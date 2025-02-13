@@ -1,0 +1,44 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.ToolBar {
+  padding: 1px;
+  background-color: bisque;
+}
+
+.ToolBar button {
+  margin: 1ex;
+  border: 2px solid indigo
+}
+
+.ToolBar button:hover {
+  background-color: deepskyblue;
+}
+
+.DataGridComponent {
+  background-color: rgb(93, 130, 231);
+  height: 220px;
+  overflow: auto;
+}
+
+.DataGridComponent table {
+  border-collapse: collapse;
+  width: 500px;
+}
+
+.DataGrigHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background:  rgb(16, 128, 219);
+  border-top: 2px solid black;
+}
+
+.DataGridComponent td, th {
+  border: 1px solid black;
+  padding: 1px;
+  text-align: left;
+}
