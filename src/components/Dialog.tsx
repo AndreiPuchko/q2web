@@ -1,15 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './Dialog.css';
 
-const Dialog: React.FC = ({ children }) => {
+const Dialog: React.FC = ({children}) => {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const [isMoving, setIsMoving] = useState(false);
-  const [isResizing, setIsResizing] = useState(false);
 
   const onMoveMouseDown = (e: React.MouseEvent) => {
-    if (isResizing) return;
-
-    setIsMoving(true);
 
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -25,34 +20,6 @@ const Dialog: React.FC = ({ children }) => {
     };
 
     const onMouseUp = () => {
-      setIsMoving(false);
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-  };
-
-  const onResizeMouseDown = (e: React.MouseEvent) => {
-    setIsResizing(true);
-
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    const startX = e.clientX;
-    const startY = e.clientY;
-    const startWidth = dialog.offsetWidth;
-    const startHeight = dialog.offsetHeight;
-
-    const onMouseMove = (e: MouseEvent) => {
-      dialog.style.width = `${startWidth + e.clientX - startX}px`;
-      dialog.style.height = `${startHeight + e.clientY - startY}px`;
-      resizeChildren();
-    };
-
-    const onMouseUp = () => {
-      setIsResizing(false);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
