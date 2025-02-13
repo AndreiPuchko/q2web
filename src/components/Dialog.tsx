@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
-import './DialogContainer.css';
+import './Dialog.css';
 
-const DialogContainer: React.FC = ({ children }) => {
+const Dialog: React.FC = ({ children }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const onMouseDown = (e: React.MouseEvent) => {
@@ -65,4 +65,4 @@ const DialogContainer: React.FC = ({ children }) => {
   );
 };
 
-export default DialogContainer;
+export default Dialog;

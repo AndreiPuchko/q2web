@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from 'prop-types';
 
-class DataTable extends Component {
+class DataGrid extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -54,9 +54,9 @@ class DataTable extends Component {
   }
 }
 
-DataTable.defaultProps = {
+DataGrid.defaultProps = {
   CanGrowHeight: true,
   CanGrowWidth: true,
 };
 
-export default DataTable;
+export default DataGrid;

@@ -4,8 +4,8 @@ import './App.css'
 import GridData from "./data_modules/data"
 import { columns } from "./data_modules/data"
 
-import DridComponent from './components/DataGridComponent'
-import DialogContainer from './components/DialogContainer'
+import DridComponent from './components/DataGrid'
+import Dialog from './components/Dialog'
 
 function App() {
   const [count, setCount] = useState(0);
@@ -19,9 +19,9 @@ function App() {
         <button>Edit</button>
         <button>Delete</button>
       </nav>
-      <DialogContainer>
+      <Dialog>
         <DridComponent columns={columns} data={GridData} />
-      </DialogContainer>
+      </Dialog>
     </>
   )
 }
