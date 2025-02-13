@@ -20,3 +20,32 @@ export const columns = [
     { key: "2", "column": "address", "label": "Addresse" },
     { key: "3", "column": "pos", "label": "Position" },
 ];
+
+
+export var forms = {};
+
+forms["datagrid1"] = {
+    "columns": columns,
+    "data": mockData,
+    "title": "Data Grid1",
+    "description": "This is a data grid1",
+    "type": "datagrid",
+    "icon": "grid",
+    "width": 800,
+    "height": 600,
+    "x": 0,
+    "y": 0,
+};
+
+forms["datagrid2"] = {
+    "columns": columns,
+    "data": mockData,
+    "title": "Data Grid2",
+    "description": "This is a data grid2",
+    "type": "datagrid",
+    "icon": "grid",
+    "width": 800,
+    "height": 600,
+    "x": 0,
+    "y": 0,
+};
