@@ -66,7 +66,8 @@ const Dialog: React.FC = ({ children }) => {
     childrenArray.forEach(child => {
       if (child.getAttribute('_can_grow_height') === 'true') {
         console.log('Resizing child height:', child.style.height);
-        const height = dialog.offsetHeight - dialogHeader.offsetHeight - dialogResizer.offsetHeight -  20;
+        const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
+        const height = dialog.offsetHeight - dialogHeader.offsetHeight - dialogResizer.offsetHeight - padding;
         child.style.height = `${height}px`;
       }
       if (child.getAttribute('_can_grow_width') === 'true') {
