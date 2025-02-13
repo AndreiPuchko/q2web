@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from 'prop-types';
 
 class DataGrid extends Component {
   constructor(props) {
@@ -29,8 +28,7 @@ class DataGrid extends Component {
     const { columns, data, CanGrowHeight, CanGrowWidth } = this.props;
     const { visibleRows } = this.state;
     return (
-      <div className="DataGridComponent" ref={this.tableBodyRef} onScroll={this.handleScroll}
-      >
+      <div className="DataGridComponent" ref={this.tableBodyRef} onScroll={this.handleScroll} _can_grow_height="true" _can_grow_width="true">
         <table >
           <thead className="DataGrigHeader">
             <tr>

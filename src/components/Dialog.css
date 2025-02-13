@@ -28,5 +28,10 @@
   right: 0;
   bottom: 0;
   cursor: se-resize;
+  /* Добавим текст для проверки */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 

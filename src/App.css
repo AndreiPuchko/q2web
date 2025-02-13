@@ -20,13 +20,13 @@
 
 .DataGridComponent {
   background-color: rgb(93, 130, 231);
-  height: 220px;
+  height: 200px;
   overflow: auto;
 }
 
 .DataGridComponent table {
   border-collapse: collapse;
-  width: 500px;
+  /* width: auto; */
 }
 
 .DataGrigHeader {
