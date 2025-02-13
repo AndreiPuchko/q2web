@@ -5,6 +5,7 @@ import GridData from "./data_modules/data"
 import { columns } from "./data_modules/data"
 
 import DridComponent from './components/DataGridComponent'
+import DialogContainer from './components/DialogContainer'
 
 function App() {
   const [count, setCount] = useState(0);
@@ -18,7 +19,9 @@ function App() {
         <button>Edit</button>
         <button>Delete</button>
       </nav>
-      <DridComponent columns={columns} data={GridData} />
+      <DialogContainer>
+        <DridComponent columns={columns} data={GridData} />
+      </DialogContainer>
     </>
   )
 }
