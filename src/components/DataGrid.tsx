@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { forms } from "../data_modules/data";
 
 class DataGrid extends Component {
   constructor(props) {
@@ -20,20 +21,21 @@ class DataGrid extends Component {
   handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = this.tableBodyRef.current;
     if (scrollTop + clientHeight >= scrollHeight - 10) {
-      this.setState((prevState1) => ({ visibleRows: prevState1.visibleRows + 10 }));
+      this.setState((prevState) => ({ visibleRows: prevState.visibleRows + 10 }));
     }
   };
 
   render() {
-    const { columns, data, CanGrowHeight, CanGrowWidth } = this.props;
+    const { currentFormKey } = this.props;
+    const { columns, data } = forms[currentFormKey];
     const { visibleRows } = this.state;
     return (
       <div className="DataGridComponent" ref={this.tableBodyRef} onScroll={this.handleScroll} _can_grow_height="true" _can_grow_width="true">
-        <table >
+        <table>
           <thead className="DataGrigHeader">
             <tr>
               {columns.map((col) => (
-                <th key={col.key} >{col.label}</th>
+                <th key={col.key}>{col.label}</th>
               ))}
             </tr>
           </thead>

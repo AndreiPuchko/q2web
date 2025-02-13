@@ -25,6 +25,7 @@ export const columns = [
 export var forms = {};
 
 forms["datagrid1"] = {
+    "key": "datagrid1",
     "columns": columns,
     "data": mockData,
     "title": "Data Grid1",
@@ -38,6 +39,7 @@ forms["datagrid1"] = {
 };
 
 forms["datagrid2"] = {
+    "key": "datagrid2",
     "columns": columns,
     "data": mockData,
     "title": "Data Grid2",
