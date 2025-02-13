@@ -1,10 +1,14 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './Dialog.css';
 
 const Dialog: React.FC = ({ children }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [isMoving, setIsMoving] = useState(false);
 
   const onMoveMouseDown = (e: React.MouseEvent) => {
+    setIsMoving(true);
+
+
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -25,10 +29,11 @@ const Dialog: React.FC = ({ children }) => {
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
-    resizeChildren();
   };
 
   const onResizeMouseDown = (e: React.MouseEvent) => {
+    if (isMoving) return;
+
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -44,6 +49,7 @@ const Dialog: React.FC = ({ children }) => {
     };
 
     const onMouseUp = () => {
+      setIsMoving(false);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -58,7 +64,6 @@ const Dialog: React.FC = ({ children }) => {
 
     const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
     const dialogResizer = dialog.querySelector('.dialog-resizer') as HTMLElement;
-
     const dialogContent = dialog.querySelector('.dialog-content') as HTMLElement;
 
     console.log('!Dialog content dimensions:', dialogContent.clientHeight, dialogContent.offsetHeight);
@@ -67,11 +72,13 @@ const Dialog: React.FC = ({ children }) => {
       if (child.getAttribute('_can_grow_height') === 'true') {
         console.log('Resizing child height:', child.style.height);
         const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
-        const height = dialog.offsetHeight - dialogHeader.offsetHeight - dialogResizer.offsetHeight - padding;
+        const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
         child.style.height = `${height}px`;
       }
       if (child.getAttribute('_can_grow_width') === 'true') {
-        child.style.width = `${dialogContent.clientWidth}px`;
+        const padding = parseFloat(window.getComputedStyle(dialogContent).paddingLeft) + parseFloat(window.getComputedStyle(dialogContent).paddingRight);
+        const width = dialog.clientWidth - padding;
+        child.style.width = `${width}px`;
       }
     });
   };
@@ -81,7 +88,7 @@ const Dialog: React.FC = ({ children }) => {
   }, []);
 
   return (
-    <div className="dialog-container" ref={dialogRef} onMouseDown={onResizeMouseDown}>
+    <div className="dialog-container" ref={dialogRef}  onMouseDown={onResizeMouseDown}>
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
         Drag here
       </div>
