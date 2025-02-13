@@ -1,11 +1,43 @@
 import React, { useRef, useEffect } from 'react';
 import './Dialog.css';
+import Cookies from 'js-cookie';
 
-const Dialog: React.FC = ({children}) => {
+interface DialogProps {
+  onClose: () => void;
+}
+
+const Dialog: React.FC<DialogProps> = ({ children, onClose }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  const onMoveMouseDown = (e: React.MouseEvent) => {
+  const saveDialogState = () => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
+    const dialogState = {
+      width: dialog.style.width,
+      height: dialog.style.height,
+      left: dialog.style.left,
+      top: dialog.style.top,
+    };
+
+    Cookies.set('dialogState', JSON.stringify(dialogState));
+  };
+
+  const loadDialogState = () => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const dialogState = Cookies.get('dialogState');
+    if (dialogState) {
+      const { width, height, left, top } = JSON.parse(dialogState);
+      dialog.style.width = width;
+      dialog.style.height = height;
+      dialog.style.left = left;
+      dialog.style.top = top;
+    }
+  };
+
+  const onMoveMouseDown = (e: React.MouseEvent) => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -22,6 +54,32 @@ const Dialog: React.FC = ({children}) => {
     const onMouseUp = () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
+      saveDialogState();
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
+  const onResizeMouseDown = (e: React.MouseEvent) => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = dialog.offsetWidth;
+    const startHeight = dialog.offsetHeight;
+
+    const onMouseMove = (e: MouseEvent) => {
+      dialog.style.width = `${startWidth + e.clientX - startX}px`;
+      dialog.style.height = `${startHeight + e.clientY - startY}px`;
+      resizeChildren();
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      saveDialogState();
     };
 
     document.addEventListener('mousemove', onMouseMove);
@@ -52,6 +110,8 @@ const Dialog: React.FC = ({children}) => {
   };
 
   useEffect(() => {
+    loadDialogState();
+
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -70,11 +130,12 @@ const Dialog: React.FC = ({children}) => {
     <div className="dialog-container" ref={dialogRef}>
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
         Dialog Header
+        <button className="close-button" onClick={onClose}>&#10006;</button>
       </div>
       <div className="dialog-content">
         {children}
       </div>
-      <div className="dialog-resizer"></div>
+      <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>
     </div>
   );
 };

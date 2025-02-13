@@ -1,15 +1,18 @@
 import React from 'react';
 import './MainMenu.css';
 
+interface MainMenuProps {
+  onShowDataGrid: () => void;
+}
 
-const MainMenu: React.FC = () => {
+const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
   return (
     <nav className='MainMenuBar'>
-      <button>Action</button>
-      <button>New</button>
+      <button onClick={onShowDataGrid}>Show DataGrid</button>
+      {/* <button>New</button>
       <button>Copy</button>
       <button>Edit</button>
-      <button>Delete</button>
+      <button>Delete</button> */}
     </nav>
   );
 };

@@ -14,6 +14,9 @@
   background-color: darkslateblue;
   cursor: move;
   user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dialog-content {
@@ -28,5 +31,16 @@
   right: 0;
   bottom: 0;
   /* cursor: se-resize; */
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
 }
 
