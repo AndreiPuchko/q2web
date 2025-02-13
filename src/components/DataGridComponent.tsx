@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
 
 class DataTable extends Component {
   constructor(props) {
@@ -25,10 +26,11 @@ class DataTable extends Component {
   };
 
   render() {
-    const { columns, data } = this.props;
+    const { columns, data, CanGrowHeight, CanGrowWidth } = this.props;
     const { visibleRows } = this.state;
     return (
-      <div className="DataGridComponent" ref={this.tableBodyRef} onScroll={this.handleScroll}>
+      <div className="DataGridComponent" ref={this.tableBodyRef} onScroll={this.handleScroll}
+      >
         <table >
           <thead className="DataGrigHeader">
             <tr>
@@ -51,5 +53,10 @@ class DataTable extends Component {
     );
   }
 }
+
+DataTable.defaultProps = {
+  CanGrowHeight: true,
+  CanGrowWidth: true,
+};
 
 export default DataTable;
