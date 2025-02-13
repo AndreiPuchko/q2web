@@ -4,10 +4,12 @@ import './Dialog.css';
 const Dialog: React.FC = ({ children }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const [isMoving, setIsMoving] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
 
   const onMoveMouseDown = (e: React.MouseEvent) => {
-    setIsMoving(true);
+    if (isResizing) return;
 
+    setIsMoving(true);
 
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -23,6 +25,7 @@ const Dialog: React.FC = ({ children }) => {
     };
 
     const onMouseUp = () => {
+      setIsMoving(false);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -32,7 +35,7 @@ const Dialog: React.FC = ({ children }) => {
   };
 
   const onResizeMouseDown = (e: React.MouseEvent) => {
-    if (isMoving) return;
+    setIsResizing(true);
 
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -49,7 +52,7 @@ const Dialog: React.FC = ({ children }) => {
     };
 
     const onMouseUp = () => {
-      setIsMoving(false);
+      setIsResizing(false);
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -70,7 +73,6 @@ const Dialog: React.FC = ({ children }) => {
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
       if (child.getAttribute('_can_grow_height') === 'true') {
-        console.log('Resizing child height:', child.style.height);
         const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
         const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
         child.style.height = `${height}px`;
@@ -84,13 +86,24 @@ const Dialog: React.FC = ({ children }) => {
   };
 
   useEffect(() => {
-    resizeChildren();
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      resizeChildren();
+    });
+
+    resizeObserver.observe(dialog);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
   return (
-    <div className="dialog-container" ref={dialogRef}  onMouseDown={onResizeMouseDown}>
+    <div className="dialog-container" ref={dialogRef}>
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
-        Drag here
+        Dialog Header
       </div>
       <div className="dialog-content">
         {children}

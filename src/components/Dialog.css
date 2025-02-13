@@ -23,15 +23,10 @@
 .dialog-resizer {
   width: 10px;
   height: 10px;
-  background-color: #ccc;
+  background-color: transparent;
   position: absolute;
   right: 0;
   bottom: 0;
-  cursor: se-resize;
-  /* Добавим текст для проверки */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+  /* cursor: se-resize; */
 }
 
