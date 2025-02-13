@@ -4,19 +4,6 @@
   text-align: center;
 }
 
-.ToolBar {
-  padding: 1px;
-  background-color: bisque;
-}
-
-.ToolBar button {
-  margin: 1ex;
-  border: 2px solid indigo
-}
-
-.ToolBar button:hover {
-  background-color: deepskyblue;
-}
 
 .DataGridComponent {
   background-color: rgb(93, 130, 231);

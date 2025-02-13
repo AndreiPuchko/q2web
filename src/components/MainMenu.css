@@ -1,0 +1,20 @@
+.MainMenuBar {
+    width: 100%;
+    padding: 10px;
+    background-color: #f0f0f0;
+    position: absolute;
+    display: flex;
+    justify-content: left;
+    flex-direction: row;
+    top: 0;
+    left: 0;
+}
+
+.MainMenuBar button {
+    margin: 1px;
+    border: 1px solid indigo
+}
+
+.MainMenuBar button:hover {
+    background-color: deepskyblue;
+}

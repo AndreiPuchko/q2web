@@ -36,7 +36,6 @@ const Dialog: React.FC = ({children}) => {
     const dialogResizer = dialog.querySelector('.dialog-resizer') as HTMLElement;
     const dialogContent = dialog.querySelector('.dialog-content') as HTMLElement;
 
-    console.log('!Dialog content dimensions:', dialogContent.clientHeight, dialogContent.offsetHeight);
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
       if (child.getAttribute('_can_grow_height') === 'true') {
