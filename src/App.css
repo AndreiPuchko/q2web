@@ -8,13 +8,13 @@ body, html {
   height: 100%;
 }
 
-.DataGridComponent {
+.DataGrid {
   background-color: rgb(93, 130, 231);
   height: 200px;
   overflow: auto;
 }
 
-.DataGridComponent table {
+.DataGrid table {
   border-collapse: collapse;
   /* width: auto; */
 }
@@ -27,7 +27,7 @@ body, html {
   border-top: 2px solid black;
 }
 
-.DataGridComponent td, th {
+.DataGrid td, th {
   border: 1px solid black;
   padding: 1px;
   text-align: left;

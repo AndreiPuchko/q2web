@@ -9,17 +9,37 @@ class DataGrid extends Component {
       selectedRow: 0, // Initially row 0 is selected
     };
     this.tableBodyRef = React.createRef();
+    this.dataGridRef = React.createRef();
   }
 
   componentDidMount() {
     this.tableBodyRef.current.addEventListener("scroll", this.handleScroll);
+    window.addEventListener("resize", this.checkTableHeight);
     document.addEventListener("keydown", this.handleKeyDown);
+    this.checkTableHeight();
+
+    this.resizeObserver = new ResizeObserver(this.checkTableHeight);
+    this.resizeObserver.observe(this.dataGridRef.current);
   }
 
   componentWillUnmount() {
     this.tableBodyRef.current.removeEventListener("scroll", this.handleScroll);
+    window.removeEventListener("resize", this.checkTableHeight);
     document.removeEventListener("keydown", this.handleKeyDown);
+    this.resizeObserver.disconnect();
   }
+
+  checkTableHeight = () => {
+    const rowElement = this.tableBodyRef.current.querySelector('tbody tr');
+    if (rowElement) {
+      const rowHeight = rowElement.offsetHeight;
+      const tableHeight = this.dataGridRef.current.clientHeight;
+      const visibleRows = Math.floor(tableHeight / rowHeight);
+      if (visibleRows > this.state.visibleRows) {
+        this.setState({ visibleRows });
+      }
+    }
+  };
 
   handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = this.tableBodyRef.current;
@@ -38,10 +58,10 @@ class DataGrid extends Component {
     const dataLength = forms[currentFormKey].data.length;
     const rowElement = this.tableBodyRef.current.querySelector('tbody tr');
     const rowsPerPage = rowElement ? Math.floor(this.tableBodyRef.current.clientHeight / rowElement.offsetHeight) : 0;
-    if (event.key === "ArrowUp" && !event.ctrlKey && selectedRow > 0) {
+    if (event.key === "ArrowUp" && selectedRow > 0) {
       this.setState({ selectedRow: selectedRow - 1 }, this.scrollToRow);
       event.preventDefault();
-    } else if (event.key === "ArrowDown" && !event.ctrlKey && selectedRow < dataLength - 1) {
+    } else if (event.key === "ArrowDown" && selectedRow < dataLength - 1) {
       this.setState({ selectedRow: selectedRow + 1 }, this.scrollToRow);
       event.preventDefault();
     } else if (event.key === "PageUp" && selectedRow > 0) {
@@ -90,29 +110,32 @@ class DataGrid extends Component {
     const { columns, data } = forms[currentFormKey];
     const { visibleRows, selectedRow } = this.state;
     return (
-      <div className="DataGridComponent" ref={this.tableBodyRef} onScroll={this.handleScroll} _can_grow_height="true" _can_grow_width="true">
-        <table>
-          <thead className="DataGrigHeader">
-            <tr>
-              {columns.map((col) => (
-                <th key={col.key}>{col.label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.slice(0, visibleRows).map((row, index) => (
-              <tr
-                key={index}
-                onClick={() => this.handleRowClick(index)}
-                style={{ backgroundColor: selectedRow === index ? '#d3d3d3' : 'transparent' }}
-              >
+      <div ref={this.dataGridRef} style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
+        text
+        <div className="DataGrid" ref={this.tableBodyRef} onScroll={this.handleScroll} style={{ height: 'calc(100% - 20px)' }}>
+          <table>
+            <thead className="DataGrigHeader">
+              <tr>
                 {columns.map((col) => (
-                  <td key={col.key}>{row[col.column]}</td>
+                  <th key={col.key}>{col.label}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.slice(0, visibleRows).map((row, index) => (
+                <tr
+                  key={index}
+                  onClick={() => this.handleRowClick(index)}
+                  style={{ backgroundColor: selectedRow === index ? '#d3d3d3' : 'transparent' }}
+                >
+                  {columns.map((col) => (
+                    <td key={col.key}>{row[col.column]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
