@@ -34,11 +34,35 @@ class DataGrid extends Component {
 
   handleKeyDown = (event) => {
     const { selectedRow, visibleRows } = this.state;
-    if (event.key === "ArrowUp" && selectedRow > 0) {
+    const { currentFormKey } = this.props;
+    const dataLength = forms[currentFormKey].data.length;
+    const rowElement = this.tableBodyRef.current.querySelector('tbody tr');
+    const rowsPerPage = rowElement ? Math.floor(this.tableBodyRef.current.clientHeight / rowElement.offsetHeight) : 0;
+    if (event.key === "ArrowUp" && !event.ctrlKey && selectedRow > 0) {
       this.setState({ selectedRow: selectedRow - 1 }, this.scrollToRow);
       event.preventDefault();
-    } else if (event.key === "ArrowDown" && selectedRow < visibleRows - 1) {
+    } else if (event.key === "ArrowDown" && !event.ctrlKey && selectedRow < dataLength - 1) {
       this.setState({ selectedRow: selectedRow + 1 }, this.scrollToRow);
+      event.preventDefault();
+    } else if (event.key === "PageUp" && selectedRow > 0) {
+      this.setState({ selectedRow: Math.max(selectedRow - rowsPerPage, 0) }, this.scrollToRow);
+      event.preventDefault();
+    } else if (event.key === "PageDown" && selectedRow < dataLength - 1) {
+      const newVisibleRows = Math.min(visibleRows + rowsPerPage, dataLength);
+      this.setState({ visibleRows: newVisibleRows, selectedRow: Math.min(selectedRow + rowsPerPage, dataLength - 1) }, () => {
+        this.scrollToRow();
+        this.handleScroll();
+      });
+      event.preventDefault();
+    } else if (event.key === "Home") {
+      this.setState({ selectedRow: 0 }, this.scrollToRow);
+      event.preventDefault();
+    } else if (event.key === "End") {
+      const newVisibleRows = dataLength;
+      this.setState({ visibleRows: newVisibleRows, selectedRow: dataLength - 1 }, () => {
+        this.scrollToRow();
+        this.handleScroll();
+      });
       event.preventDefault();
     }
   };
@@ -47,7 +71,6 @@ class DataGrid extends Component {
     const rowElement = this.tableBodyRef.current.querySelector(`tbody tr:nth-child(${this.state.selectedRow + 1})`);
     if (rowElement) {
       const { offsetTop, offsetHeight } = rowElement;
-      console.log("scrollToRow", this.state.selectedRow, rowElement.scrollTop);
       const { scrollTop, clientHeight } = this.tableBodyRef.current;
       const headerHeight = this.tableBodyRef.current.querySelector('thead').offsetHeight;
       const rowBottom = offsetTop + offsetHeight;
