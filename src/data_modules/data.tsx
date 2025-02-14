@@ -53,7 +53,22 @@ forms["datagrid2"] = {
     "key": "datagrid2",
     "columns": columns,
     "data": mockData2,
-    "menubarpath": "File|Data Grid2",
+    "menubarpath": "File|Other|222|Data Grid2",
+    "title": "Data Grid2 (common)",
+    "description": "This is a data grid2",
+    "type": "datagrid",
+    "icon": "grid",
+    "width": 800,
+    "height": 600,
+    "x": 0,
+    "y": 0,
+};
+
+forms["datagrid3"] = {
+    "key": "datagrid3",
+    "columns": columns,
+    "data": mockData2,
+    "menubarpath": "File|Other|333|Data Grid3",
     "title": "Data Grid2 (common)",
     "description": "This is a data grid2",
     "type": "datagrid",

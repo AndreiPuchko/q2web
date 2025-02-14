@@ -6,15 +6,44 @@ interface MainMenuProps {
   onShowDataGrid: (formKey: string) => void;
 }
 
-const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
-  const menuStructure = Object.keys(forms).reduce((acc, key) => {
-    const [mainMenu, subMenu] = forms[key].menubarpath.split('|');
-    if (!acc[mainMenu]) {
-      acc[mainMenu] = [];
+const buildMenuStructure = (forms: Record<string, any>) => {
+  const structure = {};
+  Object.keys(forms).forEach((key) => {
+    const path = forms[key].menubarpath.split('|');
+    let currentLevel = structure;
+    path.forEach((part, index) => {
+      if (!currentLevel[part]) {
+        currentLevel[part] = index === path.length - 1 ? { key, label: part } : {};
+      }
+      currentLevel = currentLevel[part];
+    });
+  });
+  return structure;
+};
+
+const renderMenu = (menuStructure: any, onShowDataGrid: (formKey: string) => void) => {
+  return Object.keys(menuStructure).map((menu) => {
+    const item = menuStructure[menu];
+    if (item.key) {
+      return (
+        <button key={item.key} onClick={() => onShowDataGrid(item.key)}>
+          {item.label}
+        </button>
+      );
     }
-    acc[mainMenu].push({ key, label: subMenu });
-    return acc;
-  }, {} as Record<string, { key: string, label: string }[]>);
+    return (
+      <div className='submenu' key={menu}>
+        <button className='submenubtn'>{menu}</button>
+        <div className='submenu-content'>
+          {renderMenu(item, onShowDataGrid)}
+        </div>
+      </div>
+    );
+  });
+};
+
+const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
+  const menuStructure = buildMenuStructure(forms);
 
   const openNewTab = () => {
     window.open('/empty-app-page', '_blank');
@@ -27,11 +56,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
           <div className='dropdown' key={mainMenu}>
             <button className='dropbtn'>{mainMenu}</button>
             <div className='dropdown-content'>
-              {menuStructure[mainMenu].map((item) => (
-                <button key={item.key} onClick={() => onShowDataGrid(item.key)}>
-                  {item.label}
-                </button>
-              ))}
+              {renderMenu(menuStructure[mainMenu], onShowDataGrid)}
             </div>
           </div>
         ))}
