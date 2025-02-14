@@ -98,7 +98,8 @@ forms["datagrid3"] = {
 forms["messageBox"] = {
     "key": "messagebox",
     "columns": [
-        { key: "0", "column": "message", "label": "Message", "value": "This is a message box","readonly":true, "control": "text" },	
+        { key: "0", "column": "message", "label": "Message", "value": "This is a message box", "readonly": true, "control": "text" },
+        { key: "1", "column": "description", "label": "Description", "value": "This is a Description...", "readonly": true, "control": "text" },
     ],
     "data": [],
     "menubarpath": "File|About",
