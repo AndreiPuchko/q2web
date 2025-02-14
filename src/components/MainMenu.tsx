@@ -13,7 +13,7 @@ const buildMenuStructure = (forms: Record<string, any>) => {
     let currentLevel = structure;
     path.forEach((part, index) => {
       if (!currentLevel[part]) {
-        currentLevel[part] = index === path.length - 1 ? { key, label: part } : {};
+        currentLevel[part] = index === path.length - 1 ? { key, label: part, menutoolbar: forms[key].menutoolbar } : {};
       }
       currentLevel = currentLevel[part];
     });
@@ -42,6 +42,19 @@ const renderMenu = (menuStructure: any, onShowDataGrid: (formKey: string) => voi
   });
 };
 
+const renderToolButtons = (forms: Record<string, any>, onShowDataGrid: (formKey: string) => void) => {
+  return Object.keys(forms).map((key) => {
+    if (forms[key].menutoolbar === 1) {
+      return (
+        <button key={key} onClick={() => onShowDataGrid(key)} className='toolButton'>
+          {forms[key].title}
+        </button>
+      );
+    }
+    return null;
+  });
+};
+
 const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
   const menuStructure = buildMenuStructure(forms);
 
@@ -61,6 +74,11 @@ const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
           </div>
         ))}
       </div>
+      <div className='spacer1'></div>
+      <div className='toolButtons'>
+        {renderToolButtons(forms, onShowDataGrid)}
+      </div>
+      <div className='spacer9'></div>
       <button className='newTabButton' onClick={openNewTab}><b>+</b></button>
     </nav>
   );
