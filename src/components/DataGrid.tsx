@@ -147,7 +147,7 @@ const DialogToolBar = ({ actions }) => {
   return (
     <div className="DialogToolBar">
       <div className="dropdown">
-        <button className="dropbtn">☰</button>
+        <button className="gridBurgerButton">☰</button>
         <div className="dropdown-content">
           {actions.map((action) => (
             action.label !== "/" ? (
