@@ -4,7 +4,7 @@
     background-color: #333;
     position: absolute;
     display: flex;
-    justify-content: left;
+    justify-content: space-between; /* Ensure space between menu items and the new tab button */
     top: 0;
     left: 0;
     border-bottom: 1px solid #444;
@@ -15,14 +15,9 @@
     margin: 0;
     padding: 10px 20px;
     border: none;
-    background-color: #333;
     color: white;
     cursor: pointer;
     font-size: 14px;
-}
-
-.MainMenuBar button:hover {
-    background-color: #444;
 }
 
 .dropdown {
@@ -62,7 +57,7 @@
 }
 
 .dropdown-content button:hover {
-    background-color: #f1f1f1;
+    background-color: #857b7b;
 }
 
 .dropdown:hover .dropdown-content {
@@ -70,5 +65,18 @@
 }
 
 .dropdown:hover .dropbtn {
-    background-color: #444;
+    background-color: #1a1818;
+}
+
+.menuItems {
+    display: flex;
+}
+
+.newTabButton {
+    background-color: green; /* Green background color */
+    font-size: 20px;
+}
+
+.newTabButton:hover {
+    background-color: greenyellow;
 }

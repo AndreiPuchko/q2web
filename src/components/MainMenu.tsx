@@ -16,20 +16,27 @@ const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
     return acc;
   }, {} as Record<string, { key: string, label: string }[]>);
 
+  const openNewTab = () => {
+    window.open('/empty-app-page', '_blank');
+  };
+
   return (
     <nav className='MainMenuBar'>
-      {Object.keys(menuStructure).map((mainMenu) => (
-        <div className='dropdown' key={mainMenu}>
-          <button className='dropbtn'>{mainMenu}</button>
-          <div className='dropdown-content'>
-            {menuStructure[mainMenu].map((item) => (
-              <button key={item.key} onClick={() => onShowDataGrid(item.key)}>
-                {item.label}
-              </button>
-            ))}
+      <div className='menuItems'>
+        {Object.keys(menuStructure).map((mainMenu) => (
+          <div className='dropdown' key={mainMenu}>
+            <button className='dropbtn'>{mainMenu}</button>
+            <div className='dropdown-content'>
+              {menuStructure[mainMenu].map((item) => (
+                <button key={item.key} onClick={() => onShowDataGrid(item.key)}>
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      <button className='newTabButton' onClick={openNewTab}><b>+</b></button>
     </nav>
   );
 };
