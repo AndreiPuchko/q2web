@@ -55,7 +55,7 @@ forms["datagrid2"] = {
     "columns": columns,
     "data": mockData2,
     "menubarpath": "File|Other|Data Grid2",
-    "menutoolbar": 0,
+    "menutoolbar": true,
     "title": "Data Grid2 (common)",
     "description": "This is a data grid2",
     "type": "datagrid",

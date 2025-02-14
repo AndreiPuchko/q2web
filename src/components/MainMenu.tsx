@@ -44,7 +44,8 @@ const renderMenu = (menuStructure: any, onShowDataGrid: (formKey: string) => voi
 
 const renderToolButtons = (forms: Record<string, any>, onShowDataGrid: (formKey: string) => void) => {
   return Object.keys(forms).map((key) => {
-    if (forms[key].menutoolbar === 1) {
+    const menutoolbar = forms[key].menutoolbar;
+    if (menutoolbar === 1 || menutoolbar === true || menutoolbar === "true") {
       return (
         <button key={key} onClick={() => onShowDataGrid(key)} className='toolButton'>
           {forms[key].title}
