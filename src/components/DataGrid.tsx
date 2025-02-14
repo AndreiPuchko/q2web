@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { forms } from "../data_modules/data";
+import { MdDoorBack, MdDoorFront, MdOutlineExitToApp } from "react-icons/md";
 
 class DataGrid extends Component {
   constructor(props) {
@@ -124,7 +125,7 @@ class DataGrid extends Component {
     const runtimeActions = [
       ...actions,
       { key: "separator", label: "/", icon: "" },
-      { key: "exit", label: "Exit", icon: "🚪" }
+      { key: "exit", label: "Exit", icon: <MdOutlineExitToApp /> }
     ];
 
     return (

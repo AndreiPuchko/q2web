@@ -1,4 +1,5 @@
 import { gen } from "generate-mock-data";
+import { MdAdd, MdEdit, MdContentCopy, MdDelete, MdMessage, MdExitToApp, MdViewQuilt, MdInfo, MdRemove, MdContactPage, MdCropPortrait, MdOutlineCropPortrait, MdOutlineContentCopy, MdOutlinePlaylistRemove, MdClose } from "react-icons/md";
 
 const datalen = 1000;
 
@@ -32,12 +33,12 @@ export const columns = [
 ];
 
 const actions = [
-    { key: "0", "label": "New", "icon": "➕" },
-    { key: "1", "label": "Edit", "icon": "✏️" },
-    { key: "2", "label": "Copy", "icon": "📋" },
-    { key: "3", "label": "Delete", "icon": "🗑️" },
+    { key: "0", "label": "New", "icon": <MdOutlineCropPortrait /> },
+    { key: "1", "label": "Copy", "icon": <MdOutlineContentCopy /> },
+    { key: "2", "label": "Edit", "icon": <MdEdit /> },
+    { key: "3", "label": "Delete", "icon": <MdClose /> },
     { key: "5", "label": "/", "icon": "" },
-    { key: "6", "label": "Message", "icon": "" },
+    { key: "6", "label": "Message", "icon": <MdInfo /> },
 ]
 
 export var forms = {};
