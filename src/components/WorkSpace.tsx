@@ -5,7 +5,12 @@ const WorkSpace = ({ dialogs, onCloseDialog }) => {
   return (
     <div className='WorkSpace'>
       {dialogs.map((dialog, index) => (
-        <Dialog key={index} onClose={() => onCloseDialog(index)} currentFormKey={dialog.key} />
+        <Dialog 
+          key={index} 
+          onClose={() => onCloseDialog(index)} 
+          currentFormKey={dialog.key} 
+          isTopDialog={index === dialogs.length - 1}
+        />
       ))}
     </div>
   );

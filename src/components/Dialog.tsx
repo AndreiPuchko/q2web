@@ -7,9 +7,10 @@ import { forms } from '../data_modules/data';
 interface DialogProps {
   onClose: () => void;
   currentFormKey: string;
+  isTopDialog: boolean;
 }
 
-const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey }) => {
+const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, isTopDialog }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const saveDialogState = () => {
@@ -41,6 +42,8 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey }) => {
   };
 
   const onMoveMouseDown = (e: React.MouseEvent) => {
+    if (!isTopDialog) return;
+
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -65,6 +68,8 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey }) => {
   };
 
   const onResizeMouseDown = (e: React.MouseEvent) => {
+    if (!isTopDialog) return;
+
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -131,7 +136,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey }) => {
 
   const { columns, data } = forms[currentFormKey];
   return (
-    <div className="dialog-container" ref={dialogRef}>
+    <div className={`dialog-container ${isTopDialog ? '' : 'disabled'}`} ref={dialogRef}>
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
         Dialog Header <b>{currentFormKey}</b>
         <button className="close-button" onClick={onClose}>&#10006;</button>
