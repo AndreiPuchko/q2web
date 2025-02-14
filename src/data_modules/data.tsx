@@ -31,6 +31,14 @@ export const columns = [
     { key: "3", "column": "pos", "label": "Position" },
 ];
 
+const actions = [
+    { key: "0", "label": "New", "icon": "➕" },
+    { key: "1", "label": "Edit", "icon": "✏️" },
+    { key: "2", "label": "Copy", "icon": "📋" },
+    { key: "3", "label": "Delete", "icon": "🗑️" },
+    { key: "5", "label": "/", "icon": "" },
+    { key: "6", "label": "Message", "icon": "" },
+]
 
 export var forms = {};
 
@@ -40,6 +48,7 @@ forms["datagrid1"] = {
     "data": mockData1,
     "menubarpath": "File|Data Grid1",
     "menutoolbar": 1,
+    "actions": actions,
     "title": "Data Grid1 (excluse)",
     "description": "This is a data grid1",
     "type": "datagrid",
@@ -56,6 +65,7 @@ forms["datagrid2"] = {
     "data": mockData2,
     "menubarpath": "File|Other|Data Grid2",
     "menutoolbar": true,
+    "actions": actions,
     "title": "Data Grid2 (common)",
     "description": "This is a data grid2",
     "type": "datagrid",
@@ -72,6 +82,7 @@ forms["datagrid3"] = {
     "data": mockData2,
     "menubarpath": "File|Other|Data Grid3",
     "menutoolbar": 0,
+    "actions": actions,
     "title": "Data Grid2 (common)",
     "description": "This is a data grid2",
     "type": "datagrid",
