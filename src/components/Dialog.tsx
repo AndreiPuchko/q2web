@@ -143,7 +143,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopD
       style={{ zIndex }} 
     >
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
-        Dialog Header <b>{forms[currentFormKey]["title"]}</b>
+        <b>{forms[currentFormKey]["title"]}</b>
         <button className="close-button" onClick={onClose}>&#10006;</button>
       </div>
       <div className="dialog-content">

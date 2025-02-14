@@ -33,12 +33,12 @@ export const columns = [
 ];
 
 const actions = [
-    { key: "0", "label": "New", "icon": <MdOutlineCropPortrait /> },
-    { key: "1", "label": "Copy", "icon": <MdOutlineContentCopy /> },
-    { key: "2", "label": "Edit", "icon": <MdEdit /> },
-    { key: "3", "label": "Delete", "icon": <MdClose /> },
-    { key: "5", "label": "/", "icon": "" },
-    { key: "6", "label": "Message", "icon": <MdInfo /> },
+    { "label": "New", "icon": <MdOutlineCropPortrait /> },
+    { "label": "Copy", "icon": <MdOutlineContentCopy /> },
+    { "label": "Edit", "icon": <MdEdit /> },
+    { "label": "Delete", "icon": <MdClose /> },
+    { "label": "/", "icon": "" },
+    { "label": "Message", "icon": <MdInfo /> },
 ]
 
 export var forms = {};
@@ -85,6 +85,26 @@ forms["datagrid3"] = {
     "menutoolbar": 0,
     "actions": actions,
     "title": "Data Grid2 (common)",
+    "description": "This is a data grid2",
+    "type": "datagrid",
+    "icon": "grid",
+    "width": 800,
+    "height": 600,
+    "x": 0,
+    "y": 0,
+};
+
+
+forms["messageBox"] = {
+    "key": "messagebox",
+    "columns": [
+        { key: "0", "column": "message", "label": "", "value": "This is a message box" },
+    ],
+    "data": [],
+    "menubarpath": "File|About",
+    "menutoolbar": true,
+    "actions": actions,
+    "title": "Message Box 2",
     "description": "This is a data grid2",
     "type": "datagrid",
     "icon": "grid",
