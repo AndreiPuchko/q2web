@@ -1,4 +1,4 @@
-import React, { act, Component } from "react";
+import React, { Component } from "react";
 import { forms } from "../data_modules/data";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
 
@@ -108,7 +108,18 @@ class DataGrid extends Component {
     }
   };
 
+  showCrud = (formKey, rowData) => {
+    const form = { ...forms[formKey] };
+    delete form.data;
+    console.log("Show CRUD form", form, rowData);
+    this.props.onShowForm(formKey, rowData);
+  };
+
   handleAction = (action) => {
+    const { currentFormKey } = this.props;
+    const { selectedRow } = this.state;
+    const rowData = forms[currentFormKey].data[selectedRow];
+
     switch (action.label) {
       case "Exit":
         this.props.onClose();
@@ -120,7 +131,7 @@ class DataGrid extends Component {
         console.log("Copy action");
         break;
       case "Edit":
-        console.log("Edit action");
+        this.showCrud(currentFormKey, rowData);
         break;
       case "Delete":
         console.log("Delete action");

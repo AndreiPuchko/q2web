@@ -21,10 +21,16 @@ function App() {
     setZIndexMap(newZIndexMap);
   };
 
+  const showForm = (formKey, rowData) => {
+    const newDialogIndex = dialogs.length;
+    setDialogs([...dialogs, { key: formKey, rowData }]);
+    setZIndexMap({ ...zIndexMap, [newDialogIndex]: newDialogIndex + 1 });
+  };
+
   return (
     <>
       <MainMenu onShowDataGrid={showDialog} />
-      <WorkSpace dialogs={dialogs} onCloseDialog={closeDialog} zIndexMap={zIndexMap} />
+      <WorkSpace dialogs={dialogs} onCloseDialog={closeDialog} zIndexMap={zIndexMap} onShowForm={showForm} />
     </>
   );
 }

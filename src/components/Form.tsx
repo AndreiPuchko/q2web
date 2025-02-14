@@ -11,9 +11,9 @@ class Form extends Component {
   }
 
   componentDidMount() {
-    const { currentFormKey } = this.props;
+    const { currentFormKey, rowData } = this.props;
     const formData = forms[currentFormKey].columns.reduce((acc, column) => {
-      acc[column.column] = column.value || "";
+      acc[column.column] = rowData ? rowData[column.column] : column.value || "";
       return acc;
     }, {});
     this.setState({ formData });
