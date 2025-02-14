@@ -138,7 +138,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, isTopDialog })
   return (
     <div className={`dialog-container ${isTopDialog ? '' : 'disabled'}`} ref={dialogRef}>
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
-        Dialog Header <b>{currentFormKey}</b>
+        Dialog Header <b>{forms[currentFormKey]["title"]}</b>
         <button className="close-button" onClick={onClose}>&#10006;</button>
       </div>
       <div className="dialog-content">
