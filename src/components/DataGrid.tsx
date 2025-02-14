@@ -166,20 +166,20 @@ const DialogToolBar = ({ actions, onAction }) => {
       <div className="dropdown">
         <button className="gridBurgerButton">☰</button>
         <div className="dropdown-content">
-          {actions.map((action) => (
+          {actions.map((action, index) => (
             action.label !== "/" ? (
-              <button key={action.key} onClick={() => onAction(action)}>
+              <button key={index} onClick={() => onAction(action)}>
                 {action.icon} {action.label}
               </button>
             ) : (
-              <hr key={action.key} />
+              <hr key={index} />
             )
           ))}
         </div>
       </div>
-      {actions.map((action) => (
+      {actions.map((action, index) => (
         action.icon && action.label !== "/" && (
-          <button key={action.key} className="gridToolButton" onClick={() => onAction(action)}>
+          <button key={index} className="gridToolButton" onClick={() => onAction(action)}>
             {action.icon}
           </button>
         )
