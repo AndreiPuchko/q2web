@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import './Dialog.css';
 import Cookies from 'js-cookie';
 import DataGrid from './DataGrid';
+import Form from './Form';
 import { forms } from '../data_modules/data';
 
 interface DialogProps {
@@ -136,6 +137,9 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopD
   }, [currentFormKey]);
 
   const { columns, data } = forms[currentFormKey];
+  const isDataGrid = data && data.length > 0;
+  console.log('isDataGrid', isDataGrid);
+
   return (
     <div 
       className={`dialog-container ${isTopDialog ? '' : 'disabled'}`} 
@@ -147,7 +151,11 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopD
         <button className="close-button" onClick={onClose}>&#10006;</button>
       </div>
       <div className="dialog-content">
-        <DataGrid currentFormKey={currentFormKey} onClose={onClose} />
+        {isDataGrid ? (
+          <DataGrid currentFormKey={currentFormKey} onClose={onClose} />
+        ) : (
+          <Form currentFormKey={currentFormKey} onClose={onClose} />
+        )}
       </div>
       <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>
     </div>
