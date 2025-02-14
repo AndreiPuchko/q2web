@@ -29,9 +29,10 @@
 }
 
 .dialog-header {
-  padding: 10px;
+  padding: 0px 10px;
   background-color: darkslateblue;
   cursor: move;
+  height: 2em;
   user-select: none;
   display: flex;
   justify-content: space-between;
