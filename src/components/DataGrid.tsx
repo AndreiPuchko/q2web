@@ -107,13 +107,29 @@ class DataGrid extends Component {
     }
   };
 
+  handleAction = (action) => {
+    if (action.label === "Exit") {
+      this.props.onClose();
+    } else {
+      console.log(action.label);
+    }
+  };
+
   render() {
     const { currentFormKey } = this.props;
     const { columns, data, actions } = forms[currentFormKey];
     const { visibleRows, selectedRow } = this.state;
+
+    // Add separator and Exit action at runtime
+    const runtimeActions = [
+      ...actions,
+      { key: "separator", label: "/", icon: "" },
+      { key: "exit", label: "Exit", icon: "🚪" }
+    ];
+
     return (
       <div ref={this.dataGridRef} style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
-        <DialogToolBar actions={actions} />
+        <DialogToolBar actions={runtimeActions} onAction={this.handleAction} />
         <div className="DataGrid" ref={this.tableBodyRef} onScroll={this.handleScroll}>
           <table>
             <thead className="DataGrigHeader">
@@ -143,7 +159,7 @@ class DataGrid extends Component {
   }
 }
 
-const DialogToolBar = ({ actions }) => {
+const DialogToolBar = ({ actions, onAction }) => {
   return (
     <div className="DialogToolBar">
       <div className="dropdown">
@@ -151,7 +167,7 @@ const DialogToolBar = ({ actions }) => {
         <div className="dropdown-content">
           {actions.map((action) => (
             action.label !== "/" ? (
-              <button key={action.key} onClick={() => console.log(action.label)}>
+              <button key={action.key} onClick={() => onAction(action)}>
                 {action.icon} {action.label}
               </button>
             ) : (
@@ -162,7 +178,7 @@ const DialogToolBar = ({ actions }) => {
       </div>
       {actions.map((action) => (
         action.icon && action.label !== "/" && (
-          <button key={action.key} className="gridToolButton" onClick={() => console.log(action.label)}>
+          <button key={action.key} className="gridToolButton" onClick={() => onAction(action)}>
             {action.icon}
           </button>
         )

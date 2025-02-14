@@ -147,7 +147,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopD
         <button className="close-button" onClick={onClose}>&#10006;</button>
       </div>
       <div className="dialog-content">
-        <DataGrid currentFormKey={currentFormKey} />
+        <DataGrid currentFormKey={currentFormKey} onClose={onClose} />
       </div>
       <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>
     </div>
