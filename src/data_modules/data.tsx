@@ -2,9 +2,9 @@ import { gen } from "generate-mock-data";
 
 const datalen = 1000;
 
-const mockData = []
+const mockData1 = []
 for (let x = 0; x < datalen; x++) {
-    mockData.push({
+    mockData1.push({
         "cid": x,
         "name": gen(1)[0].firstName,
         "address": gen(1)[0].townCity,
@@ -12,7 +12,17 @@ for (let x = 0; x < datalen; x++) {
     })
 }
 
-export default mockData;
+const mockData2 = []
+for (let x = 0; x < datalen; x++) {
+    mockData2.push({
+        "cid": x,
+        "name": gen(1)[0].firstName,
+        "address": gen(1)[0].townCity,
+        "pos": Math.round(Math.random(5, 19) * 10),
+    })
+}
+
+export default mockData1;
 
 export const columns = [
     { key: "0", "column": "cid", "label": "Id" },
@@ -27,7 +37,7 @@ export var forms = {};
 forms["datagrid1"] = {
     "key": "datagrid1",
     "columns": columns,
-    "data": mockData,
+    "data": mockData1,
     "title": "Data Grid1",
     "description": "This is a data grid1",
     "type": "datagrid",
@@ -41,7 +51,7 @@ forms["datagrid1"] = {
 forms["datagrid2"] = {
     "key": "datagrid2",
     "columns": columns,
-    "data": mockData,
+    "data": mockData2,
     "title": "Data Grid2",
     "description": "This is a data grid2",
     "type": "datagrid",
