@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { act, Component } from "react";
 import { forms } from "../data_modules/data";
-import { MdDoorBack, MdDoorFront, MdOutlineExitToApp } from "react-icons/md";
+import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
 
 class DataGrid extends Component {
   constructor(props) {
@@ -109,10 +109,24 @@ class DataGrid extends Component {
   };
 
   handleAction = (action) => {
-    if (action.label === "Exit") {
-      this.props.onClose();
-    } else {
-      console.log(action.label);
+    switch (action.label) {
+      case "Exit":
+        this.props.onClose();
+        break;
+      case "New":
+        console.log("New action");
+        break;
+      case "Copy":
+        console.log("Copy action");
+        break;
+      case "Edit":
+        console.log("Edit action");
+        break;
+      case "Delete":
+        console.log("Delete action");
+        break;
+      default:
+        console.log(action.label);
     }
   };
 
@@ -123,6 +137,10 @@ class DataGrid extends Component {
 
     // Add separator and Exit action at runtime
     const runtimeActions = [
+      { key: "new", label: "New", icon: <MdOutlineCropPortrait /> },
+      { key: "copy", label: "Copy", icon: <MdOutlineContentCopy /> },
+      { key: "edit", label: "Edit", icon: <MdEdit /> },
+      { key: "delete", label: "Delete", icon: <MdClose /> },
       ...actions,
       { key: "separator", label: "/", icon: "" },
       { key: "exit", label: "Exit", icon: <MdOutlineExitToApp /> }
