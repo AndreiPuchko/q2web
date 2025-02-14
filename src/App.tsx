@@ -1,22 +1,24 @@
 import { useState } from 'react';
 import './App.css';
 
-import DridComponent from './components/DataGrid';
-import Dialog from './components/Dialog';
+import WorkSpace from './components/WorkSpace';
 import MainMenu from './components/MainMenu';
 
 function App() {
-  const [showDialog, setShowDialog] = useState(false);
-  const currentFormKey = "datagrid1";
+  const [dialogs, setDialogs] = useState([]);
+
+  const handleShowDataGrid = (key) => {
+    setDialogs([...dialogs, { key }]);
+  };
+
+  const handleCloseDialog = (index) => {
+    setDialogs(dialogs.filter((_, i) => i !== index));
+  };
 
   return (
     <>
-      <MainMenu onShowDataGrid={() => setShowDialog(true)} />
-      {showDialog && (
-        <Dialog onClose={() => setShowDialog(false)}>
-          <DridComponent currentFormKey={currentFormKey} />
-        </Dialog>
-      )}
+      <MainMenu onShowDataGrid={handleShowDataGrid} />
+      <WorkSpace dialogs={dialogs} onCloseDialog={handleCloseDialog} />
     </>
   );
 }
