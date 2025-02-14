@@ -8,9 +8,10 @@ interface DialogProps {
   onClose: () => void;
   currentFormKey: string;
   zIndex: number;
+  isTopDialog: boolean;
 }
 
-const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex }) => {
+const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopDialog }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const saveDialogState = () => {
@@ -42,6 +43,8 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex }) => {
   };
 
   const onMoveMouseDown = (e: React.MouseEvent) => {
+    if (!isTopDialog) return;
+
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -66,6 +69,8 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex }) => {
   };
 
   const onResizeMouseDown = (e: React.MouseEvent) => {
+    if (!isTopDialog) return;
+
     const dialog = dialogRef.current;
     if (!dialog) return;
 
@@ -133,7 +138,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex }) => {
   const { columns, data } = forms[currentFormKey];
   return (
     <div 
-      className="dialog-container" 
+      className={`dialog-container ${isTopDialog ? '' : 'disabled'}`} 
       ref={dialogRef} 
       style={{ zIndex }} 
     >
