@@ -1,12 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import './Dialog.css';
 import Cookies from 'js-cookie';
+import DataGrid from './DataGrid';
+import { forms } from '../data_modules/data';
 
 interface DialogProps {
   onClose: () => void;
+  currentFormKey: string;
 }
 
-const Dialog: React.FC<DialogProps> = ({ children, onClose }) => {
+const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const saveDialogState = () => {
@@ -126,14 +129,15 @@ const Dialog: React.FC<DialogProps> = ({ children, onClose }) => {
     };
   }, []);
 
+  const { columns, data } = forms[currentFormKey];
   return (
     <div className="dialog-container" ref={dialogRef}>
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
-        Dialog Header
+        Dialog Header <b>{currentFormKey}</b>
         <button className="close-button" onClick={onClose}>&#10006;</button>
       </div>
       <div className="dialog-content">
-        {children}
+        <DataGrid currentFormKey={currentFormKey} />
       </div>
       <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>
     </div>
