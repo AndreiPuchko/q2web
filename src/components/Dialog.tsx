@@ -23,14 +23,14 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey }) => {
       top: dialog.style.top,
     };
 
-    Cookies.set('dialogState', JSON.stringify(dialogState));
+    Cookies.set(`dialogState_${currentFormKey}`, JSON.stringify(dialogState));
   };
 
   const loadDialogState = () => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    const dialogState = Cookies.get('dialogState');
+    const dialogState = Cookies.get(`dialogState_${currentFormKey}`);
     if (dialogState) {
       const { width, height, left, top } = JSON.parse(dialogState);
       dialog.style.width = width;
@@ -127,7 +127,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey }) => {
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [currentFormKey]);
 
   const { columns, data } = forms[currentFormKey];
   return (
