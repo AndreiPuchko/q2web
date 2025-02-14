@@ -34,10 +34,12 @@ class DataGrid extends Component {
     if (rowElement) {
       const rowHeight = rowElement.offsetHeight;
       const tableHeight = this.dataGridRef.current.clientHeight;
-      const visibleRows = Math.floor(tableHeight / rowHeight);
+      const toolbarHeight = this.dataGridRef.current.querySelector('.DialogToolBar').offsetHeight;
+      const visibleRows = Math.floor((tableHeight - toolbarHeight) / rowHeight);
       if (visibleRows > this.state.visibleRows) {
         this.setState({ visibleRows });
       }
+      this.tableBodyRef.current.style.height = `${tableHeight - toolbarHeight}px`;
     }
   };
 
@@ -107,12 +109,12 @@ class DataGrid extends Component {
 
   render() {
     const { currentFormKey } = this.props;
-    const { columns, data } = forms[currentFormKey];
+    const { columns, data, actions } = forms[currentFormKey];
     const { visibleRows, selectedRow } = this.state;
     return (
       <div ref={this.dataGridRef} style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
-        text
-        <div className="DataGrid" ref={this.tableBodyRef} onScroll={this.handleScroll} style={{ height: 'calc(100% - 20px)' }}>
+        <DialogToolBar actions={actions} />
+        <div className="DataGrid" ref={this.tableBodyRef} onScroll={this.handleScroll}>
           <table>
             <thead className="DataGrigHeader">
               <tr>
@@ -140,6 +142,34 @@ class DataGrid extends Component {
     );
   }
 }
+
+const DialogToolBar = ({ actions }) => {
+  return (
+    <div className="DialogToolBar">
+      <div className="dropdown">
+        <button className="dropbtn">☰</button>
+        <div className="dropdown-content">
+          {actions.map((action) => (
+            action.label !== "/" ? (
+              <button key={action.key} onClick={() => console.log(action.label)}>
+                {action.icon} {action.label}
+              </button>
+            ) : (
+              <hr key={action.key} />
+            )
+          ))}
+        </div>
+      </div>
+      {actions.map((action) => (
+        action.icon && action.label !== "/" && (
+          <button key={action.key} className="gridToolButton" onClick={() => console.log(action.label)}>
+            {action.icon}
+          </button>
+        )
+      ))}
+    </div>
+  );
+};
 
 DataGrid.defaultProps = {
   CanGrowHeight: true,
