@@ -8,11 +8,10 @@ function App() {
   const [dialogs, setDialogs] = useState([]);
   const [zIndexMap, setZIndexMap] = useState({});
 
-  const showDialog = (key) => {
+  const showDialog = (metaDataKey) => {
     const newDialogIndex = dialogs.length;
-    setDialogs([...dialogs, { key }]);
+    setDialogs([...dialogs, { key: metaDataKey }]);
     setZIndexMap({ ...zIndexMap, [newDialogIndex]: newDialogIndex + 1 });
-    console.log("Show dialog", forms[key], dialogs);
   };
 
   const closeDialog = (index) => {
@@ -30,7 +29,7 @@ function App() {
           <Dialog
             key={index}
             onClose={() => closeDialog(index)}
-            currentFormKey={dialog.key}
+            metaData = {forms[dialog.key]}
             isTopDialog={index === dialogs.length - 1}
             zIndex={zIndexMap[index] || 0}
           />

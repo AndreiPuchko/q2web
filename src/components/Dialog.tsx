@@ -7,13 +7,12 @@ import { forms } from '../data_modules/data';
 
 interface DialogProps {
   onClose: () => void;
-  currentFormKey: string;
   zIndex: number;
   isTopDialog: boolean;
   rowData?: any;
 }
 
-const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopDialog, rowData }) => {
+const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog, rowData }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const saveDialogState = () => {
@@ -27,14 +26,14 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopD
       top: dialog.style.top,
     };
 
-    Cookies.set(`dialogState_${currentFormKey}`, JSON.stringify(dialogState));
+    Cookies.set(`dialogState_${metaData.key}`, JSON.stringify(dialogState));
   };
 
   const loadDialogState = () => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    const dialogState = Cookies.get(`dialogState_${currentFormKey}`);
+    const dialogState = Cookies.get(`dialogState_${metaData.key}`);
     if (dialogState) {
       const { width, height, left, top } = JSON.parse(dialogState);
       dialog.style.width = width;
@@ -135,26 +134,26 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopD
     return () => {
       resizeObserver.disconnect();
     };
-  }, [currentFormKey]);
+  });
 
-  const { columns, data } = forms[currentFormKey];
+  const { data } = metaData;
   const isDataGrid = data && data.length > 0;
 
   return (
-    <div 
-      className={`dialog-container ${isTopDialog ? '' : 'disabled'}`} 
-      ref={dialogRef} 
-      style={{ zIndex }} 
+    <div
+      className={`dialog-container ${isTopDialog ? '' : 'disabled'}`}
+      ref={dialogRef}
+      style={{ zIndex }}
     >
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
-        <b>{forms[currentFormKey]["title"]}</b>
+        <b>{metaData["title"]}</b>
         <button className="close-button" onClick={onClose}>&#10006;</button>
       </div>
       <div className="dialog-content">
         {isDataGrid ? (
-          <DataGrid currentFormKey={currentFormKey} onClose={onClose}  />
+          <DataGrid metaData={metaData} onClose={onClose} />
         ) : (
-          <Form currentFormKey={currentFormKey} onClose={onClose} rowData={rowData} />
+          <Form metaData={metaData} onClose={onClose} rowData={rowData} />
         )}
       </div>
       <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>

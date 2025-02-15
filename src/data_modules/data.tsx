@@ -33,10 +33,6 @@ export const columns = [
 ];
 
 const actions = [
-    // { "label": "New", "icon": <MdOutlineCropPortrait /> },
-    // { "label": "Copy", "icon": <MdOutlineContentCopy /> },
-    // { "label": "Edit", "icon": <MdEdit /> },
-    // { "label": "Delete", "icon": <MdClose /> },
     { "label": "/", "icon": "" },
     { "label": "Message", "icon": <MdInfo /> },
 ]

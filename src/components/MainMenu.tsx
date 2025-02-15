@@ -3,7 +3,7 @@ import './MainMenu.css';
 import { forms } from '../data_modules/data';
 
 interface MainMenuProps {
-  showDialog: (formKey: string) => void;
+  showDialog: (metaDataKey: string) => void;
 }
 
 const buildMenuStructure = (forms: Record<string, any>) => {

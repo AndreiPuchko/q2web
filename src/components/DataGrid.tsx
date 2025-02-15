@@ -57,8 +57,7 @@ class DataGrid extends Component {
 
   handleKeyDown = (event) => {
     const { selectedRow, visibleRows } = this.state;
-    const { currentFormKey } = this.props;
-    const dataLength = forms[currentFormKey].data.length;
+    const dataLength = this.props.metaData.data.length;
     const rowElement = this.tableBodyRef.current.querySelector('tbody tr');
     const rowsPerPage = rowElement ? Math.floor(this.tableBodyRef.current.clientHeight / rowElement.offsetHeight) : 0;
     if (event.key === "ArrowUp" && selectedRow > 0) {
@@ -108,16 +107,13 @@ class DataGrid extends Component {
     }
   };
 
-  showCrud = (formKey, rowData) => {
-    const form = { ...forms[formKey] };
-    delete form.data;
-    console.log("Show CRUD form", form, rowData);
+  showCrud = (metaData, rowData) => {
+    console.log("Show CRUD form", metaData, rowData);
   };
 
   handleAction = (action) => {
-    const { currentFormKey } = this.props;
     const { selectedRow } = this.state;
-    const rowData = forms[currentFormKey].data[selectedRow];
+    const rowData = this.props.metaData.data[selectedRow];
 
     switch (action.label) {
       case "Exit":
@@ -130,7 +126,7 @@ class DataGrid extends Component {
         console.log("Copy action");
         break;
       case "Edit":
-        this.showCrud(currentFormKey, rowData);
+        this.showCrud(this.props.metaData, rowData);
         break;
       case "Delete":
         console.log("Delete action");
@@ -141,8 +137,7 @@ class DataGrid extends Component {
   };
 
   render() {
-    const { currentFormKey } = this.props;
-    const { columns, data, actions } = forms[currentFormKey];
+    const { columns, data, actions } = this.props.metaData;
     const { visibleRows, selectedRow } = this.state;
 
     // Add separator and Exit action at runtime

@@ -11,8 +11,8 @@ class Form extends Component {
   }
 
   componentDidMount() {
-    const { currentFormKey, rowData } = this.props;
-    const formData = forms[currentFormKey].columns.reduce((acc, column) => {
+    const { rowData } = this.props;
+    const formData = this.props.metaData.columns.reduce((acc, column) => {
       acc[column.column] = rowData ? rowData[column.column] : column.value || "";
       return acc;
     }, {});
@@ -105,9 +105,8 @@ class Form extends Component {
   };
 
   render() {
-    const { currentFormKey } = this.props;
-    const { columns } = forms[currentFormKey];
-    const hasOkButton = forms[currentFormKey].hasokbutton;
+    const { columns } = this.props.metaData;
+    const hasOkButton = this.props.metaData.hasokbutton;
 
     return (
       <div style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
