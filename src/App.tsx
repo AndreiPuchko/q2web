@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import './App.css';
-
-import WorkSpace from './components/WorkSpace';
 import MainMenu from './components/MainMenu';
+import Dialog from './components/Dialog';
 
 function App() {
   const [dialogs, setDialogs] = useState([]);
@@ -30,7 +29,19 @@ function App() {
   return (
     <>
       <MainMenu onShowDataGrid={showDialog} />
-      <WorkSpace dialogs={dialogs} onCloseDialog={closeDialog} zIndexMap={zIndexMap} onShowForm={showForm} />
+      <div className='WorkSpace'>
+        {dialogs.map((dialog, index) => (
+          <Dialog
+            key={index}
+            onClose={() => closeDialog(index)}
+            currentFormKey={dialog.key}
+            isTopDialog={index === dialogs.length - 1}
+            zIndex={zIndexMap[index] || 0}
+            onShowForm={showForm}
+          />
+        ))}
+      </div>
+
     </>
   );
 }
