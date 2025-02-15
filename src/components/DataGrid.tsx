@@ -3,7 +3,7 @@ import { forms } from "../data_modules/data";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
 
 const EDIT = "EDIT";
-const NEW = "NEW";  
+const NEW = "NEW";
 const COPY = "COPY";
 const DELETE = "DELETE";
 
@@ -113,8 +113,15 @@ class DataGrid extends Component {
   };
 
   showCrud = (metaData, rowData, mode) => {
-    console.log("Show CRUD form",mode , metaData, rowData);
-    // this.props(metaData, rowData);
+    if (typeof this.props.showDialog === 'function') {
+      const metaDataCopy = { ...metaData }; // Make a copy of metaData
+      delete metaDataCopy.data;
+      metaDataCopy.key += mode;
+      metaDataCopy.title += ".[{" + mode + "]";
+      this.props.showDialog(metaDataCopy); // Ensure showDialog is called correctly
+    } else {
+      console.error('showDialog is not a function');
+    }
   };
 
   handleAction = (action) => {

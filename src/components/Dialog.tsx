@@ -10,9 +10,10 @@ interface DialogProps {
   metaData: Record<string, any>;
   isTopDialog: boolean;
   rowData?: any;
+  showDialog: () => void;
 }
 
-const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog, rowData }) => {
+const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog, rowData, showDialog }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   if (!metaData) {
@@ -155,7 +156,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       </div>
       <div className="dialog-content">
         {isDataGrid ? (
-          <DataGrid metaData={metaData} onClose={onClose} />
+          <DataGrid metaData={metaData} onClose={onClose} showDialog={showDialog} />
         ) : (
           <Form metaData={metaData} onClose={onClose} rowData={rowData} />
         )}

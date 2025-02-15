@@ -1,42 +1,61 @@
-import { useState } from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import MainMenu from './components/MainMenu';
 import Dialog from './components/Dialog';
-import { forms } from "./data_modules/data";
+// import { forms } from "./data_modules/data";
+// import DataGrid from './components/DataGrid';
 
-function App() {
-  const [dialogs, setDialogs] = useState([]);
-  const [zIndexMap, setZIndexMap] = useState({});
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dialogs: [],
+      zIndexMap: {}
+    };
+  }
 
-  const showDialog = (metaData) => {
-    const newDialogIndex = dialogs.length;
-    setDialogs([...dialogs, { key: metaData.key, metaData }]);
-    setZIndexMap({ ...zIndexMap, [newDialogIndex]: newDialogIndex + 1 });
+  showDialog = (metaData) => {
+
+    console.log(metaData);
+
+    const newDialogIndex = this.state.dialogs.length;
+    this.setState((prevState) => ({
+      dialogs: [...prevState.dialogs, { key: metaData.key, metaData }],
+      zIndexMap: { ...prevState.zIndexMap, [newDialogIndex]: newDialogIndex + 1 }
+    }));
   };
 
-  const closeDialog = (index) => {
-    setDialogs(dialogs.filter((_, i) => i !== index));
-    const newZIndexMap = { ...zIndexMap };
-    delete newZIndexMap[index];
-    setZIndexMap(newZIndexMap);
+  closeDialog = (index) => {
+    this.setState((prevState) => {
+      const newDialogs = prevState.dialogs.filter((_, i) => i !== index);
+      const newZIndexMap = { ...prevState.zIndexMap };
+      delete newZIndexMap[index];
+      return {
+        dialogs: newDialogs,
+        zIndexMap: newZIndexMap
+      };
+    });
   };
 
-  return (
-    <>
-      <MainMenu showDialog={showDialog} />
-      <div className='WorkSpace'>
-        {dialogs.map((dialog, index) => (
-          <Dialog
-            key={index}
-            onClose={() => closeDialog(index)}
-            metaData={dialog.metaData}
-            isTopDialog={index === dialogs.length - 1}
-            zIndex={zIndexMap[index] || 0}
-          />
-        ))}
-      </div>
-    </>
-  );
+  render() {
+    return (
+      <>
+        <MainMenu showDialog={this.showDialog} />
+        <div className='WorkSpace'>
+          {this.state.dialogs.map((dialog, index) => (
+            <Dialog
+              key={index}
+              onClose={() => this.closeDialog(index)}
+              metaData={dialog.metaData}
+              isTopDialog={index === this.state.dialogs.length - 1}
+              zIndex={this.state.zIndexMap[index] || 0}
+              showDialog={this.showDialog} // Ensure showDialog is passed to Dialog
+            />
+          ))}
+        </div>
+      </>
+    );
+  }
 }
 
 export default App;
