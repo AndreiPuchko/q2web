@@ -74,6 +74,10 @@ class Form extends Component {
     }
   };
 
+  handleCancel = () => {
+    this.props.onClose();
+  };
+
   renderInput = (col) => {
     const { formData } = this.state;
     const commonProps = {
@@ -107,6 +111,7 @@ class Form extends Component {
   render() {
     const { columns } = this.props.metaData;
     const hasOkButton = this.props.metaData.hasokbutton;
+    const hasCancelButton = this.props.metaData.hasCancelButton;
 
     return (
       <div style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
@@ -117,9 +122,10 @@ class Form extends Component {
               {this.renderInput(col)}
             </div>
           ))}
-          {hasOkButton && (
+          {(hasOkButton || hasCancelButton) && (
             <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <button type="submit">Ok</button>
+              {hasOkButton && <button type="submit">Ok</button>}
+              {hasCancelButton && <button type="button" onClick={this.handleCancel}>Cancel</button>}
             </div>
           )}
         </form>

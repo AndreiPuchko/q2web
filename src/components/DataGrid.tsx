@@ -118,6 +118,8 @@ class DataGrid extends Component {
       delete metaDataCopy.data;
       metaDataCopy.key += mode;
       metaDataCopy.title += ".[" + mode + "]";
+      metaDataCopy.hasokbutton = true;
+      metaDataCopy.hasCancelButton = true;
       this.props.showDialog(metaDataCopy); // Ensure showDialog is called correctly
     } else {
       console.error('showDialog is not a function');
