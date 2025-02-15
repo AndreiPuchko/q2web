@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import { forms } from "../data_modules/data";
 
-class Form extends Component {
+interface FormProps {
+  metaData: Record<string, any>;
+  onClose: () => void;
+  rowData?: any;
+  isTopDialog: boolean;
+}
+
+class Form extends Component<FormProps> {
   constructor(props) {
     super(props);
     this.state = {

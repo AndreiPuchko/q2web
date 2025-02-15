@@ -7,7 +7,14 @@ const NEW = "NEW";
 const COPY = "COPY";
 const DELETE = "DELETE";
 
-class DataGrid extends Component {
+interface DataGridProps {
+  metaData: Record<string, any>;
+  onClose: () => void;
+  showDialog: (metaData: Record<string, any>, rowData: any) => void;
+  isTopDialog: boolean;
+}
+
+class DataGrid extends Component<DataGridProps> {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,10 +68,12 @@ class DataGrid extends Component {
   };
 
   handleKeyDown = (event) => {
+    if (!this.props.isTopDialog) return;
     const { selectedRow, visibleRows } = this.state;
     const dataLength = this.props.metaData.data.length;
     const rowElement = this.tableBodyRef.current.querySelector('tbody tr');
     const rowsPerPage = rowElement ? Math.floor(this.tableBodyRef.current.clientHeight / rowElement.offsetHeight) : 0;
+
     if (event.key === "ArrowUp" && selectedRow > 0) {
       this.setState({ selectedRow: selectedRow - 1 }, this.scrollToRow);
       event.preventDefault();
@@ -90,6 +99,15 @@ class DataGrid extends Component {
         this.scrollToRow();
         this.handleScroll();
       });
+      event.preventDefault();
+    } else if (event.key === " " && selectedRow >= 0 && selectedRow < dataLength) {
+      this.showCrud(this.props.metaData, this.props.metaData.data[selectedRow], EDIT);
+      event.preventDefault();
+    } else if (event.key === "Insert" && !event.ctrlKey) {
+      this.showCrud(this.props.metaData, {}, NEW);
+      event.preventDefault();
+    } else if (event.key === "Insert" && event.ctrlKey) {
+      this.showCrud(this.props.metaData, this.props.metaData.data[selectedRow], COPY);
       event.preventDefault();
     }
   };

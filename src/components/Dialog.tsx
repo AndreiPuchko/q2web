@@ -127,6 +127,20 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
   };
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
+  useEffect(() => {
     loadDialogState();
 
     const dialog = dialogRef.current;
@@ -141,7 +155,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
     return () => {
       resizeObserver.disconnect();
     };
-  });
+  }, []);
 
   const { data } = metaData;
   const isDataGrid = data && data.length > 0;
@@ -158,9 +172,9 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       </div>
       <div className="dialog-content">
         {isDataGrid ? (
-          <DataGrid metaData={metaData} onClose={onClose} showDialog={showDialog} />
+          <DataGrid metaData={metaData} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
         ) : (
-          <Form metaData={metaData} onClose={onClose} rowData={rowData} />
+          <Form metaData={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
         )}
       </div>
       <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>
