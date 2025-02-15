@@ -120,7 +120,15 @@ class DataGrid extends Component {
       metaDataCopy.title += ".[" + mode + "]";
       metaDataCopy.hasokbutton = true;
       metaDataCopy.hasCancelButton = true;
-      this.props.showDialog(metaDataCopy); // Ensure showDialog is called correctly
+
+      if (mode === EDIT || mode === COPY) {
+        metaDataCopy.columns = metaDataCopy.columns.map(column => ({
+          ...column,
+          value: rowData[column.column] || column.value || ""
+        }));
+      }
+
+      this.props.showDialog(metaDataCopy, rowData); // Pass rowData for all modes
     } else {
       console.error('showDialog is not a function');
     }
