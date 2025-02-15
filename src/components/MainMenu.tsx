@@ -3,7 +3,7 @@ import './MainMenu.css';
 import { forms } from '../data_modules/data';
 
 interface MainMenuProps {
-  onShowDataGrid: (formKey: string) => void;
+  showDialog: (formKey: string) => void;
 }
 
 const buildMenuStructure = (forms: Record<string, any>) => {
@@ -58,7 +58,7 @@ const renderToolButtons = (forms: Record<string, any>, onShowDataGrid: (formKey:
   });
 };
 
-const MainMenu: React.FC<MainMenuProps> = ({ onShowDataGrid }) => {
+const MainMenu: React.FC<MainMenuProps> = ({ showDialog: onShowDataGrid }) => {
   const menuStructure = buildMenuStructure(forms);
 
   const openNewTab = () => {

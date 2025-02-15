@@ -24,7 +24,7 @@ function App() {
 
   return (
     <>
-      <MainMenu onShowDataGrid={showDialog} />
+      <MainMenu showDialog={showDialog} />
       <div className='WorkSpace'>
         {dialogs.map((dialog, index) => (
           <Dialog
