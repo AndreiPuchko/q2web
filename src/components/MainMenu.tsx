@@ -21,12 +21,12 @@ const buildMenuStructure = (forms: Record<string, any>) => {
   return structure;
 };
 
-const renderMenu = (menuStructure: any, onShowDataGrid: (formKey: string) => void) => {
+const renderMenu = (menuStructure: any, showDialog: (formKey: string) => void) => {
   return Object.keys(menuStructure).map((menu) => {
     const item = menuStructure[menu];
     if (item.key) {
       return (
-        <button key={item.key} onClick={() => onShowDataGrid(item.key)}>
+        <button key={item.key} onClick={() => showDialog(item.key)}>
           {item.label}
         </button>
       );
@@ -35,21 +35,21 @@ const renderMenu = (menuStructure: any, onShowDataGrid: (formKey: string) => voi
       <div className='submenu' key={menu}>
         <button className='submenubtn'>{menu}</button>
         <div className='submenu-content'>
-          {renderMenu(item, onShowDataGrid)}
+          {renderMenu(item, showDialog)}
         </div>
       </div>
     );
   });
 };
 
-const renderToolButtons = (forms: Record<string, any>, onShowDataGrid: (formKey: string) => void) => {
+const renderToolButtons = (forms: Record<string, any>, showDialog: (formKey: string) => void) => {
   return Object.keys(forms).map((key) => {
     const menutoolbar = forms[key].menutoolbar;
     if (menutoolbar === 1 || menutoolbar === true || menutoolbar === "true") {
       const pathParts = forms[key].menubarpath.split('|');
       const label = pathParts[pathParts.length - 1];
       return (
-        <button key={key} onClick={() => onShowDataGrid(key)} className='toolButton'>
+        <button key={key} onClick={() => showDialog(key)} className='toolButton'>
           {label}
         </button>
       );
@@ -58,7 +58,7 @@ const renderToolButtons = (forms: Record<string, any>, onShowDataGrid: (formKey:
   });
 };
 
-const MainMenu: React.FC<MainMenuProps> = ({ showDialog: onShowDataGrid }) => {
+const MainMenu: React.FC<MainMenuProps> = ({ showDialog: showDialog }) => {
   const menuStructure = buildMenuStructure(forms);
 
   const openNewTab = () => {
@@ -72,14 +72,14 @@ const MainMenu: React.FC<MainMenuProps> = ({ showDialog: onShowDataGrid }) => {
           <div className='dropdown' key={mainMenu}>
             <button className='dropbtn'>{mainMenu}</button>
             <div className='dropdown-content'>
-              {renderMenu(menuStructure[mainMenu], onShowDataGrid)}
+              {renderMenu(menuStructure[mainMenu], showDialog)}
             </div>
           </div>
         ))}
       </div>
       <div className='spacer1'></div>
       <div className='toolButtons'>
-        {renderToolButtons(forms, onShowDataGrid)}
+        {renderToolButtons(forms, showDialog)}
       </div>
       <div className='spacer9'></div>
       <button className='newTabButton' onClick={openNewTab}><b>+</b></button>
