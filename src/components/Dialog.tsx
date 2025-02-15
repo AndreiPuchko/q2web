@@ -3,11 +3,11 @@ import './Dialog.css';
 import Cookies from 'js-cookie';
 import DataGrid from './DataGrid';
 import Form from './Form';
-import { forms } from '../data_modules/data';
 
 interface DialogProps {
   onClose: () => void;
   zIndex: number;
+  metaData: Record<string, any>;
   isTopDialog: boolean;
   rowData?: any;
 }

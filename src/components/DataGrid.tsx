@@ -2,6 +2,11 @@ import React, { Component } from "react";
 import { forms } from "../data_modules/data";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
 
+const EDIT = "EDIT";
+const NEW = "NEW";  
+const COPY = "COPY";
+const DELETE = "DELETE";
+
 class DataGrid extends Component {
   constructor(props) {
     super(props);
@@ -107,8 +112,9 @@ class DataGrid extends Component {
     }
   };
 
-  showCrud = (metaData, rowData) => {
-    console.log("Show CRUD form", metaData, rowData);
+  showCrud = (metaData, rowData, mode) => {
+    console.log("Show CRUD form",mode , metaData, rowData);
+    // this.props(metaData, rowData);
   };
 
   handleAction = (action) => {
@@ -120,13 +126,13 @@ class DataGrid extends Component {
         this.props.onClose();
         break;
       case "New":
-        console.log("New action");
+        this.showCrud(this.props.metaData, rowData, NEW);
         break;
       case "Copy":
-        console.log("Copy action");
+        this.showCrud(this.props.metaData, rowData, COPY);
         break;
       case "Edit":
-        this.showCrud(this.props.metaData, rowData);
+        this.showCrud(this.props.metaData, rowData, EDIT);
         break;
       case "Delete":
         console.log("Delete action");
