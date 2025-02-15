@@ -10,11 +10,10 @@ interface DialogProps {
   currentFormKey: string;
   zIndex: number;
   isTopDialog: boolean;
-  onShowForm: (formKey: string, rowData: any) => void;
   rowData?: any;
 }
 
-const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopDialog, onShowForm, rowData }) => {
+const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopDialog, rowData }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const saveDialogState = () => {
@@ -153,7 +152,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, currentFormKey, zIndex, isTopD
       </div>
       <div className="dialog-content">
         {isDataGrid ? (
-          <DataGrid currentFormKey={currentFormKey} onClose={onClose} onShowForm={onShowForm} />
+          <DataGrid currentFormKey={currentFormKey} onClose={onClose}  />
         ) : (
           <Form currentFormKey={currentFormKey} onClose={onClose} rowData={rowData} />
         )}

@@ -112,7 +112,6 @@ class DataGrid extends Component {
     const form = { ...forms[formKey] };
     delete form.data;
     console.log("Show CRUD form", form, rowData);
-    this.props.onShowForm(formKey, rowData);
   };
 
   handleAction = (action) => {
