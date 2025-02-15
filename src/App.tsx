@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import MainMenu from './components/MainMenu';
 import Dialog from './components/Dialog';
+import { forms } from "./data_modules/data";
 
 function App() {
   const [dialogs, setDialogs] = useState([]);
@@ -11,6 +12,7 @@ function App() {
     const newDialogIndex = dialogs.length;
     setDialogs([...dialogs, { key }]);
     setZIndexMap({ ...zIndexMap, [newDialogIndex]: newDialogIndex + 1 });
+    console.log("Show dialog", forms[key], dialogs);
   };
 
   const closeDialog = (index) => {
@@ -18,12 +20,6 @@ function App() {
     const newZIndexMap = { ...zIndexMap };
     delete newZIndexMap[index];
     setZIndexMap(newZIndexMap);
-  };
-
-  const showForm = (formKey, rowData) => {
-    const newDialogIndex = dialogs.length;
-    setDialogs([...dialogs, { key: formKey, rowData }]);
-    setZIndexMap({ ...zIndexMap, [newDialogIndex]: newDialogIndex + 1 });
   };
 
   return (
@@ -37,7 +33,6 @@ function App() {
             currentFormKey={dialog.key}
             isTopDialog={index === dialogs.length - 1}
             zIndex={zIndexMap[index] || 0}
-            onShowForm={showForm}
           />
         ))}
       </div>
