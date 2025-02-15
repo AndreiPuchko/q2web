@@ -67,10 +67,6 @@
     display: block;
 }
 
-.dropdown:hover .dropbtn {
-    background-color: #1a1818;
-}
-
 .menuItems {
     display: flex;
 }
