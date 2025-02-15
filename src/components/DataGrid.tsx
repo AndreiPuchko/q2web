@@ -109,6 +109,9 @@ class DataGrid extends Component<DataGridProps> {
     } else if (event.key === "Insert" && event.ctrlKey) {
       this.showCrud(this.props.metaData, this.props.metaData.data[selectedRow], COPY);
       event.preventDefault();
+    } else if (event.key === "Escape") {
+      this.props.onClose();
+      event.preventDefault();
     }
   };
 

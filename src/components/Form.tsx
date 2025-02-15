@@ -27,11 +27,20 @@ class Form extends Component<FormProps> {
 
     this.resizeObserver = new ResizeObserver(this.handleResize);
     this.resizeObserver.observe(this.formRef.current);
+
+    document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUnmount() {
     this.resizeObserver.disconnect();
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
+
+  handleKeyDown = (event) => {
+    if (event.key === "Escape" && this.props.isTopDialog) {
+      this.handleCancel();
+    }
+  };
 
   handleResize = () => {
     const formGroups = this.formRef.current.querySelectorAll('.form-group');
