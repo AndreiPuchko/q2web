@@ -15,9 +15,6 @@ class App extends Component {
   }
 
   showDialog = (metaData) => {
-
-    console.log(metaData);
-
     const newDialogIndex = this.state.dialogs.length;
     this.setState((prevState) => ({
       dialogs: [...prevState.dialogs, { key: metaData.key, metaData }],

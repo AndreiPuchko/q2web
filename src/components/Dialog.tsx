@@ -31,14 +31,16 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       top: dialog.style.top,
     };
 
-    Cookies.set(`dialogState_${metaData.key}`, JSON.stringify(dialogState));
+    const title = metaData.title.replace(/\[.*?\]/g, '');
+    Cookies.set(`dialogState_${title}`, JSON.stringify(dialogState));
   };
 
   const loadDialogState = () => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    const dialogState = Cookies.get(`dialogState_${metaData.key}`);
+    const title = metaData.title.replace(/\[.*?\]/g, '');
+    const dialogState = Cookies.get(`dialogState_${title}`);
     if (dialogState) {
       const { width, height, left, top } = JSON.parse(dialogState);
       dialog.style.width = width;
