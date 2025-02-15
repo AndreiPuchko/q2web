@@ -112,7 +112,7 @@
     /* Ensure submenus are always on top */
 }
 
-.submenu:hover>.submenu-content {
+.submenu:hover > .submenu-content {
     display: block;
 }
 
@@ -150,4 +150,13 @@
 
 .spacer9 {
     flex-grow: 9;
+}
+
+.dropbtn:hover, .submenubtn:hover, .toolButton:hover, .newTabButton:hover {
+  background-color: #ddd; /* Change background color on hover */
+  color: black; /* Change text color on hover */
+}
+
+.dropdown:hover .dropdown-content, .submenu:hover .submenu-content {
+  display: block; /* Show the dropdown or submenu content on hover */
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './MainMenu.css';
 import { forms } from '../data_modules/data';
 
@@ -21,12 +21,12 @@ const buildMenuStructure = (forms: Record<string, any>) => {
   return structure;
 };
 
-const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void) => {
+const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void, hideDropdown: () => void) => {
   return Object.keys(menuStructure).map((menu) => {
     const item = menuStructure[menu];
     if (item.key) {
       return (
-        <button key={item.key} onClick={() => showDialog(forms[item.key])}>
+        <button key={item.key} onClick={() => { showDialog(forms[item.key]); hideDropdown(); }}>
           {item.label}
         </button>
       );
@@ -35,21 +35,21 @@ const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void) => 
       <div className='submenu' key={menu}>
         <button className='submenubtn'>{menu}</button>
         <div className='submenu-content'>
-          {renderMenu(item, showDialog)}
+          {renderMenu(item, showDialog, hideDropdown)}
         </div>
       </div>
     );
   });
 };
 
-const renderToolButtons = (forms: Record<string, any>, showDialog: (metaData: any) => void) => {
+const renderToolButtons = (forms: Record<string, any>, showDialog: (metaData: any) => void, hideDropdown: () => void) => {
   return Object.keys(forms).map((key) => {
     const menutoolbar = forms[key].menutoolbar;
     if (menutoolbar === 1 || menutoolbar === true || menutoolbar === "true") {
       const pathParts = forms[key].menubarpath.split('|');
       const label = pathParts[pathParts.length - 1];
       return (
-        <button key={key} onClick={() => showDialog(forms[key])} className='toolButton'>
+        <button key={key} onClick={() => { showDialog(forms[key]); hideDropdown(); }} className='toolButton'>
           {label}
         </button>
       );
@@ -59,27 +59,32 @@ const renderToolButtons = (forms: Record<string, any>, showDialog: (metaData: an
 };
 
 const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const menuStructure = buildMenuStructure(forms);
 
   const openNewTab = () => {
     window.open('/empty-app-page', '_blank');
   };
 
+  const hideDropdown = () => {
+    setDropdownVisible(false);
+  };
+
   return (
     <nav className='MainMenuBar'>
-      <div className='menuItems'>
+      <div className='menuItems' onMouseLeave={hideDropdown}>
         {Object.keys(menuStructure).map((mainMenu) => (
-          <div className='dropdown' key={mainMenu}>
+          <div className='dropdown' key={mainMenu} onMouseEnter={() => setDropdownVisible(true)}>
             <button className='dropbtn'>{mainMenu}</button>
-            <div className='dropdown-content'>
-              {renderMenu(menuStructure[mainMenu], showDialog)}
+            <div className='dropdown-content' style={{ display: dropdownVisible ? 'block' : 'none' }}>
+              {renderMenu(menuStructure[mainMenu], showDialog, hideDropdown)}
             </div>
           </div>
         ))}
       </div>
       <div className='spacer1'></div>
       <div className='toolButtons'>
-        {renderToolButtons(forms, showDialog)}
+        {renderToolButtons(forms, showDialog, hideDropdown)}
       </div>
       <div className='spacer9'></div>
       <button className='newTabButton' onClick={openNewTab}><b>+</b></button>
