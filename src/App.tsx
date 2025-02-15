@@ -8,9 +8,9 @@ function App() {
   const [dialogs, setDialogs] = useState([]);
   const [zIndexMap, setZIndexMap] = useState({});
 
-  const showDialog = (metaDataKey) => {
+  const showDialog = (metaData) => {
     const newDialogIndex = dialogs.length;
-    setDialogs([...dialogs, { key: metaDataKey }]);
+    setDialogs([...dialogs, { key: metaData.key, metaData }]);
     setZIndexMap({ ...zIndexMap, [newDialogIndex]: newDialogIndex + 1 });
   };
 
@@ -29,13 +29,12 @@ function App() {
           <Dialog
             key={index}
             onClose={() => closeDialog(index)}
-            metaData = {forms[dialog.key]}
+            metaData={dialog.metaData}
             isTopDialog={index === dialogs.length - 1}
             zIndex={zIndexMap[index] || 0}
           />
         ))}
       </div>
-
     </>
   );
 }

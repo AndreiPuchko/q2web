@@ -3,7 +3,7 @@ import './MainMenu.css';
 import { forms } from '../data_modules/data';
 
 interface MainMenuProps {
-  showDialog: (metaDataKey: string) => void;
+  showDialog: (metaData: any) => void;
 }
 
 const buildMenuStructure = (forms: Record<string, any>) => {
@@ -21,12 +21,12 @@ const buildMenuStructure = (forms: Record<string, any>) => {
   return structure;
 };
 
-const renderMenu = (menuStructure: any, showDialog: (formKey: string) => void) => {
+const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void) => {
   return Object.keys(menuStructure).map((menu) => {
     const item = menuStructure[menu];
     if (item.key) {
       return (
-        <button key={item.key} onClick={() => showDialog(item.key)}>
+        <button key={item.key} onClick={() => showDialog(forms[item.key])}>
           {item.label}
         </button>
       );
@@ -42,14 +42,14 @@ const renderMenu = (menuStructure: any, showDialog: (formKey: string) => void) =
   });
 };
 
-const renderToolButtons = (forms: Record<string, any>, showDialog: (formKey: string) => void) => {
+const renderToolButtons = (forms: Record<string, any>, showDialog: (metaData: any) => void) => {
   return Object.keys(forms).map((key) => {
     const menutoolbar = forms[key].menutoolbar;
     if (menutoolbar === 1 || menutoolbar === true || menutoolbar === "true") {
       const pathParts = forms[key].menubarpath.split('|');
       const label = pathParts[pathParts.length - 1];
       return (
-        <button key={key} onClick={() => showDialog(key)} className='toolButton'>
+        <button key={key} onClick={() => showDialog(forms[key])} className='toolButton'>
           {label}
         </button>
       );
@@ -58,7 +58,7 @@ const renderToolButtons = (forms: Record<string, any>, showDialog: (formKey: str
   });
 };
 
-const MainMenu: React.FC<MainMenuProps> = ({ showDialog: showDialog }) => {
+const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
   const menuStructure = buildMenuStructure(forms);
 
   const openNewTab = () => {

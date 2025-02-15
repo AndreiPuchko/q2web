@@ -15,6 +15,10 @@ interface DialogProps {
 const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog, rowData }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
 
+  if (!metaData) {
+    return null;
+  }
+
   const saveDialogState = () => {
     const dialog = dialogRef.current;
     if (!dialog) return;
