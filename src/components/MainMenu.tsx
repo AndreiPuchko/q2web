@@ -7,7 +7,6 @@ interface MainMenuProps {
 }
 
 const buildMenuStructure = (forms: Q2Form[]) => {
-  console.log(forms);
   const structure = {};
   forms.forEach((form) => {
     if (!form.menubarpath) return; // Ignore forms without menubarpath
@@ -61,7 +60,7 @@ const renderToolButtons = (forms: Q2Form[], showDialog: (metaData: any) => void,
 };
 
 const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
-  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
   const menuStructure = buildMenuStructure(forms);
 
   const openNewTab = () => {
@@ -69,16 +68,16 @@ const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
   };
 
   const hideDropdown = () => {
-    setDropdownVisible(false);
+    setVisibleDropdown(null);
   };
 
   return (
     <nav className='MainMenuBar'>
       <div className='menuItems' onMouseLeave={hideDropdown}>
         {Object.keys(menuStructure).map((mainMenu) => (
-          <div className='dropdown' key={mainMenu} onMouseEnter={() => setDropdownVisible(true)}>
+          <div className='dropdown' key={mainMenu} onMouseEnter={() => setVisibleDropdown(mainMenu)}>
             <button className='dropbtn'>{mainMenu}</button>
-            <div className='dropdown-content' style={{ display: dropdownVisible ? 'block' : 'none' }}>
+            <div className='dropdown-content' style={{ display: visibleDropdown === mainMenu ? 'block' : 'none' }}>
               {renderMenu(menuStructure[mainMenu], showDialog, hideDropdown)}
             </div>
           </div>
