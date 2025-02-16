@@ -125,58 +125,43 @@ class Form extends Component<FormProps> {
     }
   };
 
-  renderColumns = (columns) => {
+  createFormTree = (columns) => {
     const stack = [];
-    const result = [];
-
-    // Add a default vertical panel
-    const defaultPanel = {
-      type: "/v",
-      children: [],
-    };
-    stack.push(defaultPanel);
+    const root = { column: 'root', children: [] };
+    stack.push(root);
 
     columns.forEach((col) => {
-      if (col.type === "/h" || col.type === "/v" || col.type === "/f") {
+      if (col.column === "/h" || col.column === "/v" || col.column === "/f") {
         const panel = {
-          type: col.type,
-          label: col.label, // Use label for group box title
+          column: col.column,
+          label: col.label,
           children: [],
         };
+        stack[stack.length - 1].children.push(panel);
         stack.push(panel);
-      } else if (col.type === "/") {
-        // Interpret '/' as '/v' for simplicity
-        const panel = stack.pop();
-        if (panel && stack.length > 0) {
-          stack[stack.length - 1].children.push(panel);
-        } else if (panel) {
-          result.push(panel);
+      } else if (col.column === "/") {
+        if (stack.length > 1) {
+          stack.pop();
         }
       } else {
-        if (stack.length > 0) {
-          stack[stack.length - 1].children.push(col);
-        } else {
-          result.push(col);
-        }
+        stack[stack.length - 1].children.push(col);
       }
     });
 
-    // Ensure the default panel is added to the result if not closed
-    if (stack.length > 0) {
-      result.push(stack.pop());
-    }
-
-    return result;
+    console.log("Form tree:", JSON.stringify(root, null, 2));
+    return root;
   };
 
   renderPanel = (panel) => {
-    const className = panel.type === "/h" ? "flex-row group-box" : "flex-column group-box";
+    if (!panel || !panel.children) return null;
+
+    const className = panel.column === "/h" ? "flex-row group-box" : "flex-column group-box";
 
     return (
       <div className={className}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
-        {panel.children && panel.children.map((child, index) => {
-          if (child.type) {
+        {panel.children.map((child, index) => {
+          if (child.column && panel.column !== 'root') {
             return this.renderPanel(child);
           } else {
             return (
@@ -193,16 +178,15 @@ class Form extends Component<FormProps> {
 
   render() {
     const { columns } = this.props.metaData;
-    console.log("Form columns:", columns);
     const hasOkButton = this.props.metaData.hasOkButton;
     const hasCancelButton = this.props.metaData.hasCancelButton;
 
-    const structuredColumns = this.renderColumns(columns);
+    const structuredColumns = this.createFormTree(columns);
 
     return (
       <div style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
         <form ref={this.formRef} onSubmit={this.handleSubmit} className="FormComponent" style={{ height: '100%' }}>
-          {structuredColumns.map((panel, index) => this.renderPanel(panel))}
+          {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel))}
           {(hasOkButton || hasCancelButton) && (
             <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
               {hasOkButton && <button type="submit">Ok</button>}
