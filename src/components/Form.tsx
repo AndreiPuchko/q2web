@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { forms } from "../data_modules/data";
+import './Form.css'; // Import the CSS file for styling
 
 interface FormProps {
   metaData: Q2Form;
@@ -139,10 +140,12 @@ class Form extends Component<FormProps> {
       if (col.type === "/h" || col.type === "/v" || col.type === "/f") {
         const panel = {
           type: col.type,
+          label: col.label, // Use label for group box title
           children: [],
         };
         stack.push(panel);
       } else if (col.type === "/") {
+        // Interpret '/' as '/v' for simplicity
         const panel = stack.pop();
         if (panel && stack.length > 0) {
           stack[stack.length - 1].children.push(panel);
@@ -167,10 +170,11 @@ class Form extends Component<FormProps> {
   };
 
   renderPanel = (panel) => {
-    const style = panel.type === "/h" ? { display: "flex", flexDirection: "row" } : { display: "flex", flexDirection: "column" };
+    const className = panel.type === "/h" ? "flex-row group-box" : "flex-column group-box";
 
     return (
-      <div style={style}>
+      <div className={className}>
+        {panel.label && <div className="group-box-title">{panel.label}</div>}
         {panel.children && panel.children.map((child, index) => {
           if (child.type) {
             return this.renderPanel(child);

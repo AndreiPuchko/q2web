@@ -1,0 +1,26 @@
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-box {
+  border: 3px solid red;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  position: relative;
+}
+
+.group-box-title {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  background: white;
+  padding: 0 5px;
+  font-weight: bold;
+}
