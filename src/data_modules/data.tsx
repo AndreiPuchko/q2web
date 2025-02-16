@@ -192,6 +192,6 @@ const form4 = new Q2Form("form2", "Example Form", "Example|Form2 - object exampl
     y: 0
 });
 form4.add_control("var6", "Line input");
-form4.hasCancelButton = true;
+// form4.hasCancelButton = false;
 form4.hasOkButton = true;
 forms.push(form4);

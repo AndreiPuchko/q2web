@@ -124,20 +124,81 @@ class Form extends Component<FormProps> {
     }
   };
 
+  renderColumns = (columns) => {
+    const stack = [];
+    const result = [];
+
+    // Add a default vertical panel
+    const defaultPanel = {
+      type: "/v",
+      children: [],
+    };
+    stack.push(defaultPanel);
+
+    columns.forEach((col) => {
+      if (col.type === "/h" || col.type === "/v" || col.type === "/f") {
+        const panel = {
+          type: col.type,
+          children: [],
+        };
+        stack.push(panel);
+      } else if (col.type === "/") {
+        const panel = stack.pop();
+        if (panel && stack.length > 0) {
+          stack[stack.length - 1].children.push(panel);
+        } else if (panel) {
+          result.push(panel);
+        }
+      } else {
+        if (stack.length > 0) {
+          stack[stack.length - 1].children.push(col);
+        } else {
+          result.push(col);
+        }
+      }
+    });
+
+    // Ensure the default panel is added to the result if not closed
+    if (stack.length > 0) {
+      result.push(stack.pop());
+    }
+
+    return result;
+  };
+
+  renderPanel = (panel) => {
+    const style = panel.type === "/h" ? { display: "flex", flexDirection: "row" } : { display: "flex", flexDirection: "column" };
+
+    return (
+      <div style={style}>
+        {panel.children && panel.children.map((child, index) => {
+          if (child.type) {
+            return this.renderPanel(child);
+          } else {
+            return (
+              <div key={child.key} className="form-group" style={child.control === "textarea" || child.control === "text" ? { flex: 1, display: 'flex', flexDirection: 'column' } : {}}>
+                <label htmlFor={child.column}>{child.label}</label>
+                {this.renderInput(child)}
+              </div>
+            );
+          }
+        })}
+      </div>
+    );
+  };
+
   render() {
     const { columns } = this.props.metaData;
+    console.log("Form columns:", columns);
     const hasOkButton = this.props.metaData.hasOkButton;
     const hasCancelButton = this.props.metaData.hasCancelButton;
+
+    const structuredColumns = this.renderColumns(columns);
 
     return (
       <div style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
         <form ref={this.formRef} onSubmit={this.handleSubmit} className="FormComponent" style={{ height: '100%' }}>
-          {columns.map((col) => (
-            <div key={col.key} className="form-group" style={col.control === "textarea" || col.control === "text" ? { flex: 1, display: 'flex', flexDirection: 'column' } : {}}>
-              <label htmlFor={col.column}>{col.label}</label>
-              {this.renderInput(col)}
-            </div>
-          ))}
+          {structuredColumns.map((panel, index) => this.renderPanel(panel))}
           {(hasOkButton || hasCancelButton) && (
             <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
               {hasOkButton && <button type="submit">Ok</button>}
