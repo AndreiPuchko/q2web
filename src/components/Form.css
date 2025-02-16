@@ -9,12 +9,10 @@
 }
 
 .group-box {
-  border: 2px solid red;
-  padding: 10px;
-  margin: 10px 0;
+  border: 1px solid wheat;
+  padding: 20px 0.3cap 0.5cap;
+  margin: 1cap 0.3cap 0.5cap;
   border-radius: 5px;
-  min-height: 100px;
-  min-width: 100px;
   position: relative;
 }
 

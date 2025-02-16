@@ -127,8 +127,11 @@ class Form extends Component<FormProps> {
 
   createFormTree = (columns) => {
     const stack = [];
-    const root = { column: 'root', children: [] };
+    const root = { column: 'root', children: [{column:"/v"}] };
     stack.push(root);
+    if (!columns[0].column.startsWith("/")) {
+      columns.splice(0, 0, { column: "/v", key: -1});
+    }
 
     columns.forEach((col) => {
       if (col.column === "/h" || col.column === "/v" || col.column === "/f") {
@@ -148,7 +151,6 @@ class Form extends Component<FormProps> {
       }
     });
 
-    console.log("Form tree:", JSON.stringify(root, null, 2));
     return root;
   };
 
@@ -161,7 +163,7 @@ class Form extends Component<FormProps> {
       <div className={className}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
         {panel.children.map((child, index) => {
-          if (child.column && panel.column !== 'root') {
+          if (child.children) {
             return this.renderPanel(child);
           } else {
             return (

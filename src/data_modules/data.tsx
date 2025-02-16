@@ -158,7 +158,7 @@ const exampleForm = new Q2Form("Layouts", "Example Form", "Example|Layouts form"
     x: 0,
     y: 0
 });
-exampleForm.add_control("/");  // close default form layout
+// exampleForm.add_control("/");  // close default form layout
 if (exampleForm.add_control("/v", "Vertical layout")) {
     exampleForm.add_control("var1", "Line input", 15);
     exampleForm.add_control("var2", "Line input");
@@ -185,19 +185,13 @@ if (exampleForm.add_control("/v", "Vertical layout")) {
 }
 
 exampleForm.hasCancelButton = true;
-exampleForm.hasOkButton = true;
 forms.push(exampleForm);
 
 const form4 = new Q2Form("form2", "Example Form", "Example|Form2 - object example", true, {
     description: "This is an example form created using Q2Form",
     type: "form",
     icon: "form",
-    width: 800,
-    height: 600,
-    x: 0,
-    y: 0
 });
 form4.add_control("var6", "Line input");
-// form4.hasCancelButton = false;
 form4.hasOkButton = true;
 forms.push(form4);
