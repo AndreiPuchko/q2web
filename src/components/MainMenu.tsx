@@ -6,15 +6,16 @@ interface MainMenuProps {
   showDialog: (metaData: any) => void;
 }
 
-const buildMenuStructure = (forms: Record<string, any>) => {
+const buildMenuStructure = (forms: Q2Form[]) => {
+  console.log(forms);
   const structure = {};
-  Object.keys(forms).forEach((key) => {
-    if (!forms[key].menubarpath) return; // Ignore forms without menubarpath
-    const path = forms[key].menubarpath.split('|');
+  forms.forEach((form) => {
+    if (!form.menubarpath) return; // Ignore forms without menubarpath
+    const path = form.menubarpath.split('|');
     let currentLevel = structure;
     path.forEach((part, index) => {
       if (!currentLevel[part]) {
-        currentLevel[part] = index === path.length - 1 ? { key, label: part, menutoolbar: forms[key].menutoolbar } : {};
+        currentLevel[part] = index === path.length - 1 ? { key: form.key, label: part, menutoolbar: form.menutoolbar } : {};
       }
       currentLevel = currentLevel[part];
     });
@@ -27,7 +28,7 @@ const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void, hid
     const item = menuStructure[menu];
     if (item.key) {
       return (
-        <button key={item.key} onClick={() => { showDialog(forms[item.key]); hideDropdown(); }}>
+        <button key={item.key} onClick={() => { showDialog(forms.find(form => form.key === item.key)); hideDropdown(); }}>
           {item.label}
         </button>
       );
@@ -43,14 +44,14 @@ const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void, hid
   });
 };
 
-const renderToolButtons = (forms: Record<string, any>, showDialog: (metaData: any) => void, hideDropdown: () => void) => {
-  return Object.keys(forms).map((key) => {
-    const menutoolbar = forms[key].menutoolbar;
+const renderToolButtons = (forms: Q2Form[], showDialog: (metaData: any) => void, hideDropdown: () => void) => {
+  return forms.map((form) => {
+    const menutoolbar = form.menutoolbar;
     if (menutoolbar === 1 || menutoolbar === true || menutoolbar === "true") {
-      const pathParts = forms[key].menubarpath.split('|');
+      const pathParts = form.menubarpath.split('|');
       const label = pathParts[pathParts.length - 1];
       return (
-        <button key={key} onClick={() => { showDialog(forms[key]); hideDropdown(); }} className='toolButton'>
+        <button key={form.key} onClick={() => { showDialog(form); hideDropdown(); }} className='toolButton'>
           {label}
         </button>
       );

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { forms } from "../data_modules/data";
 
 interface FormProps {
-  metaData: Record<string, any>;
+  metaData: Q2Form;
   onClose: () => void;
   rowData?: any;
   isTopDialog: boolean;
@@ -126,7 +126,7 @@ class Form extends Component<FormProps> {
 
   render() {
     const { columns } = this.props.metaData;
-    const hasOkButton = this.props.metaData.hasokbutton;
+    const hasOkButton = this.props.metaData.hasOkButton;
     const hasCancelButton = this.props.metaData.hasCancelButton;
 
     return (

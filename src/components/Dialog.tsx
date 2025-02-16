@@ -7,7 +7,7 @@ import Form from './Form';
 interface DialogProps {
   onClose: () => void;
   zIndex: number;
-  metaData: Record<string, any>;
+  metaData: Q2Form;
   isTopDialog: boolean;
   rowData?: any;
   showDialog: () => void;
