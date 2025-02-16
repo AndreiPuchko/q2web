@@ -9,6 +9,7 @@ interface MainMenuProps {
 const buildMenuStructure = (forms: Record<string, any>) => {
   const structure = {};
   Object.keys(forms).forEach((key) => {
+    if (!forms[key].menubarpath) return; // Ignore forms without menubarpath
     const path = forms[key].menubarpath.split('|');
     let currentLevel = structure;
     path.forEach((part, index) => {
