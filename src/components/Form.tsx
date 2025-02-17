@@ -64,7 +64,7 @@ class Form extends Component<FormProps> {
       const label = textarea.parentElement.querySelector('label');
       const labelHeight = label ? label.offsetHeight : 0;
       textarea.style.height = `${(availableHeight / textareas.length) - labelHeight}px`;
-      textarea.style.width = '99%'; // Ensure textarea width is 100% to avoid horizontal scrollbar
+      textarea.style.width = '100%'; // Ensure textarea width is 100% to avoid horizontal scrollbar
     });
 
     // Resize the form container if content overflows
