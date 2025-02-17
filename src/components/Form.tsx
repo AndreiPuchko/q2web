@@ -110,7 +110,7 @@ class Form extends Component<FormProps> {
     const root = { column: 'root', children: [{ column: "/v" }] };
     stack.push(root);
     if (!columns[0].column.startsWith("/")) {
-      columns.splice(0, 0, { column: "/v", key: -1 });
+      columns.splice(0, 0, { column: "/f", key: -1 });
     }
 
     columns.forEach((col) => {

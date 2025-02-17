@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { forms } from "../data_modules/data";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
 
 const EDIT = "EDIT";
