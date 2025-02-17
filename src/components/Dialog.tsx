@@ -128,8 +128,8 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       if (!isDataGrid) {
         const formChildDiv = child.querySelector('div');
         if (formChildDiv) {
-          formChildDiv.style.height = `${dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight -100}px`;
-          formChildDiv.style.width = `${dialog.clientWidth}px`;
+          const availableHeight = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight;
+          formChildDiv.style.height = `${availableHeight}px`;
         }
       }
     });

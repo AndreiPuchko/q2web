@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import './Form.css'; // Import the CSS file for styling
 import Line from './widgets/Line'; // Import the Line widget
 import Text from './widgets/Text'; // Import the Text widget
+import Spacer from './widgets/Spacer'; // Import the Spacer widget
 
 interface FormProps {
   metaData: Q2Form;
@@ -51,16 +52,9 @@ class Form extends Component<FormProps> {
     if (formRef.current) {
       const formHeight = formRef.current.clientHeight;
       const formWidth = formRef.current.clientWidth;
-
-      // Recalculate the height of Text objects
-      this.props.metaData.columns.forEach(col => {
-        if (col.control === 'text') {
-          const textElement = formRef.current.querySelector(`#${col.column}`);
-          if (textElement) {
-            textElement.style.height = `${formHeight / 2}px`; // Example: set height to half of form height
-          }
-        }
-      });
+      const panel0 = formRef.current.querySelector('.Panel');
+      panel0.style.height = (formRef.current.clientHeight - 2 * formRef.current.querySelector('.FormBottomButtons').offsetHeight) + 'px';
+      return;
     }
   };
 
@@ -107,6 +101,8 @@ class Form extends Component<FormProps> {
         return <Text {...commonProps} />;
       case "line":
         return <Line {...commonProps} />;
+      case "spacer":
+        return <Spacer {...commonProps} />;
       default:
         return <Line {...commonProps} />;
     }
@@ -144,7 +140,7 @@ class Form extends Component<FormProps> {
   renderPanel = (panel) => {
     if (!panel || !panel.children) return null;
 
-    const className = panel.column === "/h" ? "flex-row group-box" : "flex-column group-box";
+    const className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
     let style = { display: "flex", flex: 1 };
     if (panel.column === "/v") {
       style.flexDirection = 'column'
@@ -180,16 +176,15 @@ class Form extends Component<FormProps> {
     const structuredColumns = this.createFormTree(columns);
 
     return (
-      <div style={{ height: '100%', border: "2px solid green" }} _can_grow_height="true" _can_grow_width="true">
-        <form ref={this.formRef} onSubmit={this.handleSubmit} className="FormComponent" style={{ height: '100%' }}>
-          {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel))}
-          {(hasOkButton || hasCancelButton) && (
-            <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              {hasOkButton && <button type="submit">Ok</button>}
-              {hasCancelButton && <button type="button" onClick={this.handleCancel}>Cancel</button>}
-            </div>
-          )}
-        </form>
+      <div ref={this.formRef} className="FormComponent" style={{ height: '100%', border: "2px solid green" }} _can_grow_height="true" _can_grow_width="true">
+        {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel))}
+        {(hasOkButton || hasCancelButton) && (
+          <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            {hasOkButton && <button onClick={this.handleSubmit}>Ok</button>}
+            {hasCancelButton && <button onClick={this.handleCancel}>Cancel</button>}
+          </div>
+        )}
+        <Spacer /> {/* Add Spacer widget here */}
       </div>
     );
   }
