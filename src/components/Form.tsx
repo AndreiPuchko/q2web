@@ -47,6 +47,21 @@ class Form extends Component<FormProps> {
   };
 
   handleResize = () => {
+    const { formRef } = this;
+    if (formRef.current) {
+      const formHeight = formRef.current.clientHeight;
+      const formWidth = formRef.current.clientWidth;
+
+      // Recalculate the height of Text objects
+      this.props.metaData.columns.forEach(col => {
+        if (col.control === 'text') {
+          const textElement = formRef.current.querySelector(`#${col.column}`);
+          if (textElement) {
+            textElement.style.height = `${formHeight / 2}px`; // Example: set height to half of form height
+          }
+        }
+      });
+    }
   };
 
   handleChange = (e) => {
@@ -86,24 +101,14 @@ class Form extends Component<FormProps> {
       onChange: this.handleChange,
       readOnly: col.readonly || false,
     };
-
+    console.log("commonProps", col);
     switch (col.control) {
       case "text":
         return <Text {...commonProps} />;
-      // case "select":
-      //   return (
-      //     <select {...commonProps}>
-      //       {col.options.map((option, index) => (
-      //         <option key={index} value={option.value}>
-      //           {option.label}
-      //         </option>
-      //       ))}
-      //     </select>
-      //   );
       case "line":
         return <Line {...commonProps} />;
       default:
-        return <input type="text" {...commonProps} />;
+        return <Line {...commonProps} />;
     }
   };
 
@@ -175,7 +180,7 @@ class Form extends Component<FormProps> {
     const structuredColumns = this.createFormTree(columns);
 
     return (
-      <div style={{ height: '100%' }} _can_grow_height="true" _can_grow_width="true">
+      <div style={{ height: '100%', border: "2px solid green" }} _can_grow_height="true" _can_grow_width="true">
         <form ref={this.formRef} onSubmit={this.handleSubmit} className="FormComponent" style={{ height: '100%' }}>
           {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel))}
           {(hasOkButton || hasCancelButton) && (

@@ -123,6 +123,15 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
         const width = dialog.clientWidth - padding;
         child.style.width = `${width}px`;
       }
+
+      // Set size of the first child div in Form to fill all Dialog space only if isDataGrid is true
+      if (!isDataGrid) {
+        const formChildDiv = child.querySelector('div');
+        if (formChildDiv) {
+          formChildDiv.style.height = `${dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight -100}px`;
+          formChildDiv.style.width = `${dialog.clientWidth}px`;
+        }
+      }
     });
   };
 

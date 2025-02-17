@@ -9,7 +9,8 @@ class Line extends Widget {
 
     render() {
         const style = {
-            width: '100%' // Allow the input to grow in width until maxWidth exceeds
+            width: '100%', // Allow the input to grow in width until maxWidth exceeds
+            height: `${this.minHeight}px` // Keep the height fixed
         };
 
         return <input type="text" className="Q2Line" style={style} />;
