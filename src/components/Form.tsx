@@ -45,56 +45,6 @@ class Form extends Component<FormProps> {
   };
 
   handleResize = () => {
-    const formGroups = this.formRef.current.querySelectorAll('.form-group');
-    const totalHeight = this.formRef.current.clientHeight;
-    let usedHeight = 0;
-
-    formGroups.forEach(formGroup => {
-      if (!formGroup.querySelector('textarea')) {
-        usedHeight += formGroup.offsetHeight;
-      }
-    });
-
-    const okButton = this.formRef.current.querySelector('button[type="submit"]');
-    const okButtonHeight = okButton ? okButton.offsetHeight : 0;
-
-    const availableHeight = totalHeight - usedHeight - okButtonHeight;
-    const textareas = this.formRef.current.querySelectorAll('textarea');
-    textareas.forEach(textarea => {
-      const label = textarea.parentElement.querySelector('label');
-      const labelHeight = label ? label.offsetHeight : 0;
-      textarea.style.height = `${(availableHeight / textareas.length) - labelHeight}px`;
-      textarea.style.width = '100%'; // Ensure textarea width is 100% to avoid horizontal scrollbar
-    });
-
-    // Resize the form container if content overflows
-    if (this.formRef.current.scrollHeight > this.formRef.current.clientHeight) {
-      this.formRef.current.style.height = `${this.formRef.current.scrollHeight}px`;
-    }
-
-    // Recalculate widths and heights to avoid overflow
-    this.recalculateDimensions(this.createFormTree(this.props.metaData.columns));
-  };
-
-  recalculateDimensions = (node) => {
-    if (!node.children) return;
-
-    const totalWidth = this.formRef.current.clientWidth;
-    const totalHeight = this.formRef.current.clientHeight;
-    const childWidth = totalWidth / node.children.length;
-    const childHeight = totalHeight / node.children.length;
-
-    node.children.forEach(child => {
-      if (child.children) {
-        this.recalculateDimensions(child);
-      } else {
-        const element = this.formRef.current.querySelector(`#${child.column}`);
-        if (element) {
-          element.style.width = `${childWidth}px`;
-          element.style.height = `${childHeight}px`;
-        }
-      }
-    });
   };
 
   handleChange = (e) => {
@@ -188,26 +138,29 @@ class Form extends Component<FormProps> {
     if (!panel || !panel.children) return null;
 
     const className = panel.column === "/h" ? "flex-row group-box" : "flex-column group-box";
-    const style = panel.column === "/h" ? { display: "flex", flexDirection: 'column' } : {};
+    let style = { display: "flex", flex: 1 };
+    if (panel.column === "/v") {
+      style.flexDirection = 'column'
+    } else {
+      style.flexDirection = 'row'
+    }
 
     return (
       <div className={className}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
-        {/* <div className={className}> */}
-          {panel.children.map((child, index) => {
-            if (child.children) {
-              return this.renderPanel(child);
-            }
-            else {
-              return (
-                <div key={child.key} className="form-group" style={{ flex: 1, display: 'flex', flexDirection: 'row'}}>
-                  <label className="form-label">{child.label}</label>
-                  {this.renderInput(child)}
-                </div>
-              );
-            }
-          })}
-        {/* </div > */}
+        {panel.children.map((child, index) => {
+          if (child.children) {
+            return this.renderPanel(child);
+          }
+          else {
+            return (
+              <div key={child.key} className="form-group" style={style}>
+                <label className="form-label">{child.label}</label>
+                {this.renderInput(child)}
+              </div>
+            );
+          }
+        })}
       </div >
     );
   };
