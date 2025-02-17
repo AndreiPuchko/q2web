@@ -169,8 +169,8 @@ class Form extends Component<FormProps> {
             }
             else {
               return (
-                <div key={child.key} className="form-group" style={child.control === "textarea" || child.control === "text" ? { flex: 1, display: 'flex', flexDirection: 'column' } : {}}>
-                  <label htmlFor={child.column}>{child.label}</label>
+                <div key={child.key} className="form-group" style={{ flex: 1, display: 'flex', flexDirection: 'row'}}>
+                  <label className="form-label">{child.label}</label>
                   {this.renderInput(child)}
                 </div>
               );
@@ -203,10 +203,5 @@ class Form extends Component<FormProps> {
     );
   }
 }
-
-Form.defaultProps = {
-  CanGrowHeight: true,
-  CanGrowWidth: true,
-};
 
 export default Form;

@@ -9,6 +9,7 @@
 }
 
 .group-box {
+  width: 100%;
   border: 1px solid wheat;
   padding: 20px 0.3cap 0.5cap;
   margin: 1cap 0.3cap 0.5cap;
@@ -20,9 +21,17 @@
   position: absolute;
   border: 1px solid red;
   border-radius: 5px;
-  top: -10px;
-  left: 10px;
+  top: -1cap;
+  left: 1cap;
   background: black;
   padding: 0 5px;
   font-weight: bold;
+}
+
+.form-label {
+  /* background: red; */
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  margin: 0 1ch 0 3ch;
 }
