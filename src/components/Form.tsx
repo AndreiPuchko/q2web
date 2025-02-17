@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import './Form.css'; // Import the CSS file for styling
+import Line from './widgets/Line'; // Import the Line widget
+import Text from './widgets/Text'; // Import the Text widget
 
 interface FormProps {
   metaData: Q2Form;
@@ -83,23 +85,23 @@ class Form extends Component<FormProps> {
       value: formData[col.column],
       onChange: this.handleChange,
       readOnly: col.readonly || false,
-      style: col.control === "textarea" || col.control === "text" ? { width: '100%' } : { width: '100%' } // Make the input field large
     };
 
     switch (col.control) {
-      case "textarea":
       case "text":
-        return <textarea {...commonProps} />;
-      case "select":
-        return (
-          <select {...commonProps}>
-            {col.options.map((option, index) => (
-              <option key={index} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        );
+        return <Text {...commonProps} />;
+      // case "select":
+      //   return (
+      //     <select {...commonProps}>
+      //       {col.options.map((option, index) => (
+      //         <option key={index} value={option.value}>
+      //           {option.label}
+      //         </option>
+      //       ))}
+      //     </select>
+      //   );
+      case "line":
+        return <Line {...commonProps} />;
       default:
         return <input type="text" {...commonProps} />;
     }
@@ -146,7 +148,7 @@ class Form extends Component<FormProps> {
     }
 
     return (
-      <div className={className}>
+      <div className={className} style={{ display: 'flex', justifyContent: 'flex-center' }}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
         {panel.children.map((child, index) => {
           if (child.children) {

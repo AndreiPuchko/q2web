@@ -74,15 +74,16 @@ class Q2Form {
         Object.assign(this, options);
     }
 
-    add_control(column: string, label?: string, datalen?: number, stretch?: number) {
-        const control = { 
+    add_control(column: string, label?: string, datalen?: number, stretch?: number, control: string = 'line') {
+        const controlObj = { 
             column: column, 
             label, 
             datalen, 
             stretch, 
+            control, 
             key: this.columns.length > 0 ? this.columns.length.toString() : "0" // Unique key
         };
-        this.columns.push(control);
+        this.columns.push(controlObj);
         return true;
     }
 }
