@@ -95,6 +95,7 @@ class Form extends Component<FormProps> {
       onChange: this.handleChange,
       readOnly: col.readonly || false,
     };
+    console.log('col.control', commonProps.value);
     switch (col.control) {
       case "text":
         return <Text {...commonProps} />;
@@ -141,6 +142,7 @@ class Form extends Component<FormProps> {
 
     const className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
     const style = { display: "flex", flex: 1 };
+    style.padding = "0 1cap 1cap 0";
     if (panel.column === "/v") {
       style.flexDirection = 'column'
     } else {

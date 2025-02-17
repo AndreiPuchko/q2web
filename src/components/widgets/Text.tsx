@@ -7,12 +7,14 @@ class Text extends Widget {
     }
 
     render() {
+        const { value, onChange, readOnly, id, name } = this.props;
         const style = {
             width: '100%', // Allow the textarea to grow in width
             height: '100%', // Allow the textarea to grow in height
             resize: 'none' // Remove the resize indicator
         };
-        return <textarea className="Q2Text" style={style} />;
+
+        return <textarea className="Q2Text" style={style} value={value} onChange={onChange} readOnly={readOnly} id={id} name={name} />;
     }
 }
 
