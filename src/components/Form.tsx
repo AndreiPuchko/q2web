@@ -95,7 +95,6 @@ class Form extends Component<FormProps> {
       onChange: this.handleChange,
       readOnly: col.readonly || false,
     };
-    console.log("commonProps", col);
     switch (col.control) {
       case "text":
         return <Text {...commonProps} />;
@@ -137,19 +136,26 @@ class Form extends Component<FormProps> {
     return root;
   };
 
-  renderPanel = (panel) => {
+  renderPanel = (panel, root= false) => {
     if (!panel || !panel.children) return null;
 
     const className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
-    let style = { display: "flex", flex: 1 };
+    const style = { display: "flex", flex: 1 };
     if (panel.column === "/v") {
       style.flexDirection = 'column'
     } else {
       style.flexDirection = 'row'
     }
 
+    const rootStyle = {display: 'flex', justifyContent: 'flex-center', width: 'auto'};
+
+    if (!root && (panel.column === "/v" || panel.column ==="/f") ) {
+      rootStyle.width = '100%';
+      console.log('rootStyle', panel);
+    }
+
     return (
-      <div className={className} style={{ display: 'flex', justifyContent: 'flex-center' }}>
+      <div className={className} style={rootStyle}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
         {panel.children.map((child, index) => {
           if (child.children) {
@@ -177,7 +183,7 @@ class Form extends Component<FormProps> {
 
     return (
       <div ref={this.formRef} className="FormComponent" style={{ height: '100%', border: "2px solid green" }} _can_grow_height="true" _can_grow_width="true">
-        {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel))}
+        {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel, true))}
         {(hasOkButton || hasCancelButton) && (
           <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
             {hasOkButton && <button onClick={this.handleSubmit}>Ok</button>}
