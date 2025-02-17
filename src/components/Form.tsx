@@ -29,11 +29,13 @@ class Form extends Component<FormProps> {
     this.resizeObserver.observe(this.formRef.current);
 
     document.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("resize", this.handleResize);
   }
 
   componentWillUnmount() {
     this.resizeObserver.disconnect();
     document.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("resize", this.handleResize);
   }
 
   handleKeyDown = (event) => {
@@ -63,6 +65,35 @@ class Form extends Component<FormProps> {
       const labelHeight = label ? label.offsetHeight : 0;
       textarea.style.height = `${(availableHeight / textareas.length) - labelHeight}px`;
       textarea.style.width = '99%'; // Ensure textarea width is 100% to avoid horizontal scrollbar
+    });
+
+    // Resize the form container if content overflows
+    if (this.formRef.current.scrollHeight > this.formRef.current.clientHeight) {
+      this.formRef.current.style.height = `${this.formRef.current.scrollHeight}px`;
+    }
+
+    // Recalculate widths and heights to avoid overflow
+    this.recalculateDimensions(this.createFormTree(this.props.metaData.columns));
+  };
+
+  recalculateDimensions = (node) => {
+    if (!node.children) return;
+
+    const totalWidth = this.formRef.current.clientWidth;
+    const totalHeight = this.formRef.current.clientHeight;
+    const childWidth = totalWidth / node.children.length;
+    const childHeight = totalHeight / node.children.length;
+
+    node.children.forEach(child => {
+      if (child.children) {
+        this.recalculateDimensions(child);
+      } else {
+        const element = this.formRef.current.querySelector(`#${child.column}`);
+        if (element) {
+          element.style.width = `${childWidth}px`;
+          element.style.height = `${childHeight}px`;
+        }
+      }
     });
   };
 

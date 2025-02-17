@@ -163,7 +163,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
           <Form metaData={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
         )}
       </div>
-      <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>
+      {/* <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div> */}
     </div>
   );
 };
