@@ -33,6 +33,9 @@ class Form extends Component<FormProps> {
 
     document.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("resize", this.handleResize);
+
+    // Ensure the form has stable dimensions
+    this.handleResize();
   }
 
   componentWillUnmount() {
@@ -50,11 +53,14 @@ class Form extends Component<FormProps> {
   handleResize = () => {
     const { formRef } = this;
     if (formRef.current) {
-      const formHeight = formRef.current.clientHeight;
-      const formWidth = formRef.current.clientWidth;
-      const panel0 = formRef.current.querySelector('.Panel');
-      panel0.style.height = (formRef.current.clientHeight - 2 * formRef.current.querySelector('.FormBottomButtons').offsetHeight) + 'px';
-      return;
+      requestAnimationFrame(() => {
+        const formHeight = formRef.current.clientHeight;
+        const formWidth = formRef.current.clientWidth;
+        const panel0 = formRef.current.querySelector('.Panel');
+        if (panel0) {
+          panel0.style.height = (formHeight - 2 * formRef.current.querySelector('.FormBottomButtons').offsetHeight) + 'px';
+        }
+      });
     }
   };
 
@@ -137,7 +143,7 @@ class Form extends Component<FormProps> {
     return root;
   };
 
-  renderPanel = (panel, root= false) => {
+  renderPanel = (panel, root = false) => {
     if (!panel || !panel.children) return null;
 
     const className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
@@ -149,9 +155,9 @@ class Form extends Component<FormProps> {
       style.flexDirection = 'row'
     }
 
-    const rootStyle = {display: 'flex', justifyContent: 'flex-center', width: 'auto'};
+    const rootStyle = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
-    if (!root && (panel.column === "/v" || panel.column ==="/f") ) {
+    if (!root && (panel.column === "/v" || panel.column === "/f")) {
       rootStyle.width = '100%';
       console.log('rootStyle', panel);
     }
@@ -184,7 +190,7 @@ class Form extends Component<FormProps> {
     const structuredColumns = this.createFormTree(columns);
 
     return (
-      <div ref={this.formRef} className="FormComponent" style={{ height: '100%', border: "2px solid green" }} _can_grow_height="true" _can_grow_width="true">
+      <div ref={this.formRef} className="FormComponent" style={{ height: '100%', width: '100%', border: "2px solid green" }} _can_grow_height="true" _can_grow_width="true">
         {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel, true))}
         {(hasOkButton || hasCancelButton) && (
           <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
