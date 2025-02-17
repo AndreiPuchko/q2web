@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { forms } from "../data_modules/data";
 import './Form.css'; // Import the CSS file for styling
 
 interface FormProps {
@@ -127,10 +126,10 @@ class Form extends Component<FormProps> {
 
   createFormTree = (columns) => {
     const stack = [];
-    const root = { column: 'root', children: [{column:"/v"}] };
+    const root = { column: 'root', children: [{ column: "/v" }] };
     stack.push(root);
     if (!columns[0].column.startsWith("/")) {
-      columns.splice(0, 0, { column: "/v", key: -1});
+      columns.splice(0, 0, { column: "/v", key: -1 });
     }
 
     columns.forEach((col) => {
@@ -158,23 +157,27 @@ class Form extends Component<FormProps> {
     if (!panel || !panel.children) return null;
 
     const className = panel.column === "/h" ? "flex-row group-box" : "flex-column group-box";
+    const style = panel.column === "/h" ? { display: "flex", flexDirection: 'column' } : {};
 
     return (
       <div className={className}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
-        {panel.children.map((child, index) => {
-          if (child.children) {
-            return this.renderPanel(child);
-          } else {
-            return (
-              <div key={child.key} className="form-group" style={child.control === "textarea" || child.control === "text" ? { flex: 1, display: 'flex', flexDirection: 'column' } : {}}>
-                <label htmlFor={child.column}>{child.label}</label>
-                {this.renderInput(child)}
-              </div>
-            );
-          }
-        })}
-      </div>
+        {/* <div className={className}> */}
+          {panel.children.map((child, index) => {
+            if (child.children) {
+              return this.renderPanel(child);
+            }
+            else {
+              return (
+                <div key={child.key} className="form-group" style={child.control === "textarea" || child.control === "text" ? { flex: 1, display: 'flex', flexDirection: 'column' } : {}}>
+                  <label htmlFor={child.column}>{child.label}</label>
+                  {this.renderInput(child)}
+                </div>
+              );
+            }
+          })}
+        {/* </div > */}
+      </div >
     );
   };
 
