@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Widget.css';
 
 class Widget extends Component {
     minWidth: number;
