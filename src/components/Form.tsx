@@ -13,7 +13,8 @@ interface FormProps {
 }
 
 class Form extends Component<FormProps> {
-  s: { [key: string]: any } = {}; // Store references to the widgets
+  w: { [key: string]: any } = {}; // Store references to the widgets
+  s: { [key: string]: any } = {}; // widgets data
 
   constructor(props) {
     super(props);
@@ -39,41 +40,34 @@ class Form extends Component<FormProps> {
 
     // Add event listeners for focusin and focusout events
     document.addEventListener("focusin", this.handleFocus);
-    document.addEventListener("focusout", this.handleFocus);
+    // document.addEventListener("focusout", this.handleFocus);
 
     // Ensure the form has stable dimensions
     this.handleResize();
 
     // Focus on the first focusable element
     focusFirstFocusableElement(this.formRef.current);
-
-    // Log the this.s array after the form is rendered
-    // console.log('Form rendered, this.s:', this.s);
   }
 
   componentWillUnmount() {
     this.resizeObserver.disconnect();
     document.removeEventListener("keydown", this.handleKeyDown);
     window.removeEventListener("resize", this.handleResize);
-
-    // Remove event listeners for focusin and focusout events
     document.removeEventListener("focusin", this.handleFocus);
-    document.removeEventListener("focusout", this.handleFocus);
+    // document.removeEventListener("focusout", this.handleFocus);
   }
 
   handleFocus = (event: FocusEvent) => {
-    return;
+    if (!this.w) return;
     const focusOutElement = event.relatedTarget as HTMLElement;
     const focusInElement = event.target as HTMLElement;
-    const isVaild = this.s[focusOutElement.name].props.valid(this);
-    console.log('Focus out:', isVaild);
-    if (this.s[focusOutElement.name].props.valid(this)) {
-      console.log('Valid');
-      // Prevent focus out by setting the focus back to the focusOutElement
-      setTimeout(() => {
-        focusOutElement.focus();
-      }, 0.1);
-      return;
+    if (!focusOutElement || !focusOutElement.name || !this.w[focusOutElement.name]) return;
+    this.scanAndCopyValues();
+    if (!this.w[focusOutElement.name].props.valid(this)) {
+        setTimeout(() => {
+            focusOutElement.focus();
+        }, 0);
+        return;
     }
   };
 
@@ -128,27 +122,36 @@ class Form extends Component<FormProps> {
   };
 
   getWidgetValue = (columnName: string) => {
-    return this.s[columnName]?.getValue();
+    return this.w[columnName]?.getValue();
   };
 
   setWidgetValue = (columnName: string, value: any) => {
-    if (this.s[columnName]) {
-      this.s[columnName].setValue(value);
+    if (this.w[columnName]) {
+      this.w[columnName].setValue(value);
     }
+  };
+
+  scanAndCopyValues = () => {
+    Object.keys(this.w).forEach(key => {
+      if (this.w[key] && typeof this.w[key].getValue === 'function') {
+        this.s[key] = this.getWidgetValue(key);
+      }
+    });
   };
 
   renderInput = (col) => {
     const { formData } = this.state;
+    const value = formData[col.column] !== undefined ? formData[col.column] : "";
     const commonProps = {
       id: col.column,
       name: col.column,
-      value: formData[col.column],
+      value,
       onChange: this.handleChange,
       readOnly: col.readonly || false,
       form: this,
       valid: col.valid || (() => true),
       ref: (ref) => {
-        this.s[col.column] = ref;
+        this.w[col.column] = ref;
       }, // Store reference to the widget
     };
     // console.log('col.control', commonProps.value);
@@ -166,32 +169,34 @@ class Form extends Component<FormProps> {
 
   createFormTree = (columns) => {
     const stack = [];
-    const root = { column: 'root', children: [{ column: "/v" }] };
+    const root = { column: 'root', children: [{ column: "/v", key: 'root-0' }] };
     stack.push(root);
     if (!columns[0].column.startsWith("/")) {
-      columns.splice(0, 0, { column: "/f", key: -1 });
+        columns.splice(0, 0, { column: "/f", key: 'root-1' });
     }
 
-    columns.forEach((col) => {
-      if (col.column === "/h" || col.column === "/v" || col.column === "/f") {
-        const panel = {
-          column: col.column,
-          label: col.label,
-          children: [],
-        };
-        stack[stack.length - 1].children.push(panel);
-        stack.push(panel);
-      } else if (col.column === "/") {
-        if (stack.length > 1) {
-          stack.pop();
+    columns.forEach((col, index) => {
+        if (col.column === "/h" || col.column === "/v" || col.column === "/f") {
+            const panel = {
+                column: col.column,
+                label: col.label,
+                key: `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`, // Generate unique key
+                children: [],
+            };
+            stack[stack.length - 1].children.push(panel);
+            stack.push(panel);
+        } else if (col.column === "/") {
+            if (stack.length > 1) {
+                stack.pop();
+            }
+        } else {
+            col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`; // Ensure unique key for other columns
+            stack[stack.length - 1].children.push(col);
         }
-      } else {
-        stack[stack.length - 1].children.push(col);
-      }
     });
 
     return root;
-  };
+};
 
   renderPanel = (panel, root = false) => {
     if (!panel || !panel.children) return null;
@@ -200,38 +205,37 @@ class Form extends Component<FormProps> {
     const style = { display: "flex", flex: 1 };
     style.padding = "0 1cap 1cap 0";
     if (panel.column === "/v") {
-      style.flexDirection = 'column'
+        style.flexDirection = 'column'
     } else {
-      style.flexDirection = 'row'
+        style.flexDirection = 'row'
     }
     style.alignItems = 'start';
 
     const rootStyle = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
     if (!root && (panel.column === "/v" || panel.column === "/f")) {
-      rootStyle.width = '100%';
-      // console.log('rootStyle', panel);
+        rootStyle.width = '100%';
     }
 
     return (
-      <div className={className} style={rootStyle}>
-        {panel.label && <div className="group-box-title">{panel.label}</div>}
-        {panel.children.map((child, index) => {
-          if (child.children) {
-            return this.renderPanel(child);
-          }
-          else {
-            return (
-              <div key={child.key} className="form-group" style={style}>
-                <label className="form-label">{child.label}</label>
-                {this.renderInput(child)}
-              </div>
-            );
-          }
-        })}
-      </div >
+        <div className={className} style={rootStyle} key={panel.key}>
+            {panel.label && <div className="group-box-title">{panel.label}</div>}
+            {panel.children.map((child, index) => {
+                if (child.children) {
+                    return this.renderPanel(child);
+                }
+                else {
+                    return (
+                        <div key={child.key || index} className="form-group" style={style}>
+                            <label className="form-label">{child.label}</label>
+                            {this.renderInput(child)}
+                        </div>
+                    );
+                }
+            })}
+        </div>
     );
-  };
+};
 
   render() {
     const { columns } = this.props.metaData;
