@@ -139,26 +139,15 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
     resizeObserver.observe(dialog);
 
     const dialogHandleMouseUp = () => {
-      console.log('Dialog container mouse up');
-
       // Check for scrollbars and increment size by 1 pixel until they are gone
-      const checkScrollbars = () => {
-        const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
-        const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
-
-        if (hasVerticalScrollbar) {
-          dialog.style.height = `${dialog.clientHeight + 5}px`;
-        }
-        if (hasHorizontalScrollbar) {
-          dialog.style.width = `${dialog.clientWidth + 5}px`;
-        }
-
-        if (hasVerticalScrollbar || hasHorizontalScrollbar) {
-          requestAnimationFrame(checkScrollbars);
-        }
-      };
-
-      checkScrollbars();
+      const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
+      const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
+      if (hasVerticalScrollbar) {
+        dialog.style.height = `${dialog.scrollHeight + 3}px`;
+      }
+      if (hasHorizontalScrollbar) {
+        dialog.style.width = `${dialog.scrollWidth + 3}px`;
+      }
     };
 
     dialog.addEventListener('mouseup', dialogHandleMouseUp);
