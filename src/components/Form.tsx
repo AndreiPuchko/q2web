@@ -194,7 +194,7 @@ class Form extends Component<FormProps> {
     const structuredColumns = this.createFormTree(columns);
 
     return (
-      <div ref={this.formRef} className="FormComponent" style={{ height: '100%', width: '100%', maxWidth: '100%', border: "2px solid green", overflow: 'hidden' }} _can_grow_height="true" _can_grow_width="true">
+      <div ref={this.formRef} className="FormComponent" style={{ height: '100%', width: '100%', maxWidth: '100%', border: "2px solid green" }} _can_grow_height="true" _can_grow_width="true">
         {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel, true))}
         {(hasOkButton || hasCancelButton) && (
           <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>

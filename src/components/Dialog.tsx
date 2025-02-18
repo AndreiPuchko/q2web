@@ -147,10 +147,10 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
         const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
 
         if (hasVerticalScrollbar) {
-          dialog.style.height = `${dialog.clientHeight + 1}px`;
+          dialog.style.height = `${dialog.clientHeight + 5}px`;
         }
         if (hasHorizontalScrollbar) {
-          dialog.style.width = `${dialog.clientWidth + 1}px`;
+          dialog.style.width = `${dialog.clientWidth + 5}px`;
         }
 
         if (hasVerticalScrollbar || hasHorizontalScrollbar) {
