@@ -36,3 +36,16 @@
   white-space: nowrap;
   margin: 0 1ch;
 }
+
+.FormComponent {
+  min-width: 30cap;
+  min-height: 3cap;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+}
+
+.Panel {
+  min-width: 0; /* Ensure minWidth is set to 0 to prevent overflow */
+}

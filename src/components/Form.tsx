@@ -58,7 +58,6 @@ class Form extends Component<FormProps> {
 
       if (hasPercentageHeight) {
         const formHeight = formRef.current.clientHeight;
-        const formWidth = formRef.current.clientWidth;
         const panel0 = formRef.current.querySelector('.Panel');
         if (panel0) {
           panel0.style.height = (formHeight - 2 * formRef.current.querySelector('.FormBottomButtons').offsetHeight) + 'px';
