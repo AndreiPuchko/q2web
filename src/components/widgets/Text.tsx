@@ -1,7 +1,7 @@
 import React from 'react';
 import Widget from './Widget';
 
-class Text extends Widget {
+class Q2Text extends Widget {
     constructor(props) {
         super(props);
     }
@@ -18,4 +18,4 @@ class Text extends Widget {
     }
 }
 
-export default Text;
+export default Q2Text;

@@ -41,19 +41,14 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
 
     const title = metaData.title.replace(/\[.*?\]/g, '');
     const dialogState = Cookies.get(`dialogState_${title}`);
-    console.log('Dialog state from cookies:', dialogState);
     if (dialogState) {
       const { width, height, left, top } = JSON.parse(dialogState);
       const menuBarHeight = document.querySelector('.MenuBar')?.clientHeight || 0;
-      console.log('MenuBar height:', menuBarHeight);
-      console.log('Original top position:', top);
       dialog.style.width = width;
       dialog.style.height = height;
       dialog.style.left = left;
       dialog.style.top = `${parseFloat(top) + menuBarHeight}px`;
-      console.log('New top position:', dialog.style.top);
     } else {
-      console.log('No dialog state found in cookies. Centering dialog.');
       const workspace = document.querySelector('.WorkSpace');
       if (workspace) {
         const workspaceRect = workspace.getBoundingClientRect();

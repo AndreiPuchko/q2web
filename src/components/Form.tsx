@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import './Form.css'; // Import the CSS file for styling
-import Line from './widgets/Line'; // Import the Line widget
-import Text from './widgets/Text'; // Import the Text widget
+import Q2Line from './widgets/Line'; // Import the Line widget
+import Q2Text from './widgets/Text'; // Import the Text widget
 import Spacer from './widgets/Spacer'; // Import the Spacer widget
 import { focusFirstFocusableElement } from '../utils/dom';
 
@@ -13,6 +13,8 @@ interface FormProps {
 }
 
 class Form extends Component<FormProps> {
+  s: { [key: string]: any } = {}; // Store references to the widgets
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,18 +37,58 @@ class Form extends Component<FormProps> {
     document.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("resize", this.handleResize);
 
+    // Add event listeners for focusin and focusout events
+    document.addEventListener("focusin", this.handleFocus);
+    document.addEventListener("focusout", this.handleFocus);
+
     // Ensure the form has stable dimensions
     this.handleResize();
 
     // Focus on the first focusable element
     focusFirstFocusableElement(this.formRef.current);
+
+    // Log the this.s array after the form is rendered
+    console.log('Form rendered, this.s:', this.s);
   }
 
   componentWillUnmount() {
     this.resizeObserver.disconnect();
     document.removeEventListener("keydown", this.handleKeyDown);
     window.removeEventListener("resize", this.handleResize);
+
+    // Remove event listeners for focusin and focusout events
+    document.removeEventListener("focusin", this.handleFocus);
+    document.removeEventListener("focusout", this.handleFocus);
   }
+
+  handleFocus = (event: FocusEvent) => {
+    const focusOutElement = event.relatedTarget as HTMLElement;
+    const focusInElement = event.target as HTMLElement;
+
+    console.log('Focus changed from:', focusOutElement, 'to:', focusInElement);
+
+    // Log the this.s array
+    console.log('this.s:', this.s);
+
+    // Log the inputRef of each widget
+    Object.values(this.s).forEach(widget => {
+      console.log('Widget inputRef:', widget);
+    });
+
+    // Find the widget that lost focus
+    const focusOutWidget = Object.values(this.s).find(widget => widget?.inputRef?.current === focusOutElement);
+    console.log('Focus out widget:', focusOutWidget);
+    if (focusOutWidget && typeof focusOutWidget.valid === 'function') {
+      console.log('Focus out widget:', focusOutWidget);
+      focusOutWidget.valid();
+    }
+
+    // Find the widget that gained focus
+    const focusInWidget = Object.values(this.s).find(widget => widget?.inputRef?.current === focusInElement);
+    if (focusInWidget) {
+      console.log('Focus in widget:', focusInWidget);
+    }
+  };
 
   handleKeyDown = (event) => {
     if (event.key === "Escape" && this.props.isTopDialog) {
@@ -98,6 +140,16 @@ class Form extends Component<FormProps> {
     this.props.onClose();
   };
 
+  getWidgetValue = (columnName: string) => {
+    return this.s[columnName]?.getValue();
+  };
+
+  setWidgetValue = (columnName: string, value: any) => {
+    if (this.s[columnName]) {
+      this.s[columnName].setValue(value);
+    }
+  };
+
   renderInput = (col) => {
     const { formData } = this.state;
     const commonProps = {
@@ -106,17 +158,22 @@ class Form extends Component<FormProps> {
       value: formData[col.column],
       onChange: this.handleChange,
       readOnly: col.readonly || false,
+      form: this,
+      valid: col.valid || (() => true),
+      ref: (ref) => { 
+        this.s[col.column] = ref; 
+      }, // Store reference to the widget
     };
     // console.log('col.control', commonProps.value);
     switch (col.control) {
       case "text":
-        return <Text {...commonProps} />;
+        return <Q2Text {...commonProps} />;
       case "line":
-        return <Line {...commonProps} />;
+        return <Q2Line {...commonProps} />;
       case "spacer":
         return <Spacer {...commonProps} />;
       default:
-        return <Line {...commonProps} />;
+        return <Q2Line {...commonProps} />;
     }
   };
 

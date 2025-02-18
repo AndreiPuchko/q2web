@@ -1,7 +1,7 @@
 import React from 'react';
 import Widget from './Widget';
 
-class Line extends Widget {
+class Q2Line extends Widget {
     constructor(props) {
         super(props);
         this.minHeight = this.maxHeight = 20; // Set minHeight and maxHeight to exactly one line
@@ -14,8 +14,20 @@ class Line extends Widget {
             height: `${this.minHeight}px` // Keep the height fixed
         };
 
-        return <input type="text" className="Q2Line" style={style} value={value} onChange={onChange} readOnly={readOnly} id={id} name={name} />;
+        return (
+            <input
+                type="text"
+                className="Q2Line"
+                style={style}
+                value={value}
+                onChange={onChange}
+                onBlur={this.handleBlur}
+                readOnly={readOnly}
+                id={id}
+                name={name}
+            />
+        );
     }
 }
 
-export default Line;
+export default Q2Line;

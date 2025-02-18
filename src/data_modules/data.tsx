@@ -74,14 +74,15 @@ class Q2Form {
         Object.assign(this, options);
     }
 
-    add_control(column: string, label?: string, datalen?: number, stretch?: number, control: string = 'line') {
+    add_control(column: string, label?: string, datalen?: number, stretch?: number, control: string = 'line', valid: any = () => true) {
         const controlObj = { 
             column: column, 
             label, 
             datalen, 
             stretch, 
             control, 
-            key: this.columns.length > 0 ? this.columns.length.toString() : "0" // Unique key
+            key: this.columns.length > 0 ? this.columns.length.toString() : "0", // Unique key
+            valid
         };
         this.columns.push(controlObj);
         return true;
@@ -192,7 +193,15 @@ const form4 = new Q2Form("form2", "Example Form", "Example|Form2 - object exampl
     type: "form",
     icon: "form",
 });
-form4.add_control("var6", "Line input");
+
+
+const var6_valid = (value: string) => {
+    console.log("var6_valid", value);
+    return value === "123";
+}
+
+
+form4.add_control("var6", "Line input", undefined, undefined, 'line', var6_valid);
 form4.add_control("var7", "Line input2");
 form4.hasOkButton = true;
 forms.push(form4);
