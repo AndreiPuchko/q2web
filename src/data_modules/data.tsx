@@ -1,6 +1,7 @@
 import { gen } from "generate-mock-data";
 import { MdInfo } from "react-icons/md";
 import Q2CheckBox from '../components/widgets/CheckBox';
+import Q2RadioButton from '../components/widgets/RadioButton';
 
 const datalen = 1000;
 
@@ -75,8 +76,8 @@ class Q2Form {
         Object.assign(this, options);
     }
 
-    add_control(column: string, label: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any } = {}) {
-        const { datalen, stretch, control = 'line', valid = () => true, data = null } = options;
+    add_control(column: string, label: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string } = {}) {
+        const { datalen, stretch, control = 'line', valid = () => true, data = null, pic = '', pi = '' } = options;
         const controlObj = {
             column,
             label,
@@ -85,7 +86,9 @@ class Q2Form {
             control,
             key: this.columns.length > 0 ? this.columns.length.toString() : "0", // Unique key
             valid,
-            data
+            data,
+            pic,
+            pi
         };
         this.columns.push(controlObj);
         return true;
@@ -188,7 +191,7 @@ if (exampleForm.add_control("/v", "Vertical layout")) {
     }
     exampleForm.add_control("/");
 }
-
+exampleForm.add_control("var4", "Radio button", { pic: "Red;White", control: "radio", data: "White", pi: "some_pi_value" });
 exampleForm.hasCancelButton = true;
 forms.push(exampleForm);
 
@@ -206,5 +209,6 @@ const var6_valid = (form: any) => {
 form4.add_control("var6", "Line input",{valid: var6_valid});
 form4.add_control("var7", "Line input2");
 form4.add_control("var8", "Checkbox", {control: "check", data: true});	
+form4.add_control("var4", "Radio button", { pic: "Red;White", control: "radio", data: "White" });
 form4.hasOkButton = true;
 forms.push(form4);

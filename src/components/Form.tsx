@@ -5,6 +5,7 @@ import Q2Text from './widgets/Text'; // Import the Text widget
 import Spacer from './widgets/Spacer'; // Import the Spacer widget
 import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
 import { focusFirstFocusableElement } from '../utils/dom';
+import Q2RadioButton from "./widgets/RadioButton";
 
 interface FormProps {
   metaData: Q2Form;
@@ -166,6 +167,8 @@ class Form extends Component<FormProps> {
         return <Spacer {...commonProps} />;
       case "check":
         return <Q2CheckBox {...commonProps} />;
+      case "radio":
+        return <Q2RadioButton {...commonProps} />;
       default:
         return <Q2Line {...commonProps} />;
     }
