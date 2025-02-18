@@ -1,5 +1,6 @@
 import { gen } from "generate-mock-data";
 import { MdInfo } from "react-icons/md";
+import Q2CheckBox from '../components/widgets/CheckBox';
 
 const datalen = 1000;
 
@@ -74,15 +75,17 @@ class Q2Form {
         Object.assign(this, options);
     }
 
-    add_control(column: string, label?: string, datalen?: number, stretch?: number, control: string = 'line', valid: any = () => true) {
+    add_control(column: string, label: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any } = {}) {
+        const { datalen, stretch, control = 'line', valid = () => true, data = null } = options;
         const controlObj = {
-            column: column,
+            column,
             label,
             datalen,
             stretch,
             control,
             key: this.columns.length > 0 ? this.columns.length.toString() : "0", // Unique key
-            valid
+            valid,
+            data
         };
         this.columns.push(controlObj);
         return true;
@@ -161,23 +164,24 @@ const exampleForm = new Q2Form("Layouts", "Example Form", "Example|Layouts form"
     y: 0
 });
 if (exampleForm.add_control("/v", "Vertical layout")) {
-    exampleForm.add_control("var1", "Line input", 15);
+    exampleForm.add_control("var1", "Line input", { datalen: 15 });
     exampleForm.add_control("var2", "Line input");
 
     if (exampleForm.add_control("/h", "Horizontal layout")) {
         exampleForm.add_control("var3", "Line input");
-        exampleForm.add_control("var4", "Line input", undefined, 2);  // stretch factor!
+        exampleForm.add_control("var4", "Line input", { stretch: 2 });  // stretch factor!
         exampleForm.add_control("/");  // close layout
     }
     if (exampleForm.add_control("/h", "Next horizontal layout")) {
-        if (exampleForm.add_control("/f", "Form layout", undefined, 4)) {
-            exampleForm.add_control("var5", "Line input", 10);
-            exampleForm.add_control("var6", "Line input");
+        if (exampleForm.add_control("/f", "Form layout", { stretch: 4 })) {
+            exampleForm.add_control("var5", "Checkbox", { control: "check", data: true });
+            exampleForm.add_control("var6", "Line input", { datalen: 10 });
+            exampleForm.add_control("var7", "Line input");
             exampleForm.add_control("/");
         }
-        if (exampleForm.add_control("/f", "Next form layout", undefined, 2)) {
-            exampleForm.add_control("var7", "Line input");
+        if (exampleForm.add_control("/f", "Next form layout", { stretch: 2 })) {
             exampleForm.add_control("var8", "Line input");
+            exampleForm.add_control("var9", "Line input");
             exampleForm.add_control("/");
         }
         exampleForm.add_control("/");
@@ -196,12 +200,11 @@ const form4 = new Q2Form("form2", "Example Form", "Example|Form2 - object exampl
 
 
 const var6_valid = (form: any) => {
-    console.log('var6_valid!!!', form.s.var6.getValue(), form.s.var6.getValue() === "333");
-    return form.s.var6.getValue() === "333";
+    return form.s.var6 === "333";
 }
 
-
-form4.add_control("var6", "Line input", undefined, undefined, 'line');
+form4.add_control("var6", "Line input",{valid: var6_valid});
 form4.add_control("var7", "Line input2");
+form4.add_control("var8", "Checkbox", {control: "check", data: true});	
 form4.hasOkButton = true;
 forms.push(form4);

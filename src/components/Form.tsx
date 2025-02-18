@@ -3,6 +3,7 @@ import './Form.css'; // Import the CSS file for styling
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Text from './widgets/Text'; // Import the Text widget
 import Spacer from './widgets/Spacer'; // Import the Spacer widget
+import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
 import { focusFirstFocusableElement } from '../utils/dom';
 
 interface FormProps {
@@ -145,6 +146,7 @@ class Form extends Component<FormProps> {
     const commonProps = {
       id: col.column,
       name: col.column,
+      col:col,
       value,
       onChange: this.handleChange,
       readOnly: col.readonly || false,
@@ -162,6 +164,8 @@ class Form extends Component<FormProps> {
         return <Q2Line {...commonProps} />;
       case "spacer":
         return <Spacer {...commonProps} />;
+      case "check":
+        return <Q2CheckBox {...commonProps} />;
       default:
         return <Q2Line {...commonProps} />;
     }
@@ -227,7 +231,7 @@ class Form extends Component<FormProps> {
                 else {
                     return (
                         <div key={child.key || index} className="form-group" style={style}>
-                            <label className="form-label">{child.label}</label>
+                            {child.control !== "check" && <label className="form-label">{child.label}</label>}
                             {this.renderInput(child)}
                         </div>
                     );

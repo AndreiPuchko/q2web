@@ -4,7 +4,7 @@ import Widget from './Widget';
 class Q2Line extends Widget {
     constructor(props) {
         super(props);
-        this.minHeight = this.maxHeight = 20; // Set minHeight and maxHeight to exactly one line
+        this.minHeight = this.maxHeight = "20px"; // Set minHeight and maxHeight to exactly one line
     }
 
     render() {
