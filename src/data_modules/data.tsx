@@ -159,7 +159,6 @@ const exampleForm = new Q2Form("Layouts", "Example Form", "Example|Layouts form"
     x: 0,
     y: 0
 });
-// exampleForm.add_control("/");  // close default form layout
 if (exampleForm.add_control("/v", "Vertical layout")) {
     exampleForm.add_control("var1", "Line input", 15);
     exampleForm.add_control("var2", "Line input");

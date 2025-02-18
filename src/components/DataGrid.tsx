@@ -138,7 +138,7 @@ class DataGrid extends Component<DataGridProps> {
       delete metaDataCopy.data;
       metaDataCopy.key += mode;
       metaDataCopy.title += ".[" + mode + "]";
-      metaDataCopy.hasokbutton = true;
+      metaDataCopy.hasOkButton = true;
       metaDataCopy.hasCancelButton = true;
 
       if (mode === EDIT || mode === COPY) {
