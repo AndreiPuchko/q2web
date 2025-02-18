@@ -113,25 +113,17 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
 
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
+      console.log(child);
       if (child.getAttribute('_can_grow_height') === 'true') {
         const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
         const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
         child.style.height = `${height}px`;
       }
-      if (child.getAttribute('_can_grow_width') === 'true') {
-        const padding = parseFloat(window.getComputedStyle(dialogContent).paddingLeft) + parseFloat(window.getComputedStyle(dialogContent).paddingRight);
-        const width = dialog.clientWidth - padding;
-        child.style.width = `${width}px`;
-      }
-
-      // Set size of the first child div in Form to fill all Dialog space only if isDataGrid is true
-      if (!isDataGrid) {
-        const formChildDiv = child.querySelector('div');
-        if (formChildDiv) {
-          const availableHeight = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight;
-          formChildDiv.style.height = `${availableHeight}px`;
-        }
-      }
+      // if (child.getAttribute('_can_grow_width') === 'true') {
+      //   const padding = parseFloat(window.getComputedStyle(dialogContent).paddingLeft) + parseFloat(window.getComputedStyle(dialogContent).paddingRight);
+      //   const width = dialog.clientWidth - padding;
+      //   child.style.width = `${width}px`;
+      // }
     });
   };
 

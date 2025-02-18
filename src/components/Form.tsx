@@ -53,14 +53,17 @@ class Form extends Component<FormProps> {
   handleResize = () => {
     const { formRef } = this;
     if (formRef.current) {
-      requestAnimationFrame(() => {
+      const elements = formRef.current.querySelectorAll("[class^=Q2]");
+      const hasPercentageHeight = Array.from(elements).some(el => el.style.height.endsWith("%"));
+
+      if (hasPercentageHeight) {
         const formHeight = formRef.current.clientHeight;
         const formWidth = formRef.current.clientWidth;
         const panel0 = formRef.current.querySelector('.Panel');
         if (panel0) {
           panel0.style.height = (formHeight - 2 * formRef.current.querySelector('.FormBottomButtons').offsetHeight) + 'px';
         }
-      });
+      }
     }
   };
 
@@ -101,7 +104,7 @@ class Form extends Component<FormProps> {
       onChange: this.handleChange,
       readOnly: col.readonly || false,
     };
-    console.log('col.control', commonProps.value);
+    // console.log('col.control', commonProps.value);
     switch (col.control) {
       case "text":
         return <Text {...commonProps} />;
@@ -154,12 +157,13 @@ class Form extends Component<FormProps> {
     } else {
       style.flexDirection = 'row'
     }
+    style.alignItems = 'start';
 
     const rootStyle = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
     if (!root && (panel.column === "/v" || panel.column === "/f")) {
       rootStyle.width = '100%';
-      console.log('rootStyle', panel);
+      // console.log('rootStyle', panel);
     }
 
     return (

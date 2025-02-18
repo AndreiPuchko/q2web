@@ -1,5 +1,5 @@
 import { gen } from "generate-mock-data";
-import { MdAdd, MdEdit, MdContentCopy, MdDelete, MdMessage, MdExitToApp, MdViewQuilt, MdInfo, MdRemove, MdContactPage, MdCropPortrait, MdOutlineCropPortrait, MdOutlineContentCopy, MdOutlinePlaylistRemove, MdClose } from "react-icons/md";
+import { MdInfo } from "react-icons/md";
 
 const datalen = 1000;
 
@@ -194,5 +194,6 @@ const form4 = new Q2Form("form2", "Example Form", "Example|Form2 - object exampl
     icon: "form",
 });
 form4.add_control("var6", "Line input");
+form4.add_control("var7", "Line input2");
 form4.hasOkButton = true;
 forms.push(form4);
