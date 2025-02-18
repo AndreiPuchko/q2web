@@ -3,6 +3,7 @@ import './Form.css'; // Import the CSS file for styling
 import Line from './widgets/Line'; // Import the Line widget
 import Text from './widgets/Text'; // Import the Text widget
 import Spacer from './widgets/Spacer'; // Import the Spacer widget
+import { focusFirstFocusableElement } from '../utils/dom';
 
 interface FormProps {
   metaData: Q2Form;
@@ -36,6 +37,9 @@ class Form extends Component<FormProps> {
 
     // Ensure the form has stable dimensions
     this.handleResize();
+
+    // Focus on the first focusable element
+    focusFirstFocusableElement(this.formRef.current);
   }
 
   componentWillUnmount() {
