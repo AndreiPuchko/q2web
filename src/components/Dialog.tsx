@@ -113,7 +113,6 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
 
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
-      console.log(child);
       if (child.getAttribute('_can_grow_height') === 'true') {
         const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
         const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
@@ -139,8 +138,34 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
 
     resizeObserver.observe(dialog);
 
+    const dialogHandleMouseUp = () => {
+      console.log('Dialog container mouse up');
+
+      // Check for scrollbars and increment size by 1 pixel until they are gone
+      const checkScrollbars = () => {
+        const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
+        const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
+
+        if (hasVerticalScrollbar) {
+          dialog.style.height = `${dialog.clientHeight + 1}px`;
+        }
+        if (hasHorizontalScrollbar) {
+          dialog.style.width = `${dialog.clientWidth + 1}px`;
+        }
+
+        if (hasVerticalScrollbar || hasHorizontalScrollbar) {
+          requestAnimationFrame(checkScrollbars);
+        }
+      };
+
+      checkScrollbars();
+    };
+
+    dialog.addEventListener('mouseup', dialogHandleMouseUp);
+
     return () => {
       resizeObserver.disconnect();
+      dialog.removeEventListener('mouseup', dialogHandleMouseUp);
     };
   }, []);
 
