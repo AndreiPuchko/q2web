@@ -48,7 +48,7 @@ class Form extends Component<FormProps> {
     focusFirstFocusableElement(this.formRef.current);
 
     // Log the this.s array after the form is rendered
-    console.log('Form rendered, this.s:', this.s);
+    // console.log('Form rendered, this.s:', this.s);
   }
 
   componentWillUnmount() {
@@ -62,31 +62,18 @@ class Form extends Component<FormProps> {
   }
 
   handleFocus = (event: FocusEvent) => {
+    return;
     const focusOutElement = event.relatedTarget as HTMLElement;
     const focusInElement = event.target as HTMLElement;
-
-    console.log('Focus changed from:', focusOutElement, 'to:', focusInElement);
-
-    // Log the this.s array
-    console.log('this.s:', this.s);
-
-    // Log the inputRef of each widget
-    Object.values(this.s).forEach(widget => {
-      console.log('Widget inputRef:', widget);
-    });
-
-    // Find the widget that lost focus
-    const focusOutWidget = Object.values(this.s).find(widget => widget?.inputRef?.current === focusOutElement);
-    console.log('Focus out widget:', focusOutWidget);
-    if (focusOutWidget && typeof focusOutWidget.valid === 'function') {
-      console.log('Focus out widget:', focusOutWidget);
-      focusOutWidget.valid();
-    }
-
-    // Find the widget that gained focus
-    const focusInWidget = Object.values(this.s).find(widget => widget?.inputRef?.current === focusInElement);
-    if (focusInWidget) {
-      console.log('Focus in widget:', focusInWidget);
+    const isVaild = this.s[focusOutElement.name].props.valid(this);
+    console.log('Focus out:', isVaild);
+    if (this.s[focusOutElement.name].props.valid(this)) {
+      console.log('Valid');
+      // Prevent focus out by setting the focus back to the focusOutElement
+      setTimeout(() => {
+        focusOutElement.focus();
+      }, 0.1);
+      return;
     }
   };
 
@@ -160,8 +147,8 @@ class Form extends Component<FormProps> {
       readOnly: col.readonly || false,
       form: this,
       valid: col.valid || (() => true),
-      ref: (ref) => { 
-        this.s[col.column] = ref; 
+      ref: (ref) => {
+        this.s[col.column] = ref;
       }, // Store reference to the widget
     };
     // console.log('col.control', commonProps.value);

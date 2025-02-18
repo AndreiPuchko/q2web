@@ -42,8 +42,8 @@ class Widget extends Component<WidgetProps> {
         );
     }
 
-    valid(): boolean {
-        console.log('valid');
+    valid(form: any): boolean {
+        console.log('valid!!!');
         return true;
     }
 

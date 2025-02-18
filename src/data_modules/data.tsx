@@ -75,12 +75,12 @@ class Q2Form {
     }
 
     add_control(column: string, label?: string, datalen?: number, stretch?: number, control: string = 'line', valid: any = () => true) {
-        const controlObj = { 
-            column: column, 
-            label, 
-            datalen, 
-            stretch, 
-            control, 
+        const controlObj = {
+            column: column,
+            label,
+            datalen,
+            stretch,
+            control,
             key: this.columns.length > 0 ? this.columns.length.toString() : "0", // Unique key
             valid
         };
@@ -195,13 +195,13 @@ const form4 = new Q2Form("form2", "Example Form", "Example|Form2 - object exampl
 });
 
 
-const var6_valid = (value: string) => {
-    console.log("var6_valid", value);
-    return value === "123";
+const var6_valid = (form: any) => {
+    console.log('var6_valid!!!', form.s.var6.getValue(), form.s.var6.getValue() === "333");
+    return form.s.var6.getValue() === "333";
 }
 
 
-form4.add_control("var6", "Line input", undefined, undefined, 'line', var6_valid);
+form4.add_control("var6", "Line input", undefined, undefined, 'line');
 form4.add_control("var7", "Line input2");
 form4.hasOkButton = true;
 forms.push(form4);
