@@ -189,10 +189,10 @@ class Form extends Component<FormProps> {
             const panel = {
                 column: col.column,
                 label: col.label,
-                // key: `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`, // Generate unique key
+                key: `${col.column}-${index}}`, // Generate unique key
                 children: [],
             };
-            console.log(`${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`);
+            console.log(`${col.column}-${index}}`);3
             stack[stack.length - 1].children.push(panel);
             stack.push(panel);
         } else if (col.column === "/") {
@@ -200,7 +200,7 @@ class Form extends Component<FormProps> {
                 stack.pop();
             }
         } else {
-            // col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`; // Ensure unique key for other columns
+            col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`; // Ensure unique key for other columns
             stack[stack.length - 1].children.push(col);
         }
     });
