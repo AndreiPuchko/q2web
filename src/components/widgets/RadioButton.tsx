@@ -1,5 +1,6 @@
 import React from 'react';
 import Widget from './Widget';
+import './RadioButton.css'; // Import the CSS file
 
 interface Q2RadioButtonProps {
     col: any;
@@ -30,7 +31,6 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         const options = col.pic.split(';');
         return (
             <div className="q2-radio-button">
-                <label>{col.label}</label>
                 {options.map((opt, index) => (
                     <label key={index}>
                         <input
