@@ -30,7 +30,7 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         const { col } = this.props;
         const options = col.pic.split(';');
         return (
-            <div className="q2-radio-button">
+            <div className="Q2RadioButton">
                 {options.map((opt, index) => (
                     <label key={index}>
                         <input

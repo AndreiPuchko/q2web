@@ -1,12 +1,8 @@
-.q2-checkbox {
-    display: flex;
+.Q2CheckBox {
     align-items: center;
 }
 
-.q2-checkbox input[type="checkbox"] {
+.Q2CheckBox input[type="checkbox"] {
     margin-right: 8px;
-}
-
-.q2-checkbox-label {
-    font-size: 14px;
+    padding: 20px;
 }
