@@ -140,7 +140,7 @@ forms.push(form3);
 
 const messageBox = new Q2Form("messagebox", "Message Box 2", "File|About", true, {
     columns: [
-        { key: "0", "column": "message", "label": "Message", "value": "2222This is a message box c ckvxhb jkc hjkblxh jkblxv ljk kljxcv jkblxn bljkxc vb", "readonly": true, "control": "text" },
+        { key: "0", "column": "message", "label": "Message", "value": "Lorem ipsum", "readonly": true, "control": "text" },
         { key: "1", "column": "description", "label": "Description", "value": "This is a Description...", "readonly": true, "control": "text" },
     ],
     data: [],
