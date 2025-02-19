@@ -47,8 +47,10 @@ class Form extends Component<FormProps> {
     // Ensure the form has stable dimensions
     this.handleResize();
 
-    // Focus on the first focusable element
-    focusFirstFocusableElement(this.formRef.current);
+    // Focus on the first focusable element after a short delay to ensure rendering is complete
+    setTimeout(() => {
+        focusFirstFocusableElement(this.formRef.current);
+    }, 100);
   }
 
   componentWillUnmount() {
