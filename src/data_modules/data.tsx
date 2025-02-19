@@ -209,6 +209,6 @@ const var6_valid = (form: any) => {
 form4.add_control("var6", "Line input",{valid: var6_valid});
 form4.add_control("var7", "Line input2");
 form4.add_control("var8", "Checkbox", {control: "check", data: true});	
-form4.add_control("var4", "Radio button", { pic: "Red;White", control: "radio", data: "White" });
+form4.add_control("var4", "Radio button", { pic: "Red;White;Black", control: "radio", data: "White" });
 form4.hasOkButton = true;
 forms.push(form4);
