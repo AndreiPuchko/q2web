@@ -49,3 +49,8 @@
 .Panel {
   min-width: 0; /* Ensure minWidth is set to 0 to prevent overflow */
 }
+
+
+.FormComponent  {
+  border: 2px solid transparent; 
+}
