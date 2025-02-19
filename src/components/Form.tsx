@@ -83,8 +83,10 @@ class Form extends Component<FormProps> {
   };
 
   handleResize = () => {
+    return;
     const { formRef } = this;
     if (formRef.current) {
+      return;
       const elements = formRef.current.querySelectorAll("[class^=Q2]");
       const hasPercentageHeight = Array.from(elements).some(el => el.style.height.endsWith("%"));
 
