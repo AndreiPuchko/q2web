@@ -84,33 +84,6 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  const onResizeMouseDown = (e: React.MouseEvent) => {
-    if (!isTopDialog) return;
-
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-
-    const startX = e.clientX;
-    const startY = e.clientY;
-    const startWidth = dialog.offsetWidth;
-    const startHeight = dialog.offsetHeight;
-
-    const onMouseMove = (e: MouseEvent) => {
-      dialog.style.width = `${startWidth + e.clientX - startX}px`;
-      dialog.style.height = `${startHeight + e.clientY - startY}px`;
-      resizeChildren();
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-      saveDialogState();
-    };
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-  };
-
   const resizeChildren = () => {
     const dialog = dialogRef.current;
     if (!dialog) return;
@@ -150,12 +123,36 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       // Check for scrollbars and increment size by 1 pixel until they are gone
       const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
       const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
+
+      const elements = dialog.querySelectorAll("[class^=Q2Text]");
+      if (elements) {
+        elements.forEach(element => {
+          element.style.height = "auto";
+          // console.log(element);
+        });
+      }
+
       if (hasVerticalScrollbar) {
         dialog.style.height = `${dialog.scrollHeight + 3}px`;
       }
       if (hasHorizontalScrollbar) {
         dialog.style.width = `${dialog.scrollWidth + 3}px`;
       }
+
+      if (elements.length > 0) {
+        console.log(elements);
+        while (dialog.scrollHeight === dialog.clientHeight) {
+          elements.forEach(element => {
+            element.style.height = `${element.clientHeight + 1}px`;
+          });
+        }
+          if (dialog.scrollHeight > dialog.clientHeight) {
+            elements.forEach(element => {
+              element.style.height = `${element.clientHeight - 10}px`;
+            });
+          }
+      }
+
     };
 
     dialog.addEventListener('mouseup', dialogHandleMouseUp);
@@ -189,7 +186,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
           <Form metaData={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
         )}
       </div>
-      <div className="dialog-resizer" onMouseDown={onResizeMouseDown}></div>
+      <div className="dialog-resizer" ></div>
     </div>
   );
 };

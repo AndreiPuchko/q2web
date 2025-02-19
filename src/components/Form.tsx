@@ -83,11 +83,13 @@ class Form extends Component<FormProps> {
   };
 
   handleResize = () => {
-    return;
     const { formRef } = this;
+    return;
     if (formRef.current) {
-      return;
-      const elements = formRef.current.querySelectorAll("[class^=Q2]");
+      const elements = formRef.current.querySelectorAll("[class^=Q2Text]");
+      elements.forEach(element => {
+          console.log(element)
+      });
       const hasPercentageHeight = Array.from(elements).some(el => el.style.height.endsWith("%"));
 
       if (hasPercentageHeight) {
@@ -195,7 +197,6 @@ class Form extends Component<FormProps> {
                 key: `${col.column}-${index}}`, // Generate unique key
                 children: [],
             };
-            console.log(`${col.column}-${index}}`);3
             stack[stack.length - 1].children.push(panel);
             stack.push(panel);
         } else if (col.column === "/") {
