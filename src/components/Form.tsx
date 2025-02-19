@@ -6,6 +6,7 @@ import Spacer from './widgets/Spacer'; // Import the Spacer widget
 import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
 import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
+import Q2Button from './widgets/Button';
 
 interface FormProps {
   metaData: Q2Form;
@@ -259,8 +260,8 @@ class Form extends Component<FormProps> {
         {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel, true))}
         {(hasOkButton || hasCancelButton) && (
           <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            {hasOkButton && <button onClick={this.handleSubmit}>Ok</button>}
-            {hasCancelButton && <button onClick={this.handleCancel}>Cancel</button>}
+            {hasOkButton && <Q2Button label="OK" onClick={this.handleSubmit} />}
+            {hasCancelButton && <Q2Button label="Cancel" onClick={this.handleCancel} />}
           </div>
         )}
         <Spacer /> {/* Add Spacer widget here */}
