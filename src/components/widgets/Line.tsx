@@ -1,17 +1,19 @@
-import React from 'react';
 import Widget from './Widget';
+import { WidgetProps } from './Widget';
 
-class Q2Line extends Widget {
-    constructor(props) {
-        super(props);
-        this.minHeight = this.maxHeight = "20px"; // Set minHeight and maxHeight to exactly one line
-    }
 
+interface Q2LineProps extends WidgetProps { }
+
+class Q2Line extends Widget<Q2LineProps> {
+    // minHeight = maxHeight = "20px";
+    // constructor(props: Q2LineProps) {
+    //     super(props);
+    // }
     render() {
         const { value, onChange, readOnly, id, name } = this.props;
         const style = {
             width: '100%', // Allow the input to grow in width until maxWidth exceeds
-            height: `${this.minHeight}px` // Keep the height fixed
+            // height: `${this.minHeight}px` // Keep the height fixed
         };
 
         return (
@@ -21,7 +23,7 @@ class Q2Line extends Widget {
                 style={style}
                 value={value}
                 onChange={onChange}
-                onBlur={this.handleBlur}
+                // onBlur={this.handleBlur}
                 readOnly={readOnly}
                 id={id}
                 name={name}

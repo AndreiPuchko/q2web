@@ -45,7 +45,7 @@ const actions = [
 
 export var forms: Q2Form[] = [];
 
-class Q2Form {
+export class Q2Form {
     key: string;
     columns: any[];
     data: any[];

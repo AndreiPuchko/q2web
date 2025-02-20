@@ -2,18 +2,20 @@ import React from 'react';
 import Widget from './Widget';
 import './RadioButton.css'; // Import the CSS file
 
-interface Q2RadioButtonProps {
-    col: any;
-    onChange: (value: string) => void;
-}
+import {WidgetProps} from './Widget';
+
+interface Q2RadioButtonProps extends WidgetProps {}
 
 interface Q2RadioButtonState {
     selectedValue: string;
 }
 
 class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
+    // state: any;
+    // props: any;
     constructor(props: Q2RadioButtonProps) {
         super(props);
+        // this.props = props;
         this.state = {
             selectedValue: props.col.data || ''
         };
@@ -27,11 +29,11 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     };
 
     render() {
-        const { col } = this.props;
+        const col = this.props.col;
         const options = col.pic.split(';');
         return (
             <div className="Q2RadioButton">
-                {options.map((opt, index) => (
+                {options.map((opt: any, index: number) => (
                     <label key={index}>
                         <input
                             type="radio"

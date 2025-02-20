@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './MainMenu.css';
-import { forms } from '../data_modules/data';
+import { forms, Q2Form } from '../data_modules/data';
 
 interface MainMenuProps {
   showDialog: (metaData: any) => void;

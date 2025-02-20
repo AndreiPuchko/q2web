@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import './CheckBox.css'; // Import CSS for styling
+import { WidgetProps } from './Widget';
 
-interface Q2CheckBoxProps {
+interface Q2CheckBoxProps extends WidgetProps { 
     label: string;
     checked: boolean;
-    onChange: (checked: boolean) => void;
+    // onChange: (checked: boolean) => void;
 }
-
 class Q2CheckBox extends Component<Q2CheckBoxProps> {
-    constructor(props: Q2CheckBoxProps) {
-        super(props);
-    }
+    // constructor(props: Q2CheckBoxProps) {
+    //     super(props);
+    // }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.onChange(e.target.checked);
+        this.props.onChange(e);
     };
 
     render() {
-        const { label, checked, col } = this.props;
+        const { checked, col } = this.props;
         const id = col.column;
         return (
             <div className="Q2CheckBox-container">

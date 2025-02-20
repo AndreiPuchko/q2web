@@ -1,13 +1,15 @@
-import React from 'react';
-import Widget from './Widget';
+import { Component } from 'react';
 import './Button.css';
+
+// interface Q2ButtonProps {
+// }
 
 interface Q2ButtonProps {
     label: string;
     onClick: () => void;
 }
 
-class Q2Button extends Widget<Q2ButtonProps> {
+class Q2Button<P extends Q2ButtonProps> extends Component<P> {    
     render() {
         const { label, onClick } = this.props;
         return (

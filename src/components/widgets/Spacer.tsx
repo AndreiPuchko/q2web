@@ -1,8 +1,7 @@
-import React from 'react';
-import Widget from './Widget';
+import { Component } from 'react';
 
-class Spacer extends Widget {
-    constructor(props) {
+class Spacer extends Component {
+    constructor(props: any) {
         super(props);
     }
 
