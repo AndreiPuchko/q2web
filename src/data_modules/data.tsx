@@ -1,9 +1,13 @@
 import { gen } from "generate-mock-data";
 import { MdInfo } from "react-icons/md";
-import Q2CheckBox from '../components/widgets/CheckBox';
-import Q2RadioButton from '../components/widgets/RadioButton';
 
 const datalen = 1000;
+
+function getRandomInt(min: number , max: number ) {
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+}
 
 const mockData1 = []
 for (let x = 0; x < datalen; x++) {
@@ -11,7 +15,7 @@ for (let x = 0; x < datalen; x++) {
         "cid": x,
         "name": gen(1)[0].firstName,
         "address": gen(1)[0].townCity,
-        "pos": Math.round(Math.random(5, 19) * 10),
+        "pos": Math.round(getRandomInt(5, 19) * 10),
     })
 }
 
@@ -21,7 +25,7 @@ for (let x = 0; x < datalen; x++) {
         "cid": x,
         "name": gen(1)[0].firstName,
         "address": gen(1)[0].townCity,
-        "pos": Math.round(Math.random(5, 19) * 10),
+        "pos": Math.round(getRandomInt(5, 19) * 10),
     })
 }
 
@@ -44,6 +48,8 @@ export var forms: Q2Form[] = [];
 class Q2Form {
     key: string;
     columns: any[];
+    data: any[];
+    actions: any [];
     hasCancelButton: boolean;
     hasOkButton: boolean;
     description: string;
@@ -65,6 +71,8 @@ class Q2Form {
         this.description = "";
         this.menubarpath = menubarpath;
         this.menutoolbar = menutoolbar;
+        this.data = [];
+        this.actions = actions;
         this.title = title;
         this.type = "form";
         this.icon = "form";
@@ -76,7 +84,7 @@ class Q2Form {
         Object.assign(this, options);
     }
 
-    add_control(column: string, label: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string } = {}) {
+    add_control(column: string, label?: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string } = {}) {
         const { datalen, stretch, control = 'line', valid = () => true, data = null, pic = '', pi = '' } = options;
         const controlObj = {
             column,
