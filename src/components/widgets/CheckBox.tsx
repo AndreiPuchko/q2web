@@ -3,8 +3,6 @@ import './CheckBox.css'; // Import CSS for styling
 import { WidgetProps } from './Widget';
 
 interface Q2CheckBoxProps extends WidgetProps { 
-    label: string;
-    checked: boolean;
     // onChange: (checked: boolean) => void;
 }
 class Q2CheckBox extends Component<Q2CheckBoxProps> {
@@ -17,7 +15,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
     };
 
     render() {
-        const { checked, col } = this.props;
+        const { col } = this.props;
         const id = col.column;
         return (
             <div className="Q2CheckBox-container">
@@ -25,7 +23,6 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
                     type="checkbox"
                     id={id}
                     className="Q2CheckBox"
-                    checked={checked}
                     onChange={this.handleChange}
                 />
                 <label htmlFor={id} className="Q2CheckBox-label">{col.label}</label>

@@ -6,8 +6,8 @@ interface MainMenuProps {
   showDialog: (metaData: any) => void;
 }
 
-const buildMenuStructure = (forms: Q2Form[]) => {
-  const structure = {};
+function buildMenuStructure (forms: Q2Form[]): any {
+  const structure: any  = {};
   forms.forEach((form) => {
     if (!form.menubarpath) return; // Ignore forms without menubarpath
     const path = form.menubarpath.split('|');
@@ -46,7 +46,7 @@ const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void, hid
 const renderToolButtons = (forms: Q2Form[], showDialog: (metaData: any) => void, hideDropdown: () => void) => {
   return forms.map((form) => {
     const menutoolbar = form.menutoolbar;
-    if (menutoolbar === 1 || menutoolbar === true || menutoolbar === "true") {
+    if (menutoolbar === 1 || menutoolbar === true) {
       const pathParts = form.menubarpath.split('|');
       const label = pathParts[pathParts.length - 1];
       return (

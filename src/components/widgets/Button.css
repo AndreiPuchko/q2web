@@ -1,4 +1,4 @@
-.q2-button {
+.Q2Button {
     padding: 10px 15px;
     background-color: #4CAF50; /* Green */
     border: none;
@@ -12,6 +12,6 @@
     border-radius: 5px;
 }
 
-.q2-button:hover {
-    background-color: #3e8e41;
+.Q2Button:hover {
+    opacity: 0.9;
 }

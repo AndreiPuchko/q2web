@@ -1,20 +1,16 @@
 import { Component } from 'react';
 import './Button.css';
 
-// interface Q2ButtonProps {
-// }
-
 interface Q2ButtonProps {
     label: string;
     onClick: () => void;
 }
 
-class Q2Button<P extends Q2ButtonProps> extends Component<P> {    
+class Q2Button extends Component<Q2ButtonProps> {
     render() {
-        const { label, onClick } = this.props;
         return (
-            <button onClick={onClick} className="q2-button">
-                {label}
+            <button onClick={this.props.onClick} className="Q2Button">
+                {this.props.label}
             </button>
         );
     }

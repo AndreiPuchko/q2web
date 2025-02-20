@@ -3,6 +3,7 @@ import './Dialog.css';
 import Cookies from 'js-cookie';
 import DataGrid from './DataGrid';
 import Form from './Form';
+import { Q2Form } from "../data_modules/data";
 
 interface DialogProps {
   onClose: () => void;
@@ -124,7 +125,8 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
       const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
 
-      const elements = dialog.querySelectorAll("[class^=Q2Text]");
+      // const elements = dialog.querySelectorAll("[class^=Q2Text]");
+      const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text]") as unknown as HTMLCollectionOf<HTMLElement>)
       if (elements) {
         elements.forEach(element => {
           element.style.height = "auto";

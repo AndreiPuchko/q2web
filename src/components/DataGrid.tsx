@@ -232,7 +232,7 @@ const DialogToolBar = ({ actions, onAction }) => {
       <div className="dropdown">
         <button className="gridBurgerButton">☰</button>
         <div className="dropdown-content">
-          {actions.map((action, index) => (
+          {actions.map((action: any, index: number) => (
             action.label !== "/" ? (
               <button key={index} onClick={() => onAction(action)}>
                 {action.icon} {action.label}
@@ -243,7 +243,7 @@ const DialogToolBar = ({ actions, onAction }) => {
           ))}
         </div>
       </div>
-      {actions.map((action, index) => (
+      {actions.map((action: any, index: number) => (
         action.icon && action.label !== "/" && (
           <button key={index} className="gridToolButton" onClick={() => onAction(action)}>
             {action.icon}
@@ -254,9 +254,9 @@ const DialogToolBar = ({ actions, onAction }) => {
   );
 };
 
-DataGrid.defaultProps = {
-  CanGrowHeight: true,
-  CanGrowWidth: true,
-};
+// DataGrid.defaultProps = {
+//   CanGrowHeight: true,
+//   CanGrowWidth: true,
+// };
 
 export default DataGrid;

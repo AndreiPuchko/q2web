@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, CSSProperties } from "react";
 import './Form.css'; // Import the CSS file for styling
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Text from './widgets/Text'; // Import the Text widget
@@ -7,6 +7,7 @@ import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
 import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
+import { Q2Form } from "../data_modules/data";
 
 interface FormProps {
   metaData: Q2Form;
@@ -15,94 +16,76 @@ interface FormProps {
   isTopDialog: boolean;
 }
 
-class Form extends Component<FormProps> {
+class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
   w: { [key: string]: any } = {}; // Store references to the widgets
   s: { [key: string]: any } = {}; // widgets data
-
-  constructor(props) {
+  formRef = React.createRef<HTMLDivElement>();
+  constructor(props:FormProps) {
     super(props);
     this.state = {
       formData: {},
     };
-    this.formRef = React.createRef();
   }
 
   componentDidMount() {
     const { rowData } = this.props;
-    const formData = this.props.metaData.columns.reduce((acc, column) => {
+    const formData = this.props.metaData.columns.reduce((acc: any, column: any) => {
       acc[column.column] = rowData ? rowData[column.column] : column.value || "";
       return acc;
     }, {});
     this.setState({ formData });
 
-    this.resizeObserver = new ResizeObserver(this.handleResize);
-    this.resizeObserver.observe(this.formRef.current);
+    // this.resizeObserver = new ResizeObserver(this.handleResize);
+    // this.resizeObserver.observe(this.formRef.current);
 
     document.addEventListener("keydown", this.handleKeyDown);
-    window.addEventListener("resize", this.handleResize);
+    // window.addEventListener("resize", this.handleResize);
 
     // Add event listeners for focusin and focusout events
     document.addEventListener("focusin", this.handleFocus);
     // document.addEventListener("focusout", this.handleFocus);
 
     // Ensure the form has stable dimensions
-    this.handleResize();
+    // this.handleResize();
 
     // Focus on the first focusable element after a short delay to ensure rendering is complete
     setTimeout(() => {
-        focusFirstFocusableElement(this.formRef.current);
+      focusFirstFocusableElement(this.formRef.current);
     }, 100);
   }
 
   componentWillUnmount() {
-    this.resizeObserver.disconnect();
+    // this.resizeObserver.disconnect();
     document.removeEventListener("keydown", this.handleKeyDown);
-    window.removeEventListener("resize", this.handleResize);
+    // window.removeEventListener("resize", this.handleResize);
     document.removeEventListener("focusin", this.handleFocus);
     // document.removeEventListener("focusout", this.handleFocus);
   }
 
   handleFocus = (event: FocusEvent) => {
     if (!this.w) return;
-    const focusOutElement = event.relatedTarget as HTMLElement;
-    const focusInElement = event.target as HTMLElement;
+    const focusOutElement = event.relatedTarget as HTMLInputElement;
+    // const focusInElement = event.target as HTMLInputElement;
     if (!focusOutElement || !focusOutElement.name || !this.w[focusOutElement.name]) return;
     this.scanAndCopyValues();
     if (!this.w[focusOutElement.name].props.valid(this)) {
-        setTimeout(() => {
-            focusOutElement.focus();
-        }, 0);
-        return;
+      setTimeout(() => {
+        focusOutElement.focus();
+      }, 0);
+      return;
     }
   };
 
-  handleKeyDown = (event) => {
+  handleKeyDown = (event: any) => {
     if (event.key === "Escape" && this.props.isTopDialog) {
       this.handleCancel();
     }
   };
 
   handleResize = () => {
-    const { formRef } = this;
-    return;
-    if (formRef.current) {
-      const elements = formRef.current.querySelectorAll("[class^=Q2Text]");
-      elements.forEach(element => {
-          console.log(element)
-      });
-      const hasPercentageHeight = Array.from(elements).some(el => el.style.height.endsWith("%"));
-
-      if (hasPercentageHeight) {
-        const formHeight = formRef.current.clientHeight;
-        const panel0 = formRef.current.querySelector('.Panel');
-        if (panel0) {
-          panel0.style.height = (formHeight - 2 * formRef.current.querySelector('.FormBottomButtons').offsetHeight) + 'px';
-        }
-      }
-    }
   };
 
-  handleChange = (e) => {
+  handleChange = (e: any) => {
     const { name, value } = e.target;
     this.setState((prevState) => ({
       formData: {
@@ -112,13 +95,13 @@ class Form extends Component<FormProps> {
     }), this.handleResize);
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
+  handleSubmit = () => {
+    // e.preventDefault();
     console.log("Form submitted:", this.state.formData);
     this.props.onClose();
   };
 
-  handleAction = (action) => {
+  handleAction = (action: any) => {
     if (action.label === "Exit") {
       this.props.onClose();
     } else {
@@ -148,19 +131,19 @@ class Form extends Component<FormProps> {
     });
   };
 
-  renderInput = (col) => {
+  renderInput = (col: any) => {
     const { formData } = this.state;
-    const value = formData[col.column] !== undefined ? formData[col.column] : "";
+    const value: any = formData[col.column] !== undefined ? formData[col.column] : "";
     const commonProps = {
       id: col.column,
       name: col.column,
-      col:col,
+      col: col,
       value,
       onChange: this.handleChange,
       readOnly: col.readonly || false,
       form: this,
       valid: col.valid || (() => true),
-      ref: (ref) => {
+      ref: (ref: any) => {
         this.w[col.column] = ref;
       }, // Store reference to the widget
     };
@@ -181,75 +164,74 @@ class Form extends Component<FormProps> {
     }
   };
 
-  createFormTree = (columns) => {
-    const stack = [];
+  createFormTree = (columns: any) => {
+    const stack: any[] = [];
     const root = { column: 'root', children: [{ column: "/v", key: 'root-0' }] };
     stack.push(root);
     if (!columns[0].column.startsWith("/")) {
-        columns.splice(0, 0, { column: "/f", key: 'root-1' });
+      columns.splice(0, 0, { column: "/f", key: 'root-1' });
     }
 
-    columns.forEach((col, index) => {
-        if (col.column === "/h" || col.column === "/v" || col.column === "/f") {
-            const panel = {
-                column: col.column,
-                label: col.label,
-                key: `${col.column}-${index}}`, // Generate unique key
-                children: [],
-            };
-            stack[stack.length - 1].children.push(panel);
-            stack.push(panel);
-        } else if (col.column === "/") {
-            if (stack.length > 1) {
-                stack.pop();
-            }
-        } else {
-            col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`; // Ensure unique key for other columns
-            stack[stack.length - 1].children.push(col);
+    columns.forEach((col: any, index: number) => {
+      if (col.column === "/h" || col.column === "/v" || col.column === "/f") {
+        const panel = {
+          column: col.column,
+          label: col.label,
+          key: `${col.column}-${index}}`, // Generate unique key
+          children: [],
+        };
+        stack[stack.length - 1].children.push(panel);
+        stack.push(panel);
+      } else if (col.column === "/") {
+        if (stack.length > 1) {
+          stack.pop();
         }
+      } else {
+        col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`; // Ensure unique key for other columns
+        stack[stack.length - 1].children.push(col);
+      }
     });
 
     return root;
-};
+  };
 
-  renderPanel = (panel, root = false) => {
+  renderPanel = (panel: any, root = false) => {
     if (!panel || !panel.children) return null;
 
     const className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
-    const style = { display: "flex", flex: 1 };
-    style.padding = "0 1cap 1cap 0";
+    const style: CSSProperties = { display: "flex", flex: 1, padding: "0 1cap 1cap 0" };
     if (panel.column === "/v") {
-        style.flexDirection = 'column'
+      style.flexDirection = 'column'
     } else {
-        style.flexDirection = 'row'
+      style.flexDirection = 'row'
     }
     style.alignItems = 'start';
 
     const rootStyle = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
     if (!root && (panel.column === "/v" || panel.column === "/f")) {
-        rootStyle.width = '100%';
+      rootStyle.width = '100%';
     }
 
     return (
-        <div className={className} style={rootStyle} key={panel.key}>
-            {panel.label && <div className="group-box-title">{panel.label}</div>}
-            {panel.children.map((child, index) => {
-                if (child.children) {
-                    return this.renderPanel(child);
-                }
-                else {
-                    return (
-                        <div key={child.key || index} className="form-group" style={style}>
-                            {child.control !== "check" && <label className="form-label">{child.label}</label>}
-                            {this.renderInput(child)}
-                        </div>
-                    );
-                }
-            })}
-        </div>
+      <div className={className} style={rootStyle} key={panel.key}>
+        {panel.label && <div className="group-box-title">{panel.label}</div>}
+        {panel.children.map((child: any, index: number) => {
+          if (child.children) {
+            return this.renderPanel(child);
+          }
+          else {
+            return (
+              <div key={child.key || index} className="form-group" style={style}>
+                {child.control !== "check" && <label className="form-label">{child.label}</label>}
+                {this.renderInput(child)}
+              </div>
+            );
+          }
+        })}
+      </div>
     );
-};
+  };
 
   render() {
     const { columns } = this.props.metaData;
@@ -259,8 +241,9 @@ class Form extends Component<FormProps> {
     const structuredColumns = this.createFormTree(columns);
 
     return (
-      <div ref={this.formRef} className="FormComponent" _can_grow_height="true" _can_grow_width="true">
-        {structuredColumns.children && structuredColumns.children.map((panel, index) => this.renderPanel(panel, true))}
+      <div ref={this.formRef} className="FormComponent" >
+        {/* <div ref={this.formRef} className="FormComponent" _can_grow_height="true" _can_grow_width="true"> */}
+        {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel, true))}
         {(hasOkButton || hasCancelButton) && (
           <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
             {hasOkButton && <Q2Button label="OK" onClick={this.handleSubmit} />}
