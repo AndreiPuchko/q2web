@@ -1,12 +1,14 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './App.css';
 import MainMenu from './components/MainMenu';
 import Dialog from './components/Dialog';
 // import { forms } from "./data_modules/data";
 // import DataGrid from './components/DataGrid';
 
-class App extends Component {
-  constructor(props) {
+
+
+class App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: any }> {
+  constructor(props: object) {
     super(props);
     this.state = {
       dialogs: [],
@@ -14,7 +16,7 @@ class App extends Component {
     };
   }
 
-  showDialog = (metaData) => {
+  showDialog = (metaData: { key: any; }) => {
     const newDialogIndex = this.state.dialogs.length;
     this.setState((prevState) => ({
       dialogs: [...prevState.dialogs, { key: metaData.key, metaData }],
@@ -22,9 +24,9 @@ class App extends Component {
     }));
   };
 
-  closeDialog = (index) => {
+  closeDialog = (index: number) => {
     this.setState((prevState) => {
-      const newDialogs = prevState.dialogs.filter((_, i) => i !== index);
+      const newDialogs = prevState.dialogs.filter((_: any, i: number) => i !== index);
       const newZIndexMap = { ...prevState.zIndexMap };
       delete newZIndexMap[index];
       return {
@@ -39,7 +41,7 @@ class App extends Component {
       <>
         <MainMenu showDialog={this.showDialog} />
         <div className='WorkSpace'>
-          {this.state.dialogs.map((dialog, index) => (
+          {this.state.dialogs.map((dialog: any, index: any) => (
             <Dialog
               key={index}
               onClose={() => this.closeDialog(index)}

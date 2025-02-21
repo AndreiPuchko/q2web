@@ -11,7 +11,7 @@ interface DialogProps {
   metaData: Q2Form;
   isTopDialog: boolean;
   rowData?: any;
-  showDialog: () => void;
+  showDialog: (metaData: any) => void;
 }
 
 const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog, rowData, showDialog }) => {
@@ -95,11 +95,11 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
 
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
-      if (child.getAttribute('_can_grow_height') === 'true') {
+      // if (child.getAttribute('_can_grow_height') === 'true') {
         const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
         const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
         child.style.height = `${height}px`;
-      }
+      // }
       // if (child.getAttribute('_can_grow_width') === 'true') {
       //   const padding = parseFloat(window.getComputedStyle(dialogContent).paddingLeft) + parseFloat(window.getComputedStyle(dialogContent).paddingRight);
       //   const width = dialog.clientWidth - padding;

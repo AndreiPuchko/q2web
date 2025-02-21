@@ -64,7 +64,8 @@ const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
   const menuStructure = buildMenuStructure(forms);
 
   const openNewTab = () => {
-    window.open('/empty-app-page', '_blank');
+    // window.open('/empty-app-page', '_blank');
+    window.open('/', '_blank');
   };
 
   const hideDropdown = () => {
