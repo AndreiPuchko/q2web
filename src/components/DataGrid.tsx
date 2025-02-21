@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
+import "./DataGrid.css"
 
 const EDIT = "EDIT";
 const NEW = "NEW";
@@ -216,7 +217,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
                 <tr
                   key={index}
                   onClick={() => this.handleRowClick(index)}
-                  style={{ backgroundColor: selectedRow === index ? '#d3d3d3' : 'transparent' }}
+                  style={{ backgroundColor: selectedRow === index ? 'Highlight' : 'transparent' }}
                 >
                   {columns.map((col: any) => (
                     <td key={col.key}>{row[col.column]}</td>

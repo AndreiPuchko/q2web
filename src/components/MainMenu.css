@@ -79,6 +79,7 @@
 
 .newTabButton:hover {
     background-color: greenyellow;
+    color: black;
 }
 
 .submenu {
@@ -148,7 +149,7 @@
     flex-grow: 9;
 }
 
-.dropbtn:hover, .submenubtn:hover, .toolButton:hover, .newTabButton:hover {
+.dropbtn:hover, .submenubtn:hover, .toolButton:hover {
   background-color: #ddd; /* Change background color on hover */
   color: black; /* Change text color on hover */
 }

@@ -9,7 +9,7 @@ body, html {
 }
 
 .DataGrid {
-  background-color: rgb(93, 130, 231);
+  background-color:rgb(63, 78, 94);
   height: 200px;
   overflow: auto;
 }

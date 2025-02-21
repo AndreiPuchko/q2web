@@ -1,4 +1,5 @@
-* {white-space: nowrap;}
+* {white-space: nowrap;
+}
 
 .flex-row {
   display: flex;
@@ -21,11 +22,12 @@
 
 .group-box-title {
   position: absolute;
-  border: 1px solid red;
+  border: 1px solid none;
   border-radius: 5px;
-  top: -1cap;
+  top: -1.2cap;
   left: 1cap;
-  background: black;
+  background: Canvas;
+  text-decoration: underline dotted;
   padding: 0 5px;
   font-weight: bold;
 }

@@ -104,7 +104,7 @@ export class Q2Form {
 }
 
 // Create forms using Q2Form class
-const form1 = new Q2Form("datagrid1", "Data Grid1 (excluse)", "File|Data Grid1", 1, {
+const form1 = new Q2Form("datagrid1", "Data Grid1", "File|Data Grid1", 1, {
     columns,
     data: mockData1,
     actions,
@@ -118,7 +118,7 @@ const form1 = new Q2Form("datagrid1", "Data Grid1 (excluse)", "File|Data Grid1",
 });
 forms.push(form1);
 
-const form2 = new Q2Form("datagrid2", "Data Grid2 (common)", "File|Other|Data Grid2", true, {
+const form2 = new Q2Form("datagrid2", "Data Grid2", "File|Other|Data Grid2", true, {
     columns,
     data: mockData2,
     actions,
@@ -132,7 +132,7 @@ const form2 = new Q2Form("datagrid2", "Data Grid2 (common)", "File|Other|Data Gr
 });
 forms.push(form2);
 
-const form3 = new Q2Form("datagrid3", "Data Grid2 (common)", "File|Other|Data Grid3", 0, {
+const form3 = new Q2Form("datagrid3", "Data Grid3", "File|Other|Data Grid3", 0, {
     columns,
     data: mockData2,
     actions,
@@ -203,7 +203,7 @@ exampleForm.add_control("var4", "Radio button", { pic: "Red;White", control: "ra
 exampleForm.hasCancelButton = true;
 forms.push(exampleForm);
 
-const form4 = new Q2Form("form2", "Example Form", "Example|Form2 - object example", true, {
+const form4 = new Q2Form("form2", "Example Form 2", "Examples|Form2", true, {
     description: "This is an example form created using Q2Form",
     type: "form",
     icon: "form",
