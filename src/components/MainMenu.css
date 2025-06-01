@@ -1,25 +1,81 @@
+:root {
+  --menu-bg: #333;
+  --menu-border: #444;
+  --menu-btn-bg: #333;
+  --menu-btn-color: #fff;
+  --menu-dropdown-bg: #f9f9f9;
+  --menu-dropdown-color: #000;
+  --menu-dropdown-hover-bg: #857b7b;
+  --menu-dropdown-hover-color: #000;
+  --menu-submenu-bg: #f9f9f9;
+  --menu-submenu-hover-bg: #e0e0e0;
+  --tool-btn-bg: rgb(88, 82, 78);
+  --tool-btn-color: #fff;
+  --tool-btn-hover-bg: royalblue;
+  --newtab-btn-bg: green;
+  --newtab-btn-hover-bg: greenyellow;
+  --newtab-btn-hover-color: black;
+}
+
+.theme-light {
+  --menu-bg: #f5f5f5;
+  --menu-border: #bbb;
+  --menu-btn-bg: #f5f5f5;
+  --menu-btn-color: #222;
+  --menu-dropdown-bg: #fff;
+  --menu-dropdown-color: #222;
+  --menu-dropdown-hover-bg: #e0e0e0;
+  --menu-dropdown-hover-color: #000;
+  --menu-submenu-bg: #fff;
+  --menu-submenu-hover-bg: #e0e0e0;
+  --tool-btn-bg: #e0e0e0;
+  --tool-btn-color: #222;
+  --tool-btn-hover-bg: #1976d2;
+  --newtab-btn-bg: #4caf50;
+  --newtab-btn-hover-bg: #b2ff59;
+  --newtab-btn-hover-color: #222;
+}
+
+.theme-dark {
+  --menu-bg: #333;
+  --menu-border: #444;
+  --menu-btn-bg: #333;
+  --menu-btn-color: #fff;
+  --menu-dropdown-bg: #222;
+  --menu-dropdown-color: #fff;
+  --menu-dropdown-hover-bg: #857b7b;
+  --menu-dropdown-hover-color: #fff;
+  --menu-submenu-bg: #222;
+  --menu-submenu-hover-bg: #444;
+  --tool-btn-bg: rgb(88, 82, 78);
+  --tool-btn-color: #fff;
+  --tool-btn-hover-bg: royalblue;
+  --newtab-btn-bg: green;
+  --newtab-btn-hover-bg: greenyellow;
+  --newtab-btn-hover-color: black;
+}
+
 .MainMenuBar {
     width: 100%;
     padding: 0;
-    background-color: #333;
+    background-color: var(--menu-bg);
     position: absolute;
     display: flex;
     justify-content: space-between;
-    /* Ensure space between menu items and the new tab button */
     top: 0;
     left: 0;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid var(--menu-border);
     font-family: Arial, sans-serif;
-    /* align-items: center; */
 }
 
 .MainMenuBar button {
     margin: 0;
     padding: 10px 20px;
     border: none;
-    color: white;
+    color: var(--menu-btn-color);
     cursor: pointer;
     font-size: 14px;
+    background: var(--menu-btn-bg);
 }
 
 .dropdown {
@@ -28,8 +84,8 @@
 }
 
 .dropbtn {
-    background-color: #333;
-    color: white;
+    background-color: var(--menu-btn-bg);
+    color: var(--menu-btn-color);
     padding: 10px 20px;
     font-size: 14px;
     border: none;
@@ -39,15 +95,14 @@
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: var(--menu-dropdown-bg);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 9999;
-    /* Ensure submenus are always on top */
 }
 
 .dropdown-content button {
-    color: black;
+    color: var(--menu-dropdown-color);
     padding: 10px 20px;
     text-decoration: none;
     display: block;
@@ -57,10 +112,12 @@
     text-align: left;
     cursor: pointer;
     font-size: 14px;
+    background: var(--menu-dropdown-bg);
 }
 
 .dropdown-content button:hover {
-    background-color: #857b7b;
+    background-color: var(--menu-dropdown-hover-bg);
+    color: var(--menu-dropdown-hover-color);
 }
 
 .dropdown:hover .dropdown-content {
@@ -72,14 +129,13 @@
 }
 
 .newTabButton {
-    background-color: green;
-    /* Green background color */
+    background-color: var(--newtab-btn-bg);
     font-size: 20px;
 }
 
 .newTabButton:hover {
-    background-color: greenyellow;
-    color: black;
+    background-color: var(--newtab-btn-hover-bg);
+    color: var(--newtab-btn-hover-color);
 }
 
 .submenu {
@@ -87,8 +143,8 @@
 }
 
 .submenubtn {
-    background-color: #f9f9f9;
-    color: black;
+    background-color: var(--menu-submenu-bg);
+    color: var(--menu-dropdown-color);
     padding: 10px 20px;
     font-size: 14px;
     border: none;
@@ -102,11 +158,10 @@
     position: absolute;
     left: 100%;
     top: 0;
-    background-color: #f9f9f9;
+    background-color: var(--menu-submenu-bg);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 9999;
-    /* Ensure submenus are always on top */
 }
 
 .submenu:hover > .submenu-content {
@@ -114,10 +169,9 @@
 }
 
 .submenu:hover>.submenubtn {
-    background-color: #e0e0e0;
+    background-color: var(--menu-submenu-hover-bg);
 }
 
-/* Ensure nested submenus are positioned correctly */
 .submenu-content .submenu-content {
     left: 100%;
     top: 0;
@@ -130,15 +184,15 @@
 }
 
 .toolButton {
-    background-color: rgb(88, 82, 78);
-    color: white;
+    background-color: var(--tool-btn-bg);
+    color: var(--tool-btn-color);
     padding: 20px;
     font-size: 14px;
-    border: 2px solid rgb(88, 82, 78);
+    border: 2px solid var(--tool-btn-bg);
     margin-left: 5px;
 }
 .toolButton:hover {
-    background-color: royalblue;
+    background-color: var(--tool-btn-hover-bg);
 }
 
 .spacer1 {
@@ -150,10 +204,10 @@
 }
 
 .dropbtn:hover, .submenubtn:hover, .toolButton:hover {
-  background-color: #ddd; /* Change background color on hover */
-  color: black; /* Change text color on hover */
+  background-color: var(--menu-dropdown-hover-bg);
+  color: var(--menu-dropdown-hover-color);
 }
 
 .dropdown:hover .dropdown-content, .submenu:hover .submenu-content {
-  display: block; /* Show the dropdown or submenu content on hover */
+  display: block;
 }
