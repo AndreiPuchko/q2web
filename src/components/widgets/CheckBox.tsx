@@ -6,9 +6,9 @@ interface Q2CheckBoxProps extends WidgetProps {
     // onChange: (checked: boolean) => void;
 }
 class Q2CheckBox extends Component<Q2CheckBoxProps> {
-    // constructor(props: Q2CheckBoxProps) {
-    //     super(props);
-    // }
+    constructor(props: Q2CheckBoxProps) {
+        super(props);
+    }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.props.onChange(e);

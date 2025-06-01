@@ -63,7 +63,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
   handleScroll = () => {
     const { scrollTop, scrollHeight, clientHeight } = this.tableBodyRef.current as HTMLTableRowElement;
     if (scrollTop + clientHeight >= scrollHeight - 10) {
-      this.setState((prevState) => ({ visibleRows: prevState.visibleRows + 10 }), this.scrollToRow);
+      this.setState((prevState) => ({ visibleRows: prevState.visibleRows + 10 }));
     }
   };
 
