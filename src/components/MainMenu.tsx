@@ -8,11 +8,14 @@ interface MainMenuProps {
 
 function buildMenuStructure (forms: Q2Form[]): any {
   const structure: any  = {};
+  console.log(forms);
+  // structure["File"] = {key: "121", label: "File", menutoolbar: 1}
   forms.forEach((form) => {
     if (!form.menubarpath) return; // Ignore forms without menubarpath
     const path = form.menubarpath.split('|');
     let currentLevel = structure;
     path.forEach((part, index) => {
+      console.log(part, index)
       if (!currentLevel[part]) {
         currentLevel[part] = index === path.length - 1 ? { key: form.key, label: part, menutoolbar: form.menutoolbar } : {};
       }

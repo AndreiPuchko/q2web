@@ -11,7 +11,7 @@
 
 .theme-light {
   --dialog-bg: #fff;
-  --dialog-header-bg: #f5f5f5;
+  --dialog-header-bg: #d5d5d5;
   --dialog-border: #bbb;
   --dialog-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   --dialog-disabled-overlay: rgba(0, 0, 0, 0.07);

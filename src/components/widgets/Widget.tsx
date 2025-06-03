@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import './Widget.css';
 
 export interface WidgetProps {
     id: string;

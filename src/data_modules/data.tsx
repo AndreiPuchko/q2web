@@ -1,9 +1,10 @@
 import { gen } from "generate-mock-data";
 import { MdInfo } from "react-icons/md";
+import { Q2Form } from "../q2_modules/Q2Form"
 
 const datalen = 1000;
 
-function getRandomInt(min: number , max: number ) {
+function getRandomInt(min: number, max: number) {
     const minCeiled = Math.ceil(min);
     const maxFloored = Math.floor(max);
     return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
@@ -38,78 +39,20 @@ export const columns = [
     { key: "3", "column": "pos", "label": "Position" },
 ];
 
-const actions = [
+const actions1 = [
     { "label": "/", "icon": "" },
     { "label": "Message", "icon": <MdInfo /> },
 ]
 
 export var forms: Q2Form[] = [];
 
-export class Q2Form {
-    key: string;
-    columns: any[];
-    data: any[];
-    actions: any [];
-    hasCancelButton: boolean;
-    hasOkButton: boolean;
-    description: string;
-    menubarpath: string;
-    menutoolbar: boolean | number;
-    title: string;
-    type: string;
-    icon: string;
-    width: number;
-    height: number;
-    x: number;
-    y: number;
-
-    constructor(key: string, title: string, menubarpath: string = "", menutoolbar: boolean | number = false, options: Partial<Q2Form> = {}) {
-        this.key = key;
-        this.columns = [];
-        this.hasCancelButton = false;
-        this.hasOkButton = false;
-        this.description = "";
-        this.menubarpath = menubarpath;
-        this.menutoolbar = menutoolbar;
-        this.data = [];
-        this.actions = actions;
-        this.title = title;
-        this.type = "form";
-        this.icon = "form";
-        this.width = 800;
-        this.height = 600;
-        this.x = 0;
-        this.y = 0;
-
-        Object.assign(this, options);
-    }
-
-    add_control(column: string, label?: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string } = {}) {
-        const { datalen, stretch, control = 'line', valid = () => true, data = null, pic = '', pi = '' } = options;
-        const controlObj = {
-            column,
-            label,
-            datalen,
-            stretch,
-            control,
-            key: this.columns.length > 0 ? this.columns.length.toString() : "0", // Unique key
-            valid,
-            data,
-            pic,
-            pi
-        };
-        this.columns.push(controlObj);
-        return true;
-    }
-}
 
 // Create forms using Q2Form class
-const form1 = new Q2Form("datagrid1", "Data Grid1", "File|Data Grid1", 1, {
+const form1 = new Q2Form("datagrid1", "Data Grid1", "Tables|Data Grid1", 1, {
     columns,
     data: mockData1,
-    actions,
+    actions: actions1,
     description: "This is a data grid1",
-    type: "datagrid",
     icon: "grid",
     width: 800,
     height: 600,
@@ -118,12 +61,11 @@ const form1 = new Q2Form("datagrid1", "Data Grid1", "File|Data Grid1", 1, {
 });
 forms.push(form1);
 
-const form2 = new Q2Form("datagrid2", "Data Grid2", "File|Other|Data Grid2", true, {
+const form2 = new Q2Form("datagrid2", "Data Grid2", "Tables|Other|Data Grid2", true, {
     columns,
     data: mockData2,
-    actions,
+    actions: actions1,
     description: "This is a data grid2",
-    type: "datagrid",
     icon: "grid",
     width: 800,
     height: 600,
@@ -132,12 +74,11 @@ const form2 = new Q2Form("datagrid2", "Data Grid2", "File|Other|Data Grid2", tru
 });
 forms.push(form2);
 
-const form3 = new Q2Form("datagrid3", "Data Grid3", "File|Other|Data Grid3", 0, {
+const form3 = new Q2Form("datagrid3", "Data Grid3", "Tables|Other|Data Grid3", 0, {
     columns,
     data: mockData2,
-    actions,
+    actions: actions1,
     description: "This is a data grid2",
-    type: "datagrid",
     icon: "grid",
     width: 800,
     height: 600,
@@ -146,15 +87,13 @@ const form3 = new Q2Form("datagrid3", "Data Grid3", "File|Other|Data Grid3", 0, 
 });
 forms.push(form3);
 
-const messageBox = new Q2Form("messagebox", "Message Box 2", "File|About", true, {
+const messageBox = new Q2Form("messagebox", "Message Box 2", "Tables|About", true, {
     columns: [
         { key: "0", "column": "message", "label": "Message", "value": "Lorem ipsum", "readonly": true, "control": "text" },
         { key: "1", "column": "description", "label": "Description", "value": "This is a Description...", "readonly": true, "control": "text" },
     ],
     data: [],
-    actions,
     description: "This is a data grid2",
-    type: "datagrid",
     icon: "grid",
     width: 800,
     height: 600,
@@ -165,9 +104,8 @@ const messageBox = new Q2Form("messagebox", "Message Box 2", "File|About", true,
 forms.push(messageBox);
 
 // Example usage:
-const exampleForm = new Q2Form("Layouts", "Example Form", "Example|Layouts form", true, {
+const exampleForm = new Q2Form("Layouts", "Example Form", "Examples|Layouts form", true, {
     description: "This is an example form created using Q2Form",
-    type: "form",
     icon: "form",
     width: 800,
     height: 600,
@@ -205,7 +143,6 @@ forms.push(exampleForm);
 
 const form4 = new Q2Form("form2", "Example Form 2", "Examples|Form2", true, {
     description: "This is an example form created using Q2Form",
-    type: "form",
     icon: "form",
 });
 
@@ -214,9 +151,9 @@ const var6_valid = (form: any) => {
     return form.s.var6 === "333";
 }
 
-form4.add_control("var6", "Line input",{valid: var6_valid});
+form4.add_control("var6", "Line input", { valid: var6_valid });
 form4.add_control("var7", "Line input2");
-form4.add_control("var8", "Checkbox", {control: "check", data: true});	
+form4.add_control("var8", "Checkbox", { control: "check", data: true });
 form4.add_control("var4", "Radio button", { pic: "Red;White;Black", control: "radio", data: "White" });
 form4.hasOkButton = true;
 forms.push(form4);

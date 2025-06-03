@@ -1,8 +1,6 @@
 .Q2Button {
     padding: 10px 15px;
-    background-color: LinkText; /* Green */
     border: none;
-    color: Canvas;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -14,9 +12,10 @@
 
 .Q2Button:active {
     border-radius:  10px;
-    border:1px solid SelectedItem;
+    border:1px solid green;
 }
 
 .Q2Button:hover {
     opacity: 0.9;
+    border:1px solid green;
 }
