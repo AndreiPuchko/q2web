@@ -1,3 +1,28 @@
+/* Theme variables */
+:root {
+  --form-bg: #23272f;
+  --form-border: rgb(179, 186, 245);
+  --form-label: #e0e0e0;
+  --form-groupbox-bg: #23272f;
+  --form-groupbox-title-bg: #23272f;
+}
+
+.theme-light {
+  --form-bg: #fff;
+  --form-border: #b3b6f5;
+  --form-label: #222;
+  --form-groupbox-bg: #f5f5f5;
+  --form-groupbox-title-bg: #fff;
+}
+
+.theme-dark {
+  --form-bg: #23272f;
+  --form-border: rgb(179, 186, 245);
+  --form-label: #e0e0e0;
+  --form-groupbox-bg: #23272f;
+  --form-groupbox-title-bg: #23272f;
+}
+
 * {white-space: nowrap;
 }
 
@@ -13,7 +38,8 @@
 
 .group-box {
   /* width: 100%; */
-  border: 1px solid wheat;
+  border: 1px solid var(--form-border);
+  background: var(--form-groupbox-bg);
   padding: 20px 0.3cap 0.5cap;
   margin: 1cap 0.3cap 0.5cap;
   border-radius: 5px;
@@ -26,10 +52,11 @@
   border-radius: 5px;
   top: -1.2cap;
   left: 1cap;
-  background: Canvas;
+  background: var(--form-groupbox-title-bg);
   text-decoration: underline dotted;
   padding: 0 5px;
   font-weight: bold;
+  color: var(--form-label);
 }
 
 .form-label {
@@ -37,6 +64,7 @@
   flex-wrap: nowrap;
   white-space: nowrap;
   margin: 0 1ch;
+  color: var(--form-label);
 }
 
 .FormComponent {
@@ -46,12 +74,12 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
+  background: var(--form-bg);
 }
 
 .Panel {
   min-width: 0; /* Ensure minWidth is set to 0 to prevent overflow */
 }
-
 
 .FormComponent  {
   border: 2px solid transparent; 
