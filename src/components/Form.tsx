@@ -7,7 +7,7 @@ import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
 import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
-import { Q2Form } from "../data_modules/data";
+import { Q2Form } from "../q2_modules/Q2Form";
 
 interface FormProps {
   metaData: Q2Form;

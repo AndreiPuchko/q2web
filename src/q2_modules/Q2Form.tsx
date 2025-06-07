@@ -31,7 +31,6 @@ export class Q2Form {
         this.height = 600;
         this.x = 0;
         this.y = 0;
-
         Object.assign(this, options);
     }
 

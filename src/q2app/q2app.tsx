@@ -1,0 +1,60 @@
+import { Q2Form } from "../q2_modules/Q2Form"
+
+export const q2forms: Q2Form[] = [];
+
+const exampleForm = new Q2Form("layouts", "Example Form", "Refs|LayoutForm", true, {
+    description: "This is an example form created using Q2Form",
+    icon: "form",
+    width: 800,
+    height: 600,
+    x: 0,
+    y: 0
+});
+if (exampleForm.add_control("/v", "Vertical layout")) {
+    exampleForm.add_control("var1", "Line input", { datalen: 15 });
+    exampleForm.add_control("var2", "Line input");
+
+    if (exampleForm.add_control("/h", "Horizontal layout")) {
+        exampleForm.add_control("var3", "Line input");
+        exampleForm.add_control("var4", "Line input", { stretch: 2 });  // stretch factor!
+        exampleForm.add_control("/");  // close layout
+    }
+    if (exampleForm.add_control("/h", "Next horizontal layout")) {
+        if (exampleForm.add_control("/f", "Form layout", { stretch: 4 })) {
+            exampleForm.add_control("var5", "Checkbox", { control: "check", data: true });
+            exampleForm.add_control("var6", "Line input", { datalen: 10 });
+            exampleForm.add_control("var7", "Line input");
+            exampleForm.add_control("/");
+        }
+        if (exampleForm.add_control("/f", "Next form layout", { stretch: 2 })) {
+            exampleForm.add_control("var8", "Line input");
+            exampleForm.add_control("var9", "Line input");
+            exampleForm.add_control("/");
+        }
+        exampleForm.add_control("/");
+
+    }
+    exampleForm.add_control("var44", "Radio button", { pic: "Red;White", control: "radio", data: "White", pi: "some_pi_value" });
+}
+
+exampleForm.hasCancelButton = true;
+
+const messageBox = new Q2Form("messagebox", "Message Box 2", "Refs|MessageBox", true, {
+    columns: [
+        { key: "0", "column": "message", "label": "Message", "value": "Lorem ipsum", "readonly": true, "control": "text" },
+        { key: "1", "column": "description", "label": "Description", "value": "This is a Description...", "readonly": true, "control": "text" },
+    ],
+    data: [],
+    description: "This is a data grid2",
+    icon: "grid",
+    width: 800,
+    height: 600,
+    x: 0,
+    y: 0,
+    hasOkButton: true
+});
+
+q2forms.push(exampleForm);
+q2forms.push(messageBox);
+
+

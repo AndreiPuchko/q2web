@@ -3,7 +3,7 @@ import './Dialog.css';
 import Cookies from 'js-cookie';
 import DataGrid from './DataGrid';
 import Form from './Form';
-import { Q2Form } from "../data_modules/data";
+import { Q2Form } from "../q2_modules/Q2Form";
 
 interface DialogProps {
   onClose: () => void;

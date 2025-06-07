@@ -44,7 +44,7 @@ const actions1 = [
     { "label": "Message", "icon": <MdInfo /> },
 ]
 
-export var forms: Q2Form[] = [];
+export const forms: Q2Form[] = [];
 
 
 // Create forms using Q2Form class

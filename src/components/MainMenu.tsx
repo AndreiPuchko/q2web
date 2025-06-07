@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import './MainMenu.css';
-import { forms, Q2Form } from '../data_modules/data';
+import { Q2Form } from "../q2_modules/Q2Form";
+import { forms } from '../data_modules/data';
+import { q2forms } from '../q2app/q2app'
 
 interface MainMenuProps {
   showDialog: (metaData: any) => void;
 }
 
-function buildMenuStructure (forms: Q2Form[]): any {
-  const structure: any  = {};
-  console.log(forms);
+
+function buildMenuStructure(forms: Q2Form[]): any {
+  const structure: any = {};
+  console.log("mm", forms);
   // structure["File"] = {key: "121", label: "File", menutoolbar: 1}
   forms.forEach((form) => {
     if (!form.menubarpath) return; // Ignore forms without menubarpath
     const path = form.menubarpath.split('|');
     let currentLevel = structure;
     path.forEach((part, index) => {
-      console.log(part, index)
       if (!currentLevel[part]) {
         currentLevel[part] = index === path.length - 1 ? { key: form.key, label: part, menutoolbar: form.menutoolbar } : {};
       }
@@ -64,7 +66,7 @@ const renderToolButtons = (forms: Q2Form[], showDialog: (metaData: any) => void,
 
 const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
   const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
-  const menuStructure = buildMenuStructure(forms);
+  const menuStructure = buildMenuStructure(q2forms);
 
   const openNewTab = () => {
     // window.open('/empty-app-page', '_blank');
@@ -89,7 +91,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
       </div>
       <div className='spacer1'></div>
       <div className='toolButtons'>
-        {renderToolButtons(forms, showDialog, hideDropdown)}
+        {renderToolButtons(q2forms, showDialog, hideDropdown)}
       </div>
       <div className='spacer9'></div>
       <button className='newTabButton' onClick={openNewTab}><b>+</b></button>
