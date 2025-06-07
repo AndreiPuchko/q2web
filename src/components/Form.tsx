@@ -8,6 +8,7 @@ import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
+import { GiConsoleController } from "react-icons/gi";
 
 interface FormProps {
   metaData: Q2Form;
@@ -237,7 +238,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     const { columns } = this.props.metaData;
     const hasOkButton = this.props.metaData.hasOkButton;
     const hasCancelButton = this.props.metaData.hasCancelButton;
-
     const structuredColumns = this.createFormTree(columns);
 
     return (

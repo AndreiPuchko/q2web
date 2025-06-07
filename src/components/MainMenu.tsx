@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './MainMenu.css';
 import { Q2Form } from "../q2_modules/Q2Form";
-import { forms } from '../data_modules/data';
+//import { forms } from '../data_modules/data';
 import { q2forms } from '../q2app/q2app'
 
 interface MainMenuProps {
@@ -11,7 +11,6 @@ interface MainMenuProps {
 
 function buildMenuStructure(forms: Q2Form[]): any {
   const structure: any = {};
-  console.log("mm", forms);
   // structure["File"] = {key: "121", label: "File", menutoolbar: 1}
   forms.forEach((form) => {
     if (!form.menubarpath) return; // Ignore forms without menubarpath
@@ -31,11 +30,19 @@ const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void, hid
   return Object.keys(menuStructure).map((menu) => {
     const item = menuStructure[menu];
     if (item.key) {
-      return (
-        <button key={item.key} onClick={() => { showDialog(forms.find(form => form.key === item.key)); hideDropdown(); }}>
-          {item.label}
-        </button>
-      );
+      if (item.label === "-") {
+        return (<hr key={item.key}/>)
+      }
+      else {
+        return (
+          <button key={item.key} onClick={() => {
+            showDialog(q2forms.find(form => form.key === item.key));
+            hideDropdown();
+          }}>
+            {item.label}
+          </button>
+        );
+      }
     }
     return (
       <div className='submenu' key={menu}>
@@ -67,9 +74,9 @@ const renderToolButtons = (forms: Q2Form[], showDialog: (metaData: any) => void,
 const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
   const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
   const menuStructure = buildMenuStructure(q2forms);
+  // console.log(menuStructure);
 
   const openNewTab = () => {
-    // window.open('/empty-app-page', '_blank');
     window.open('/', '_blank');
   };
 

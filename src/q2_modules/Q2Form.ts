@@ -2,7 +2,7 @@ export class Q2Form {
     key: string;
     columns: any[];
     data: any[];
-    actions: any [];
+    actions: any[];
     hasCancelButton: boolean;
     hasOkButton: boolean;
     description: string;
@@ -15,14 +15,14 @@ export class Q2Form {
     x: number;
     y: number;
 
-    constructor(key: string, title: string, menubarpath: string = "", menutoolbar: boolean | number = false, options: Partial<Q2Form> = {}) {
+    constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
         this.columns = [];
         this.hasCancelButton = false;
         this.hasOkButton = false;
         this.description = "";
         this.menubarpath = menubarpath;
-        this.menutoolbar = menutoolbar;
+        this.menutoolbar = options.menutoolbar ?? false;
         this.data = [];
         this.actions = [];
         this.title = title;
@@ -31,7 +31,18 @@ export class Q2Form {
         this.height = 600;
         this.x = 0;
         this.y = 0;
+        if (key === "") {
+            this.key = this.get_random_key();
+        }
         Object.assign(this, options);
+    }
+
+    get_random_key() {
+        let uid = "";
+        for (var x = 0; x < 10; x++){
+            uid = uid + String.fromCharCode(Math.floor(Math.random() * (90 - 65) + 65));
+        }
+        return uid
     }
 
     add_control(column: string, label?: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string } = {}) {

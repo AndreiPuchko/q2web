@@ -17,6 +17,10 @@
   --newtab-btn-hover-color: black;
 }
 
+hr {
+    color:lightgray;
+}
+
 .theme-light {
   --menu-bg: #f5f5f5;
   --menu-border: #bbb;

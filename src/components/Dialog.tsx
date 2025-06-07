@@ -142,7 +142,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       }
 
       if (elements.length > 0) {
-        console.log(elements);
+        // console.log(elements);
         while (dialog.scrollHeight === dialog.clientHeight) {
           elements.forEach(element => {
             element.style.height = `${element.clientHeight + 1}px`;
