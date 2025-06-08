@@ -8,7 +8,7 @@ export interface WidgetProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     readOnly: boolean;
     form: any;
-    valid: (form: any) => boolean;
+    // valid: (form: any) => boolean;
 }
 
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {

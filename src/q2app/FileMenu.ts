@@ -19,14 +19,14 @@ function colorThemeValid(form: Q2Form){
     window.dispatchEvent(new Event('q2-theme-changed'));
 }
 
-fileMenuSettings.add_control("colorTheme", "Color Theme", { pic: "System;Dark;Light", control: "radio", valid: colorThemeValid });
+fileMenuSettings.add_control("colorTheme", "Color Theme", { pic: "System;Dark;Light", control: "radio", valid: colorThemeValid, data:"Light" });
 
 function tagValid(form: Q2Form){
     console.log("tag:", form.s.tag);
     console.log("tag", localStorage.getItem('theme'), form);
 }
 
-fileMenuSettings.add_control("tag", "Text Tag", { control: "line", valid: tagValid, value:"tag value" });
+fileMenuSettings.add_control("tag", "Text Tag", { control: "line", valid: tagValid, data:"tag value" });
 
 
 export const fileMenuAbout = new Q2Form("File|About", "Settings", "about", {
@@ -36,7 +36,7 @@ export const fileMenuAbout = new Q2Form("File|About", "Settings", "about", {
 });
 
 
-fileMenuAbout.add_control("text", "", { readonly: true,  value: "Q2App framework", control: "text"});
+fileMenuAbout.add_control("text", "", { readonly: true,  data: "Q2App framework", control: "text"});
 
 
 export const fileMenu: Q2Form[] = [];

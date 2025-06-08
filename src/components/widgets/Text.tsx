@@ -10,12 +10,12 @@ class Q2Text extends Widget<Q2TextProps> {
     }
 
     render() {
-        const { value, readOnly, id, name } = this.props;
+        const { col, readOnly, id, name } = this.props;
+        console.log(this.props)
         return (
             <textarea
                 className="Q2Text"
-                value={value}
-                // onChange={onChange}
+                value={col.data}
                 readOnly={readOnly}
                 id={id}
                 name={name}

@@ -117,12 +117,12 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
 
   renderInput = (col: any) => {
     const { formData } = this.state;
-    const value: any = formData[col.column] !== undefined ? formData[col.column] : "";
+    const data: any = formData[col.column] !== undefined ? formData[col.column] : "";
     const commonProps = {
       id: col.column,
       name: col.column,
       col: col,
-      value,
+      data,
       onChange: this.handleChange,
       readOnly: col.readonly || false,
       form: this,

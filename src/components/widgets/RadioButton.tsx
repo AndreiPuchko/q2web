@@ -17,6 +17,7 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     constructor(props: Q2RadioButtonProps) {
         super(props);
         // this.props = props;
+        this.prevValue = "";
         this.state = {
             selectedValue: props.col.data || ''
         };
@@ -32,11 +33,6 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         // console.log("setData", data)
         this.setState({ selectedValue: data });
     }
-
-    // handleMouseDown = (event: React.MouseEvent<HTMLInputElement>) => {
-    //     const newValue = event.target.value;
-    //     this.setData(newValue)
-    // };
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log("onChange")
@@ -61,7 +57,6 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
                             name={col.column}
                             value={opt}
                             checked={this.state.selectedValue === opt}
-                            // onMouseDown={this.handleMouseDown}
                             onChange={this.handleChange}
                             onBlur={this.focusOut}
                             onFocus={this.focusIn}
