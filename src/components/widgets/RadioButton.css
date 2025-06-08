@@ -8,4 +8,14 @@
   white-space: nowrap; /* Prevent wrapping */
 }
 
-/* .Q2RadioButton:focus-within {background-color:  red;} */
+input[type="radio"] {
+    appearance: none;
+    width: 1.3cap;
+    height: 1.3cap;
+    border: 1px solid black;
+    border-radius: 50%;
+    background-color: white;
+}
+input[type="radio"]:checked {
+    background-color: black;
+}

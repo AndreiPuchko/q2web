@@ -23,8 +23,19 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
+        const prevValue = this.state.selectedValue;
         this.setState({ selectedValue: newValue }, () => {
-            this.props.col.data = newValue;
+            let validResult = true;
+            if (typeof this.props.col.valid === "function") {
+                validResult = this.props.col.valid(newValue, this.props.col);
+            }
+            if (validResult === false) {
+                // Revert to previous value if validation fails
+                this.setState({ selectedValue: prevValue });
+                this.props.col.data = prevValue;
+            } else {
+                this.props.col.data = newValue;
+            }
         });
     };
 
