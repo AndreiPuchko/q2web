@@ -143,6 +143,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
         return <Q2CheckBox {...commonProps} />;
       case "radio":
         return <Q2RadioButton {...commonProps} />;
+      case "form":
+        return <Q2Form {...commonProps} />;
       default:
         return <Q2Line {...commonProps} />;
     }

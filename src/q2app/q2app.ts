@@ -1,6 +1,5 @@
 import { Q2Form } from "../q2_modules/Q2Form"
 import {fileMenuAbout, fileMenuSettings, fileMenu} from "./fileMenu"
-4
 export const q2forms: Q2Form[] = [];
 
 const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
@@ -57,6 +56,8 @@ const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", 
     y: 0,
     hasOkButton: true
 });
+
+
 
 q2forms.push(...fileMenu);
 
