@@ -1,3 +1,41 @@
+export class Q2Control {
+    column: string;
+    label?: string;
+    datalen?: number;
+    stretch?: number;
+    control: string;
+    readonly: boolean;
+    key: string;
+    valid: any;
+    value?: string;
+    data?: any;
+    pic?: string;
+    pi?: string;
+
+    constructor(
+        column: string,
+        label?: string,
+        options: {
+            datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
+            readonly?: boolean, value?: string
+        } = {},
+        key: string = "0"
+    ) {
+        this.column = column;
+        this.label = label;
+        this.datalen = options.datalen;
+        this.stretch = options.stretch;
+        this.control = options.control ?? 'line';
+        this.readonly = options.readonly ?? false;
+        this.key = key;
+        this.valid = options.valid ?? (() => true);
+        this.value = options.value ?? "";
+        this.data = options.data;
+        this.pic = options.pic;
+        this.pi = options.pi;
+    }
+}
+
 export class Q2Form {
     key: string;
     columns: any[];
@@ -37,31 +75,39 @@ export class Q2Form {
             this.key = this.get_random_key();
         }
         Object.assign(this, options);
+        // Ensure all columns are Q2Control instances
+        if (this.columns && Array.isArray(this.columns)) {
+            this.columns = this.columns.map((col: any, idx: number) =>
+                col instanceof Q2Control
+                    ? col
+                    : new Q2Control(
+                        col.column,
+                        col.label,
+                        col,
+                        col.key ?? idx.toString()
+                    )
+            );
+        }
     }
 
     get_random_key() {
         let uid = "";
-        for (var x = 0; x < 10; x++){
+        for (var x = 0; x < 10; x++) {
             uid = uid + String.fromCharCode(Math.floor(Math.random() * (90 - 65) + 65));
         }
         return uid
     }
 
-    add_control(column: string, label?: string, options: { datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string } = {}) {
-        const { datalen, stretch, control = 'line', valid = () => true, data = null, pic = '', pi = '' } = options;
-        const controlObj = {
-            column,
-            label,
-            datalen,
-            stretch,
-            control,
-            key: this.columns.length > 0 ? this.columns.length.toString() : "0", // Unique key
-            valid,
-            data,
-            pic,
-            pi
-        };
+    add_control(column: string, label?: string,
+        options: {
+            datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
+            readonly?: boolean,
+            value?: string
+        } = {}) {
+        const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
+        const controlObj = new Q2Control(column, label, options, key);
         this.columns.push(controlObj);
+        if (this.key === "about") console.log(this.columns);
         return true;
     }
 }

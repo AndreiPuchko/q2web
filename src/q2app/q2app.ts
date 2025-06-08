@@ -1,5 +1,6 @@
 import { Q2Form } from "../q2_modules/Q2Form"
-
+import {fileMenuAbout, fileMenuSettings, fileMenu} from "./fileMenu"
+4
 export const q2forms: Q2Form[] = [];
 
 const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
@@ -43,7 +44,7 @@ exampleForm.hasCancelButton = true;
 const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", {
     columns: [
         { key: "0", "column": "message", "label": "Message", "value": "Lorem ipsum", "readonly": true, "control": "text" },
-        { key: "1", "column": "description", "label": "Description", "value": "This is a Description...", "readonly": true, "control": "text" },
+        { key: "1", column: "description", label: "Description", value: "This is a Description...", readonly: true, control: "text" },
     ],
     data: [],
     description: "This is a data grid2",
@@ -56,6 +57,13 @@ const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", 
     y: 0,
     hasOkButton: true
 });
+
+// q2forms.push(fileMenuSettings);
+// q2forms.push(fileMenuAbout);
+
+q2forms.push(...fileMenu);
+
+
 
 q2forms.push(exampleForm);
 q2forms.push(new Q2Form("Refs|-"));
