@@ -144,7 +144,13 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
       case "radio":
         return <Q2RadioButton {...commonProps} />;
       case "form":
-        return <Q2Form {...commonProps} />;
+        // console.log(this.props.metaData.title);
+        // console.log(col.data);
+        col.data.subForm = true;
+        return <Form metaData={col.data} />
+        // return <Form metaData={col.data} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
+
+        return "";
       default:
         return <Q2Line {...commonProps} />;
     }
@@ -222,6 +228,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
   render() {
     const { columns } = this.props.metaData;
     const hasOkButton = this.props.metaData.hasOkButton;
+    const subForm = this.props.metaData?.subForm;
+    console.log(this.props.metaData?.subForm)
     const hasCancelButton = this.props.metaData.hasCancelButton;
     const structuredColumns = this.createFormTree(columns);
     // this.scanAndCopyValues();
@@ -230,7 +238,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
       <div ref={this.formRef} className="FormComponent" >
         {/* <div ref={this.formRef} className="FormComponent" _can_grow_height="true" _can_grow_width="true"> */}
         {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel, true))}
-        {(hasOkButton || hasCancelButton) && (
+        {(hasOkButton || hasCancelButton && !subForm) && (
           <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
             {hasOkButton && <Q2Button label="OK" onClick={this.handleSubmit} />}
             {hasCancelButton && <Q2Button label="Cancel" onClick={this.handleCancel} />}

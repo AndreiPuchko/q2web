@@ -66,3 +66,31 @@ q2forms.push(new Q2Form("Refs|-"));
 q2forms.push(messageBox);
 
 
+
+const messageBox1 = new Q2Form("1|1", "Message Box 1", "messagebox1", {
+    columns: [
+        { key: "0", column: "message", label: "Message1", data: "Lorem ipsum1", readonly: true, control: "text" },
+    ],
+    hasOkButton: true
+});
+
+const messageBox2 = new Q2Form("1|2", "Message Box 2", "messagebox2", {
+    columns: [
+        { key: "0", column: "message", label: "Message2", data: "Lorem ipsum2", readonly: true, control: "text" },
+    ],
+    hasOkButton: true
+});
+
+const messageBox0 = new Q2Form("1|0000000000000000", "Message Box 0", "messagebox0", {
+    columns: [
+        { key: "0", column: "message1", label: "Message1", data: messageBox1, control: "form" },
+        { key: "1", column: "message2", label: "Message2", data: messageBox2, control: "form" },
+    ],
+    hasOkButton: true,
+    menutoolbar: true
+});
+
+
+q2forms.push(messageBox1);
+q2forms.push(messageBox2);
+q2forms.push(messageBox0);

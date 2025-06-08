@@ -104,7 +104,7 @@ export class Q2Form {
         const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
         const controlObj = new Q2Control(column, label, options, key);
         this.columns.push(controlObj);
-        if (this.key === "about") console.log(this.columns);
+        // if (this.key === "about") console.log(this.columns);
         return true;
     }
 }
