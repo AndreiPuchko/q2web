@@ -27,7 +27,17 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
 
   componentDidMount() {
     this.applyTheme();
+    window.addEventListener('q2-theme-changed', this.handleThemeChanged);
   }
+
+  componentWillUnmount() {
+    window.removeEventListener('q2-theme-changed', this.handleThemeChanged);
+  }
+
+  handleThemeChanged = () => {
+    const theme = this.detectTheme();
+    this.setState({ theme });
+  };
 
   componentDidUpdate(prevProps: {}, prevState: any) {
     if (prevState.theme !== this.state.theme) {
@@ -75,24 +85,6 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
     return (
       <>
         <MainMenu showDialog={this.showDialog} />
-        <button
-          style={{
-            position: 'absolute',
-            top: 5,
-            right: 5,
-            zIndex: 99999,
-            padding: '0.3em 1em',
-            borderRadius: '0.5em',
-            border: '1px solid #888',
-            background: 'var(--dialog-bg)',
-            color: 'inherit',
-            cursor: 'pointer'
-          }}
-          onClick={this.toggleTheme}
-          title="Toggle theme"
-        >
-          {this.state.theme === 'light' ? '🌞' : '🌙'}
-        </button>
         <div className='WorkSpace'>
           {this.state.dialogs.map((dialog: any, index: any) => (
             <Dialog
