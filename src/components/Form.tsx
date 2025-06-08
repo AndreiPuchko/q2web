@@ -20,8 +20,10 @@ interface FormProps {
 class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
   w: { [key: string]: any } = {}; // Store references to the widgets
   s: { [key: string]: any } = {}; // widgets data
+  focus: string = "";
+  prevFocus: string = "";
   formRef = React.createRef<HTMLDivElement>();
-  constructor(props:FormProps) {
+  constructor(props: FormProps) {
     super(props);
     this.state = {
       formData: {},
@@ -36,18 +38,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     }, {});
     this.setState({ formData });
 
-    // this.resizeObserver = new ResizeObserver(this.handleResize);
-    // this.resizeObserver.observe(this.formRef.current);
-
     document.addEventListener("keydown", this.handleKeyDown);
-    // window.addEventListener("resize", this.handleResize);
-
-    // Add event listeners for focusin and focusout events
-    document.addEventListener("focusin", this.handleFocus);
-    // document.addEventListener("focusout", this.handleFocus);
-
-    // Ensure the form has stable dimensions
-    // this.handleResize();
 
     // Focus on the first focusable element after a short delay to ensure rendering is complete
     setTimeout(() => {
@@ -58,24 +49,16 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
   componentWillUnmount() {
     // this.resizeObserver.disconnect();
     document.removeEventListener("keydown", this.handleKeyDown);
-    // window.removeEventListener("resize", this.handleResize);
-    document.removeEventListener("focusin", this.handleFocus);
-    // document.removeEventListener("focusout", this.handleFocus);
   }
 
-  handleFocus = (event: FocusEvent) => {
-    if (!this.w) return;
-    const focusOutElement = event.relatedTarget as HTMLInputElement;
-    // const focusInElement = event.target as HTMLInputElement;
-    if (!focusOutElement || !focusOutElement.name || !this.w[focusOutElement.name]) return;
-    this.scanAndCopyValues();
-    if (!this.w[focusOutElement.name].props.valid(this)) {
-      setTimeout(() => {
-        focusOutElement.focus();
-      }, 0);
-      return;
+  handleFocus = () => {
+    // console.log("valid", this.prevFocus, this.focus)
+    if (typeof this.w[this.prevFocus]?.props.col.valid === "function") {
+      this.scanAndCopyValues();
+      const validResult = this.w[this.prevFocus].props.col.valid(this);
     }
-  };
+
+  }
 
   handleKeyDown = (event: any) => {
     if (event.key === "Escape" && this.props.isTopDialog) {
@@ -114,11 +97,11 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     this.props.onClose();
   };
 
-  getWidgetValue = (columnName: string) => {
-    return this.w[columnName]?.getValue();
+  getWidgetData = (columnName: string) => {
+    return this.w[columnName]?.getData();
   };
 
-  setWidgetValue = (columnName: string, value: any) => {
+  setWidgetData = (columnName: string, value: any) => {
     if (this.w[columnName]) {
       this.w[columnName].setValue(value);
     }
@@ -126,8 +109,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
 
   scanAndCopyValues = () => {
     Object.keys(this.w).forEach(key => {
-      if (this.w[key] && typeof this.w[key].getValue === 'function') {
-        this.s[key] = this.getWidgetValue(key);
+      if (this.w[key] && typeof this.w[key].getData === 'function') {
+        this.s[key] = this.getWidgetData(key);
       }
     });
   };
@@ -239,6 +222,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     const hasOkButton = this.props.metaData.hasOkButton;
     const hasCancelButton = this.props.metaData.hasCancelButton;
     const structuredColumns = this.createFormTree(columns);
+    // this.scanAndCopyValues();
 
     return (
       <div ref={this.formRef} className="FormComponent" >

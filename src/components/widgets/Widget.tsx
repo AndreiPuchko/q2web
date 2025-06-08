@@ -12,12 +12,20 @@ export interface WidgetProps {
 }
 
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
-    getValue() {
+    getData() {
         return this.props.value;
     }
 
-    // setValue(value: any) {
+    focusIn = () => {
+        this.props.form.focus = this.props.col.column
+        this.props.form.handleFocus()
+    }
 
+    focusOut = () => {
+        this.props.form.prevFocus = this.props.col.column;
+    }
+
+    // setValue(value: any) {
     //     // this.props.onChange({ target: { name: this.props.name, value } });
     // }
 

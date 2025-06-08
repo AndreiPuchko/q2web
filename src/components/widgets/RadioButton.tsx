@@ -13,36 +13,40 @@ interface Q2RadioButtonState {
 class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     // state: any;
     // props: any;
+    prevValue: string;
     constructor(props: Q2RadioButtonProps) {
         super(props);
         // this.props = props;
         this.state = {
-            selectedValue: props.col.value || ''
+            selectedValue: props.col.data || ''
         };
     }
 
-    getValue() {
+    getData() {
         return this.state.selectedValue;
     }
 
+    setData(data: any) {
+        this.props.col.data = data;
+        this.props.form.s[this.props.col.column] = data;
+        // console.log("setData", data)
+        this.setState({ selectedValue: data });
+    }
+
+    // handleMouseDown = (event: React.MouseEvent<HTMLInputElement>) => {
+    //     const newValue = event.target.value;
+    //     this.setData(newValue)
+    // };
+
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // console.log("onChange")
         const newValue = event.target.value;
-        const prevValue = this.state.selectedValue;
-        this.props.form.s[this.props.col.column] = newValue;
-        this.setState({ selectedValue: newValue }, () => {
-            let validResult = true;
-            if (typeof this.props.col.valid === "function") {
-                validResult = this.props.col.valid(this.props.form);
-            }
-            if (validResult === false) {
-                // Revert to previous value if validation fails
-                this.setState({ selectedValue: prevValue });
-                this.props.col.valu = prevValue;
-                this.props.form.s[this.props.col.column] = prevValue;
-            } else {
-                this.props.col.value = newValue;
-            }
-        });
+        this.prevValue = this.state.selectedValue;
+        this.setData(newValue)
+        if (typeof this.props.col.valid === "function") {
+            const validResult = this.props.col.valid(this.props.form);
+        }
+
     };
 
     render() {
@@ -57,7 +61,10 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
                             name={col.column}
                             value={opt}
                             checked={this.state.selectedValue === opt}
+                            // onMouseDown={this.handleMouseDown}
                             onChange={this.handleChange}
+                            onBlur={this.focusOut}
+                            onFocus={this.focusIn}
                         />
                         {opt}
                     </label>

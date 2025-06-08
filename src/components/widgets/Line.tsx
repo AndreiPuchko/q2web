@@ -8,7 +8,7 @@ class Q2Line extends Widget<Q2LineProps> {
     render() {
         const { value, onChange, readOnly, id, name } = this.props;
         const style = {
-            width: '100%', 
+            width: '100%',
         };
 
         return (
@@ -18,7 +18,8 @@ class Q2Line extends Widget<Q2LineProps> {
                 style={style}
                 value={value}
                 onChange={onChange}
-                // onBlur={this.handleBlur}
+                onBlur={this.focusOut}
+                onFocus={this.focusIn}
                 readOnly={readOnly}
                 id={id}
                 name={name}

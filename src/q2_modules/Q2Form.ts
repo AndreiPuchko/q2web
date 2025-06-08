@@ -7,7 +7,6 @@ export class Q2Control {
     readonly: boolean;
     key: string;
     valid: any;
-    value?: string;
     data?: any;
     pic?: string;
     pi?: string;
@@ -17,7 +16,7 @@ export class Q2Control {
         label?: string,
         options: {
             datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
-            readonly?: boolean, value?: string
+            readonly?: boolean
         } = {},
         key: string = "0"
     ) {
@@ -29,7 +28,6 @@ export class Q2Control {
         this.readonly = options.readonly ?? false;
         this.key = key;
         this.valid = options.valid ?? (() => true);
-        this.value = options.value ?? "";
         this.data = options.data;
         this.pic = options.pic;
         this.pi = options.pi;
@@ -102,7 +100,6 @@ export class Q2Form {
         options: {
             datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
             readonly?: boolean,
-            value?: string
         } = {}) {
         const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
         const controlObj = new Q2Control(column, label, options, key);

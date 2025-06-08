@@ -14,6 +14,7 @@ export const fileMenuSettings = new Q2Form("File|Settings", "Settings", "setting
 
 
 function colorThemeValid(form: Q2Form){
+    // console.log("colorThemeValid", form)
     localStorage.setItem('theme', form.s.colorTheme.toLowerCase());
     window.dispatchEvent(new Event('q2-theme-changed'));
 }
