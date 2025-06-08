@@ -93,7 +93,7 @@
   /* cursor: se-resize; */
 }
 
-.close-button {
+.max-button, .close-button {
   background: transparent;
   color: var(--title-color);
   border: none;
@@ -104,4 +104,8 @@
 
 .close-button:hover {
   background-color: var(--close-btn-hover);
+}
+
+.max-button:hover {
+  background-color: lightblue;
 }

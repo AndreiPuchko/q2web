@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './Dialog.css';
 import Cookies from 'js-cookie';
 import DataGrid from './DataGrid';
@@ -16,6 +16,8 @@ interface DialogProps {
 
 const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog, rowData, showDialog }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const prevStateRef = useRef<{ width: string, height: string, left: string, top: string } | null>(null);
+  const [isMaximized, setIsMaximized] = useState(false);
 
   if (!metaData) {
     return null;
@@ -96,9 +98,9 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
       // if (child.getAttribute('_can_grow_height') === 'true') {
-        const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
-        const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
-        child.style.height = `${height}px`;
+      const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
+      const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
+      child.style.height = `${height}px`;
       // }
       // if (child.getAttribute('_can_grow_width') === 'true') {
       //   const padding = parseFloat(window.getComputedStyle(dialogContent).paddingLeft) + parseFloat(window.getComputedStyle(dialogContent).paddingRight);
@@ -148,11 +150,11 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
             element.style.height = `${element.clientHeight + 1}px`;
           });
         }
-          if (dialog.scrollHeight > dialog.clientHeight) {
-            elements.forEach(element => {
-              element.style.height = `${element.clientHeight - 10}px`;
-            });
-          }
+        if (dialog.scrollHeight > dialog.clientHeight) {
+          elements.forEach(element => {
+            element.style.height = `${element.clientHeight - 10}px`;
+          });
+        }
       }
 
     };
@@ -171,6 +173,49 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
   const { data } = metaData;
   const isDataGrid = data && data.length > 0;
 
+  const handleMaximize = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    if (!isMaximized) {
+      // Save current state
+      prevStateRef.current = {
+        width: dialog.style.width,
+        height: dialog.style.height,
+        left: dialog.style.left,
+        top: dialog.style.top,
+      };
+      // Maximize within workspace
+      const workspace = document.querySelector('.WorkSpace') as HTMLElement;
+      const mb = document.querySelector('.MainMenuBar') as HTMLElement;
+      console.log(mb.clientHeight);
+      if (workspace) {
+        const wsRect = workspace.getBoundingClientRect();
+        dialog.style.left = "0px";
+        dialog.style.top = `${mb.clientHeight}px`;
+        dialog.style.width = wsRect.width + "px";
+        dialog.style.height = `{wsRect.height  -mb.clientHeight}px`;
+      } else {
+        // fallback to window
+        dialog.style.left = "0px";
+        dialog.style.top = "0px";
+        dialog.style.width = window.innerWidth + "px";
+        dialog.style.height = window.innerHeight + "px";
+      }
+      setIsMaximized(true);
+    } else {
+      // Restore previous state
+      if (prevStateRef.current) {
+        dialog.style.width = prevStateRef.current.width;
+        dialog.style.height = prevStateRef.current.height;
+        dialog.style.left = prevStateRef.current.left;
+        dialog.style.top = prevStateRef.current.top;
+      }
+      setIsMaximized(false);
+    }
+  };
+
   return (
     <div
       className={`dialog-container ${isTopDialog ? '' : 'disabled'}`}
@@ -179,7 +224,14 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
     >
       <div className="dialog-header" onMouseDown={onMoveMouseDown}>
         <b>{metaData["title"]}</b>
-        <button className="close-button" onClick={onClose}>&#10006;</button>
+        <div>
+          {metaData.hasMaxButton ? (
+            <button className="max-button" onClick={handleMaximize}>
+              {isMaximized ? "🗗" : "🗖"}
+            </button>
+          ) : ""}
+          <button className="close-button" onClick={onClose}>&#10006;</button>
+        </div>
       </div>
       <div className="dialog-content">
         {isDataGrid ? (

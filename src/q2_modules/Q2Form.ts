@@ -5,6 +5,7 @@ export class Q2Form {
     actions: any[];
     hasCancelButton: boolean;
     hasOkButton: boolean;
+    hasMaxButton: boolean;
     description: string;
     menubarpath: string;
     menutoolbar: boolean | number;
@@ -20,6 +21,7 @@ export class Q2Form {
         this.columns = [];
         this.hasCancelButton = false;
         this.hasOkButton = false;
+        this.hasMaxButton = true;
         this.description = "";
         this.menubarpath = menubarpath;
         this.menutoolbar = options.menutoolbar ?? false;
