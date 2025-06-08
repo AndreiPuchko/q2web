@@ -45,6 +45,12 @@
   overflow: auto;
 }
 
+
+.dialog-container.maximized {
+  resize: none;
+}
+
+
 .dialog-container.disabled {
   pointer-events: none;
 }
@@ -81,16 +87,6 @@
   padding: 0 2px 0 2px;
   position: relative;
   z-index: 2;
-}
-
-.dialog-resizer {
-  width: 10px;
-  height: 10px;
-  background-color: transparent;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  /* cursor: se-resize; */
 }
 
 .max-button, .close-button {

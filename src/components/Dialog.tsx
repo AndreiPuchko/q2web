@@ -92,21 +92,13 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
     if (!dialog) return;
 
     const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
-    const dialogResizer = dialog.querySelector('.dialog-resizer') as HTMLElement;
     const dialogContent = dialog.querySelector('.dialog-content') as HTMLElement;
 
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
-      // if (child.getAttribute('_can_grow_height') === 'true') {
       const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
-      const height = dialog.clientHeight - dialogHeader.clientHeight - dialogResizer.clientHeight - padding;
+      const height = dialog.clientHeight - dialogHeader.clientHeight -  padding;
       child.style.height = `${height}px`;
-      // }
-      // if (child.getAttribute('_can_grow_width') === 'true') {
-      //   const padding = parseFloat(window.getComputedStyle(dialogContent).paddingLeft) + parseFloat(window.getComputedStyle(dialogContent).paddingRight);
-      //   const width = dialog.clientWidth - padding;
-      //   child.style.width = `${width}px`;
-      // }
     });
   };
 
@@ -189,13 +181,12 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
       // Maximize within workspace
       const workspace = document.querySelector('.WorkSpace') as HTMLElement;
       const mb = document.querySelector('.MainMenuBar') as HTMLElement;
-      console.log(mb.clientHeight);
       if (workspace) {
         const wsRect = workspace.getBoundingClientRect();
         dialog.style.left = "0px";
-        dialog.style.top = `${mb.clientHeight}px`;
-        dialog.style.width = wsRect.width + "px";
-        dialog.style.height = `{wsRect.height  -mb.clientHeight}px`;
+        dialog.style.top = `${mb.offsetHeight}px`;
+        dialog.style.width = `${wsRect.width - 2}px`;
+        dialog.style.height = `${wsRect.height - mb.offsetHeight - 2}px`;
       } else {
         // fallback to window
         dialog.style.left = "0px";
@@ -218,7 +209,7 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
 
   return (
     <div
-      className={`dialog-container ${isTopDialog ? '' : 'disabled'}`}
+      className={`dialog-container ${isTopDialog ? '' : 'disabled'} ${isMaximized ? "maximized": ""}`}
       ref={dialogRef}
       style={{ zIndex }}
     >
@@ -240,7 +231,6 @@ const Dialog: React.FC<DialogProps> = ({ onClose, metaData, zIndex, isTopDialog,
           <Form metaData={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
         )}
       </div>
-      <div className="dialog-resizer" ></div>
     </div>
   );
 };
