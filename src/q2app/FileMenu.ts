@@ -13,11 +13,19 @@ export const fileMenuSettings = new Q2Form("File|Settings", "Settings", "setting
 });
 
 
-function colorThemeValid(){
-    console.log("1234");
+function colorThemeValid(form: Q2Form){
+    localStorage.setItem('theme', form.s.colorTheme.toLowerCase());
+    window.dispatchEvent(new Event('q2-theme-changed'));
 }
 
-fileMenuSettings.add_control("colorTheme", "Radio button", { pic: "System;Dark;Light", control: "radio", data: "System", valid: colorThemeValid });
+fileMenuSettings.add_control("colorTheme", "Color Theme", { pic: "System;Dark;Light", control: "radio", valid: colorThemeValid });
+
+function tagValid(form: Q2Form){
+    console.log("tag:", form.s.tag);
+    console.log("tag", localStorage.getItem('theme'), form);
+}
+
+fileMenuSettings.add_control("tag", "Text Tag", { control: "line", valid: tagValid, value:"tag value" });
 
 
 export const fileMenuAbout = new Q2Form("File|About", "Settings", "about", {
