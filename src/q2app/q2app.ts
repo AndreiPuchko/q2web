@@ -43,8 +43,8 @@ exampleForm.hasCancelButton = true;
 
 const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", {
     columns: [
-        { key: "0", "column": "message", "label": "Message", "value": "Lorem ipsum", "readonly": true, "control": "text" },
-        { key: "1", column: "description", label: "Description", value: "This is a Description...", readonly: true, control: "text" },
+        { key: "0", column: "message", label: "Message", data: "Lorem ipsum", readonly: true, control: "text" },
+        { key: "1", column: "description", label: "Description", data: "This is a Description...", readonly: true, control: "text" },
     ],
     data: [],
     description: "This is a data grid2",
@@ -58,12 +58,7 @@ const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", 
     hasOkButton: true
 });
 
-// q2forms.push(fileMenuSettings);
-// q2forms.push(fileMenuAbout);
-
 q2forms.push(...fileMenu);
-
-
 
 q2forms.push(exampleForm);
 q2forms.push(new Q2Form("Refs|-"));
