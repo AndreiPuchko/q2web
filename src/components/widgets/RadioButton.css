@@ -3,7 +3,8 @@
   flex-direction: row;
   align-items: center;
   gap: 0.5em;
-  width: 100%;
+  padding-left: 1ch;
+  padding-right: 1ch;
   overflow-x: auto; /* Enable horizontal scrolling */
   white-space: nowrap; /* Prevent wrapping */
 }
@@ -14,7 +15,7 @@ input[type="radio"] {
     height: 1.3cap;
     border: 1px solid black;
     border-radius: 50%;
-    background-color: white;
+    background-color: lightgray;
 }
 input[type="radio"]:checked {
     background-color: black;
