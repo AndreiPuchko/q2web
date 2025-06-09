@@ -8,7 +8,6 @@ import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
-import { GiConsoleController } from "react-icons/gi";
 
 interface FormProps {
   metaData: Q2Form;
