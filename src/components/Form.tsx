@@ -143,13 +143,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
       case "radio":
         return <Q2RadioButton {...commonProps} />;
       case "form":
-        // console.log(this.props.metaData.title);
-        // console.log(col.data);
         col.data.subForm = true;
         return <Form metaData={col.data} />
-        // return <Form metaData={col.data} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
-
-        return "";
+      case "widget":
+        return col.data()
       default:
         return <Q2Line {...commonProps} />;
     }
@@ -228,7 +225,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     const { columns } = this.props.metaData;
     const hasOkButton = this.props.metaData.hasOkButton;
     const subForm = this.props.metaData?.subForm;
-    console.log(this.props.metaData?.subForm)
     const hasCancelButton = this.props.metaData.hasCancelButton;
     const structuredColumns = this.createFormTree(columns);
     // this.scanAndCopyValues();

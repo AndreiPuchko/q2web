@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import MainMenu from '../components/MainMenu';
 import Dialog from '../components/Dialog';
-import {Q2ReportEditor} from "../q2app/ReportEditor"
+import { Q2ReportEditor } from "../q2app/ReportEditor"
 
 
 import './Q2App.css';
@@ -88,7 +88,7 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
     return (
       <>
         <MainMenu showDialog={this.showDialog} />
-          <Q2ReportEditor />
+        <Q2ReportEditor />
 
         <div className='WorkSpace'>
           {this.state.dialogs.map((dialog: any, index: any) => (

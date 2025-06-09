@@ -1,5 +1,6 @@
 import { Q2Form } from "../q2_modules/Q2Form"
 import {fileMenuAbout, fileMenuSettings, fileMenu} from "./fileMenu"
+import { Q2ReportEditor } from "../q2app/ReportEditor"
 export const q2forms: Q2Form[] = [];
 
 const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
@@ -85,6 +86,7 @@ const messageBox0 = new Q2Form("1|0000000000000000", "Message Box 0", "messagebo
     columns: [
         { key: "0", column: "message1", label: "", data: messageBox1, control: "form" },
         { key: "1", column: "message2", label: "", data: messageBox2, control: "form" },
+        { key: "2", column: "red", label: "", data: Q2ReportEditor, control: "widget" },
     ],
     hasOkButton: true,
     menutoolbar: true
