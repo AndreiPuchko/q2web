@@ -45,6 +45,7 @@ export class Q2Form {
     description: string;
     menubarpath: string;
     menutoolbar: boolean | number;
+    subForm: boolean;
     title: string;
     icon: string;
     width: number;
@@ -61,6 +62,7 @@ export class Q2Form {
         this.description = "";
         this.menubarpath = menubarpath;
         this.menutoolbar = options.menutoolbar ?? false;
+        this.subForm = false;
         this.data = [];
         this.actions = [];
         this.title = title;

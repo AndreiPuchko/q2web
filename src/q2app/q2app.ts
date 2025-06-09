@@ -83,8 +83,8 @@ const messageBox2 = new Q2Form("1|2", "Message Box 2", "messagebox2", {
 
 const messageBox0 = new Q2Form("1|0000000000000000", "Message Box 0", "messagebox0", {
     columns: [
-        { key: "0", column: "message1", label: "Message1", data: messageBox1, control: "form" },
-        { key: "1", column: "message2", label: "Message2", data: messageBox2, control: "form" },
+        { key: "0", column: "message1", label: "", data: messageBox1, control: "form" },
+        { key: "1", column: "message2", label: "", data: messageBox2, control: "form" },
     ],
     hasOkButton: true,
     menutoolbar: true
