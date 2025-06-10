@@ -414,6 +414,44 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
         );
     }
 
+    // Helper to render the report row (title and export buttons)
+    function renderReport() {
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    background: "#f0f0f0",
+                    borderBottom: "2px solid #888",
+                    marginBottom: 2,
+                    minHeight: 40,
+                }}
+            >
+                <div
+                    style={{
+                        width: 160,
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        color: "#333",
+                        textAlign: "center",
+                        background: "#e0e0e0",
+                        padding: "8px 0",
+                        borderRight: "1px solid #b0b0b0",
+                        boxSizing: "border-box",
+                    }}
+                >
+                    Report
+                </div>
+                <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
+                    <button style={{ padding: "6px 18px", fontSize: 12 }}>HTML</button>
+                    <button style={{ padding: "6px 18px", fontSize: 12 }}>DOCX</button>
+                    <button style={{ padding: "6px 18px", fontSize: 12 }}>XLSX</button>
+                    <button style={{ padding: "6px 18px", fontSize: 12 }}>PDF</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div style={{
             padding: 0,
@@ -425,10 +463,9 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
             overflow: "auto",
             marginTop: "50px",
         }}>
-            {/* Render all pages */}
+            {renderReport()}
             {report.pages.map((page, pageIdx) => (
-                <div key={pageIdx} style={{ marginBottom: 32 }}>
-                    {/* Render page section only once per page at the top */}
+                <div key={pageIdx} style={{ marginBottom: 12 }}>
                     {RenderPage(page, page.columns[0].widths.length,
                         (() => {
                             const column = page.columns[0];
