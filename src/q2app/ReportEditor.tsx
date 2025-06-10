@@ -4,9 +4,20 @@ interface Q2ReportEditorProps {
     zoomWidthPx?: number;
 }
 
-class Q2ReportEditor extends Component<Q2ReportEditorProps> {
+type Selection =
+    | { type: "report" }
+    | { type: "page", pageIdx: number }
+    | { type: "column", pageIdx: number, colIdx: number }
+    | { type: "row", pageIdx: number, colIdx: number, rowSetIdx: number }
+    | { type: "cell", pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number };
+
+class Q2ReportEditor extends Component<Q2ReportEditorProps, { selection?: Selection }> {
     static defaultProps = {
         zoomWidthPx: 700,
+    };
+
+    state = {
+        selection: undefined as Selection | undefined,
     };
 
     report = {
@@ -117,6 +128,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx };
     }
 
+    handleSelect = (sel: Selection) => {
+        this.setState({ selection: sel });
+    };
+
     renderReport() {
         const buttonStyle = {
             padding: "6px 18px",
@@ -124,16 +139,19 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
             borderRadius: "10px",
             width: "10cap"
         };
+        const isSelected = this.state.selection?.type === "report";
         return (
             <div
                 style={{
                     display: "flex",
                     alignItems: "center",
-                    background: "#f0f0f0",
+                    background: isSelected ? "#ffe066" : "#f0f0f0",
                     borderBottom: "2px solid #888",
                     marginBottom: 2,
                     minHeight: 40,
+                    cursor: "pointer",
                 }}
+                onClick={() => this.handleSelect({ type: "report" })}
             >
                 <div
                     style={{
@@ -142,7 +160,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                         fontSize: 14,
                         color: "#333",
                         textAlign: "center",
-                        background: "#e0e0e0",
+                        background: isSelected ? "#ffe066" : "#e0e0e0",
                         padding: "8px 0",
                         borderRight: "1px solid #b0b0b0",
                         boxSizing: "border-box",
@@ -165,17 +183,20 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
         const pxPerCm = zoomWidthPx / availableWidthCm;
 
-        // Render all columns for this page
+        this._currentPageIdx = pageIdx; // set for children
+        const isSelected = this.state.selection?.type === "page" && this.state.selection.pageIdx === pageIdx;
         return (
             <div>
                 {/* Page info row */}
                 <div
                     style={{
                         display: "flex",
-                        background: "#f9fbe7",
+                        background: isSelected ? "#ffe066" : "#f9fbe7",
                         borderBottom: "2px solid #888",
                         alignItems: "center",
+                        cursor: "pointer",
                     }}
+                    onClick={() => this.handleSelect({ type: "page", pageIdx })}
                 >
                     <div
                         style={{
@@ -186,7 +207,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                             fontSize: 13,
                             color: "#444",
                             borderRight: "1px solid #b0c4de",
-                            background: "#f9fbe7",
+                            background: isSelected ? "#ffe066" : "#f9fbe7",
                         }}
                     >
                         Page [{pageIdx}]
@@ -197,7 +218,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                             alignItems: "center",
                             gap: 12,
                             padding: "4px 8px",
-                            background: "#f9fbe7",
+                            background: isSelected ? "#ffe066" : "#f9fbe7",
                         }}
                     >
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -266,15 +287,16 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                 <div
                     style={{
                         display: "flex",
-                        flexDirection: "column", // Ensure columns are stacked vertically
+                        flexDirection: "column",
                         flexWrap: "nowrap",
                         margin: 0,
                         padding: 0,
                     }}
                 >
                     {page.columns.map((column: any, colIdx: number) => {
-                        // --- width calculations for each column ---
-                        const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx } = this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
+                        const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx } =
+                            this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
+                        this._currentColIdx = colIdx; // set for children
                         return (
                             <div
                                 key={colIdx}
@@ -287,7 +309,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                                     width: gridWidthPx + firstColWidthPx + secondColWidthPx,
                                 }}
                             >
-                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
+                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx, pageIdx, colIdx)}
                             </div>
                         );
                     })}
@@ -296,19 +318,31 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         );
     }
 
-    renderColumns(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number, cellHeightPx: number) {
+    renderColumns(
+        column: any,
+        cellWidthsPx: number[],
+        firstColWidthPx: number,
+        secondColWidthPx: number,
+        cellHeightPx: number,
+        pageIdx?: number,
+        colIdx?: number
+    ) {
+        const isSelected = this.state.selection?.type === "column" &&
+            this.state.selection.pageIdx === pageIdx &&
+            this.state.selection.colIdx === colIdx;
         return (
-            <div style={{
-                
-            }}>
+            <div>
                 <div
                     style={{
                         display: "flex",
                         margin: 0,
                         padding: 0,
-                        background: "#e0eaff",
+                        background: isSelected ? "#ffe066" : "#e0eaff",
                         borderBottom: "1px solid #888",
+                        cursor: "pointer",
                     }}
+                    // Only first cell (label) is selectable for column
+                    onClick={() => this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
                 >
                     <div
                         style={{
@@ -316,43 +350,76 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                             textAlign: "center",
                             fontSize: 12,
                             color: "#333",
-                            background: "#d0eaff",
+                            background: isSelected ? "#ffe066" : "#d0eaff",
                             borderRight: "1px solid #b0c4de",
                             padding: "2px 0",
                             boxSizing: "border-box",
                             fontWeight: "bold",
+                            cursor: "pointer",
+                        }}
+                        onClick={e => {
+                            e.stopPropagation();
+                            this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
                         }}
                     >
                         Columns
                     </div>
-                    {cellWidthsPx.map((w, i) => (
-                        <div
-                            key={i}
-                            style={{
-                                width: `${w}px`,
-                                textAlign: "center",
-                                fontSize: 12,
-                                color: "#333",
-                                background: "#e0eaff",
-                                borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
-                                padding: "2px 0",
-                                boxSizing: "border-box",
-                            }}
-                        >
-                            {column.widths[i]}
-                        </div>
-                    ))}
+                    {cellWidthsPx.map((w, i) => {
+                        const isWidthSelected = this.state.selection?.type === "colwidth"
+                            && this.state.selection.pageIdx === pageIdx
+                            && this.state.selection.colIdx === colIdx
+                            && this.state.selection.widthIdx === i;
+                        return (
+                            <div
+                                key={i}
+                                style={{
+                                    width: `${w}px`,
+                                    textAlign: "center",
+                                    fontSize: 12,
+                                    color: "#333",
+                                    background: isWidthSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0eaff"),
+                                    borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
+                                    padding: "2px 0",
+                                    boxSizing: "border-box",
+                                    cursor: "pointer",
+                                }}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    this.handleSelect({
+                                        type: "colwidth",
+                                        pageIdx: pageIdx!,
+                                        colIdx: colIdx!,
+                                        widthIdx: i
+                                    });
+                                }}
+                            >
+                                {column.widths[i]}
+                            </div>
+                        );
+                    })}
                 </div>
                 {/* Render rows section here */}
-                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
+                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx, pageIdx, colIdx)}
             </div>
         );
     }
 
-    renderRows(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number, cellHeightPx: number) {
+    renderRows(
+        column: any,
+        cellWidthsPx: number[],
+        firstColWidthPx: number,
+        secondColWidthPx: number,
+        cellHeightPx: number,
+        pageIdx?: number,
+        colIdx?: number
+    ) {
         const colCount = column.widths.length;
         return column.rows.map((rowSet: any, rowSetIdx: number) => {
             const rowCount = rowSet.heights.length || 0;
+            const isSelected = this.state.selection?.type === "row"
+                && this.state.selection.pageIdx === pageIdx
+                && this.state.selection.colIdx === colIdx
+                && this.state.selection.rowSetIdx === rowSetIdx;
             return (
                 <div
                     key={rowSetIdx}
@@ -361,15 +428,20 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                         gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
                         gridTemplateRows: `repeat(${rowCount}, ${cellHeightPx}px)`,
                         gap: 0,
-                        background: "#888",
+                        background: isSelected ? "#ffe066" : "#888",
                         margin: 0,
                         padding: 0,
                         borderBottom: rowSetIdx < column.rows.length - 1 ? "2px solid #888" : undefined,
+                        cursor: "pointer",
+                    }}
+                    onClick={e => {
+                        e.stopPropagation();
+                        this.handleSelect({ type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx });
                     }}
                 >
                     <div
                         style={{
-                            background: "#f0f8ff",
+                            background: isSelected ? "#ffe066" : "#f0f8ff",
                             color: "#333",
                             display: "flex",
                             alignItems: "center",
@@ -384,42 +456,72 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                             fontWeight: "bold",
                             gridRow: `1 / span ${rowCount}`,
                             gridColumn: "1 / 2",
+                            cursor: "pointer",
+                        }}
+                        onClick={e => {
+                            e.stopPropagation();
+                            this.handleSelect({ type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx });
                         }}
                     >
                         Rows
                     </div>
-                    {Array.from({ length: rowCount }).map((_, rowIdx) => (
-                        <div
-                            key={`height-${rowIdx}`}
-                            style={{
-                                background: "#e0f7fa",
-                                color: "#333",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: 12,
-                                minWidth: 0,
-                                minHeight: 0,
-                                border: "1px solid #CCC",
-                                margin: 0,
-                                padding: 0,
-                                boxSizing: "border-box",
-                                gridColumn: "2 / 3",
-                                gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
-                            }}
-                        >
-                            {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
-                        </div>
-                    ))}
+                    {Array.from({ length: rowCount }).map((_, rowIdx) => {
+                        const isHeightSelected = this.state.selection?.type === "rowheight"
+                            && this.state.selection.pageIdx === pageIdx
+                            && this.state.selection.colIdx === colIdx
+                            && this.state.selection.rowSetIdx === rowSetIdx
+                            && this.state.selection.heightIdx === rowIdx;
+                        return (
+                            <div
+                                key={`height-${rowIdx}`}
+                                style={{
+                                    background: isHeightSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0f7fa"),
+                                    color: "#333",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: 12,
+                                    minWidth: 0,
+                                    minHeight: 0,
+                                    border: "1px solid #CCC",
+                                    margin: 0,
+                                    padding: 0,
+                                    boxSizing: "border-box",
+                                    gridColumn: "2 / 3",
+                                    gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
+                                    cursor: "pointer",
+                                }}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    this.handleSelect({
+                                        type: "rowheight",
+                                        pageIdx: pageIdx!,
+                                        colIdx: colIdx!,
+                                        rowSetIdx,
+                                        heightIdx: rowIdx
+                                    });
+                                }}
+                            >
+                                {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
+                            </div>
+                        );
+                    })}
                     {Array.from({ length: rowCount }).map((_, rowIdx) =>
                         Array.from({ length: colCount }).map((_, cellIdx) => {
                             const cellKey = `${cellIdx},${rowIdx}`;
                             const cell = rowSet.cells && rowSet.cells[cellKey];
+                            const isCurrent =
+                                this.state.selection?.type === "cell" &&
+                                this.state.selection.pageIdx === pageIdx &&
+                                this.state.selection.colIdx === colIdx &&
+                                this.state.selection.rowSetIdx === rowSetIdx &&
+                                this.state.selection.rowIdx === rowIdx &&
+                                this.state.selection.cellIdx === cellIdx;
                             return (
                                 <div
                                     key={cellKey}
                                     style={{
-                                        background: "#fafafa",
+                                        background: isCurrent ? "#ffe066" : "#fafafa",
                                         color: "black",
                                         display: "flex",
                                         alignItems: "center",
@@ -433,6 +535,18 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                                         boxSizing: "border-box",
                                         gridColumn: `${cellIdx + 3} / ${cellIdx + 4}`,
                                         gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
+                                        cursor: "pointer",
+                                    }}
+                                    onClick={e => {
+                                        e.stopPropagation();
+                                        this.handleSelect({
+                                            type: "cell",
+                                            pageIdx: pageIdx!,
+                                            colIdx: colIdx!,
+                                            rowSetIdx,
+                                            rowIdx,
+                                            cellIdx
+                                        });
                                     }}
                                 >
                                     {cell ? cell.data : ""}
@@ -444,6 +558,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
             );
         });
     }
+
+    // Helper to pass pageIdx/colIdx to renderRows/renderColumns
+    private _currentPageIdx: number = 0;
+    private _currentColIdx: number = 0;
 
     render() {
         return (
