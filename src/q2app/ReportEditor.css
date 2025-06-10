@@ -1,0 +1,25 @@
+.q2-context-menu {
+    position: fixed;
+    background: #EEE;
+    border: 1px solid #888;
+    box-shadow: 0 2px 8px #0003;
+    z-index: 1000;
+    padding: 1px;
+    min-width: 100px;
+}
+.q2-context-menu-item {
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #222;
+    background: #EEE;
+    border-radius: 3px;
+    user-select: none;
+}
+.q2-context-menu-item:hover {
+    background: #93affc;
+}
+.q2-context-menu-separator {
+    border-top: 1px solid #ccc;
+    margin: 6px 0;
+}
