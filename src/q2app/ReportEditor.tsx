@@ -1,6 +1,6 @@
 import React from "react";
 
-const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 600 }) => {
+const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 }) => {
     const report = {
         pages: [
             {
@@ -10,16 +10,35 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 600 
                 page_margin_top: 2.0,
                 page_margin_right: 1.0,
                 page_margin_bottom: 2.0,
-                columns: [{
-                    widths: ["10%", "20%", "0.0", "3.00", "3.0"],
-                    rows: [{
-                        heights: ["0-0", "0-0", "0-0", "0-0.30", "0-0"],
-                        cells: {
-                            "0,0": { data: "text", style: {} },
+                columns: [
+                    {
+                        widths: ["10%", "20%", "0.0", "3.00", "3.0"],
+                        rows: [{
+                            heights: ["0-0", "0-0", "0-0", "0-0.30", "0-0"],
+                            cells: {
+                                "0,0": { data: "text", style: {} },
+                                "3,3": { data: "text3", style: {} },
+                            }
+                        },
+                        {
+                            heights: ["0-0", "0-0"],
+                            cells: {
+                                "0,1": { data: "text", style: {} },
+                            }
                         }
+                        ]
+                    },
+                    {
+                        widths: ["10", "20%", "0.0", "2.00", "1.0"],
+                        rows: [{
+                            heights: ["0-0", "0-0", "0-0", "0-0.30", "0-0"],
+                            cells: {
+                                "1,1": { data: "text", style: {} },
+                            }
+                        }
+                        ]
                     }
-                    ]
-                }
+
                 ]
             }
         ]
@@ -42,24 +61,23 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 600 
         let cmTotal = 0;
         let zeroCount = 0;
 
-        column.widths.forEach((w: string, idx: number) => {
+        column.widths.forEach((w: string) => {
             if (parseFloat(w) === 0.00) {
-                zeroCount = zeroCount +1;
-            } else if (w.endsWith("%")) {
+                zeroCount = zeroCount + 1;
+            } else if (w.includes("%")) {
                 const pct = parseFloat(w);
                 percentTotal += isNaN(pct) ? 0 : pct;
             } else {
-                const n = parseFloat(w);
-                cmTotal += isNaN(n) ? 3 : n;
+                cmTotal += parseFloat(w);
             }
         });
-        const pzCm = (availableWidthCm - cmTotal) /100
+        const pzCm = (availableWidthCm - cmTotal) / 100
         const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal
 
         const colWidthsCm = [];
-        column.widths.forEach((w: string, idx: number) => {
+        column.widths.forEach((w: string) => {
             if (parseFloat(w) === 0.00) {
-                colWidthsCm.push(zeroCm/zeroCount)
+                colWidthsCm.push(zeroCm / zeroCount)
             } else if (w.endsWith("%")) {
                 colWidthsCm.push(parseFloat(w) * pzCm)
             } else {
@@ -73,9 +91,13 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 600 
         const scale = totalCm > 0 ? (zoomWidthPx / (totalCm * pxPerCm)) : 1;
         const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
 
-        // Calculate cell widths in px
+        // Fixed widths for the first two columns (do not scale)
+        const firstColWidthPx = 80;
+        const secondColWidthPx = 80;
+
+        // Calculate cell widths in px (do not include first two columns)
         const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
-        // Calculate grid width in px (should be exactly zoomWidthPx)
+        // Calculate grid width in px (should be exactly zoomWidthPx for data columns only)
         const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
 
         // Calculate cell height in px (use 1.5cm per row for now)
@@ -90,50 +112,160 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 600 
                     background: "#BBB",
                     border: "1px solid #888",
                     padding: 0,
-                    width: gridWidthPx,
+                    width: gridWidthPx + firstColWidthPx + secondColWidthPx,
                 }}
             >
-                <div style={{ textAlign: "center", marginTop: 4, fontSize: 12, color: "#555" }}>
-                    Column {colIdx + 1}
+                {/* Show row with columns widths */}
+                <div
+                    style={{
+                        display: "flex",
+                        margin: 0,
+                        padding: 0,
+                        background: "#e0eaff",
+                        borderBottom: "1px solid #888",
+                    }}
+                >
+                    {/* First column: "Columns" label */}
+                    <div
+                        style={{
+                            width: `${firstColWidthPx}px`,
+                            textAlign: "center",
+                            fontSize: 12,
+                            color: "#333",
+                            background: "#d0eaff",
+                            borderRight: "1px solid #b0c4de",
+                            padding: "2px 0",
+                            boxSizing: "border-box",
+                            fontWeight: "bold",
+                        }}
+                    >
+                        Columns
+                    </div>
+                    {/* Second column: heights info (empty for header row) */}
+                    <div
+                        style={{
+                            width: `${secondColWidthPx}px`,
+                            textAlign: "center",
+                            fontSize: 12,
+                            color: "#333",
+                            background: "#e0f7fa",
+                            borderRight: "1px solid #b0c4de",
+                            padding: "2px 0",
+                            boxSizing: "border-box",
+                        }}
+                    >
+                    </div>
+                    {/* Then the widths columns */}
+                    {cellWidthsPx.map((w, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                width: `${w}px`,
+                                textAlign: "center",
+                                fontSize: 12,
+                                color: "#333",
+                                background: "#e0eaff",
+                                borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
+                                padding: "2px 0",
+                                boxSizing: "border-box",
+                            }}
+                        >
+                            {column.widths[i]}
+                        </div>
+                    ))}
                 </div>
 
-                <div style={{
-                    display: "grid",
-                    gridTemplateColumns: cellWidthsPx.map(w => `${w}px`).join(" "),
-                    gridTemplateRows: `repeat(${rowCount}, ${cellHeightPx}px)`,
-                    gap: 0,
-                    background: "#888",
-                    margin: 0,
-                    padding: 0,
-                }}>
-                    {Array.from({ length: rowCount }).map((_, rowIdx) =>
-                        Array.from({ length: colCount }).map((_, cellIdx) => {
-                            const cellKey = `${cellIdx},${rowIdx}`;
-                            const cell = column.rows[0]?.cells[cellKey];
-                            return (
-                                <div
-                                    key={cellKey}
-                                    style={{
-                                        background: "#fafafa",
-                                        color: "black",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: 14,
-                                        minWidth: 0,
-                                        minHeight: 0,
-                                        border: "1px solid #CCC",
-                                        margin: 0,
-                                        padding: 0,
-                                        boxSizing: "border-box",
-                                    }}
-                                >
-                                    {cell ? cell.data : ""}
-                                </div>
-                            );
-                        })
-                    )}
-                </div>
+                {/* Render each row set as its own grid, with its own row count */}
+                {column.rows.map((rowSet: any, rowSetIdx: number) => {
+                    const rowCount = rowSet.heights.length || 0;
+                    return (
+                        <div
+                            key={rowSetIdx}
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
+                                gridTemplateRows: `repeat(${rowCount}, ${cellHeightPx}px)`,
+                                gap: 0,
+                                background: "#888",
+                                margin: 0,
+                                padding: 0,
+                                borderBottom: rowSetIdx < column.rows.length - 1 ? "2px solid #888" : undefined,
+                            }}
+                        >
+                            {Array.from({ length: rowCount }).map((_, rowIdx) =>
+                                [
+                                    // First column: "Rows" label for first row only
+                                    <div
+                                        key={`label-${rowIdx}`}
+                                        style={{
+                                            background: "#f0f8ff",
+                                            color: "#333",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontSize: 12,
+                                            minWidth: 0,
+                                            minHeight: 0,
+                                            border: "1px solid #CCC",
+                                            margin: 0,
+                                            padding: 0,
+                                            boxSizing: "border-box",
+                                            fontWeight: rowIdx === 0 ? "bold" : undefined,
+                                        }}
+                                    >
+                                        {rowIdx === 0 ? "Rows" : ""}
+                                    </div>,
+                                    // Second column: heights for this row
+                                    <div
+                                        key={`height-${rowIdx}`}
+                                        style={{
+                                            background: "#e0f7fa",
+                                            color: "#333",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            fontSize: 12,
+                                            minWidth: 0,
+                                            minHeight: 0,
+                                            border: "1px solid #CCC",
+                                            margin: 0,
+                                            padding: 0,
+                                            boxSizing: "border-box",
+                                        }}
+                                    >
+                                        {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
+                                    </div>,
+                                    // The grid cells
+                                    ...Array.from({ length: colCount }).map((_, cellIdx) => {
+                                        const cellKey = `${cellIdx},${rowIdx}`;
+                                        const cell = rowSet.cells && rowSet.cells[cellKey];
+                                        return (
+                                            <div
+                                                key={cellKey}
+                                                style={{
+                                                    background: "#fafafa",
+                                                    color: "black",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    fontSize: 14,
+                                                    minWidth: 0,
+                                                    minHeight: 0,
+                                                    border: "1px solid #CCC",
+                                                    margin: 0,
+                                                    padding: 0,
+                                                    boxSizing: "border-box",
+                                                }}
+                                            >
+                                                {cell ? cell.data : ""}
+                                            </div>
+                                        );
+                                    })
+                                ]
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         );
     }
@@ -143,6 +275,7 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 600 
             padding: 0,
             background: "#AAA",
             boxShadow: "0 2px 8px #0002",
+            // maxWidth: `${zoomWidthPx+ 2}px`,
             width: "100%",
             height: "100%",
             overflow: "auto",

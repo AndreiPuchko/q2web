@@ -146,7 +146,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
         col.data.subForm = true;
         return <Form metaData={col.data} />
       case "widget":
-        return col.data()
+        return <col.data />;
       default:
         return <Q2Line {...commonProps} />;
     }
