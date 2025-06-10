@@ -91,6 +91,32 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         ]
     };
 
+    private calcColumnsWidths(column: any, availableWidthCm: number, pxPerCm: number) {
+        let percentTotal = 0, cmTotal = 0, zeroCount = 0;
+        column.widths.forEach((w: string) => {
+            if (parseFloat(w) === 0.00) zeroCount++;
+            else if (w.includes("%")) percentTotal += isNaN(parseFloat(w)) ? 0 : parseFloat(w);
+            else cmTotal += parseFloat(w);
+        });
+        const pzCm = (availableWidthCm - cmTotal) / 100;
+        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal;
+        const colWidthsCm = column.widths.map((w: string) => parseFloat(w) === 0.00
+            ? zeroCm / zeroCount
+            : w.endsWith("%")
+                ? parseFloat(w) * pzCm
+                : parseFloat(w)
+        );
+        const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
+        const scale = totalCm > 0 ? (this.props.zoomWidthPx! / (totalCm * pxPerCm)) : 1;
+        const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
+        const firstColWidthPx = 80;
+        const secondColWidthPx = 80;
+        const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
+        const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
+        const cellHeightPx = 0.5 * pxPerCm;
+        return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx };
+    }
+
     renderReport() {
         const buttonStyle = {
             padding: "6px 18px",
@@ -134,10 +160,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         );
     }
 
-    RenderPage(page: any) {
-        const { zoomWidthPx = 800 } = this.props;
-        const pxPerCm = zoomWidthPx / 18;
+    RenderPage(page: any, pageIdx: number) {
+        const { zoomWidthPx } = this.props;
         const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
+        const pxPerCm = zoomWidthPx / availableWidthCm;
 
         // Render all columns for this page
         return (
@@ -163,7 +189,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                             background: "#f9fbe7",
                         }}
                     >
-                        Page
+                        Page [{pageIdx}]
                     </div>
                     <div
                         style={{
@@ -240,35 +266,12 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                 <div style={{ display: "flex", flexWrap: "wrap", margin: 0, padding: 0 }}>
                     {page.columns.map((column: any, colIdx: number) => {
                         // --- width calculations for each column ---
-                        let percentTotal = 0, cmTotal = 0, zeroCount = 0;
-                        column.widths.forEach((w: string) => {
-                            if (parseFloat(w) === 0.00) zeroCount++;
-                            else if (w.includes("%")) percentTotal += isNaN(parseFloat(w)) ? 0 : parseFloat(w);
-                            else cmTotal += parseFloat(w);
-                        });
-                        const pzCm = (availableWidthCm - cmTotal) / 100;
-                        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal;
-                        const colWidthsCm = column.widths.map((w: string) =>
-                            parseFloat(w) === 0.00
-                                ? zeroCm / zeroCount
-                                : w.endsWith("%")
-                                    ? parseFloat(w) * pzCm
-                                    : parseFloat(w)
-                        );
-                        const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
-                        const scale = totalCm > 0 ? (this.props.zoomWidthPx! / (totalCm * pxPerCm)) : 1;
-                        const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
-                        const firstColWidthPx = 80;
-                        const secondColWidthPx = 80;
-                        const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
-                        const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
-                        const cellHeightPx = 0.5 * pxPerCm;
-
+                        const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx } = this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
                         return (
                             <div
                                 key={colIdx}
                                 style={{
-                                    display: "inline-block",
+                                    display: "flex",
                                     margin: 0,
                                     background: "#BBB",
                                     border: "1px solid #888",
@@ -276,8 +279,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                                     width: gridWidthPx + firstColWidthPx + secondColWidthPx,
                                 }}
                             >
-                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx)}
-                                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
+                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
                             </div>
                         );
                     })}
@@ -286,49 +288,55 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         );
     }
 
-    renderColumns(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number) {
+    renderColumns(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number, cellHeightPx: number) {
         return (
-            <div
-                style={{
-                    display: "flex",
-                    margin: 0,
-                    padding: 0,
-                    background: "#e0eaff",
-                    borderBottom: "1px solid #888",
-                }}
-            >
+            <div style={{
+                
+            }}>
                 <div
                     style={{
-                        width: `${firstColWidthPx + secondColWidthPx}px`,
-                        textAlign: "center",
-                        fontSize: 12,
-                        color: "#333",
-                        background: "#d0eaff",
-                        borderRight: "1px solid #b0c4de",
-                        padding: "2px 0",
-                        boxSizing: "border-box",
-                        fontWeight: "bold",
+                        display: "flex",
+                        margin: 0,
+                        padding: 0,
+                        background: "#e0eaff",
+                        borderBottom: "1px solid #888",
                     }}
                 >
-                    Columns
-                </div>
-                {cellWidthsPx.map((w, i) => (
                     <div
-                        key={i}
                         style={{
-                            width: `${w}px`,
+                            width: `${firstColWidthPx + secondColWidthPx + 1}px`,
                             textAlign: "center",
                             fontSize: 12,
                             color: "#333",
-                            background: "#e0eaff",
-                            borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
+                            background: "#d0eaff",
+                            borderRight: "1px solid #b0c4de",
                             padding: "2px 0",
                             boxSizing: "border-box",
+                            fontWeight: "bold",
                         }}
                     >
-                        {column.widths[i]}
+                        Columns
                     </div>
-                ))}
+                    {cellWidthsPx.map((w, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                width: `${w}px`,
+                                textAlign: "center",
+                                fontSize: 12,
+                                color: "#333",
+                                background: "#e0eaff",
+                                borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
+                                padding: "2px 0",
+                                boxSizing: "border-box",
+                            }}
+                        >
+                            {column.widths[i]}
+                        </div>
+                    ))}
+                </div>
+                {/* Render rows section here */}
+                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
             </div>
         );
     }
@@ -443,7 +451,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                 {this.renderReport()}
                 {this.report.pages.map((page, pageIdx) => (
                     <div key={pageIdx} style={{ marginBottom: 12 }}>
-                        {this.RenderPage(page)}
+                        {this.RenderPage(page, pageIdx)}
                     </div>
                 ))}
             </div>
