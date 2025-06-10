@@ -1,7 +1,15 @@
-import React from "react";
+import React, { Component } from "react";
 
-const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 }) => {
-    const report = {
+interface Q2ReportEditorProps {
+    zoomWidthPx?: number;
+}
+
+class Q2ReportEditor extends Component<Q2ReportEditorProps> {
+    static defaultProps = {
+        zoomWidthPx: 800,
+    };
+
+    report = {
         pages: [
             {
                 page_width: 21.0,
@@ -12,7 +20,7 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                 page_margin_bottom: 2.0,
                 columns: [
                     {
-                        widths: ["10%", "20%", "0.0", "3.00", "3.0"],
+                        widths: ["20%", "20%", "0.0", "3.00", "3.0"],
                         rows: [{
                             heights: ["0-0", "0-0", "0-0", "0-0.30", "0-0"],
                             cells: {
@@ -83,20 +91,54 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
         ]
     };
 
-    // Calculate px per cm based on 18cm = zoomWidthPx
-    const pxPerCm = zoomWidthPx / 18;
-
-    // Get page and margins
-    const page = report.pages[0];
-    const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
-
-    // Helper to render page section for a column
-    function RenderPage(page: any, colCount: number, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number) {
+    renderReport() {
+        const buttonStyle = {
+            padding: "6px 18px",
+            fontSize: 12, 
+            borderRadius: "10px",
+            width: "10cap"
+        };
         return (
             <div
                 style={{
-                    display: "grid",
-                    gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
+                    display: "flex",
+                    alignItems: "center",
+                    background: "#f0f0f0",
+                    borderBottom: "2px solid #888",
+                    marginBottom: 2,
+                    minHeight: 40,
+                }}
+            >
+                <div
+                    style={{
+                        width: 162,
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        color: "#333",
+                        textAlign: "center",
+                        background: "#e0e0e0",
+                        padding: "8px 0",
+                        borderRight: "1px solid #b0b0b0",
+                        boxSizing: "border-box",
+                    }}
+                >
+                    Report
+                </div>
+                <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
+                    <button style={buttonStyle}>HTML</button>
+                    <button style={buttonStyle}>DOCX</button>
+                    <button style={buttonStyle}>XLSX</button>
+                    <button style={buttonStyle}>PDF</button>
+                </div>
+            </div>
+        );
+    }
+
+    RenderPage(page: any) {
+        return (
+            <div
+                style={{
+                    display: "flex",
                     background: "#f9fbe7",
                     borderBottom: "2px solid #888",
                     alignItems: "center",
@@ -105,7 +147,7 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                 {/* Span col 1 and 2 */}
                 <div
                     style={{
-                        gridColumn: "1 / span 2",
+                        width: 161,
                         padding: "4px 0",
                         textAlign: "center",
                         fontWeight: "bold",
@@ -117,10 +159,8 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                 >
                     Page
                 </div>
-                {/* Span col 3 to end */}
                 <div
                     style={{
-                        gridColumn: `3 / span ${colCount}`,
                         display: "flex",
                         alignItems: "center",
                         gap: 12,
@@ -193,8 +233,7 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
         );
     }
 
-    // Helper to render columns widths row for a column
-    function renderColumns(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number) {
+    renderColumns(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number) {
         return (
             <div
                 style={{
@@ -243,8 +282,7 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
         );
     }
 
-    // Helper to render rows section for a column
-    function RenderRows(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number, cellHeightPx: number) {
+    RenderRows(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number, cellHeightPx: number) {
         const colCount = column.widths.length;
         return column.rows.map((rowSet: any, rowSetIdx: number) => {
             const rowCount = rowSet.heights.length || 0;
@@ -343,8 +381,8 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
         });
     }
 
-    function renderGrid(column: any, colIdx: number) {
-        const rowCount = column.rows[0]?.heights.length || 0; // Use heights to determine rows
+    renderGrid(column: any, colIdx: number, availableWidthCm: number, pxPerCm: number, zoomWidthPx: number) {
+        const rowCount = column.rows[0]?.heights.length || 0;
         const colCount = column.widths.length;
 
         // Parse widths and classify columns
@@ -362,20 +400,19 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                 cmTotal += parseFloat(w);
             }
         });
-        const pzCm = (availableWidthCm - cmTotal) / 100
-        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal
+        const pzCm = (availableWidthCm - cmTotal) / 100;
+        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal;
 
         const colWidthsCm = [];
         column.widths.forEach((w: string) => {
             if (parseFloat(w) === 0.00) {
-                colWidthsCm.push(zeroCm / zeroCount)
+                colWidthsCm.push(zeroCm / zeroCount);
             } else if (w.endsWith("%")) {
-                colWidthsCm.push(parseFloat(w) * pzCm)
+                colWidthsCm.push(parseFloat(w) * pzCm);
             } else {
-                colWidthsCm.push(parseFloat(w))
+                colWidthsCm.push(parseFloat(w));
             }
         });
-
 
         // --- Correction: scale all columns so their sum in px is exactly zoomWidthPx ---
         const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
@@ -407,98 +444,45 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                 }}
             >
                 {/* Show row with columns widths */}
-                {renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx)}
+                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx)}
                 {/* Render rows section */}
-                {RenderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
+                {this.RenderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
             </div>
         );
     }
 
-    // Helper to render the report row (title and export buttons)
-    function renderReport() {
+    render() {
+        const { zoomWidthPx = 800 } = this.props;
+        const pxPerCm = zoomWidthPx / 18;
+
         return (
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    background: "#f0f0f0",
-                    borderBottom: "2px solid #888",
-                    marginBottom: 2,
-                    minHeight: 40,
-                }}
-            >
-                <div
-                    style={{
-                        width: 160,
-                        fontWeight: "bold",
-                        fontSize: 14,
-                        color: "#333",
-                        textAlign: "center",
-                        background: "#e0e0e0",
-                        padding: "8px 0",
-                        borderRight: "1px solid #b0b0b0",
-                        boxSizing: "border-box",
-                    }}
-                >
-                    Report
-                </div>
-                <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
-                    <button style={{ padding: "6px 18px", fontSize: 12 }}>HTML</button>
-                    <button style={{ padding: "6px 18px", fontSize: 12 }}>DOCX</button>
-                    <button style={{ padding: "6px 18px", fontSize: 12 }}>XLSX</button>
-                    <button style={{ padding: "6px 18px", fontSize: 12 }}>PDF</button>
-                </div>
+            <div style={{
+                padding: 0,
+                background: "#AAA",
+                boxShadow: "0 2px 8px #0002",
+                // maxWidth: `${zoomWidthPx+ 2}px`,
+                width: "100%",
+                height: "100%",
+                overflow: "auto",
+                marginTop: "50px",
+            }}>
+                {this.renderReport()}
+                {this.report.pages.map((page, pageIdx) => {
+                    const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
+                    return (
+                        <div key={pageIdx} style={{ marginBottom: 12 }}>
+                            {this.RenderPage(page)}
+                            <div style={{ display: "flex", flexWrap: "wrap", margin: 0, padding: 0 }}>
+                                {page.columns.map((col, idx) =>
+                                    this.renderGrid(col, idx, availableWidthCm, pxPerCm, zoomWidthPx)
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         );
     }
-
-    return (
-        <div style={{
-            padding: 0,
-            background: "#AAA",
-            boxShadow: "0 2px 8px #0002",
-            // maxWidth: `${zoomWidthPx+ 2}px`,
-            width: "100%",
-            height: "100%",
-            overflow: "auto",
-            marginTop: "50px",
-        }}>
-            {renderReport()}
-            {report.pages.map((page, pageIdx) => (
-                <div key={pageIdx} style={{ marginBottom: 12 }}>
-                    {RenderPage(page, page.columns[0].widths.length,
-                        (() => {
-                            const column = page.columns[0];
-                            let percentTotal = 0, cmTotal = 0, zeroCount = 0;
-                            column.widths.forEach((w: string) => {
-                                if (parseFloat(w) === 0.00) zeroCount++;
-                                else if (w.includes("%")) percentTotal += isNaN(parseFloat(w)) ? 0 : parseFloat(w);
-                                else cmTotal += parseFloat(w);
-                            });
-                            const pzCm = (page.page_width - page.page_margin_left - page.page_margin_right - cmTotal) / 100;
-                            const zeroCm = page.page_width - page.page_margin_left - page.page_margin_right - cmTotal - pzCm * percentTotal;
-                            const colWidthsCm = column.widths.map((w: string) =>
-                                parseFloat(w) === 0.00
-                                    ? zeroCm / zeroCount
-                                    : w.endsWith("%")
-                                        ? parseFloat(w) * pzCm
-                                        : parseFloat(w)
-                            );
-                            const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
-                            const pxPerCm = zoomWidthPx / 18;
-                            const scale = totalCm > 0 ? (zoomWidthPx / (totalCm * pxPerCm)) : 1;
-                            const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
-                            return scaledColWidthsCm.map(cm => cm * pxPerCm);
-                        })(),
-                        80, 80
-                    )}
-                    <div style={{ display: "flex", flexWrap: "wrap", margin: 0, padding: 0 }}>
-                        {page.columns.map((col, idx) => renderGrid(col, idx))}
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-};
+}
 
 export { Q2ReportEditor };
