@@ -94,7 +94,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
     renderReport() {
         const buttonStyle = {
             padding: "6px 18px",
-            fontSize: 12, 
+            fontSize: 12,
             borderRadius: "10px",
             width: "10cap"
         };
@@ -135,99 +135,152 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
     }
 
     RenderPage(page: any) {
+        const { zoomWidthPx = 800 } = this.props;
+        const pxPerCm = zoomWidthPx / 18;
+        const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
+
+        // Render all columns for this page
         return (
-            <div
-                style={{
-                    display: "flex",
-                    background: "#f9fbe7",
-                    borderBottom: "2px solid #888",
-                    alignItems: "center",
-                }}
-            >
-                {/* Span col 1 and 2 */}
-                <div
-                    style={{
-                        width: 161,
-                        padding: "4px 0",
-                        textAlign: "center",
-                        fontWeight: "bold",
-                        fontSize: 13,
-                        color: "#444",
-                        borderRight: "1px solid #b0c4de",
-                        background: "#f9fbe7",
-                    }}
-                >
-                    Page
-                </div>
+            <div>
+                {/* Page info row */}
                 <div
                     style={{
                         display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        padding: "4px 8px",
                         background: "#f9fbe7",
+                        borderBottom: "2px solid #888",
+                        alignItems: "center",
                     }}
                 >
-                    <label style={{ fontSize: 12, color: "#333" }}>
-                        W:
-                        <input
-                            type="number"
-                            value={page.page_width.toFixed(2)}
-                            step="0.01"
-                            style={{ width: 60, marginLeft: 2, marginRight: 8 }}
-                            readOnly
-                        />
-                    </label>
-                    <label style={{ fontSize: 12, color: "#333" }}>
-                        H:
-                        <input
-                            type="number"
-                            value={page.page_height.toFixed(2)}
-                            step="0.01"
-                            style={{ width: 60, marginLeft: 2, marginRight: 8 }}
-                            readOnly
-                        />
-                    </label>
-                    <label style={{ fontSize: 12, color: "#333" }}>
-                        ML:
-                        <input
-                            type="number"
-                            value={page.page_margin_left.toFixed(2)}
-                            step="0.01"
-                            style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
-                        />
-                    </label>
-                    <label style={{ fontSize: 12, color: "#333" }}>
-                        MT:
-                        <input
-                            type="number"
-                            value={page.page_margin_top.toFixed(2)}
-                            step="0.01"
-                            style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
-                        />
-                    </label>
-                    <label style={{ fontSize: 12, color: "#333" }}>
-                        MR:
-                        <input
-                            type="number"
-                            value={page.page_margin_right.toFixed(2)}
-                            step="0.01"
-                            style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
-                        />
-                    </label>
-                    <label style={{ fontSize: 12, color: "#333" }}>
-                        MB:
-                        <input
-                            type="number"
-                            value={page.page_margin_bottom.toFixed(2)}
-                            step="0.01"
-                            style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
-                        />
-                    </label>
+                    <div
+                        style={{
+                            width: 161,
+                            padding: "4px 0",
+                            textAlign: "center",
+                            fontWeight: "bold",
+                            fontSize: 13,
+                            color: "#444",
+                            borderRight: "1px solid #b0c4de",
+                            background: "#f9fbe7",
+                        }}
+                    >
+                        Page
+                    </div>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                            padding: "4px 8px",
+                            background: "#f9fbe7",
+                        }}
+                    >
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            W:
+                            <input
+                                type="number"
+                                value={page.page_width.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 60, marginLeft: 2, marginRight: 8 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            H:
+                            <input
+                                type="number"
+                                value={page.page_height.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 60, marginLeft: 2, marginRight: 8 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            ML:
+                            <input
+                                type="number"
+                                value={page.page_margin_left.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            MT:
+                            <input
+                                type="number"
+                                value={page.page_margin_top.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            MR:
+                            <input
+                                type="number"
+                                value={page.page_margin_right.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            MB:
+                            <input
+                                type="number"
+                                value={page.page_margin_bottom.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                    </div>
+                </div>
+                {/* Columns and rows for each column */}
+                <div style={{ display: "flex", flexWrap: "wrap", margin: 0, padding: 0 }}>
+                    {page.columns.map((column: any, colIdx: number) => {
+                        // --- width calculations for each column ---
+                        let percentTotal = 0, cmTotal = 0, zeroCount = 0;
+                        column.widths.forEach((w: string) => {
+                            if (parseFloat(w) === 0.00) zeroCount++;
+                            else if (w.includes("%")) percentTotal += isNaN(parseFloat(w)) ? 0 : parseFloat(w);
+                            else cmTotal += parseFloat(w);
+                        });
+                        const pzCm = (availableWidthCm - cmTotal) / 100;
+                        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal;
+                        const colWidthsCm = column.widths.map((w: string) =>
+                            parseFloat(w) === 0.00
+                                ? zeroCm / zeroCount
+                                : w.endsWith("%")
+                                    ? parseFloat(w) * pzCm
+                                    : parseFloat(w)
+                        );
+                        const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
+                        const scale = totalCm > 0 ? (this.props.zoomWidthPx! / (totalCm * pxPerCm)) : 1;
+                        const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
+                        const firstColWidthPx = 80;
+                        const secondColWidthPx = 80;
+                        const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
+                        const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
+                        const cellHeightPx = 0.5 * pxPerCm;
+
+                        return (
+                            <div
+                                key={colIdx}
+                                style={{
+                                    display: "inline-block",
+                                    margin: 0,
+                                    background: "#BBB",
+                                    border: "1px solid #888",
+                                    padding: 0,
+                                    width: gridWidthPx + firstColWidthPx + secondColWidthPx,
+                                }}
+                            >
+                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx)}
+                                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         );
@@ -244,7 +297,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                     borderBottom: "1px solid #888",
                 }}
             >
-                {/* First and second columns merged: "Columns" label */}
                 <div
                     style={{
                         width: `${firstColWidthPx + secondColWidthPx}px`,
@@ -260,7 +312,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                 >
                     Columns
                 </div>
-                {/* Then the widths columns */}
                 {cellWidthsPx.map((w, i) => (
                     <div
                         key={i}
@@ -282,7 +333,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         );
     }
 
-    RenderRows(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number, cellHeightPx: number) {
+    renderRows(column: any, cellWidthsPx: number[], firstColWidthPx: number, secondColWidthPx: number, cellHeightPx: number) {
         const colCount = column.widths.length;
         return column.rows.map((rowSet: any, rowSetIdx: number) => {
             const rowCount = rowSet.heights.length || 0;
@@ -300,7 +351,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                         borderBottom: rowSetIdx < column.rows.length - 1 ? "2px solid #888" : undefined,
                     }}
                 >
-                    {/* First column: "Rows" label spanning all rows */}
                     <div
                         style={{
                             background: "#f0f8ff",
@@ -322,7 +372,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                     >
                         Rows
                     </div>
-                    {/* Second column: heights for each row */}
                     {Array.from({ length: rowCount }).map((_, rowIdx) => (
                         <div
                             key={`height-${rowIdx}`}
@@ -346,7 +395,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                             {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
                         </div>
                     ))}
-                    {/* The grid cells */}
                     {Array.from({ length: rowCount }).map((_, rowIdx) =>
                         Array.from({ length: colCount }).map((_, cellIdx) => {
                             const cellKey = `${cellIdx},${rowIdx}`;
@@ -381,105 +429,23 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
         });
     }
 
-    renderGrid(column: any, colIdx: number, availableWidthCm: number, pxPerCm: number, zoomWidthPx: number) {
-        const rowCount = column.rows[0]?.heights.length || 0;
-        const colCount = column.widths.length;
-
-        // Parse widths and classify columns
-        let percentTotal = 0;
-        let cmTotal = 0;
-        let zeroCount = 0;
-
-        column.widths.forEach((w: string) => {
-            if (parseFloat(w) === 0.00) {
-                zeroCount = zeroCount + 1;
-            } else if (w.includes("%")) {
-                const pct = parseFloat(w);
-                percentTotal += isNaN(pct) ? 0 : pct;
-            } else {
-                cmTotal += parseFloat(w);
-            }
-        });
-        const pzCm = (availableWidthCm - cmTotal) / 100;
-        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal;
-
-        const colWidthsCm = [];
-        column.widths.forEach((w: string) => {
-            if (parseFloat(w) === 0.00) {
-                colWidthsCm.push(zeroCm / zeroCount);
-            } else if (w.endsWith("%")) {
-                colWidthsCm.push(parseFloat(w) * pzCm);
-            } else {
-                colWidthsCm.push(parseFloat(w));
-            }
-        });
-
-        // --- Correction: scale all columns so their sum in px is exactly zoomWidthPx ---
-        const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
-        const scale = totalCm > 0 ? (zoomWidthPx / (totalCm * pxPerCm)) : 1;
-        const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
-
-        // Fixed widths for the first two columns (do not scale)
-        const firstColWidthPx = 80;
-        const secondColWidthPx = 80;
-
-        // Calculate cell widths in px (do not include first two columns)
-        const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
-        // Calculate grid width in px (should be exactly zoomWidthPx for data columns only)
-        const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
-
-        // Calculate cell height in px (use 1.5cm per row for now)
-        const cellHeightPx = 0.5 * pxPerCm;
-
-        return (
-            <div
-                key={colIdx}
-                style={{
-                    display: "inline-block",
-                    margin: 0,
-                    background: "#BBB",
-                    border: "1px solid #888",
-                    padding: 0,
-                    width: gridWidthPx + firstColWidthPx + secondColWidthPx,
-                }}
-            >
-                {/* Show row with columns widths */}
-                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx)}
-                {/* Render rows section */}
-                {this.RenderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx)}
-            </div>
-        );
-    }
-
     render() {
-        const { zoomWidthPx = 800 } = this.props;
-        const pxPerCm = zoomWidthPx / 18;
-
         return (
             <div style={{
                 padding: 0,
                 background: "#AAA",
                 boxShadow: "0 2px 8px #0002",
-                // maxWidth: `${zoomWidthPx+ 2}px`,
                 width: "100%",
                 height: "100%",
                 overflow: "auto",
                 marginTop: "50px",
             }}>
                 {this.renderReport()}
-                {this.report.pages.map((page, pageIdx) => {
-                    const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
-                    return (
-                        <div key={pageIdx} style={{ marginBottom: 12 }}>
-                            {this.RenderPage(page)}
-                            <div style={{ display: "flex", flexWrap: "wrap", margin: 0, padding: 0 }}>
-                                {page.columns.map((col, idx) =>
-                                    this.renderGrid(col, idx, availableWidthCm, pxPerCm, zoomWidthPx)
-                                )}
-                            </div>
-                        </div>
-                    );
-                })}
+                {this.report.pages.map((page, pageIdx) => (
+                    <div key={pageIdx} style={{ marginBottom: 12 }}>
+                        {this.RenderPage(page)}
+                    </div>
+                ))}
             </div>
         );
     }
