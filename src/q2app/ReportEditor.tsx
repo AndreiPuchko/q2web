@@ -6,7 +6,7 @@ interface Q2ReportEditorProps {
 
 class Q2ReportEditor extends Component<Q2ReportEditorProps> {
     static defaultProps = {
-        zoomWidthPx: 800,
+        zoomWidthPx: 700,
     };
 
     report = {
@@ -263,7 +263,15 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps> {
                     </div>
                 </div>
                 {/* Columns and rows for each column */}
-                <div style={{ display: "flex", flexWrap: "wrap", margin: 0, padding: 0 }}>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column", // Ensure columns are stacked vertically
+                        flexWrap: "nowrap",
+                        margin: 0,
+                        padding: 0,
+                    }}
+                >
                     {page.columns.map((column: any, colIdx: number) => {
                         // --- width calculations for each column ---
                         const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx } = this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
