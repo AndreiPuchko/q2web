@@ -115,6 +115,104 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                     width: gridWidthPx + firstColWidthPx + secondColWidthPx,
                 }}
             >
+                {/* Page row: spans first two columns and the rest, with inputs for page sizes and margins */}
+                <div
+                    style={{
+                        display: "grid",
+                        gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
+                        background: "#f9fbe7",
+                        borderBottom: "2px solid #888",
+                        alignItems: "center",
+                    }}
+                >
+                    {/* Span col 1 and 2 */}
+                    <div
+                        style={{
+                            gridColumn: "1 / span 2",
+                            padding: "4px 0",
+                            textAlign: "center",
+                            fontWeight: "bold",
+                            fontSize: 13,
+                            color: "#444",
+                            borderRight: "1px solid #b0c4de",
+                            background: "#f9fbe7",
+                        }}
+                    >
+                        Page
+                    </div>
+                    {/* Span col 3 to end */}
+                    <div
+                        style={{
+                            gridColumn: `3 / span ${colCount}`,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 12,
+                            padding: "4px 8px",
+                            background: "#f9fbe7",
+                        }}
+                    >
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            W:
+                            <input
+                                type="number"
+                                value={page.page_width.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 60, marginLeft: 2, marginRight: 8 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            H:
+                            <input
+                                type="number"
+                                value={page.page_height.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 60, marginLeft: 2, marginRight: 8 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            ML:
+                            <input
+                                type="number"
+                                value={page.page_margin_left.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            MT:
+                            <input
+                                type="number"
+                                value={page.page_margin_top.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            MR:
+                            <input
+                                type="number"
+                                value={page.page_margin_right.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                        <label style={{ fontSize: 12, color: "#333" }}>
+                            MB:
+                            <input
+                                type="number"
+                                value={page.page_margin_bottom.toFixed(2)}
+                                step="0.01"
+                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
+                                readOnly
+                            />
+                        </label>
+                    </div>
+                </div>
                 {/* Show row with columns widths */}
                 <div
                     style={{
@@ -125,10 +223,10 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                         borderBottom: "1px solid #888",
                     }}
                 >
-                    {/* First column: "Columns" label */}
+                    {/* First and second columns merged: "Columns" label */}
                     <div
                         style={{
-                            width: `${firstColWidthPx}px`,
+                            width: `${firstColWidthPx + secondColWidthPx}px`,
                             textAlign: "center",
                             fontSize: 12,
                             color: "#333",
@@ -140,20 +238,6 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                         }}
                     >
                         Columns
-                    </div>
-                    {/* Second column: heights info (empty for header row) */}
-                    <div
-                        style={{
-                            width: `${secondColWidthPx}px`,
-                            textAlign: "center",
-                            fontSize: 12,
-                            color: "#333",
-                            background: "#e0f7fa",
-                            borderRight: "1px solid #b0c4de",
-                            padding: "2px 0",
-                            boxSizing: "border-box",
-                        }}
-                    >
                     </div>
                     {/* Then the widths columns */}
                     {cellWidthsPx.map((w, i) => (
@@ -174,7 +258,6 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                         </div>
                     ))}
                 </div>
-
                 {/* Render each row set as its own grid, with its own row count */}
                 {column.rows.map((rowSet: any, rowSetIdx: number) => {
                     const rowCount = rowSet.heights.length || 0;
@@ -192,76 +275,81 @@ const Q2ReportEditor: React.FC<{ zoomWidthPx?: number }> = ({ zoomWidthPx = 800 
                                 borderBottom: rowSetIdx < column.rows.length - 1 ? "2px solid #888" : undefined,
                             }}
                         >
+                            {/* First column: "Rows" label spanning all rows */}
+                            <div
+                                style={{
+                                    background: "#f0f8ff",
+                                    color: "#333",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: 12,
+                                    minWidth: 0,
+                                    minHeight: 0,
+                                    border: "1px solid #CCC",
+                                    margin: 0,
+                                    padding: 0,
+                                    boxSizing: "border-box",
+                                    fontWeight: "bold",
+                                    gridRow: `1 / span ${rowCount}`,
+                                    gridColumn: "1 / 2",
+                                }}
+                            >
+                                Rows
+                            </div>
+                            {/* Second column: heights for each row */}
+                            {Array.from({ length: rowCount }).map((_, rowIdx) => (
+                                <div
+                                    key={`height-${rowIdx}`}
+                                    style={{
+                                        background: "#e0f7fa",
+                                        color: "#333",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        fontSize: 12,
+                                        minWidth: 0,
+                                        minHeight: 0,
+                                        border: "1px solid #CCC",
+                                        margin: 0,
+                                        padding: 0,
+                                        boxSizing: "border-box",
+                                        gridColumn: "2 / 3",
+                                        gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
+                                    }}
+                                >
+                                    {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
+                                </div>
+                            ))}
+                            {/* The grid cells */}
                             {Array.from({ length: rowCount }).map((_, rowIdx) =>
-                                [
-                                    // First column: "Rows" label for first row only
-                                    <div
-                                        key={`label-${rowIdx}`}
-                                        style={{
-                                            background: "#f0f8ff",
-                                            color: "#333",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            fontSize: 12,
-                                            minWidth: 0,
-                                            minHeight: 0,
-                                            border: "1px solid #CCC",
-                                            margin: 0,
-                                            padding: 0,
-                                            boxSizing: "border-box",
-                                            fontWeight: rowIdx === 0 ? "bold" : undefined,
-                                        }}
-                                    >
-                                        {rowIdx === 0 ? "Rows" : ""}
-                                    </div>,
-                                    // Second column: heights for this row
-                                    <div
-                                        key={`height-${rowIdx}`}
-                                        style={{
-                                            background: "#e0f7fa",
-                                            color: "#333",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            fontSize: 12,
-                                            minWidth: 0,
-                                            minHeight: 0,
-                                            border: "1px solid #CCC",
-                                            margin: 0,
-                                            padding: 0,
-                                            boxSizing: "border-box",
-                                        }}
-                                    >
-                                        {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
-                                    </div>,
-                                    // The grid cells
-                                    ...Array.from({ length: colCount }).map((_, cellIdx) => {
-                                        const cellKey = `${cellIdx},${rowIdx}`;
-                                        const cell = rowSet.cells && rowSet.cells[cellKey];
-                                        return (
-                                            <div
-                                                key={cellKey}
-                                                style={{
-                                                    background: "#fafafa",
-                                                    color: "black",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    fontSize: 14,
-                                                    minWidth: 0,
-                                                    minHeight: 0,
-                                                    border: "1px solid #CCC",
-                                                    margin: 0,
-                                                    padding: 0,
-                                                    boxSizing: "border-box",
-                                                }}
-                                            >
-                                                {cell ? cell.data : ""}
-                                            </div>
-                                        );
-                                    })
-                                ]
+                                Array.from({ length: colCount }).map((_, cellIdx) => {
+                                    const cellKey = `${cellIdx},${rowIdx}`;
+                                    const cell = rowSet.cells && rowSet.cells[cellKey];
+                                    return (
+                                        <div
+                                            key={cellKey}
+                                            style={{
+                                                background: "#fafafa",
+                                                color: "black",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontSize: 14,
+                                                minWidth: 0,
+                                                minHeight: 0,
+                                                border: "1px solid #CCC",
+                                                margin: 0,
+                                                padding: 0,
+                                                boxSizing: "border-box",
+                                                gridColumn: `${cellIdx + 3} / ${cellIdx + 4}`,
+                                                gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
+                                            }}
+                                        >
+                                            {cell ? cell.data : ""}
+                                        </div>
+                                    );
+                                })
                             )}
                         </div>
                     );
