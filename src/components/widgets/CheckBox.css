@@ -1,28 +1,28 @@
 .Q2CheckBox {
-    align-items: center;
+  align-items: center;
 }
 
 input1 {
-        appearance: none;
-        position: relative;
-        width: 1.5cap;
-        height: 1.5cap;
-        border: 1px solid;
-        line-height: 1;
-        background: #aaa;
-      }
-      
-      input[type="checkbox"]::before {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        white-space: pre;
-        content: " ";
-      }
-      
-      input[type="checkbox"]:checked::before {
-        content: "\2713";
-        font-size: 1.3cap;
-        background-color: red;
-      }
+  appearance: none;
+  position: relative;
+  width: 1.5cap;
+  height: 1.5cap;
+  border: 1px solid;
+  line-height: 1;
+  background: #aaa;
+}
+
+input[type="checkbox"]::before {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  white-space: pre;
+  content: " ";
+}
+
+input[type="checkbox"]:checked::before {
+  content: "\2713";
+  font-size: 1.3cap;
+  background-color: red;
+}

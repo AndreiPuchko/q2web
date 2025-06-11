@@ -233,6 +233,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
         {panel.label && <div className="group-box-title">{panel.label}</div>}
         <div style={style}>
           {panel.children.map((child: any, index: number) => {
+            const id = `${child.column}-control-cb`;
             if (child.children) {
               return (
                 <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
@@ -243,11 +244,11 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
               return (
                 <>
                   {child.check ?
-                    
-                    <label className="Q2CheckBox-label">{child.label}</label>
-                      // <input type="text" type="checkbox" />
-                      
-                    
+                    <div style={{ justifySelf: "end", marginRight: "0.1em" }}>
+                      <input id={id} type="checkbox" />
+                      <label htmlFor={id}
+                      >{child.control === "check" ? "on" : child.label}</label>
+                    </div>
                     : <label
                       key={child.key + "-label"}
                       className="form-label"
@@ -256,7 +257,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
                       {child.label ? child.label : ""}
                     </label>
                   }
-
 
                   <div key={child.key || index} className="form-group" >
                     {this.renderInput(child)}
