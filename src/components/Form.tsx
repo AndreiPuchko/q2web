@@ -9,6 +9,8 @@ import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
 import { columns } from "../data_modules/data";
+import { LiaBell } from "react-icons/lia";
+import { DiVim } from "react-icons/di";
 
 interface FormProps {
   metaData: Q2Form;
@@ -221,16 +223,28 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
       rootStyle.padding = "0px";
     }
 
-    console.log(panel?.metadata?.alignment)
-
-
     if (!root && (panel.column === "/v" || panel.column === "/f")) {
       // rootStyle.width = '100%';
     }
-
+  const panel_id = `${panel.key}-panel-id`;
     return (
+      
       <div className={className} style={rootStyle} key={panel.key}>
-        {panel.label && <div className="group-box-title">{panel.label}</div>}
+        {[""].map(() => {
+          if (panel.label) {
+              console.log(panel.metadata)
+            if (panel.metadata.check) {
+              return <div className="group-box-title">
+                <input id={panel_id} type="checkbox" />
+                <label htmlFor={panel_id}>{panel.label}</label>
+              </div>
+            }
+            else {
+              return <div className="group-box-title">{panel.label}</div>
+            }
+
+          }
+        })}
         <div style={style}>
           {panel.children.map((child: any, index: number) => {
             const id = `${child.column}-control-cb`;
@@ -247,7 +261,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
                     <div style={{ justifySelf: "end", marginRight: "0.1em" }}>
                       <input id={id} type="checkbox" />
                       <label htmlFor={id}
-                      >{child.control === "check" ? "on" : child.label}</label>
+                      >{child.control === "check" ? "Turn on" : child.label}</label>
                     </div>
                     : <label
                       key={child.key + "-label"}
