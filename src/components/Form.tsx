@@ -207,6 +207,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     let className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
     let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
     const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
+    const fieldSetStyle = { border: "none", margin: 0, padding: 0, width: "100%" };
 
     if (panel.column === "/f") {
       // 2-column grid: label right, input left
@@ -243,8 +244,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     const hasCheck = panel.metadata?.check;
     const checked = hasCheck
       ? (this.state.panelChecks[panel.key] !== undefined
-          ? this.state.panelChecks[panel.key]
-          : true)
+        ? this.state.panelChecks[panel.key]
+        : true)
       : true;
 
     // Only disable the panel content, not the checkbox itself
@@ -266,7 +267,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
           )
         )}
         <fieldset
-          style={{ border: "none", margin: 0, padding: 0, width: "100%" }}
+          style={fieldSetStyle}
           disabled={hasCheck && !checked}
         >
           <div style={style}>
@@ -283,9 +284,23 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                   <>
                     {child.check ?
                       <div style={{ justifySelf: "end", marginRight: "0.1em" }}>
-                        <input id={id} type="checkbox" />
-                        <label htmlFor={id}
-                        >{child.control === "check" ? "Turn on" : child.label}</label>
+                        <input
+                          id={id}
+                          type="checkbox"
+                          checked={!!this.state.formData?.[child.column]}
+                          onChange={e => {
+                            const checked = e.target.checked;
+                            this.setState(prevState => ({
+                              formData: {
+                                ...prevState.formData,
+                                [child.column]: checked
+                              }
+                            }));
+                          }}
+                        />
+                        <label htmlFor={id}>
+                          {child.control === "check" ? "Turn on" : child.label}
+                        </label>
                       </div>
                       : <label
                         key={child.key + "-label"}
@@ -297,7 +312,16 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                     }
 
                     <div key={child.key || index} className="form-group" >
-                      {this.renderInput(child)}
+                      {child.check ? (
+                        <fieldset
+                          style={fieldSetStyle}
+                          disabled={!this.state.formData?.[child.column]}
+                        >
+                          {this.renderInput(child)}
+                        </fieldset>
+                      ) : (
+                        this.renderInput(child)
+                      )}
                     </div>
                   </>
                 );

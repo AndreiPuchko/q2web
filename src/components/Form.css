@@ -6,6 +6,7 @@
   --form-groupbox-bg: #23272f;
   --form-input-bg: lightgray;
   --form-input: black;
+  --form-input-focus: black;
 }
 
 .theme-light {
@@ -15,6 +16,7 @@
   --form-groupbox-bg: #f5f5f5;
   --form-input-bg: rgb(225, 242, 245);
   --form-input: black;
+  --form-input-focus: rgb(186, 226, 240);
 }
 
 .theme-dark {
@@ -24,6 +26,7 @@
   --form-groupbox-bg: #23272f;
   --form-input-bg: gray;
   --form-input: white;
+  --form-input-focus: black;
 }
 
 * {
@@ -40,7 +43,7 @@ button {
 .Q2Button:focus,
 .Q2Text:focus,
 .Q2Line:focus {
-  background-color: Highlight;
+  background-color:  var(--form-input-focus);
 }
 
 .Q2RadioButton,
