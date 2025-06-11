@@ -5,15 +5,19 @@ import { WidgetProps } from './Widget';
 interface Q2LineProps extends WidgetProps { }
 
 class Q2Line extends Widget<Q2LineProps> {
+    // focus() {
+    //     const { id } = this.props;
+    //     document.getElementById(id)?.focus()
+    // }
+
     render() {
         const { col, onChange, readOnly, id, name } = this.props;
         const style = {
             width: '100%',
         };
 
-        if (col?.datalen)
-        {
-        style.maxWidth = `${col.datalen}cap`
+        if (col?.datalen) {
+            style.maxWidth = `${col.datalen}cap`
         }
 
         return (

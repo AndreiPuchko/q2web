@@ -42,28 +42,37 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         if (typeof this.props.col.valid === "function") {
             const validResult = this.props.col.valid(this.props.form);
         }
-
     };
 
+    focus() {
+        const { id } = this.props;
+        const radio_id = `${id}-${0}`
+        document.getElementById(radio_id)?.focus()
+    }
+
     render() {
-        const col = this.props.col;
+        const { col, id } = this.props;
         const options = col.pic.split(';');
         return (
             <div className="Q2RadioButton">
-                {options.map((opt: any, index: number) => (
-                    <label key={index}>
-                        <input
-                            type="radio"
-                            name={col.column}
-                            value={opt}
-                            checked={this.state.selectedValue === opt}
-                            onChange={this.handleChange}
-                            onBlur={this.focusOut}
-                            onFocus={this.focusIn}
-                        />
-                        {opt}
-                    </label>
-                ))}
+                {options.map((opt: any, index: number) => {
+                    const radio_id = `${id}-${index}`
+                    return (
+                        <label key={index}>
+                            <input
+                                type="radio"
+                                name={col.column}
+                                id={radio_id}
+                                value={opt}
+                                checked={this.state.selectedValue === opt}
+                                onChange={this.handleChange}
+                                onBlur={this.focusOut}
+                                onFocus={this.focusIn}
+                            />
+                            {opt}
+                        </label>
+                    )
+                })}
             </div>
         );
     }

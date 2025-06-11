@@ -1,4 +1,4 @@
-.Q2RadioButton {
+.Q2RadioButton1 {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -9,7 +9,7 @@
   white-space: nowrap; /* Prevent wrapping */
 }
 
-input[type="radio"] {
+input1[type="radio"] {
     appearance: none;
     width: 1.3cap;
     height: 1.3cap;
@@ -17,6 +17,6 @@ input[type="radio"] {
     border-radius: 50%;
     background-color: lightgray;
 }
-input[type="radio"]:checked {
+input1[type="radio"]:checked {
     background-color: black;
 }

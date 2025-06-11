@@ -8,9 +8,6 @@ import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
-import { columns } from "../data_modules/data";
-import { LiaBell } from "react-icons/lia";
-import { DiVim } from "react-icons/di";
 
 interface FormProps {
   metaData: Q2Form;
@@ -121,8 +118,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
   renderInput = (col: any) => {
     const { formData } = this.state;
     const data: any = formData[col.column] !== undefined ? formData[col.column] : "";
+    col["id"] = `${col.column}-${col.key}`;
     const commonProps = {
-      id: col.column,
+      id: col["id"],
       name: col.column,
       col: col,
       data,
@@ -272,7 +270,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         >
           <div style={style}>
             {panel.children.map((child: any, index: number) => {
-              const id = `${child.column}-control-cb`;
+              const id = `${child.id}-control-cb`;
               if (child.children) {
                 return (
                   <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
@@ -290,12 +288,19 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                           checked={!!this.state.formData?.[child.column]}
                           onChange={e => {
                             const checked = e.target.checked;
-                            this.setState(prevState => ({
-                              formData: {
-                                ...prevState.formData,
-                                [child.column]: checked
+                            this.setState(
+                              prevState => ({
+                                formData: {
+                                  ...prevState.formData,
+                                  [child.column]: checked
+                                }
+                              }),
+                              () => {
+                                if (checked && typeof this.w[child.column].focus === "function") {
+                                  this.w[child.column].focus();
+                                }
                               }
-                            }));
+                            );
                           }}
                         />
                         <label htmlFor={id}>
@@ -332,6 +337,21 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
       </div>
     );
   };
+
+  componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
+    // Focus input when a check-linked input becomes checked
+    Object.keys(this.state.formData).forEach(column => {
+      if (
+        this.state.formData[column] &&
+        !prevState.formData?.[column] &&
+        this.w[column] &&
+        typeof this.w[column]?.focus === "function"
+      ) {
+        console.log(column)
+        this.w[column].focus();
+      }
+    });
+  }
 
   render() {
     const { columns } = this.props.metaData;

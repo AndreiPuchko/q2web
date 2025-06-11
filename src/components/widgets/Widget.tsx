@@ -25,6 +25,12 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
         this.props.form.prevFocus = this.props.col.column;
     }
 
+    focus() {
+        const { id } = this.props;
+        document.getElementById(id)?.focus()
+        console.log(id)
+    }
+
     // setValue(value: any) {
     //     // this.props.onChange({ target: { name: this.props.name, value } });
     // }

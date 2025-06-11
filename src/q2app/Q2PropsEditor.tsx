@@ -47,8 +47,8 @@ class Q2PropsEditor extends Component {
         propEditor.add_control("/");  // close layout
       }
       if (propEditor.add_control("/v", "Aligments", {alignment:8})) {
-        propEditor.add_control("text_align", "", { pic: "Left;Center;Right;Justify", control: "radio", data: 1});
-        propEditor.add_control("vertical_align", "", { pic: "Top;Middle;Bottom", control: "radio", data: 2});
+        propEditor.add_control("text_align", "Horizontal", { pic: "Left;Center;Right;Justify", control: "radio", data: 1, check: true });
+        propEditor.add_control("vertical_align", "Vertical", { pic: "Top;Middle;Bottom", control: "radio", data: 2, check: true });
         propEditor.add_control("/");  // close layout
       }      
     }
