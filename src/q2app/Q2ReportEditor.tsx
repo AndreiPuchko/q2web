@@ -688,7 +688,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
     render() {
         return (
-            <div style={{ display: "flex" }}>
+            <div className="q2-report-editor-container" >
                 <div className="q2-report-editor">
                     {this.renderReport()}
                     {this.report.pages.map((page, pageIdx) => (

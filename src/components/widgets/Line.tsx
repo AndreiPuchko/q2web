@@ -11,6 +11,11 @@ class Q2Line extends Widget<Q2LineProps> {
             width: '100%',
         };
 
+        if (col?.datalen)
+        {
+        style.maxWidth = `${col.datalen}cap`
+        }
+
         return (
             <input
                 type="text"

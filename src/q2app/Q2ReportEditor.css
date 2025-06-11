@@ -28,6 +28,10 @@
 }
 
 
+.q2-report-editor-container {
+    display: flex;
+    border: 1px solid black
+}
 
 .q2-report-editor {
         padding: 0;

@@ -23,34 +23,29 @@ class Q2PropsEditor extends Component {
       exampleForm.add_control("font_weight", "Font wight", { control: "check", data: true });
       exampleForm.add_control("/");
 
-      if (exampleForm.add_control("/h", "Borders")) {
-        exampleForm.add_control("var3", "");
+      if (exampleForm.add_control("/h", "Borders", {alignment:4})) {
+        exampleForm.add_control("var3", "", {datalen:6});
         exampleForm.add_control("/v", "");
-        exampleForm.add_control("var3", "");
-        exampleForm.add_control("var3", "");
+        exampleForm.add_control("var3", "", {datalen:6});
+        exampleForm.add_control("var3", "", {datalen:6});
         exampleForm.add_control("/");  // close layout
-        exampleForm.add_control("var4", "");
+        exampleForm.add_control("var4", "", {datalen:6});
         exampleForm.add_control("/");  // close layout
       }
-      if (exampleForm.add_control("/h", "Paddings")) {
-        exampleForm.add_control("var3", "");
-        exampleForm.add_control("/v", "");
-        exampleForm.add_control("var3", "");
-        exampleForm.add_control("var3", "");
+      if (exampleForm.add_control("/h", "Paddings", {alignment:4})) {
+        exampleForm.add_control("var3", "", {datalen:6});
+        exampleForm.add_control("/v", "", {datalen:6});
+        exampleForm.add_control("var3", "", {datalen:6});
+        exampleForm.add_control("var3", "", {datalen:6});
         exampleForm.add_control("/");  // close layout
-        exampleForm.add_control("var4", "");
+        exampleForm.add_control("var4", "", {datalen:6});
         exampleForm.add_control("/");  // close layout
       }
-      if (exampleForm.add_control("/h", "Aligments")) {
-        exampleForm.add_control("var3", "");
-        exampleForm.add_control("/v", "");
-        exampleForm.add_control("var3", "");
-        exampleForm.add_control("var3", "");
-        exampleForm.add_control("/");  // close layout
-        exampleForm.add_control("var4", "", );
+      if (exampleForm.add_control("/v", "Aligments", {alignment:8})) {
+        exampleForm.add_control("var4", "", { pic: "Left;Center;Right;Justify", control: "radio", data: 1});
+        exampleForm.add_control("var4", "", { pic: "Top;Middle;Bottom", control: "radio", data: 2});
         exampleForm.add_control("/");  // close layout
       }      
-      exampleForm.add_control("var44", "Radio button", { pic: "Red;White", control: "radio", data: "White", pi: "some_pi_value" });
     }
 
     return exampleForm
@@ -65,6 +60,7 @@ class Q2PropsEditor extends Component {
             background: "",
             color: "black",
             fontSize: "10px",
+            border: "1px solid black",
             marginTop: "50px",
           }}
         >

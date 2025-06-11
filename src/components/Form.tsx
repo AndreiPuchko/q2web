@@ -8,6 +8,7 @@ import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
+import { columns } from "../data_modules/data";
 
 interface FormProps {
   metaData: Q2Form;
@@ -154,7 +155,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
 
   createFormTree = (columns: any) => {
     const stack: any[] = [];
-    const root = { column: 'root', children: [{ column: "/v", key: 'root-0' }] };
+    const root = { column: 'root', children: [{ column: "/v", key: 'root-0', metadata: undefined }] };
     stack.push(root);
     if (!columns[0].column.startsWith("/")) {
       columns.splice(0, 0, { column: "/f", key: 'root-1' });
@@ -167,6 +168,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
           label: col.label,
           key: `${col.column}-${index}}`, // Generate unique key
           children: [],
+          metadata: col,
         };
         stack[stack.length - 1].children.push(panel);
         stack.push(panel);
@@ -187,18 +189,30 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     if (!panel || !panel.children) return null;
 
     const className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
-    const style: CSSProperties = { display: "flex", flex: 1, padding: "0 1cap 1cap 0" };
+    const style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
+    const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
+
     if (panel.column === "/v") {
       style.flexDirection = 'column'
     } else {
       style.flexDirection = 'row'
     }
     style.alignItems = 'start';
+    style.justifyContent = 'flex-start';
+    if ([4, 5, 6].includes(panel?.metadata?.alignment)) {
+      style.alignItems = 'center';
+    }
+    if (panel.label === "") {
+      rootStyle.border = "none";
+      rootStyle.margin = "0px";
+      rootStyle.padding = "0px";
+    }
 
-    const rootStyle = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
+    console.log(panel?.metadata?.alignment)
+
 
     if (!root && (panel.column === "/v" || panel.column === "/f")) {
-      rootStyle.width = '100%';
+      // rootStyle.width = '100%';
     }
 
     return (
@@ -211,7 +225,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
           else {
             return (
               <div key={child.key || index} className="form-group" style={style}>
-                {child.control !== "check" && <label className="form-label">{child.label}</label>}
+                {child.control !== "check" && child.label && <label className="form-label">{child.label}</label>}
                 {this.renderInput(child)}
               </div>
             );
