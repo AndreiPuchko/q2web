@@ -19,7 +19,7 @@ interface FormProps {
   isTopDialog: boolean;
 }
 
-class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
+class Form extends Component<FormProps, { formData: { [key: string]: any }, panelChecks: { [key: string]: boolean } }> {
   w: { [key: string]: any } = {}; // Store references to the widgets
   s: { [key: string]: any } = {}; // widgets data
   focus: string = "";
@@ -29,6 +29,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     super(props);
     this.state = {
       formData: {},
+      panelChecks: {}, // Track checkbox state for panels
     };
   }
 
@@ -190,6 +191,16 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     return root;
   };
 
+  // Add handler for panel checkbox toggle
+  handlePanelCheck = (panelKey: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState((prevState) => ({
+      panelChecks: {
+        ...prevState.panelChecks,
+        [panelKey]: e.target.checked,
+      }
+    }));
+  };
+
   renderPanel = (panel: any, root = false) => {
     if (!panel || !panel.children) return null;
 
@@ -226,60 +237,74 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     if (!root && (panel.column === "/v" || panel.column === "/f")) {
       // rootStyle.width = '100%';
     }
-  const panel_id = `${panel.key}-panel-id`;
+    const panel_id = `${panel.key}-panel-id`;
+
+    // Determine if this panel should be disabled
+    const hasCheck = panel.metadata?.check;
+    const checked = hasCheck
+      ? (this.state.panelChecks[panel.key] !== undefined
+          ? this.state.panelChecks[panel.key]
+          : true)
+      : true;
+
+    // Only disable the panel content, not the checkbox itself
     return (
-      
       <div className={className} style={rootStyle} key={panel.key}>
-        {[""].map(() => {
-          if (panel.label) {
-              console.log(panel.metadata)
-            if (panel.metadata.check) {
-              return <div className="group-box-title">
-                <input id={panel_id} type="checkbox" />
-                <label htmlFor={panel_id}>{panel.label}</label>
-              </div>
-            }
-            else {
-              return <div className="group-box-title">{panel.label}</div>
-            }
-
-          }
-        })}
-        <div style={style}>
-          {panel.children.map((child: any, index: number) => {
-            const id = `${child.column}-control-cb`;
-            if (child.children) {
-              return (
-                <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
-                  {this.renderPanel(child)}
-                </div>
-              );
-            } else {
-              return (
-                <>
-                  {child.check ?
-                    <div style={{ justifySelf: "end", marginRight: "0.1em" }}>
-                      <input id={id} type="checkbox" />
-                      <label htmlFor={id}
-                      >{child.control === "check" ? "Turn on" : child.label}</label>
-                    </div>
-                    : <label
-                      key={child.key + "-label"}
-                      className="form-label"
-                      style={{ justifySelf: "end", marginRight: "0.1em" }}
-                    >
-                      {child.label ? child.label : ""}
-                    </label>
-                  }
-
-                  <div key={child.key || index} className="form-group" >
-                    {this.renderInput(child)}
+        {panel.label && (
+          hasCheck ? (
+            <div className="group-box-title">
+              <input
+                id={panel_id}
+                type="checkbox"
+                checked={checked}
+                onChange={this.handlePanelCheck(panel.key)}
+              />
+              <label htmlFor={panel_id}>{panel.label}</label>
+            </div>
+          ) : (
+            <div className="group-box-title">{panel.label}</div>
+          )
+        )}
+        <fieldset
+          style={{ border: "none", margin: 0, padding: 0, width: "100%" }}
+          disabled={hasCheck && !checked}
+        >
+          <div style={style}>
+            {panel.children.map((child: any, index: number) => {
+              const id = `${child.column}-control-cb`;
+              if (child.children) {
+                return (
+                  <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
+                    {this.renderPanel(child)}
                   </div>
-                </>
-              );
-            }
-          })}
-        </div>
+                );
+              } else {
+                return (
+                  <>
+                    {child.check ?
+                      <div style={{ justifySelf: "end", marginRight: "0.1em" }}>
+                        <input id={id} type="checkbox" />
+                        <label htmlFor={id}
+                        >{child.control === "check" ? "Turn on" : child.label}</label>
+                      </div>
+                      : <label
+                        key={child.key + "-label"}
+                        className="form-label"
+                        style={{ justifySelf: "end", marginRight: "0.1em" }}
+                      >
+                        {child.label ? child.label : ""}
+                      </label>
+                    }
+
+                    <div key={child.key || index} className="form-group" >
+                      {this.renderInput(child)}
+                    </div>
+                  </>
+                );
+              }
+            })}
+          </div>
+        </fieldset>
       </div>
     );
   };
