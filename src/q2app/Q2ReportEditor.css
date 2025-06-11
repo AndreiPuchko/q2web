@@ -7,6 +7,7 @@
     padding: 1px;
     min-width: 100px;
 }
+
 .q2-context-menu-item {
     padding: 4px 8px;
     cursor: pointer;
@@ -16,10 +17,23 @@
     border-radius: 3px;
     user-select: none;
 }
+
 .q2-context-menu-item:hover {
     background: #93affc;
 }
+
 .q2-context-menu-separator {
     border-top: 1px solid #ccc;
     margin: 6px 0;
+}
+
+
+
+.q2-report-editor {
+        padding: 0;
+        box-shadow: 0 2px 8px #0002;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        margin-top: 50px;
 }

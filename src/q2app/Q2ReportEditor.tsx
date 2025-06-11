@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import "./ReportEditor.css";
+import Q2PropsEditor from "./Q2PropsEditor";
+import "./Q2ReportEditor.css";
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
@@ -160,7 +161,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         });
     };
 
-    handleContextMenuItemClick (command: string){
+    handleContextMenuItemClick(command: string) {
         const { contextMenu } = this.state;
         console.log(command, contextMenu?.selection);
     }
@@ -198,7 +199,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             <div
                                 key={idx}
                                 className="q2-context-menu-item"
-                                onClick={() => {this.handleContextMenuItemClick(item)}}
+                                onClick={() => { this.handleContextMenuItemClick(item) }}
                                 onMouseDown={e => e.stopPropagation()}
                             >
                                 {item}
@@ -262,7 +263,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
         const pxPerCm = zoomWidthPx / availableWidthCm;
 
-        this._currentPageIdx = pageIdx; // set for children
+        // this._currentPageIdx = pageIdx; // set for children
         const isSelected = this.state.selection?.type === "page" && this.state.selection.pageIdx === pageIdx;
         return (
             <div>
@@ -308,7 +309,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_width.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 60, marginLeft: 2, marginRight: 8 }}
-                                readOnly
+                            readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -318,7 +319,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_height.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 60, marginLeft: 2, marginRight: 8 }}
-                                readOnly
+                            readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -328,7 +329,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_left.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                                readOnly
+                            readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -338,7 +339,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_top.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                                readOnly
+                            readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -348,7 +349,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_right.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                                readOnly
+                            readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -358,7 +359,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_bottom.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                                readOnly
+                            readOnly
                             />
                         </label>
                     </div>
@@ -376,7 +377,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     {page.columns.map((column: any, colIdx: number) => {
                         const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx } =
                             this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
-                        this._currentColIdx = colIdx; // set for children
+                        // this._currentColIdx = colIdx; // set for children
                         return (
                             <div
                                 key={colIdx}
@@ -682,27 +683,22 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     }
 
     // Helper to pass pageIdx/colIdx to renderRows/renderColumns
-    private _currentPageIdx: number = 0;
-    private _currentColIdx: number = 0;
+    // private _currentPageIdx: number = 0;
+    // private _currentColIdx: number = 0;
 
     render() {
         return (
-            <div style={{
-                padding: 0,
-                background: "#AAA",
-                boxShadow: "0 2px 8px #0002",
-                width: "100%",
-                height: "100%",
-                overflow: "auto",
-                marginTop: "50px",
-            }}>
-                {this.renderReport()}
-                {this.report.pages.map((page, pageIdx) => (
-                    <div key={pageIdx} style={{ marginBottom: 12 }}>
-                        {this.RenderPage(page, pageIdx)}
-                    </div>
-                ))}
-                {this.renderContextMenu()}
+            <div style={{ display: "flex" }}>
+                <div className="q2-report-editor">
+                    {this.renderReport()}
+                    {this.report.pages.map((page, pageIdx) => (
+                        <div key={pageIdx} style={{ marginBottom: 12 }}>
+                            {this.RenderPage(page, pageIdx)}
+                        </div>
+                    ))}
+                    {this.renderContextMenu()}
+                </div>
+                <Q2PropsEditor />
             </div>
         );
     }
