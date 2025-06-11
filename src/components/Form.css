@@ -6,6 +6,7 @@
   --form-groupbox-bg: #23272f;
   --form-input-bg: lightgray;
   --form-input: black;
+  --form-input-disabled: lightgray;
   --form-input-focus: black;
 }
 
@@ -16,6 +17,7 @@
   --form-groupbox-bg: #f5f5f5;
   --form-input-bg: rgb(225, 242, 245);
   --form-input: black;
+  --form-input-disabled: lightgray;
   --form-input-focus: rgb(186, 226, 240);
 }
 
@@ -26,6 +28,7 @@
   --form-groupbox-bg: #23272f;
   --form-input-bg: gray;
   --form-input: white;
+  --form-input-disabled: gray;
   --form-input-focus: black;
 }
 
@@ -54,6 +57,13 @@ button {
   color: var(--form-input);
   border: 1px solid gray;
   padding: 1px 2px;
+}
+
+._Q2RadioButton.disabled,
+._Q2CheckBox-container.disabled,
+._Q2Text:disabled,
+._Q2Line:disabled {
+  background-color:  var(--form-input-disabled);
 }
 
 .flex-row {
