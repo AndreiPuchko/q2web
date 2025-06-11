@@ -139,7 +139,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
       case "text":
         return <Q2Text {...commonProps} />;
       case "line":
-        return <Q2Line {...commonProps} />;
+        return <Q2Line {...commonProps} />
       case "spacer":
         return <Spacer {...commonProps} />;
       case "check":
@@ -231,47 +231,41 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     return (
       <div className={className} style={rootStyle} key={panel.key}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
-        {panel.column === "/f" ? (
-          <div style={style}>
-            {panel.children.map((child: any, index: number) => {
-              if (child.children) {
-                return (
-                  <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
-                    {this.renderPanel(child)}
-                  </div>
-                );
-              } else {
-                return (
-                  <>
-                    <label
-                      key={child.key + "-label"}
-                      className="form-label"
-                      style={{  justifySelf: "end", marginRight: "0.2em" }}
-                    >
-                      {child.control !== "check" && child.label ? child.label : ""}
-                    </label>
-                    <div key={child.key || index} className="form-group" style={{ width: "100%" }}>
-                      {this.renderInput(child)}
-                    </div>
-                  </>
-                );
-              }
-            })}
-          </div>
-        ) : (
-          panel.children.map((child: any, index: number) => {
+        <div style={style}>
+          {panel.children.map((child: any, index: number) => {
             if (child.children) {
-              return this.renderPanel(child);
-            } else {
               return (
-                <div key={child.key || index} className="form-group" style={style}>
-                  {child.control !== "check" && child.label && <label className="form-label">{child.label}</label>}
-                  {this.renderInput(child)}
+                <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
+                  {this.renderPanel(child)}
                 </div>
               );
+            } else {
+              return (
+                <>
+                  {child.check ?
+                    
+                    <label className="Q2CheckBox-label">{child.label}</label>
+                      // <input type="text" type="checkbox" />
+                      
+                    
+                    : <label
+                      key={child.key + "-label"}
+                      className="form-label"
+                      style={{ justifySelf: "end", marginRight: "0.1em" }}
+                    >
+                      {child.label ? child.label : ""}
+                    </label>
+                  }
+
+
+                  <div key={child.key || index} className="form-group" >
+                    {this.renderInput(child)}
+                  </div>
+                </>
+              );
             }
-          })
-        )}
+          })}
+        </div>
       </div>
     );
   };
