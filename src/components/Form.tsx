@@ -132,6 +132,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
       }, // Store reference to the widget
     };
     // console.log('col.control', commonProps.value);
+    if (col.column === "/s") {
+      col.control = "spacer"
+    }
     switch (col.control) {
       case "text":
         return <Q2Text {...commonProps} />;

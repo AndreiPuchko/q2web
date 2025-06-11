@@ -20,7 +20,12 @@ class Q2PropsEditor extends Component {
 
       exampleForm.add_control("font_family", "Font family", { datalen: 15 });
       exampleForm.add_control("font_size", "Font size");
-      exampleForm.add_control("font_weight", "Font wight", { control: "check", data: true });
+      exampleForm.add_control("/h", "");
+      exampleForm.add_control("font_weight", "Weight", { control: "check", data: true });
+      exampleForm.add_control("font_italic", "Italic", { control: "check", data: true });
+      exampleForm.add_control("font_underline", "Unterline", { control: "check", data: true });
+      exampleForm.add_control("/s", "");
+      exampleForm.add_control("/");
       exampleForm.add_control("/");
 
       if (exampleForm.add_control("/h", "Borders", {alignment:4})) {
@@ -30,6 +35,7 @@ class Q2PropsEditor extends Component {
         exampleForm.add_control("var3", "", {datalen:6});
         exampleForm.add_control("/");  // close layout
         exampleForm.add_control("var4", "", {datalen:6});
+        exampleForm.add_control("/s", "");
         exampleForm.add_control("/");  // close layout
       }
       if (exampleForm.add_control("/h", "Paddings", {alignment:4})) {
@@ -39,6 +45,7 @@ class Q2PropsEditor extends Component {
         exampleForm.add_control("var3", "", {datalen:6});
         exampleForm.add_control("/");  // close layout
         exampleForm.add_control("var4", "", {datalen:6});
+        exampleForm.add_control("/s", "");
         exampleForm.add_control("/");  // close layout
       }
       if (exampleForm.add_control("/v", "Aligments", {alignment:8})) {
@@ -59,7 +66,7 @@ class Q2PropsEditor extends Component {
           style={{
             background: "",
             color: "black",
-            fontSize: "10px",
+            // fontSize: "10px",
             border: "1px solid black",
             marginTop: "50px",
           }}

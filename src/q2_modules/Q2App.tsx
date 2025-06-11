@@ -90,8 +90,10 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
         <MainMenu showDialog={this.showDialog} />
 
         <div className='WorkSpace'>
-          <Q2ReportEditor />
-          
+          <div style={{ marginTop: 50, overlay: "none" }}>
+            <Q2ReportEditor />
+          </div>
+
           {this.state.dialogs.map((dialog: any, index: any) => (
             <Dialog
               key={index}
