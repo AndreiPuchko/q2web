@@ -191,14 +191,24 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
   renderPanel = (panel: any, root = false) => {
     if (!panel || !panel.children) return null;
 
-    const className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
-    const style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
+    let className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
+    let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
     const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
-    if (panel.column === "/v") {
-      style.flexDirection = 'column'
+    if (panel.column === "/f") {
+      // 2-column grid: label right, input left
+      className += " panel-formgrid";
+      style = {
+        display: "grid",
+        gridTemplateColumns: "max-content 1fr",
+        // alignItems: "center",
+        gap: "0.2em",
+        padding: "0.5cap"
+      };
+    } else if (panel.column === "/v") {
+      style.flexDirection = 'column';
     } else {
-      style.flexDirection = 'row'
+      style.flexDirection = 'row';
     }
     style.alignItems = 'start';
     style.justifyContent = 'flex-start';
@@ -221,19 +231,47 @@ class Form extends Component<FormProps, { formData: { [key: string]: any } }> {
     return (
       <div className={className} style={rootStyle} key={panel.key}>
         {panel.label && <div className="group-box-title">{panel.label}</div>}
-        {panel.children.map((child: any, index: number) => {
-          if (child.children) {
-            return this.renderPanel(child);
-          }
-          else {
-            return (
-              <div key={child.key || index} className="form-group" style={style}>
-                {child.control !== "check" && child.label && <label className="form-label">{child.label}</label>}
-                {this.renderInput(child)}
-              </div>
-            );
-          }
-        })}
+        {panel.column === "/f" ? (
+          <div style={style}>
+            {panel.children.map((child: any, index: number) => {
+              if (child.children) {
+                return (
+                  <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
+                    {this.renderPanel(child)}
+                  </div>
+                );
+              } else {
+                return (
+                  <>
+                    <label
+                      key={child.key + "-label"}
+                      className="form-label"
+                      style={{  justifySelf: "end", marginRight: "0.2em" }}
+                    >
+                      {child.control !== "check" && child.label ? child.label : ""}
+                    </label>
+                    <div key={child.key || index} className="form-group" style={{ width: "100%" }}>
+                      {this.renderInput(child)}
+                    </div>
+                  </>
+                );
+              }
+            })}
+          </div>
+        ) : (
+          panel.children.map((child: any, index: number) => {
+            if (child.children) {
+              return this.renderPanel(child);
+            } else {
+              return (
+                <div key={child.key || index} className="form-group" style={style}>
+                  {child.control !== "check" && child.label && <label className="form-label">{child.label}</label>}
+                  {this.renderInput(child)}
+                </div>
+              );
+            }
+          })
+        )}
       </div>
     );
   };

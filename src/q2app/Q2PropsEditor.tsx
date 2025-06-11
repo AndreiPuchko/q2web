@@ -21,9 +21,9 @@ class Q2PropsEditor extends Component {
       exampleForm.add_control("font_family", "Font family", { datalen: 15 });
       exampleForm.add_control("font_size", "Font size");
       exampleForm.add_control("/h", "");
-      exampleForm.add_control("font_weight", "Weight", { control: "check", data: true });
-      exampleForm.add_control("font_italic", "Italic", { control: "check", data: true });
-      exampleForm.add_control("font_underline", "Unterline", { control: "check", data: true });
+      exampleForm.add_control("font_weight", "Weight", { control: "check", data: true, check: true });
+      exampleForm.add_control("font_italic", "Italic", { control: "check", data: true, check: true });
+      exampleForm.add_control("font_underline", "Unterline", { control: "check", data: true, check: true });
       exampleForm.add_control("/s", "");
       exampleForm.add_control("/");
       exampleForm.add_control("/");

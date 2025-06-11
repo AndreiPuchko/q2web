@@ -13,7 +13,7 @@ const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
     y: 0
 });
 if (exampleForm.add_control("/v", "Vertical layout")) {
-    exampleForm.add_control("var1", "Line input", { datalen: 15 });
+    exampleForm.add_control("var1", "Line input", { datalen: 15, check: 1 });
     exampleForm.add_control("var2", "Line input");
 
     if (exampleForm.add_control("/h", "Horizontal layout")) {

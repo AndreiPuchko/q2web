@@ -11,6 +11,7 @@ export class Q2Control {
     data?: any;
     pic?: string;
     pi?: string;
+    check?: boolean | string | number;
 
     constructor(
         column: string,
@@ -19,6 +20,7 @@ export class Q2Control {
             datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
             readonly?: boolean,
             alignment?: number,
+            check?: boolean | string | number,
         } = {},
         key: string = "0"
     ) {
@@ -34,6 +36,7 @@ export class Q2Control {
         this.data = options.data;
         this.pic = options.pic;
         this.pi = options.pi;
+        this.check = options.check;
     }
 }
 
@@ -106,6 +109,7 @@ export class Q2Form {
             datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
             readonly?: boolean,
             alignment?: number,
+            check?: boolean | string | number,
         } = {}) {
         const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
         const controlObj = new Q2Control(column, label, options, key);
