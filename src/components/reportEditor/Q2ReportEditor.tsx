@@ -72,8 +72,12 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
     }
 
-    handleSelect = (sel: Selection) => {
+    handleSelect = (sel: Selection, style: any) => {
         this.setState({ selection: sel, contextMenu: undefined });
+        // Call Q2PropsEditor.setData if available
+        if (this.propsEditorRef && this.propsEditorRef.current && typeof this.propsEditorRef.current.setData === "function") {
+            this.propsEditorRef.current.setData(sel, style);
+        }
     };
 
     handleContextMenu = (e: React.MouseEvent, sel: Selection) => {
@@ -143,21 +147,27 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         };
         const isSelected = this.state.selection?.type === "report";
         return (
-            <div
-                className="q2-report-header"
-                style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
-                onClick={() => this.handleSelect({ type: "report" })}
-                onContextMenu={e => this.handleContextMenu(e, { type: "report" })}
-            >
-                <div style={{ width: 161, borderRight: "1px solid #BBB" }}>
-                    Report
+            <div>
+                <div
+                    className="q2-report-header"
+                    style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
+                    onClick={() => this.handleSelect({ type: "report" }, this.report.style)}
+                    onContextMenu={e => this.handleContextMenu(e, { type: "report" })}
+                >
+                    <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
+                    <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
+                        <button style={buttonStyle}>HTML</button>
+                        <button style={buttonStyle}>DOCX</button>
+                        <button style={buttonStyle}>XLSX</button>
+                        <button style={buttonStyle}>PDF</button>
+                    </div>
                 </div>
-                <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
-                    <button style={buttonStyle}>HTML</button>
-                    <button style={buttonStyle}>DOCX</button>
-                    <button style={buttonStyle}>XLSX</button>
-                    <button style={buttonStyle}>PDF</button>
-                </div>
+                {/* Move page rendering loop here */}
+                {this.report.pages.map((page, pageIdx) => (
+                    <div key={pageIdx} style={{ marginBottom: 12 }}>
+                        {this.RenderPage(page, pageIdx, this.report.style)}
+                    </div>
+                ))}
             </div>
         );
     }
@@ -166,6 +176,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const { zoomWidthPx } = this.props;
         const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
         const pxPerCm = zoomWidthPx / availableWidthCm;
+        if (!page.style) {
+            page.style = {}
+        }
 
         // this._currentPageIdx = pageIdx; // set for children
         const isSelected = this.state.selection?.type === "page" && this.state.selection.pageIdx === pageIdx;
@@ -180,7 +193,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         alignItems: "center",
                         cursor: "pointer",
                     }}
-                    onClick={() => this.handleSelect({ type: "page", pageIdx })}
+                    onClick={() => this.handleSelect({ type: "page", pageIdx }, page.style)}
                     onContextMenu={e => this.handleContextMenu(e, { type: "page", pageIdx })}
                 >
                     <div
@@ -315,7 +328,12 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const isSelected = this.state.selection?.type === "column" &&
             this.state.selection.pageIdx === pageIdx &&
             this.state.selection.colIdx === colIdx;
-        const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(column.style ? column.style : {}) };
+        if (!column.style) {
+            column.style = {};
+        }
+
+        const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(column.style) };
+
         return (
             <div>
                 <div
@@ -327,8 +345,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         borderBottom: "1px solid #888",
                         cursor: "pointer",
                     }}
-                    onClick={() => this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
-                    onContextMenu={e => this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
+                // onClick={() => this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
+                // onContextMenu={e => this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
                 >
                     <div
                         style={{
@@ -345,7 +363,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         }}
                         onClick={e => {
                             e.stopPropagation();
-                            this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
+                            this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! }, column.style);
                         }}
                         onContextMenu={e => {
                             e.stopPropagation();
@@ -424,6 +442,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             const coveredCells = new Set<string>();
 
             if (!rowSet.cells) return;
+
+            if (!rowSet.style) {
+                rowSet.style = {};
+            }
             Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
                 const [rowIdx, cellIdx] = key.split(',').map(Number);
                 if (!cell) return;
@@ -440,11 +462,11 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 }
             });
             const rowClickParams = { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx };
-            const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(rowSet.style ? rowSet.style : {}) };
+            const nextStyle = { ...(parentStyle ? parentStyle : {}), ...rowSet.style };
             const rowHeights: string[] = [];
             rowSet.heights.forEach(element => {
                 const elsplt = element.split("-")
-                if (parseFloat(elsplt[1]) != 0) {
+                if (parseFloat(elsplt[1]) !== 0) {
                     rowHeights.push(`${elsplt[1]}cm`)
                 }
                 else {
@@ -469,14 +491,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             background: isSelected ? "#ffe066" : "#f0f8ff",
                             gridRow: `1 / span ${rowCount}`,
                         }}
-                        onClick={e => {
-                            e.stopPropagation();
-                            this.handleSelect(rowClickParams);
-                        }}
-                        onContextMenu={e => {
-                            e.stopPropagation();
-                            this.handleContextMenu(e, rowClickParams);
-                        }}
+                        onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams, rowSet.style); }}
+                        onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
                     >
                         Rows
                     </div>
@@ -498,7 +514,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 }}
                                 onClick={e => {
                                     e.stopPropagation();
-                                    this.handleSelect(rowHeightsClickParams);
+                                    this.handleSelect(rowHeightsClickParams, rowSet.style);
                                 }}
                                 onContextMenu={e => {
                                     e.stopPropagation();
@@ -515,6 +531,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             const cellKey = `${rowIdx},${cellIdx}`;
                             // Exclude covered cells and parent cell (top-left of span)
                             if (coveredCells.has(cellKey)) return null;
+                            if (rowSet.cells[cellKey] === undefined) {
+                                rowSet.cells[cellKey] = {};
+                            }
                             const cell = rowSet.cells && rowSet.cells[cellKey];
                             return this.renderCell(
                                 cell,
@@ -552,6 +571,11 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             cellIdx
         };
 
+
+        if (cell && !cell.style) {
+            cell.style = {};
+        }
+
         const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(cell?.style ? cell.style : {}) };
 
         const isCurrent = this.state.selection?.type === "cell" &&
@@ -586,14 +610,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 key={cellKey}
                 className="q2-report-cell"
                 style={cellStyle}
-                onClick={e => {
-                    e.stopPropagation();
-                    this.handleSelect(clickParams);
-                }}
-                onContextMenu={e => {
-                    e.stopPropagation();
-                    this.handleContextMenu(e, clickParams);
-                }}
+                onClick={e => { e.stopPropagation(); this.handleSelect(clickParams, cell.style); }}
+                onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, clickParams); }}
             >
                 {cell ? cell.data : ""}
             </div>
@@ -604,6 +622,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         for (const key in reportStyle) {
             if (key.includes("-")) {
                 if (key === "font-size") style["fontSize"] = reportStyle[key]
+                else if (key === "font-family") style["fontFamily"] = reportStyle[key]
                 else if (key === "font-weight") style["fontWeight"] = reportStyle[key]
                 else if (key === "text-align") style["textAlign"] = reportStyle[key]
                 else if (key === "vertical-align") style["verticalAlign"] = reportStyle[key]
@@ -643,19 +662,16 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     // private _currentPageIdx: number = 0;
     // private _currentColIdx: number = 0;
 
+    propsEditorRef = React.createRef<Q2PropsEditor>();
+
     render() {
         return (
             <div className="q2-report-editor-container" >
                 <div className="q2-report-editor">
                     {this.renderReport()}
-                    {this.report.pages.map((page, pageIdx) => (
-                        <div key={pageIdx} style={{ marginBottom: 12 }}>
-                            {this.RenderPage(page, pageIdx, page?.style)}
-                        </div>
-                    ))}
                     {this.renderContextMenu()}
                 </div>
-                <Q2PropsEditor />
+                <Q2PropsEditor ref={this.propsEditorRef} />
             </div>
         );
     }

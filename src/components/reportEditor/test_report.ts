@@ -301,6 +301,7 @@ const report_json = `{
     "font-size": "8pt",
     "font-weight": "normal",
     "border-width": "1 1 1 1",
+    "border-color": "black",
     "padding": "0.05cm 0.05cm 0.05cm 0.05cm",
     "text-align": "left",
     "vertical-align": "top"
