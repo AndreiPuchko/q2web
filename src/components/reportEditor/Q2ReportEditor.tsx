@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Q2PropsEditor from "./Q2PropsEditor";
 import "./Q2ReportEditor.css";
-import get_report_json, {} from "./test_report"
+import get_report_json, { } from "./test_report"
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
@@ -30,7 +30,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         selection: undefined,
         contextMenu: undefined,
     };
-    
+
     report = get_report_json();
 
     defaultMenu = ["Clone", "Add above", "Add below", "-"];
@@ -229,7 +229,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_width.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 60, marginLeft: 2, marginRight: 8 }}
-                            readOnly
+                                readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -239,7 +239,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_height.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 60, marginLeft: 2, marginRight: 8 }}
-                            readOnly
+                                readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -249,7 +249,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_left.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
+                                readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -259,7 +259,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_top.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
+                                readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -269,7 +269,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_right.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
+                                readOnly
                             />
                         </label>
                         <label style={{ fontSize: 12, color: "#333" }}>
@@ -279,7 +279,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 value={page.page_margin_bottom.toFixed(2)}
                                 step="0.01"
                                 style={{ width: 45, marginLeft: 2, marginRight: 4 }}
-                            readOnly
+                                readOnly
                             />
                         </label>
                     </div>
@@ -457,6 +457,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         this.handleContextMenu(e, { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx });
                     }}
                 >
+                    {/* render rows's section "header" column  */}
                     <div
                         style={{
                             background: isSelected ? "#ffe066" : "#f0f8ff",
@@ -487,6 +488,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     >
                         Rows
                     </div>
+                    {/* render rows's heights column */}
                     {Array.from({ length: rowCount }).map((_, rowIdx) => {
                         const isHeightSelected = (this.state.selection as any)?.type === "rowheight"
                             && (this.state.selection as any).pageIdx === pageIdx
@@ -538,9 +540,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             </div>
                         );
                     })}
+                    {/* render cells */}
                     {Array.from({ length: rowCount }).map((_, rowIdx) =>
                         Array.from({ length: colCount }).map((_, cellIdx) => {
-                            const cellKey = `${cellIdx},${rowIdx}`;
+                            const cellKey = `${rowIdx},${cellIdx}`;
                             const cell = rowSet.cells && rowSet.cells[cellKey];
                             const isCurrent =
                                 this.state.selection?.type === "cell" &&
@@ -549,57 +552,65 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 this.state.selection.rowSetIdx === rowSetIdx &&
                                 this.state.selection.rowIdx === rowIdx &&
                                 this.state.selection.cellIdx === cellIdx;
-                            return (
-                                <div
-                                    key={cellKey}
-                                    style={{
-                                        background: isCurrent ? "#ffe066" : "#fafafa",
-                                        color: "black",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: 14,
-                                        minWidth: 0,
-                                        minHeight: 0,
-                                        border: "1px solid #CCC",
-                                        margin: 0,
-                                        padding: 0,
-                                        boxSizing: "border-box",
-                                        gridColumn: `${cellIdx + 3} / ${cellIdx + 4}`,
-                                        gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
-                                        cursor: "pointer",
-                                    }}
-                                    onClick={e => {
-                                        e.stopPropagation();
-                                        this.handleSelect({
-                                            type: "cell",
-                                            pageIdx: pageIdx!,
-                                            colIdx: colIdx!,
-                                            rowSetIdx,
-                                            rowIdx,
-                                            cellIdx
-                                        });
-                                    }}
-                                    onContextMenu={e => {
-                                        e.stopPropagation();
-                                        this.handleContextMenu(e, {
-                                            type: "cell",
-                                            pageIdx: pageIdx!,
-                                            colIdx: colIdx!,
-                                            rowSetIdx,
-                                            rowIdx,
-                                            cellIdx
-                                        });
-                                    }}
-                                >
-                                    {cell ? cell.data : ""}
-                                </div>
+                            return this.renderCell(
+                                cell,
+                                isCurrent,
+                                cellKey,
+                                cellIdx,
+                                rowIdx,
+                                pageIdx!,
+                                colIdx!,
+                                rowSetIdx
                             );
                         })
                     )}
                 </div>
             );
         });
+    }
+
+
+    renderCell(
+        cell: any,
+        isCurrent: boolean,
+        cellKey: string,
+        cellIdx: number,
+        rowIdx: number,
+        pageIdx: number,
+        colIdx: number,
+        rowSetIdx: number
+    ) {
+        const clickParams = {
+            type: "cell",
+            pageIdx: pageIdx!,
+            colIdx: colIdx!,
+            rowSetIdx,
+            rowIdx,
+            cellIdx
+        };
+        // console.log(cell?.style);
+        return (
+            <div
+                key={cellKey}
+                style={{
+                    background: isCurrent ? "#ffe066" : "#fafafa",
+                    fontSize: 14,
+                    gridColumn: `${cellIdx + 3} / ${cellIdx + 4}`,
+                    gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
+                }}
+                className="q2-report-cell"
+                onClick={e => {
+                    e.stopPropagation();
+                    this.handleSelect(clickParams);
+                }}
+                onContextMenu={e => {
+                    e.stopPropagation();
+                    this.handleContextMenu(e, clickParams);
+                }}
+            >
+                {cell ? cell.data : ""}
+            </div>
+        );
     }
 
     // Helper to pass pageIdx/colIdx to renderRows/renderColumns
