@@ -441,14 +441,23 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             });
             const rowClickParams = { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx };
             const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(rowSet.style ? rowSet.style : {}) };
-            const cellHeightPx = "auto";
+            const rowHeights: string[] = [];
+            rowSet.heights.forEach(element => {
+                const elsplt = element.split("-")
+                if (parseFloat(elsplt[1]) != 0) {
+                    rowHeights.push(`${elsplt[1]}cm`)
+                }
+                else {
+                    rowHeights.push("auto")
+                }
+            });
             return (
                 <div
                     key={rowSetIdx}
                     className="q2-report-rowssection-body"
                     style={{
                         gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
-                        gridTemplateRows: `repeat(${rowCount}, ${cellHeightPx}px)`,
+                        gridTemplateRows: `${rowHeights.join(" ")}`,
                         borderBottom: rowSetIdx < column.rows.length - 1 ? "1px solid #EEE" : undefined,
                         background: isSelected ? "#ffe066" : "#EEE"
                     }}
