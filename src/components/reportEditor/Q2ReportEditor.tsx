@@ -430,12 +430,32 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         colIdx?: number
     ) {
         const colCount = column.widths.length;
+
         return column.rows.map((rowSet: any, rowSetIdx: number) => {
             const rowCount = rowSet.heights.length || 0;
             const isSelected = this.state.selection?.type === "row"
                 && this.state.selection.pageIdx === pageIdx
                 && this.state.selection.colIdx === colIdx
                 && this.state.selection.rowSetIdx === rowSetIdx;
+            const coveredCells = new Set<string>();
+
+            if (!rowSet.cells) return;
+            Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
+                const [rowIdx, cellIdx] = key.split(',').map(Number);
+                if (!cell) return;
+                const rowspan = cell.rowspan > 1 ? cell.rowspan : 1;
+                const colspan = cell.colspan > 1 ? cell.colspan : 1;
+                if (rowspan > 1 || colspan > 1) {
+                    for (let dr = 0; dr < rowspan; dr++) {
+                        for (let dc = 0; dc < colspan; dc++) {
+                            if (dr !== 0 || dc !== 0) {
+                                coveredCells.add(`${rowIdx + dr},${cellIdx + dc}`);
+                            }
+                        }
+                    }
+                }
+            });
+
             return (
                 <div
                     key={rowSetIdx}
@@ -475,9 +495,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             padding: 0,
                             boxSizing: "border-box",
                             fontWeight: "bold",
-                            gridRow: `1 / span ${rowCount}`,
                             gridColumn: "1 / 2",
                             cursor: "pointer",
+                            gridRow: `1 / span ${rowCount}`,
                         }}
                         onClick={e => {
                             e.stopPropagation();
@@ -546,6 +566,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     {Array.from({ length: rowCount }).map((_, rowIdx) =>
                         Array.from({ length: colCount }).map((_, cellIdx) => {
                             const cellKey = `${rowIdx},${cellIdx}`;
+                            // Exclude covered cells and parent cell (top-left of span)
+                            if (coveredCells.has(cellKey)) return null;
                             const cell = rowSet.cells && rowSet.cells[cellKey];
                             return this.renderCell(
                                 cell,
