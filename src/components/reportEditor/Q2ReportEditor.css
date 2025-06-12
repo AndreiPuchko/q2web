@@ -43,8 +43,8 @@
 
 
 .q2-report-cell {
+    display: table-cell;
     color: black;
-    display: flex;
     align-items: center;
     justify-content: center;
     font-size: 14;

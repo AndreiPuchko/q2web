@@ -14,7 +14,9 @@ type Selection =
     | { type: "colwidth", pageIdx: number, colIdx: number, widthIdx: number }
     | { type: "row", pageIdx: number, colIdx: number, rowSetIdx: number }
     | { type: "rowheight", pageIdx: number, colIdx: number, rowSetIdx: number, heightIdx: number }
-    | { type: "cell", pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number };
+    | { type: "cell", pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number }
+    | { type: string, pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number };
+
 
 interface Q2ReportEditorState {
     selection?: Selection;
@@ -545,16 +547,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         Array.from({ length: colCount }).map((_, cellIdx) => {
                             const cellKey = `${rowIdx},${cellIdx}`;
                             const cell = rowSet.cells && rowSet.cells[cellKey];
-                            const isCurrent =
-                                this.state.selection?.type === "cell" &&
-                                this.state.selection.pageIdx === pageIdx &&
-                                this.state.selection.colIdx === colIdx &&
-                                this.state.selection.rowSetIdx === rowSetIdx &&
-                                this.state.selection.rowIdx === rowIdx &&
-                                this.state.selection.cellIdx === cellIdx;
                             return this.renderCell(
                                 cell,
-                                isCurrent,
                                 cellKey,
                                 cellIdx,
                                 rowIdx,
@@ -572,7 +566,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
     renderCell(
         cell: any,
-        isCurrent: boolean,
         cellKey: string,
         cellIdx: number,
         rowIdx: number,
@@ -588,16 +581,33 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             rowIdx,
             cellIdx
         };
-        // console.log(cell?.style);
+        const isCurrent = this.state.selection?.type === "cell" &&
+            this.state.selection.pageIdx === pageIdx &&
+            this.state.selection.colIdx === colIdx &&
+            this.state.selection.rowSetIdx === rowSetIdx &&
+            this.state.selection.rowIdx === rowIdx &&
+            this.state.selection.cellIdx === cellIdx;
+
+        // Merge cell.style if present
+        const cellStyle = {
+            background: isCurrent ? "#ffe066" : "#fafafa",
+            fontSize: 14,
+            gridColumn: `${cellIdx + 3}`,
+            gridRow: `${rowIdx + 1}`,
+            ...(cell && cell.style ? cell.style : {})
+        };
+        if (cell) {
+            if (cell.colspan && cell.colspan > 1) {
+                cellStyle.gridColumn = cellStyle.gridColumn + ` / span ${cell.colspan}`;
+            }
+            if (cell.rowspan && cell.rowspan > 1) {
+                cellStyle.gridRow = cellStyle.gridRow + ` / span ${cell.rowspan}`;
+            }
+        }
         return (
             <div
                 key={cellKey}
-                style={{
-                    background: isCurrent ? "#ffe066" : "#fafafa",
-                    fontSize: 14,
-                    gridColumn: `${cellIdx + 3} / ${cellIdx + 4}`,
-                    gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
-                }}
+                style={cellStyle}
                 className="q2-report-cell"
                 onClick={e => {
                     e.stopPropagation();
