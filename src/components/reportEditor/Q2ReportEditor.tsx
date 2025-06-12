@@ -526,7 +526,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         });
     }
 
-
     renderCell(
         cell: any,
         cellKey: string,
@@ -562,9 +561,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             gridColumn: `${cellIdx + 3}`,
             gridRow: `${rowIdx + 1}`,
         };
-        if (cell && cell.style) {
-            this.adaptStyle(cellStyle, nextStyle)
-        }
 
         if (cell) {
             if (cell.colspan && cell.colspan > 1) {
@@ -574,6 +570,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 cellStyle.gridRow = cellStyle.gridRow + ` / span ${cell.rowspan}`;
             }
         }
+        if (cell && cell.style) {
+            this.adaptStyle(cellStyle, nextStyle);
+        }
+
         return (
             <div
                 key={cellKey}
@@ -592,7 +592,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             </div>
         );
     }
-
 
     adaptStyle(style: any, reportStyle: any) {
         for (const key in reportStyle) {
@@ -624,13 +623,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 else console.log(key + " -> " + reportStyle[key]);
             }
             else {
-                if (key === "padding") style["padding"] = reportStyle[key].split(" ")
-                    .map(x => x.includes("cm") ? x : `${x}cm`)
-                    .join(" ");
-                // style[key] = reportStyle[key]
+                if (key === "padding") {
+                    style["padding"] = reportStyle[key].split(" ")
+                        .map(x => x.includes("cm") ? x : `${x}cm`)
+                        .join(" ");
+                }
             }
         }
-        // console.log(style)
     }
 
     // Helper to pass pageIdx/colIdx to renderRows/renderColumns

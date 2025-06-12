@@ -45,7 +45,8 @@ const report_json = `{
                   "data": "Customer",
                   "style": {
                     "text-align": "right",
-                    "border-color": "black"
+                    "border-color": "black",
+                    "padding": "0.05cm 1.0cm 0.05cm 0.05cm"
                   }
                 },
                 "1,2": {
