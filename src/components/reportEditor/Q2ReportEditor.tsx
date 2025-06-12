@@ -13,7 +13,9 @@ type Selection =
     | { type: "column", pageIdx: number, colIdx: number }
     | { type: "colwidth", pageIdx: number, colIdx: number, widthIdx: number }
     | { type: "row", pageIdx: number, colIdx: number, rowSetIdx: number }
+    | { type: string, pageIdx: number, colIdx: number, rowSetIdx: number }
     | { type: "rowheight", pageIdx: number, colIdx: number, rowSetIdx: number, heightIdx: number }
+    | { type: string, pageIdx: number, colIdx: number, rowSetIdx: number, heightIdx: number }
     | { type: "cell", pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number }
     | { type: string, pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number };
 
@@ -455,7 +457,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     }
                 }
             });
-
+            const rowClickParams = { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx };
             return (
                 <div
                     key={rowSetIdx}
@@ -464,48 +466,28 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
                         gridTemplateRows: `repeat(${rowCount}, ${cellHeightPx}px)`,
                         gap: 0,
-                        background: isSelected ? "#ffe066" : "#888",
+                        background: isSelected ? "#ffe066" : "#EEE",
                         margin: 0,
                         padding: 0,
+                        paddingTop: 3,
                         borderBottom: rowSetIdx < column.rows.length - 1 ? "2px solid #888" : undefined,
                         cursor: "pointer",
-                    }}
-                    onClick={e => {
-                        e.stopPropagation();
-                        this.handleSelect({ type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx });
-                    }}
-                    onContextMenu={e => {
-                        e.stopPropagation();
-                        this.handleContextMenu(e, { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx });
                     }}
                 >
                     {/* render rows's section "header" column  */}
                     <div
+                        className="q2-report-rowssection-header"
                         style={{
                             background: isSelected ? "#ffe066" : "#f0f8ff",
-                            color: "#333",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: 12,
-                            minWidth: 0,
-                            minHeight: 0,
-                            border: "1px solid #CCC",
-                            margin: 0,
-                            padding: 0,
-                            boxSizing: "border-box",
-                            fontWeight: "bold",
-                            gridColumn: "1 / 2",
-                            cursor: "pointer",
                             gridRow: `1 / span ${rowCount}`,
                         }}
                         onClick={e => {
                             e.stopPropagation();
-                            this.handleSelect({ type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx });
+                            this.handleSelect(rowClickParams);
                         }}
                         onContextMenu={e => {
                             e.stopPropagation();
-                            this.handleContextMenu(e, { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx });
+                            this.handleContextMenu(e, rowClickParams);
                         }}
                     >
                         Rows
@@ -517,45 +499,22 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             && (this.state.selection as any).colIdx === colIdx
                             && (this.state.selection as any).rowSetIdx === rowSetIdx
                             && (this.state.selection as any).heightIdx === rowIdx;
+                        const rowHeightsClickParams = { type: "rowheight", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx, heightIdx: rowIdx };
                         return (
                             <div
                                 key={`height-${rowIdx}`}
+                                className="q2-report-rowsheights-header"
                                 style={{
                                     background: isHeightSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0f7fa"),
-                                    color: "#333",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontSize: 12,
-                                    minWidth: 0,
-                                    minHeight: 0,
-                                    border: "1px solid #CCC",
-                                    margin: 0,
-                                    padding: 0,
-                                    boxSizing: "border-box",
-                                    gridColumn: "2 / 3",
                                     gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
-                                    cursor: "pointer",
                                 }}
                                 onClick={e => {
                                     e.stopPropagation();
-                                    this.handleSelect({
-                                        type: "rowheight",
-                                        pageIdx: pageIdx!,
-                                        colIdx: colIdx!,
-                                        rowSetIdx,
-                                        heightIdx: rowIdx
-                                    });
+                                    this.handleSelect(rowHeightsClickParams);
                                 }}
                                 onContextMenu={e => {
                                     e.stopPropagation();
-                                    this.handleContextMenu(e, {
-                                        type: "rowheight",
-                                        pageIdx: pageIdx!,
-                                        colIdx: colIdx!,
-                                        rowSetIdx,
-                                        heightIdx: rowIdx
-                                    });
+                                    this.handleContextMenu(e, rowHeightsClickParams);
                                 }}
                             >
                                 {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
@@ -611,13 +570,51 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             this.state.selection.cellIdx === cellIdx;
 
         // Merge cell.style if present
-        const cellStyle = {
-            background: isCurrent ? "#ffe066" : "#fafafa",
+        const cellStyle: any = {
+            backgroundColor: isCurrent ? "#ffe066" : "#fafafa",
             fontSize: 14,
             gridColumn: `${cellIdx + 3}`,
             gridRow: `${rowIdx + 1}`,
-            ...(cell && cell.style ? cell.style : {})
         };
+        if (cell && cell.style) {
+            for (const key in cell.style) {
+                if (key.includes("-")) {
+                    if (key === "font-size") cellStyle["fontSize"] = cell.style[key]
+                    else if (key === "font-weight") cellStyle["fontWeight"] = cell.style[key]
+                    else if (key === "text-align") cellStyle["textAlign"] = cell.style[key]
+                    else if (key === "vertical-align") cellStyle["verticalAlign"] = cell.style[key]
+                    else if (key === "border-color") cellStyle["borderColor"] = cell.style[key]
+                    else if (key === "border-width") {
+                        const bw = cell.style[key].split(" ");
+                        if (parseInt(bw[0])) {
+                            cellStyle["borderTopStyle"] = "solid"
+                            cellStyle["borderTopWidth"] = `${bw[0]}px`
+                        }
+                        if (parseInt(bw[1])) {
+                            cellStyle["borderRightStyle"] = "solid"
+                            cellStyle["borderRightWidth"] = `${bw[1]}px`
+                        }
+                        if (parseInt(bw[2])) {
+                            cellStyle["borderBottomStyle"] = "solid"
+                            cellStyle["borderBottomWidth"] = `${bw[2]}px`
+                        }
+                        if (parseInt(bw[3])) {
+                            cellStyle["borderLeftStyle"] = "solid"
+                            cellStyle["borderLeftWidth"] = `${bw[3]}px`
+                        }
+                    }
+                    else console.log(key + " -> " + cell.style[key]);
+                }
+                else {
+                    cellStyle[key] = cell.style[key]
+                }
+            }
+            // console.log(Object(cell.style))
+            // .map((eq1,q2) => {} )
+
+        }
+        // ...(cell && cell.style ? cell.style : {})
+
         if (cell) {
             if (cell.colspan && cell.colspan > 1) {
                 cellStyle.gridColumn = cellStyle.gridColumn + ` / span ${cell.colspan}`;
@@ -629,8 +626,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         return (
             <div
                 key={cellKey}
-                style={cellStyle}
                 className="q2-report-cell"
+                style={cellStyle}
                 onClick={e => {
                     e.stopPropagation();
                     this.handleSelect(clickParams);
