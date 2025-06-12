@@ -42,6 +42,21 @@
 }
 
 
+.q2-report-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #888;
+    margin-bottom: 1px;
+    min-height: 40;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14;
+    color: #333;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+
 .q2-report-rowssection-header {
     color: #333;
     display: flex;
@@ -76,6 +91,14 @@
     cursor: pointer;
 }
 
+.q2-report-rowssection-body {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    padding-top: 3;
+    cursor: pointer;
+}
 
 .q2-report-cell {
     display: table-cell;

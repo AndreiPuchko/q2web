@@ -67,7 +67,8 @@ const report_json = `{
                 "3,0": {
                   "data": "Address",
                   "style": {
-                    "border-color": "black"
+                    "border-color": "black",
+                    "padding": "0.05cm 0.05cm 0.05cm 1.0cm"
                   }
                 },
                 "3,4": {
