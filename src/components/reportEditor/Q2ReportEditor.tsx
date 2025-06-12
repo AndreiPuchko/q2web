@@ -69,8 +69,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const secondColWidthPx = 80;
         const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
         const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
-        const cellHeightPx = 0.5 * pxPerCm;
-        return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx };
+        return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
     }
 
     handleSelect = (sel: Selection) => {
@@ -280,7 +279,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     }}
                 >
                     {page.columns.map((column: any, colIdx: number) => {
-                        const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx, cellHeightPx } =
+                        const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx } =
                             this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
                         const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(page.style ? page.style : {}), ...(column.style ? column.style : {}) };
                         return (
@@ -295,7 +294,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                     width: gridWidthPx + firstColWidthPx + secondColWidthPx,
                                 }}
                             >
-                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx, pageIdx, colIdx, nextStyle)}
+                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, pageIdx, colIdx, nextStyle)}
                             </div>
                         );
                     })}
@@ -309,7 +308,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         cellWidthsPx: number[],
         firstColWidthPx: number,
         secondColWidthPx: number,
-        cellHeightPx: number,
         pageIdx?: number,
         colIdx?: number,
         parentStyle: any
@@ -400,7 +398,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     })}
                 </div>
                 {/* Render rows section here */}
-                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, cellHeightPx, pageIdx, colIdx, nextStyle)}
+                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, pageIdx, colIdx, nextStyle)}
             </div>
         );
     }
@@ -410,7 +408,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         cellWidthsPx: number[],
         firstColWidthPx: number,
         secondColWidthPx: number,
-        cellHeightPx: number,
         pageIdx?: number,
         colIdx?: number,
         parentStyle: any
@@ -444,6 +441,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             });
             const rowClickParams = { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx };
             const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(rowSet.style ? rowSet.style : {}) };
+            const cellHeightPx = "auto";
             return (
                 <div
                     key={rowSetIdx}
