@@ -1,6 +1,6 @@
 import { Component } from "react";
-import { Q2Form } from "../q2_modules/Q2Form";
-import Form from '../components/Form';
+import { Q2Form } from "../../q2_modules/Q2Form";
+import Form from '../Form';
 
 
 class Q2PropsEditor extends Component {

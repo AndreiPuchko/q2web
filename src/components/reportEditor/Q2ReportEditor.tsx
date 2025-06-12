@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Q2PropsEditor from "./Q2PropsEditor";
 import "./Q2ReportEditor.css";
+import get_report_json, {} from "./test_report"
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
@@ -29,89 +30,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         selection: undefined,
         contextMenu: undefined,
     };
-
-    report = {
-        pages: [
-            {
-                page_width: 21.0,
-                page_height: 29.0,
-                page_margin_left: 2.0,
-                page_margin_top: 2.0,
-                page_margin_right: 1.0,
-                page_margin_bottom: 2.0,
-                columns: [
-                    {
-                        widths: ["20%", "20%", "0.0", "3.00", "3.0"],
-                        rows: [{
-                            heights: ["0-0", "0-0", "0-0", "0-0.30", "0-0"],
-                            cells: {
-                                "0,0": { data: "text", style: {} },
-                                "3,3": { data: "text3", style: {} },
-                            }
-                        },
-                        {
-                            heights: ["0-0", "0-0"],
-                            cells: {
-                                "0,1": { data: "text", style: {} },
-                            }
-                        }
-                        ]
-                    },
-                    {
-                        widths: ["10", "20%", "0.0", "2.00", "1.0"],
-                        rows: [{
-                            heights: ["0-0", "0-0", "0-0", "0-0.30", "0-0"],
-                            cells: {
-                                "1,1": { data: "text", style: {} },
-                            }
-                        }
-                        ]
-                    }
-
-                ]
-            },
-            {
-                page_width: 19.0,
-                page_height: 29.0,
-                page_margin_left: 2.0,
-                page_margin_top: 2.0,
-                page_margin_right: 1.0,
-                page_margin_bottom: 2.0,
-                columns: [
-                    {
-                        widths: ["10%", "20%", "0.0", "3.00", "3.0"],
-                        rows: [{
-                            heights: ["0-0", "0-0", "0-0", "0-0.30"],
-                            cells: {
-                                "0,0": { data: "text", style: {} },
-                                "3,3": { data: "text3", style: {} },
-                            }
-                        },
-                        {
-                            heights: ["0-0", "0-0"],
-                            cells: {
-                                "0,1": { data: "text", style: {} },
-                            }
-                        }
-                        ]
-                    },
-                    {
-                        widths: ["10", "20%", "0.0", "2.00", "1.0"],
-                        rows: [{
-                            heights: ["0-0", "0-0"],
-                            cells: {
-                                "1,1": { data: "text", style: {} },
-                            }
-                        }
-                        ]
-                    }
-
-                ]
-            }
-
-        ]
-    };
-
+    
+    report = get_report_json();
 
     defaultMenu = ["Clone", "Add above", "Add below", "-"];
     reportMenu = ["HTML", "DOCX", "XLSX", "PDF"];

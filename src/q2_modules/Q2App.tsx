@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import MainMenu from '../components/MainMenu';
 import Dialog from '../components/Dialog';
-import { Q2ReportEditor } from "../q2app/Q2ReportEditor"
+import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
 
 
 import './Q2App.css';
