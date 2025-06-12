@@ -577,43 +577,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             gridRow: `${rowIdx + 1}`,
         };
         if (cell && cell.style) {
-            for (const key in cell.style) {
-                if (key.includes("-")) {
-                    if (key === "font-size") cellStyle["fontSize"] = cell.style[key]
-                    else if (key === "font-weight") cellStyle["fontWeight"] = cell.style[key]
-                    else if (key === "text-align") cellStyle["textAlign"] = cell.style[key]
-                    else if (key === "vertical-align") cellStyle["verticalAlign"] = cell.style[key]
-                    else if (key === "border-color") cellStyle["borderColor"] = cell.style[key]
-                    else if (key === "border-width") {
-                        const bw = cell.style[key].split(" ");
-                        if (parseInt(bw[0])) {
-                            cellStyle["borderTopStyle"] = "solid"
-                            cellStyle["borderTopWidth"] = `${bw[0]}px`
-                        }
-                        if (parseInt(bw[1])) {
-                            cellStyle["borderRightStyle"] = "solid"
-                            cellStyle["borderRightWidth"] = `${bw[1]}px`
-                        }
-                        if (parseInt(bw[2])) {
-                            cellStyle["borderBottomStyle"] = "solid"
-                            cellStyle["borderBottomWidth"] = `${bw[2]}px`
-                        }
-                        if (parseInt(bw[3])) {
-                            cellStyle["borderLeftStyle"] = "solid"
-                            cellStyle["borderLeftWidth"] = `${bw[3]}px`
-                        }
-                    }
-                    else console.log(key + " -> " + cell.style[key]);
-                }
-                else {
-                    cellStyle[key] = cell.style[key]
-                }
-            }
-            // console.log(Object(cell.style))
-            // .map((eq1,q2) => {} )
-
+            this.adaptStyle(cellStyle, cell.style)
         }
-        // ...(cell && cell.style ? cell.style : {})
 
         if (cell) {
             if (cell.colspan && cell.colspan > 1) {
@@ -640,6 +605,42 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 {cell ? cell.data : ""}
             </div>
         );
+    }
+
+
+    adaptStyle(style: any, reportStyle: any) {
+        for (const key in reportStyle) {
+            if (key.includes("-")) {
+                if (key === "font-size") style["fontSize"] = reportStyle[key]
+                else if (key === "font-weight") style["fontWeight"] = reportStyle[key]
+                else if (key === "text-align") style["textAlign"] = reportStyle[key]
+                else if (key === "vertical-align") style["verticalAlign"] = reportStyle[key]
+                else if (key === "border-color") style["borderColor"] = reportStyle[key]
+                else if (key === "border-width") {
+                    const bw = reportStyle[key].split(" ");
+                    if (parseInt(bw[0])) {
+                        style["borderTopStyle"] = "solid"
+                        style["borderTopWidth"] = `${bw[0]}px`
+                    }
+                    if (parseInt(bw[1])) {
+                        style["borderRightStyle"] = "solid"
+                        style["borderRightWidth"] = `${bw[1]}px`
+                    }
+                    if (parseInt(bw[2])) {
+                        style["borderBottomStyle"] = "solid"
+                        style["borderBottomWidth"] = `${bw[2]}px`
+                    }
+                    if (parseInt(bw[3])) {
+                        style["borderLeftStyle"] = "solid"
+                        style["borderLeftWidth"] = `${bw[3]}px`
+                    }
+                }
+                else console.log(key + " -> " + reportStyle[key]);
+            }
+            else {
+                style[key] = reportStyle[key]
+            }
+        }
     }
 
     // Helper to pass pageIdx/colIdx to renderRows/renderColumns
