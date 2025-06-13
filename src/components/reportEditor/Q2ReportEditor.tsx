@@ -415,8 +415,20 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         );
                     })}
                 </div>
-                {/* Render rows section here */}
-                {this.renderRows(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, pageIdx, colIdx, nextStyle)}
+                {/* Move rows section loop here */}
+                {column.rows.map((rowSet: any, rowSetIdx: number) =>
+                    this.renderRows(
+                        column,
+                        cellWidthsPx,
+                        firstColWidthPx,
+                        secondColWidthPx,
+                        pageIdx,
+                        colIdx,
+                        nextStyle,
+                        rowSet,
+                        rowSetIdx
+                    )
+                )}
             </div>
         );
     }
@@ -428,128 +440,130 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         secondColWidthPx: number,
         pageIdx?: number,
         colIdx?: number,
-        parentStyle: any
+        parentStyle?: any,
+        rowSet?: any,
+        rowSetIdx?: number
     ) {
+        // Only render a single rowSet (not a map)
         const colCount = column.widths.length;
         const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(column.style ? column.style : {}) };
 
-        return column.rows.map((rowSet: any, rowSetIdx: number) => {
-            const rowCount = rowSet.heights.length || 0;
-            const isSelected = this.state.selection?.type === "row"
-                && this.state.selection.pageIdx === pageIdx
-                && this.state.selection.colIdx === colIdx
-                && this.state.selection.rowSetIdx === rowSetIdx;
-            const coveredCells = new Set<string>();
+        if (!rowSet) return null;
+        const rowCount = rowSet.heights.length || 0;
+        const isSelected = this.state.selection?.type === "row"
+            && this.state.selection.pageIdx === pageIdx
+            && this.state.selection.colIdx === colIdx
+            && this.state.selection.rowSetIdx === rowSetIdx;
+        const coveredCells = new Set<string>();
 
-            if (!rowSet.cells) return;
+        if (!rowSet.cells) return null;
 
-            if (!rowSet.style) {
-                rowSet.style = {};
-            }
-            Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
-                const [rowIdx, cellIdx] = key.split(',').map(Number);
-                if (!cell) return;
-                const rowspan = cell.rowspan > 1 ? cell.rowspan : 1;
-                const colspan = cell.colspan > 1 ? cell.colspan : 1;
-                if (rowspan > 1 || colspan > 1) {
-                    for (let dr = 0; dr < rowspan; dr++) {
-                        for (let dc = 0; dc < colspan; dc++) {
-                            if (dr !== 0 || dc !== 0) {
-                                coveredCells.add(`${rowIdx + dr},${cellIdx + dc}`);
-                            }
+        if (!rowSet.style) {
+            rowSet.style = {};
+        }
+        Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
+            const [rowIdx, cellIdx] = key.split(',').map(Number);
+            if (!cell) return;
+            const rowspan = cell.rowspan > 1 ? cell.rowspan : 1;
+            const colspan = cell.colspan > 1 ? cell.colspan : 1;
+            if (rowspan > 1 || colspan > 1) {
+                for (let dr = 0; dr < rowspan; dr++) {
+                    for (let dc = 0; dc < colspan; dc++) {
+                        if (dr !== 0 || dc !== 0) {
+                            coveredCells.add(`${rowIdx + dr},${cellIdx + dc}`);
                         }
                     }
                 }
-            });
-            const rowClickParams = { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx };
-            const nextStyle = { ...(parentStyle ? parentStyle : {}), ...rowSet.style };
-            const rowHeights: string[] = [];
-            rowSet.heights.forEach(element => {
-                const elsplt = element.split("-")
-                if (parseFloat(elsplt[1]) !== 0) {
-                    rowHeights.push(`${elsplt[1]}cm`)
-                }
-                else {
-                    rowHeights.push("auto")
-                }
-            });
-            return (
-                <div
-                    key={rowSetIdx}
-                    className="q2-report-rowssection-body"
-                    style={{
-                        gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
-                        gridTemplateRows: `${rowHeights.join(" ")}`,
-                        borderBottom: rowSetIdx < column.rows.length - 1 ? "1px solid #EEE" : undefined,
-                        background: isSelected ? "#ffe066" : "#EEE"
-                    }}
-                >
-                    {/* render rows's section "header" column  */}
-                    <div
-                        className="q2-report-rowssection-header"
-                        style={{
-                            background: isSelected ? "#ffe066" : "#f0f8ff",
-                            gridRow: `1 / span ${rowCount}`,
-                        }}
-                        onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams, rowSet.style); }}
-                        onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
-                    >
-                        Rows
-                    </div>
-                    {/* render rows's heights column */}
-                    {Array.from({ length: rowCount }).map((_, rowIdx) => {
-                        const isHeightSelected = (this.state.selection as any)?.type === "rowheight"
-                            && (this.state.selection as any).pageIdx === pageIdx
-                            && (this.state.selection as any).colIdx === colIdx
-                            && (this.state.selection as any).rowSetIdx === rowSetIdx
-                            && (this.state.selection as any).heightIdx === rowIdx;
-                        const rowHeightsClickParams = { type: "rowheight", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx, heightIdx: rowIdx };
-                        return (
-                            <div
-                                key={`height-${rowIdx}`}
-                                className="q2-report-rowsheights-header"
-                                style={{
-                                    background: isHeightSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0f7fa"),
-                                    gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
-                                }}
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    this.handleSelect(rowHeightsClickParams, rowSet.style);
-                                }}
-                                onContextMenu={e => {
-                                    e.stopPropagation();
-                                    this.handleContextMenu(e, rowHeightsClickParams);
-                                }}
-                            >
-                                {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
-                            </div>
-                        );
-                    })}
-                    {/* render cells */}
-                    {Array.from({ length: rowCount }).map((_, rowIdx) =>
-                        Array.from({ length: colCount }).map((_, cellIdx) => {
-                            const cellKey = `${rowIdx},${cellIdx}`;
-                            // Exclude covered cells and parent cell (top-left of span)
-                            if (coveredCells.has(cellKey)) return null;
-                            if (rowSet.cells[cellKey] === undefined) {
-                                rowSet.cells[cellKey] = {};
-                            }
-                            const cell = rowSet.cells && rowSet.cells[cellKey];
-                            return this.renderCell(
-                                cell,
-                                cellKey,
-                                cellIdx,
-                                rowIdx,
-                                pageIdx!,
-                                colIdx!,
-                                rowSetIdx,
-                                nextStyle
-                            );
-                        })
-                    )}
-                </div>
-            );
+            }
         });
+        const rowClickParams = { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx };
+        const nextRowStyle = { ...(parentStyle ? parentStyle : {}), ...rowSet.style };
+        const rowHeights: string[] = [];
+        rowSet.heights.forEach(element => {
+            const elsplt = element.split("-")
+            if (parseFloat(elsplt[1]) !== 0) {
+                rowHeights.push(`${elsplt[1]}cm`)
+            }
+            else {
+                rowHeights.push("auto")
+            }
+        });
+        return (
+            <div
+                key={rowSetIdx}
+                className="q2-report-rowssection-body"
+                style={{
+                    gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
+                    gridTemplateRows: `${rowHeights.join(" ")}`,
+                    borderBottom: rowSetIdx! < column.rows.length - 1 ? "1px solid #EEE" : undefined,
+                    background: isSelected ? "#ffe066" : "#EEE"
+                }}
+            >
+                {/* render rows's section "header" column  */}
+                <div
+                    className="q2-report-rowssection-header"
+                    style={{
+                        background: isSelected ? "#ffe066" : "#f0f8ff",
+                        gridRow: `1 / span ${rowCount}`,
+                    }}
+                    onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams, rowSet.style); }}
+                    onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
+                >
+                   Rows<div><b>{rowSet.role}</b></div>
+                </div>
+                {/* render rows's heights column */}
+                {Array.from({ length: rowCount }).map((_, rowIdx) => {
+                    const isHeightSelected = (this.state.selection as any)?.type === "rowheight"
+                        && (this.state.selection as any).pageIdx === pageIdx
+                        && (this.state.selection as any).colIdx === colIdx
+                        && (this.state.selection as any).rowSetIdx === rowSetIdx
+                        && (this.state.selection as any).heightIdx === rowIdx;
+                    const rowHeightsClickParams = { type: "rowheight", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx, heightIdx: rowIdx };
+                    return (
+                        <div
+                            key={`height-${rowIdx}`}
+                            className="q2-report-rowsheights-header"
+                            style={{
+                                background: isHeightSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0f7fa"),
+                                gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
+                            }}
+                            onClick={e => {
+                                e.stopPropagation();
+                                this.handleSelect(rowHeightsClickParams, rowSet.style);
+                            }}
+                            onContextMenu={e => {
+                                e.stopPropagation();
+                                this.handleContextMenu(e, rowHeightsClickParams);
+                            }}
+                        >
+                            {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
+                        </div>
+                    );
+                })}
+                {/* render cells */}
+                {Array.from({ length: rowCount }).map((_, rowIdx) =>
+                    Array.from({ length: colCount }).map((_, cellIdx) => {
+                        const cellKey = `${rowIdx},${cellIdx}`;
+                        // Exclude covered cells and parent cell (top-left of span)
+                        if (coveredCells.has(cellKey)) return null;
+                        if (rowSet.cells[cellKey] === undefined) {
+                            rowSet.cells[cellKey] = {};
+                        }
+                        const cell = rowSet.cells && rowSet.cells[cellKey];
+                        return this.renderCell(
+                            cell,
+                            cellKey,
+                            cellIdx,
+                            rowIdx,
+                            pageIdx!,
+                            colIdx!,
+                            rowSetIdx!,
+                            nextRowStyle
+                        );
+                    })
+                )}
+            </div>
+        );
     }
 
     renderCell(
