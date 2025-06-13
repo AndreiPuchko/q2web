@@ -323,6 +323,55 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
         const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(column.style) };
 
+        // Prepare header, section, footer
+        const rowsContent: any[] = [];
+        column.rows.forEach((rowSet: any, rowSetIdx: number) => {
+            if (rowSet.table_header) {
+                rowsContent.push(
+                    this.renderRows(
+                        column,
+                        cellWidthsPx,
+                        firstColWidthPx,
+                        secondColWidthPx,
+                        pageIdx,
+                        colIdx,
+                        nextStyle,
+                        rowSet.table_header,
+                        `${rowSetIdx}-header`
+                    )
+                );
+            }
+            // Main section
+            rowsContent.push(
+                this.renderRows(
+                    column,
+                    cellWidthsPx,
+                    firstColWidthPx,
+                    secondColWidthPx,
+                    pageIdx,
+                    colIdx,
+                    nextStyle,
+                    rowSet,
+                    `${rowSetIdx}-table`
+                )
+            );
+            if (rowSet.table_footer) {
+                rowsContent.push(
+                    this.renderRows(
+                        column,
+                        cellWidthsPx,
+                        firstColWidthPx,
+                        secondColWidthPx,
+                        pageIdx,
+                        colIdx,
+                        nextStyle,
+                        rowSet.table_footer,
+                        `${rowSetIdx}-footer`
+                    )
+                );
+            }
+        });
+
         return (
             <div>
                 <div
@@ -382,20 +431,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         );
                     })}
                 </div>
-                {/* Move rows section loop here */}
-                {column.rows.map((rowSet: any, rowSetIdx: number) =>
-                    this.renderRows(
-                        column,
-                        cellWidthsPx,
-                        firstColWidthPx,
-                        secondColWidthPx,
-                        pageIdx,
-                        colIdx,
-                        nextStyle,
-                        rowSet,
-                        rowSetIdx
-                    )
-                )}
+                {/* Render header, section, footer */}
+                {rowsContent}
             </div>
         );
     }
@@ -409,7 +446,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         colIdx?: number,
         parentStyle?: any,
         rowSet?: any,
-        rowSetIdx?: number
+        rowSetIdx?: any
     ) {
         // Only render a single rowSet (not a map)
         const colCount = column.widths.length;
@@ -476,7 +513,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams, rowSet.style); }}
                     onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
                 >
-                    Rows<div><b>[{rowSet.role}]</b></div>
+                    {rowSet.role}
                 </div>
                 {/* render rows's heights column */}
                 {Array.from({ length: rowCount }).map((_, rowIdx) => {

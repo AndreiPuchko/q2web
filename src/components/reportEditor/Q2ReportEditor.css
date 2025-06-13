@@ -1,3 +1,7 @@
+:root {
+    user-select: none;
+}
+
 .q2-context-menu {
     position: fixed;
     background: #EEE;
@@ -106,6 +110,7 @@
     font-size: 12px;
     min-width: 0px;
     min-height: 0px;
+    font-weight: bold;
     border: 1px solid #CCC;
     margin: 0;
     padding: 0;

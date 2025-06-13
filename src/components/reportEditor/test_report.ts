@@ -208,7 +208,7 @@ const report_json = `{
                 "new_page_before": "",
                 "new_page_after": "",
                 "heights": [
-                  "0-0",
+                  "0.9-0.9",
                   "0-0"
                 ],
                 "cells": {
