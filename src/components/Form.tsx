@@ -247,6 +247,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
       : true;
 
     // Only disable the panel content, not the checkbox itself
+
     return (
       <div className={className} style={rootStyle} key={panel.key}>
         {panel.label && (
@@ -254,6 +255,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             <div className="group-box-title">
               <input
                 id={panel_id}
+                key={panel_id}
                 type="checkbox"
                 checked={checked}
                 onChange={this.handlePanelCheck(panel.key)}
@@ -273,7 +275,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
               const id = `${child.id}-control-cb`;
               if (child.children) {
                 return (
-                  <div key={child.key || index} style={{ gridColumn: "1 / span 2" }}>
+                  <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2" }}>
                     {this.renderPanel(child)}
                   </div>
                 );
@@ -284,6 +286,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                       <div style={{ justifySelf: "end", marginRight: "0.1em" }}>
                         <input
                           id={id}
+                          key={id}
                           type="checkbox"
                           checked={!!this.state.formData?.[child.column]}
                           onChange={e => {
@@ -316,7 +319,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                       </label>
                     }
 
-                    <div key={child.key || index} className="form-group" >
+                    <div key={child.key + `-form-group-${index}`} className="form-group" >
                       {child.check ? (
                         <fieldset
                           style={fieldSetStyle}
@@ -347,7 +350,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         this.w[column] &&
         typeof this.w[column]?.focus === "function"
       ) {
-        console.log(column)
         this.w[column].focus();
       }
     });
@@ -359,20 +361,18 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     const subForm = this.props.metaData?.subForm;
     const hasCancelButton = this.props.metaData.hasCancelButton;
     const structuredColumns = this.createFormTree(columns);
-    // this.scanAndCopyValues();
-
+    
     return (
       <div ref={this.formRef} className="FormComponent" >
-        {/* <div ref={this.formRef} className="FormComponent" _can_grow_height="true" _can_grow_width="true"> */}
         {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel, true))}
+
         {((hasOkButton || hasCancelButton) && !subForm) && (
           <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
             {hasOkButton && <Q2Button label="OK" onClick={this.handleSubmit} />}
             {hasCancelButton && <Q2Button label="Cancel" onClick={this.handleCancel} />}
           </div>
         )}
-        {/* <Spacer />  */}
-        {/* Add Spacer widget here */}
+
       </div>
     );
   }

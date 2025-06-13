@@ -1,8 +1,8 @@
 import Widget from './Widget';
 import './Text.css';
-import {WidgetProps} from './Widget';
+import { WidgetProps } from './Widget';
 
-interface Q2TextProps extends WidgetProps {}
+interface Q2TextProps extends WidgetProps { }
 
 class Q2Text extends Widget<Q2TextProps> {
     constructor(props: Q2TextProps) {
@@ -13,6 +13,7 @@ class Q2Text extends Widget<Q2TextProps> {
         const { col, readOnly, id, name } = this.props;
         return (
             <textarea
+                key={col.id}
                 className="Q2Text"
                 value={col.data}
                 readOnly={readOnly}
