@@ -162,9 +162,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         <button style={buttonStyle}>PDF</button>
                     </div>
                 </div>
-                {/* Move page rendering loop here */}
                 {this.report.pages.map((page, pageIdx) => (
-                    <div key={pageIdx} style={{ marginBottom: 12 }}>
+                    <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
                         {this.RenderPage(page, pageIdx, this.report.style)}
                     </div>
                 ))}
@@ -337,7 +336,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         colIdx,
                         nextStyle,
                         rowSet.table_header,
-                        `${rowSetIdx}-header`
+                        `rowset-${rowSetIdx}-header`
                     )
                 );
             }
@@ -352,7 +351,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     colIdx,
                     nextStyle,
                     rowSet,
-                    `${rowSetIdx}-table`
+                    `rowset-${rowSetIdx}-table`
                 )
             );
             if (rowSet.table_footer) {
@@ -366,7 +365,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         colIdx,
                         nextStyle,
                         rowSet.table_footer,
-                        `${rowSetIdx}-footer`
+                        `rowset-${rowSetIdx}-footer`
                     )
                 );
             }
@@ -411,7 +410,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         return (
                             <div
                                 className="q2-report-colssection-widths"
-                                key={i}
+                                key={`colwidth-${colIdx}-${i}`}
                                 style={{
                                     width: `${w}px`,
                                     background: isWidthSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0eaff"),
@@ -431,7 +430,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         );
                     })}
                 </div>
-                {/* Render header, section, footer */}
                 {rowsContent}
             </div>
         );
@@ -525,7 +523,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     const rowHeightsClickParams = { type: "rowheight", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx, heightIdx: rowIdx };
                     return (
                         <div
-                            key={`height-${rowIdx}`}
+                            key={`height-${rowSetIdx}-${rowIdx}`}
                             className="q2-report-rowsheights-header"
                             style={{
                                 background: isHeightSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0f7fa"),
@@ -556,7 +554,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         const cell = rowSet.cells && rowSet.cells[cellKey];
                         return this.renderCell(
                             cell,
-                            cellKey,
+                            `cell-${rowSetIdx}-${rowIdx}-${cellIdx}`,
                             cellIdx,
                             rowIdx,
                             pageIdx!,
