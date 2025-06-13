@@ -197,15 +197,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     onContextMenu={e => this.handleContextMenu(e, { type: "page", pageIdx })}
                 >
                     <div
+                        className="q2-report-page"
                         style={{
-                            width: 161,
-                            padding: "4px 0",
-                            textAlign: "center",
-                            fontWeight: "bold",
-                            fontSize: 13,
-                            color: "#444",
-                            borderRight: "1px solid #b0c4de",
                             background: isSelected ? "#ffe066" : "#f9fbe7",
+                            width: 161,
                         }}
                     >
                         Page [{pageIdx}]
@@ -219,63 +214,57 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             background: isSelected ? "#ffe066" : "#f9fbe7",
                         }}
                     >
-                        <label style={{ fontSize: 12, color: "#333" }}>
+                        <label className="q2-report-page-size">
                             W:
                             <input
                                 type="number"
                                 value={page.page_width.toFixed(2)}
                                 step="0.01"
-                                style={{ width: 60, marginLeft: 2, marginRight: 8 }}
                                 readOnly
                             />
                         </label>
-                        <label style={{ fontSize: 12, color: "#333" }}>
+                        <label className="q2-report-page-size">
                             H:
                             <input
                                 type="number"
                                 value={page.page_height.toFixed(2)}
                                 step="0.01"
-                                style={{ width: 60, marginLeft: 2, marginRight: 8 }}
                                 readOnly
                             />
                         </label>
-                        <label style={{ fontSize: 12, color: "#333" }}>
+                        <label className="q2-report-page-size">
                             ML:
                             <input
                                 type="number"
                                 value={page.page_margin_left.toFixed(2)}
                                 step="0.01"
-                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
                                 readOnly
                             />
                         </label>
-                        <label style={{ fontSize: 12, color: "#333" }}>
+                        <label className="q2-report-page-size">
                             MT:
                             <input
                                 type="number"
                                 value={page.page_margin_top.toFixed(2)}
                                 step="0.01"
-                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
                                 readOnly
                             />
                         </label>
-                        <label style={{ fontSize: 12, color: "#333" }}>
+                        <label className="q2-report-page-size">
                             MR:
                             <input
                                 type="number"
                                 value={page.page_margin_right.toFixed(2)}
                                 step="0.01"
-                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
                                 readOnly
                             />
                         </label>
-                        <label style={{ fontSize: 12, color: "#333" }}>
+                        <label className="q2-report-page-size">
                             MB:
                             <input
                                 type="number"
                                 value={page.page_margin_bottom.toFixed(2)}
                                 step="0.01"
-                                style={{ width: 45, marginLeft: 2, marginRight: 4 }}
                                 readOnly
                             />
                         </label>
@@ -349,17 +338,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 // onContextMenu={e => this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
                 >
                     <div
+                        className="q2-report-colssection-header"
                         style={{
                             width: `${firstColWidthPx + secondColWidthPx + 1}px`,
-                            textAlign: "center",
-                            fontSize: 12,
-                            color: "#333",
                             background: isSelected ? "#ffe066" : "#d0eaff",
-                            borderRight: "1px solid #b0c4de",
-                            padding: "2px 0",
-                            boxSizing: "border-box",
-                            fontWeight: "bold",
-                            cursor: "pointer",
                         }}
                         onClick={e => {
                             e.stopPropagation();
@@ -379,35 +361,20 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             && (this.state.selection as any).widthIdx === i;
                         return (
                             <div
+                                className="q2-report-colssection-widths"
                                 key={i}
                                 style={{
                                     width: `${w}px`,
-                                    textAlign: "center",
-                                    fontSize: 12,
-                                    color: "#333",
                                     background: isWidthSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0eaff"),
                                     borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
-                                    padding: "2px 0",
-                                    boxSizing: "border-box",
-                                    cursor: "pointer",
                                 }}
                                 onClick={e => {
                                     e.stopPropagation();
-                                    this.handleSelect({
-                                        type: "colwidth",
-                                        pageIdx: pageIdx!,
-                                        colIdx: colIdx!,
-                                        widthIdx: i
-                                    });
+                                    this.handleSelect({ type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
                                 }}
                                 onContextMenu={e => {
                                     e.stopPropagation();
-                                    this.handleContextMenu(e, {
-                                        type: "colwidth",
-                                        pageIdx: pageIdx!,
-                                        colIdx: colIdx!,
-                                        widthIdx: i
-                                    });
+                                    this.handleContextMenu(e, { type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
                                 }}
                             >
                                 {column.widths[i]}
@@ -509,7 +476,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams, rowSet.style); }}
                     onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
                 >
-                   Rows<div><b>[{rowSet.role}]</b></div>
+                    Rows<div><b>[{rowSet.role}]</b></div>
                 </div>
                 {/* render rows's heights column */}
                 {Array.from({ length: rowCount }).map((_, rowIdx) => {
