@@ -143,23 +143,33 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const { selection } = this.state;
         const nothing = <div className="q2-report-data-editor">&nbsp;</div>;
         if (!selection) { return nothing }
-        const { pageIdx, colIdx, rowSetIdx, rowIdx, cellIdx } = selection as any;
-        console.log(pageIdx, colIdx, rowSetIdx, rowIdx, cellIdx)
-
+        console.log(selection)
+        const { type, pageIdx, colIdx, rowSetIdx, rowIdx, cellIdx, widthIdx, heightIdx } = selection as any;
+        if (["report", "page", "column"].includes(type)) {
+            return nothing
+        }
         const page = this.report.pages?.[pageIdx];
-        if (!page) { return nothing }
-
         const column = page?.columns?.[colIdx];
-        if (!column) { return nothing }
-        if (rowSetIdx === undefined) { return nothing }
-
-        const real_rowIdx = rowSetIdx.replace("-header", "").replace("-footer", "")
+        if (type == "colwidth") {
+            return <div className="q2-report-data-editor">
+                {column.widths[widthIdx]}
+            </div>
+        }
+        const real_rowIdx = rowSetIdx?.replace("-header", "").replace("-footer", "")
         let rowSet = undefined;
         if (rowSetIdx.includes("-header")) { rowSet = column.rows?.[real_rowIdx].table_header }
         else if (rowSetIdx.includes("-footer")) { rowSet = column.rows?.[real_rowIdx].table_footer }
         else { rowSet = column.rows?.[real_rowIdx] };
 
-        if (rowIdx >= 0 && cellIdx >= 0) {
+        if (type == "rowheight") {
+            return <div className="q2-report-data-editor">
+                {rowSet.heights[heightIdx]}
+            </div>
+        }
+        else if (type == "row") {
+            return <div className="q2-report-data-editor">{rowSet.role}</div>
+        }
+        else if (type == "cell") {
             const cellKey = `${rowIdx},${cellIdx}`;
             const cell = rowSet.cells[cellKey];
             return (
@@ -168,7 +178,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 </div>
             );
         }
-        return <div className="q2-report-data-editor">{rowSet.role}</div>
+
+        // return <div className="q2-report-data-editor">{rowSet.role}</div>
     }
 
     renderReport() {
@@ -456,7 +467,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 }}
                                 onContextMenu={e => {
                                     e.stopPropagation();
-                                    this.handleContextMenu(e, { type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
+                                    this.handleContextMenu(e, { type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, c: i });
                                 }}
                             >
                                 {column.widths[i]}
