@@ -509,7 +509,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams, rowSet.style); }}
                     onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
                 >
-                   Rows<div><b>{rowSet.role}</b></div>
+                   Rows<div><b>[{rowSet.role}]</b></div>
                 </div>
                 {/* render rows's heights column */}
                 {Array.from({ length: rowCount }).map((_, rowIdx) => {
@@ -627,7 +627,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 onClick={e => { e.stopPropagation(); this.handleSelect(clickParams, cell.style); }}
                 onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, clickParams); }}
             >
-                {cell ? cell.data : ""}
+                {cell && cell.data
+                    ? <span dangerouslySetInnerHTML={{ __html: cell.data }} />
+                    : ""}
             </div>
         );
     }
