@@ -138,6 +138,39 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         );
     }
 
+
+    renderDataEditor() {
+        const { selection } = this.state;
+        const nothing = <div className="q2-report-data-editor">&nbsp;</div>;
+        if (!selection) { return nothing }
+        const { pageIdx, colIdx, rowSetIdx, rowIdx, cellIdx } = selection as any;
+        console.log(pageIdx, colIdx, rowSetIdx, rowIdx, cellIdx)
+
+        const page = this.report.pages?.[pageIdx];
+        if (!page) { return nothing }
+
+        const column = page?.columns?.[colIdx];
+        if (!column) { return nothing }
+        if (rowSetIdx === undefined) { return nothing }
+
+        const real_rowIdx = rowSetIdx.replace("-header", "").replace("-footer", "")
+        let rowSet = undefined;
+        if (rowSetIdx.includes("-header")) { rowSet = column.rows?.[real_rowIdx].table_header }
+        else if (rowSetIdx.includes("-footer")) { rowSet = column.rows?.[real_rowIdx].table_footer }
+        else { rowSet = column.rows?.[real_rowIdx] };
+
+        if (rowIdx >= 0 && cellIdx >= 0) {
+            const cellKey = `${rowIdx},${cellIdx}`;
+            const cell = rowSet.cells[cellKey];
+            return (
+                <div className="q2-report-data-editor">
+                    {cell?.data}
+                </div>
+            );
+        }
+        return <div className="q2-report-data-editor">{rowSet.role}</div>
+    }
+
     renderReport() {
         const buttonStyle = {
             padding: "6px 18px",
@@ -162,6 +195,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         <button style={buttonStyle}>PDF</button>
                     </div>
                 </div>
+                {this.renderDataEditor()}
                 {this.report.pages.map((page, pageIdx) => (
                     <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
                         {this.RenderPage(page, pageIdx, this.report.style)}
@@ -336,7 +370,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         colIdx,
                         nextStyle,
                         rowSet.table_header,
-                        `rowset-${rowSetIdx}-header`
+                        `${rowSetIdx}-header`
                     )
                 );
             }
@@ -351,7 +385,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     colIdx,
                     nextStyle,
                     rowSet,
-                    `rowset-${rowSetIdx}-table`
+                    `${rowSetIdx}`
                 )
             );
             if (rowSet.table_footer) {
@@ -365,7 +399,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         colIdx,
                         nextStyle,
                         rowSet.table_footer,
-                        `rowset-${rowSetIdx}-footer`
+                        `${rowSetIdx}-footer`
                     )
                 );
             }
