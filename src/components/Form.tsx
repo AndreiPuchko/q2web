@@ -317,7 +317,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                         className="form-label"
                         style={{ justifySelf: "end", marginRight: "0.5em" }}
                       >
-                        {child.label && child.control !== "check" ? child.label : ""}:
+                        {child.label && child.control !== "check" ? child.label + ":" : ""}
                       </label>
                     }
                     {child.control !== "label" &&
