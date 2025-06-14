@@ -59,11 +59,11 @@
     box-sizing: border-box;
 }
 
-.q2-report-data-editor {
+.q2-report-content-editor {
     color: black;
-    min-height: 2.2em;
-    max-height: 2.2em;
-    border: 1px solid gray;
+    min-height: 2.5em;
+    max-height: 2.5em;
+    border-bottom: 1px solid black;
 }
 
 .q2-report-page {

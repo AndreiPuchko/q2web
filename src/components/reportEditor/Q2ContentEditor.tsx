@@ -98,7 +98,7 @@ class Q2ContentEditor extends Component<ContentProps> {
         const mode = this.props.selection?.type;
         return (
             <>
-                <div className="q2-report-data-editor">
+                <div className="q2-report-content-editor">
                     {mode === "row" && <Form metaData={this.defineSectionEditor()} />}
                     {mode === "colwidth" && <Form metaData={this.defineWidthEditor()} />}
                     {mode === "rowheight" && <Form metaData={this.defineHeightEditor()} />}
