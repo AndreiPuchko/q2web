@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Q2PropsEditor from "./Q2PropsEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
+import { Q2Form } from "../../q2_modules/Q2Form";
+import Form from '../Form';
 import "./Q2ReportEditor.css";
 import get_report_json from "./test_report"
 
@@ -183,8 +185,19 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
         // this._currentPageIdx = pageIdx; // set for children
         const isSelected = this.state.selection?.type === "page" && this.state.selection.pageIdx === pageIdx;
+        const pageSizes = new Q2Form("", "", "");
+        pageSizes.add_control("/h", "")
+        pageSizes.add_control("page_width", "W", { datalen: 6 });
+        pageSizes.add_control("page_height", "H after", { datalen: 6 });
+        pageSizes.add_control("page_margin_left", "ML", { datalen: 6 });
+        pageSizes.add_control("page_margin_right", "MR", { datalen: 6 });
+        pageSizes.add_control("page_margin_top", "MT", { datalen: 6 });
+        pageSizes.add_control("page_margin_bottom", "MB", { datalen: 6 });
+
+
         return (
             <div>
+
                 {/* Page info row */}
                 <div
                     style={{
@@ -201,75 +214,12 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         className="q2-report-page"
                         style={{
                             background: isSelected ? "#ffe066" : "#f9fbe7",
-                            width: 161,
+                            minWidth: 161,
                         }}
                     >
                         Page [{pageIdx}]
                     </div>
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 12,
-                            padding: "4px 8px",
-                            background: isSelected ? "#ffe066" : "#f9fbe7",
-                        }}
-                    >
-                        <label className="q2-report-page-size">
-                            W:
-                            <input
-                                type="number"
-                                value={page.page_width.toFixed(2)}
-                                step="0.01"
-                                readOnly
-                            />
-                        </label>
-                        <label className="q2-report-page-size">
-                            H:
-                            <input
-                                type="number"
-                                value={page.page_height.toFixed(2)}
-                                step="0.01"
-                                readOnly
-                            />
-                        </label>
-                        <label className="q2-report-page-size">
-                            ML:
-                            <input
-                                type="number"
-                                value={page.page_margin_left.toFixed(2)}
-                                step="0.01"
-                                readOnly
-                            />
-                        </label>
-                        <label className="q2-report-page-size">
-                            MT:
-                            <input
-                                type="number"
-                                value={page.page_margin_top.toFixed(2)}
-                                step="0.01"
-                                readOnly
-                            />
-                        </label>
-                        <label className="q2-report-page-size">
-                            MR:
-                            <input
-                                type="number"
-                                value={page.page_margin_right.toFixed(2)}
-                                step="0.01"
-                                readOnly
-                            />
-                        </label>
-                        <label className="q2-report-page-size">
-                            MB:
-                            <input
-                                type="number"
-                                value={page.page_margin_bottom.toFixed(2)}
-                                step="0.01"
-                                readOnly
-                            />
-                        </label>
-                    </div>
+                    <Form metaData={pageSizes} />
                 </div>
                 {/* Columns and rows for each column */}
                 <div
