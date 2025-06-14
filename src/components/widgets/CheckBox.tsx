@@ -25,6 +25,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
             <div className="Q2CheckBox-container">
                 <input
                     type="checkbox"
+                    key={id}
                     id={id}
                     className="Q2CheckBox"
                     onChange={this.handleChange}
