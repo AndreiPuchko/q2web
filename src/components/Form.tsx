@@ -285,7 +285,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 return (
                   <>
                     {child.check ?
-                      <div style={{ justifySelf: "end", marginRight: "0.1em" }}>
+                      <div style={{ justifySelf: "end", marginRight: "0.5em" }}>
                         <input
                           id={id}
                           key={id}
@@ -315,9 +315,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                       : <label
                         key={child.key + "-label"}
                         className="form-label"
-                        style={{ justifySelf: "end", marginRight: "0.1em" }}
+                        style={{ justifySelf: "end", marginRight: "0.5em" }}
                       >
-                        {child.label && child.control !== "check" ? child.label : ""}
+                        {child.label && child.control !== "check" ? child.label : ""}:
                       </label>
                     }
                     {child.control !== "label" &&
