@@ -61,7 +61,8 @@
 
 .q2-report-data-editor {
     color: black;
-    min-height: 2em;
+    min-height: 2.2em;
+    max-height: 2.2em;
     border: 1px solid gray;
 }
 

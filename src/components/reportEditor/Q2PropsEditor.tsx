@@ -6,9 +6,9 @@ import Form from '../Form';
 class Q2PropsEditor extends Component {
 
   defineUi() {
-    const propEditor = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
-      description: "This is an example form created using Q2Form",
-      menutoolbar: true,
+    const propEditor = new Q2Form("", "PropsEditor", "propsEditor", {
+      description: "",
+      menutoolbar: false,
       icon: "form",
       width: 800,
       height: 600,
