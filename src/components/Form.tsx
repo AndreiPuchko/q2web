@@ -274,12 +274,14 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             {panel.children.map((child: any, index: number) => {
               const id = `${child.id}-control-cb`;
               if (child.children) {
+                //render panel
                 return (
                   <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2" }}>
                     {this.renderPanel(child)}
                   </div>
                 );
               } else {
+                // render input fields
                 return (
                   <>
                     {child.check ?
@@ -315,22 +317,23 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                         className="form-label"
                         style={{ justifySelf: "end", marginRight: "0.1em" }}
                       >
-                        {child.label ? child.label : ""}
+                        {child.label && child.control !== "check" ? child.label : ""}
                       </label>
                     }
-
-                    <div key={child.key + `-form-group-${index}`} className="form-group" >
-                      {child.check ? (
-                        <fieldset
-                          style={fieldSetStyle}
-                          disabled={!this.state.formData?.[child.column]}
-                        >
-                          {this.renderInput(child)}
-                        </fieldset>
-                      ) : (
-                        this.renderInput(child)
-                      )}
-                    </div>
+                    {child.control !== "label" &&
+                      <div key={child.key + `-form-group-${index}`} className="form-group" >
+                        {child.check ? (
+                          <fieldset
+                            style={fieldSetStyle}
+                            disabled={!this.state.formData?.[child.column]}
+                          >
+                            {this.renderInput(child)}
+                          </fieldset>
+                        ) : (
+                          this.renderInput(child)
+                        )}
+                      </div>
+                    }
                   </>
                 );
               }
@@ -361,7 +364,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     const subForm = this.props.metaData?.subForm;
     const hasCancelButton = this.props.metaData.hasCancelButton;
     const structuredColumns = this.createFormTree(columns);
-    
+
     return (
       <div ref={this.formRef} className="FormComponent" >
         {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel, true))}
