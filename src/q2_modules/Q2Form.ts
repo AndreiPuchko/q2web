@@ -61,7 +61,7 @@ export class Q2Control {
     }
 
     getStyle() {
-        console.log(this.control, this.label, this.stretch)
+        // console.log(this.control, this.label, this.stretch)
         if (this.datalen)
             return { flex: `0 1 auto` }
         else

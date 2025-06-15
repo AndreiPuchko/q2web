@@ -29,6 +29,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
                     id={id}
                     className="Q2CheckBox"
                     onChange={this.handleChange}
+                    checked = {col.data}
                 />
                 <label htmlFor={id} className="Q2CheckBox-label">{col.label}</label>
             </div>

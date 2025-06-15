@@ -3,9 +3,18 @@ import { Q2Form } from "../../q2_modules/Q2Form";
 import Form from '../Form';
 
 
-class Q2PropsEditor extends Component {
+interface ContentProps {
+    selection: any;
+    report: any;
+}
+
+class Q2PropsEditor extends Component<ContentProps> {
 
   defineUi() {
+    const {report, selection} = this.props;
+
+    console.log(selection)
+
     const propEditor = new Q2Form("", "PropsEditor", "propsEditor", {
       description: "",
       menutoolbar: false,

@@ -133,9 +133,6 @@ label {
   /* Ensure minWidth is set to 0 to prevent overflow */
 }
 
-.FormComponent {
-  border: 1px solid transparent;
-}
 
 .field-set-style {
   border: none;
@@ -145,5 +142,7 @@ label {
 }
 
 .form-group {
-  margin-right: 1cap;
+  margin-right: 0.6em;
+  margin-bottom: 0.1em;
+
 }
