@@ -205,7 +205,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     let className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
     let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
     const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
-    const fieldSetStyle = { border: "none", margin: 0, padding: 0, width: "100%" };
 
     if (panel.column === "/f") {
       // 2-column grid: label right, input left
@@ -249,6 +248,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     // Only disable the panel content, not the checkbox itself
 
     return (
+      // Gropubox title
       <div className={className} style={rootStyle} key={panel.key}>
         {panel.label && (
           hasCheck ? (
@@ -267,7 +267,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
           )
         )}
         <fieldset
-          style={fieldSetStyle}
+          className="field-set-style"
           disabled={hasCheck && !checked}
         >
           <div style={style}>
@@ -284,7 +284,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 // render input fields
                 return (
                   <>
+                    {/* label/checkbox  label for control */}
                     {child.check ?
+                      // Checkbox
                       <div style={{ justifySelf: "end", marginRight: "0.5em" }}>
                         <input
                           id={id}
@@ -312,6 +314,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                           {child.control === "check" ? "Turn on" : child.label}
                         </label>
                       </div>
+                      // Label
                       : <label
                         key={child.key + "-label"}
                         className="form-label"
@@ -320,16 +323,23 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                         {child.label && child.control !== "check" ? child.label + ":" : ""}
                       </label>
                     }
+                    {/* Control! */}
                     {child.control !== "label" &&
-                      <div key={child.key + `-form-group-${index}`} className="form-group" >
+                      // <div key={child.key + `-form-group-${index}`} className="form-group" style={{flexGrow: }} >
+                      <div key={child.key + `-form-group-${index}`}
+                        className="form-group"
+                        style={child.getStyle()}
+                      >
                         {child.check ? (
+                          // control with checkbox
                           <fieldset
-                            style={fieldSetStyle}
+                            className="field-set-style"
                             disabled={!this.state.formData?.[child.column]}
                           >
                             {this.renderInput(child)}
                           </fieldset>
                         ) : (
+                          // Simple control
                           this.renderInput(child)
                         )}
                       </div>

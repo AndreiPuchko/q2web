@@ -75,8 +75,9 @@ class Q2ContentEditor extends Component<ContentProps> {
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("h", "Height", { control: "label" });
-        editor.add_control("h0", "minimal", { data: heights[0] });
-        editor.add_control("h1", "maximal", { data: heights[1] });
+        editor.add_control("h0", "minimal", { data: heights[0], datalen:6 });
+        editor.add_control("h1", "maximal", { data: heights[1], datalen:6 });
+        editor.add_control("/s", "")
         return editor
     }
 

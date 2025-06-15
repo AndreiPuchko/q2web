@@ -20,6 +20,10 @@ class Q2Line extends Widget<Q2LineProps> {
             style.maxWidth = `${col.datalen}cap`
         }
 
+        if (col?.stretch) {
+            style.flex = `${col?.stretch} 1 auto`
+        }
+
         return (
             <input
                 type="text"

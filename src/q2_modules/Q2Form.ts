@@ -2,6 +2,9 @@ export class Q2Control {
     column: string;
     label?: string;
     datalen?: number;
+    datadec: number;
+    datatype: string;
+    size: string;
     stretch?: number;
     alignment?: number;
     control: string;
@@ -17,9 +20,19 @@ export class Q2Control {
         column: string,
         label?: string,
         options: {
-            datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
-            readonly?: boolean,
+            datalen?: number,
+            datadec?: number,
+            datatype?: string,
+            size?: string,
+            stretch?: number,
             alignment?: number,
+            control?: string,
+            readonly?: boolean,
+            key?: string,
+            valid?: any,
+            data?: any,
+            pic?: string,
+            pi?: string,
             check?: boolean | string | number,
         } = {},
         key: string = "0"
@@ -27,7 +40,10 @@ export class Q2Control {
         this.column = column;
         this.label = label;
         this.datalen = options.datalen;
-        this.stretch = options.stretch;
+        this.datadec = options.datadec !== undefined ? options.datadec : 0;
+        this.datatype = options.datatype !== undefined ? options.datatype : "";
+        this.stretch = options.stretch !== undefined ? options.stretch : 1;
+        this.size = options.size !== undefined ? options.size : "";
         this.alignment = options.alignment;
         this.control = options.control ?? 'line';
         this.readonly = options.readonly ?? false;
@@ -37,6 +53,19 @@ export class Q2Control {
         this.pic = options.pic;
         this.pi = options.pi;
         this.check = options.check;
+
+        if (this.control === "check") {
+            this.stretch = 0
+            this.size = "max"
+        }
+    }
+
+    getStyle() {
+        console.log(this.control, this.label, this.stretch)
+        if (this.datalen)
+            return { flex: `0 1 auto` }
+        else
+            return { flex: `${this.stretch} 1 auto` }
     }
 }
 
@@ -104,17 +133,16 @@ export class Q2Form {
         return uid
     }
 
-    add_control(column: string, label?: string,
-        options: {
-            datalen?: number, stretch?: number, control?: string, valid?: any, data?: any, pic?: string, pi?: string,
-            readonly?: boolean,
-            alignment?: number,
-            check?: boolean | string | number,
-        } = {}) {
+    add_control(column: string, label: string, options: any = {}) {
         const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
-        const controlObj = new Q2Control(column, label, options, key);
-        this.columns.push(controlObj);
-        // if (this.key === "about") console.log(this.columns);
-        return true;
+        const ctrl = new Q2Control(column, label, options);
+        // Sync all option keys to the control instance
+        for (const key in options) {
+            if (options.hasOwnProperty(key)) {
+                (ctrl as any)[key] = options[key];
+            }
+        }
+        this.columns.push(ctrl);
+        return ctrl;
     }
 }

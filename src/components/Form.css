@@ -46,7 +46,7 @@ button {
 .Q2Button:focus,
 .Q2Text:focus,
 .Q2Line:focus {
-  background-color:  var(--form-input-focus);
+  background-color: var(--form-input-focus);
 }
 
 .Q2RadioButton,
@@ -63,7 +63,7 @@ button {
 ._Q2CheckBox-container.disabled,
 ._Q2Text:disabled,
 ._Q2Line:disabled {
-  background-color:  var(--form-input-disabled);
+  background-color: var(--form-input-disabled);
 }
 
 .flex-row {
@@ -102,7 +102,6 @@ button {
   display: flex;
   flex-wrap: nowrap;
   white-space: nowrap;
-  margin: 0 1ch;
 }
 
 label {
@@ -127,4 +126,14 @@ label {
 
 .FormComponent {
   border: 1px solid transparent;
+}
+
+.field-set-style {
+  border: none;
+  padding: 0;
+  width: 100%;
+}
+
+.form-group {
+  margin-right: 1cap;
 }

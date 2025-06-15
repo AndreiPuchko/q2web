@@ -193,6 +193,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         pageSizes.add_control("page_margin_right", "MR", { datalen: 6 });
         pageSizes.add_control("page_margin_top", "MT", { datalen: 6 });
         pageSizes.add_control("page_margin_bottom", "MB", { datalen: 6 });
+        pageSizes.add_control("/s");
 
 
         return (
