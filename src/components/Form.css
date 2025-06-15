@@ -41,13 +41,6 @@ button {
   color: var(--form-input);
 }
 
-.Q2RadioButton:focus-within,
-.Q2CheckBox-container:focus-within,
-.Q2Button:focus,
-.Q2Text:focus,
-.Q2Line:focus {
-  background-color: var(--form-input-focus);
-}
 
 .Q2RadioButton,
 .Q2CheckBox-container,
@@ -57,6 +50,22 @@ button {
   color: var(--form-input);
   border: 1px solid gray;
   padding: 1px 2px;
+}
+
+.Q2CheckBox-container {
+  /* padding: 0px; */
+  /* height: 1.8cap; */
+  /* display: flex; */
+  /* margin: 3px; */
+  /* padding-right: 0.5cap; */
+}
+
+.Q2RadioButton:focus-within,
+.Q2CheckBox-container:focus-within,
+.Q2Button:focus,
+.Q2Text:focus,
+.Q2Line:focus {
+  background-color: var(--form-input-focus);
 }
 
 ._Q2RadioButton.disabled,
@@ -132,6 +141,7 @@ label {
   border: none;
   padding: 0;
   width: 100%;
+  display: flex;
 }
 
 .form-group {
