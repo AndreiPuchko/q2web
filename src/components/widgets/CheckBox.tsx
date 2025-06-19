@@ -15,6 +15,21 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
         document.getElementById(id)?.focus()
     }
 
+    setChecked(checked: boolean) {
+        const { col } = this.props;
+        col.data = checked;
+        // Optionally trigger onChange if needed
+        if (typeof this.props.onChange === "function") {
+            // Create a synthetic event for compatibility
+            const event = {
+                target: { checked },
+                currentTarget: { checked }
+            } as React.ChangeEvent<HTMLInputElement>;
+            this.props.onChange(event);
+        }
+        this.forceUpdate();
+    }
+
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { col } = this.props;
         this.props.onChange(e);
