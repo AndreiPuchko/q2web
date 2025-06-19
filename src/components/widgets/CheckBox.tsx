@@ -16,7 +16,9 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
     }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { col } = this.props;
         this.props.onChange(e);
+        col.data = e.currentTarget.checked ? true : false;
     };
 
     render() {
@@ -29,7 +31,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
                     id={id}
                     className="Q2CheckBox"
                     onChange={this.handleChange}
-                    checked = {col.data}
+                    checked={col.data}
                 />
                 <label htmlFor={id} className="Q2CheckBox-label">{col.label}</label>
             </div>
