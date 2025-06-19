@@ -39,7 +39,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");
     }
-    this.bordersControl = this.propsEditor.add_control("/h", "Borders", { alignment: 4, check: true, checked: false });
+    this.bordersControl = this.propsEditor.add_control("/h", "Borders", { alignment: 4, check: true, checked: false, tag: "borders" });
     if (this.bordersControl) {
       this.propsEditor.add_control("border_left", "", { datalen: 3 });
       this.propsEditor.add_control("/v", "");
@@ -50,7 +50,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }
-    this.paddingsControl = this.propsEditor.add_control("/h", "Paddings", { alignment: 4, check: true });
+    this.paddingsControl = this.propsEditor.add_control("/h", "Paddings", { alignment: 4, check: true, checked: true, tag: "paddings" });
     if (this.paddingsControl) {
       this.propsEditor.add_control("padding_left", "", { datalen: 5 });
       this.propsEditor.add_control("/v", "", { datalen: 6 });

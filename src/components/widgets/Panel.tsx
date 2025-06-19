@@ -12,6 +12,12 @@ interface Q2PanelProps {
     form: any;
     valid: any;
     ref?: any;
+    children: any[];
+    renderInput: (col: any) => React.ReactNode;
+    renderPanel: (panel: any, root?: boolean) => React.ReactNode;
+    formData: any;
+    w: any;
+    setState: any;
 }
 
 class Q2Panel extends Component<Q2PanelProps> {
@@ -23,7 +29,7 @@ class Q2Panel extends Component<Q2PanelProps> {
     };
 
     render() {
-        const { col, id, data, onChange, readOnly, form } = this.props;
+        const { col, id, data, onChange, readOnly, form, children, renderInput, renderPanel, formData, w, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
         let className = col.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
         let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
@@ -53,9 +59,8 @@ class Q2Panel extends Component<Q2PanelProps> {
             rootStyle.padding = "0px";
         }
 
-        const panel_id = `${col.key}-panel-id`;
+        const panel_id = `${col.key}-${col.tag}-panel-id`;
         const hasCheck = col?.check;
-        // const checked = data !== undefined ? data : true;
         const checked = col.checked;
         console.log(this.props.children)
 
@@ -84,8 +89,76 @@ class Q2Panel extends Component<Q2PanelProps> {
                     disabled={hasCheck && !checked}
                 >
                     <div style={style}>
-                        {/* Children panels or controls should be rendered by parent Form */}
-                        {this.props.children}
+                        {children && children.map((child: any, index: number) => {
+                            const id = `${child.id}-control-cb`;
+                            if (child.children) {
+                                // render nested panel
+                                return (
+                                    <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2" }}>
+                                        {renderPanel(child)}
+                                    </div>
+                                );
+                            } else {
+                                // render input fields
+                                return (
+                                    <>
+                                        {child.check ?
+                                            <div style={{ justifySelf: "end", marginRight: "0.5em" }}>
+                                                <input
+                                                    id={id}
+                                                    key={id}
+                                                    type="checkbox"
+                                                    checked={!!formData?.[child.column]}
+                                                    onChange={e => {
+                                                        const checked = e.target.checked;
+                                                        setState(
+                                                            (prevState: any) => ({
+                                                                formData: {
+                                                                    ...prevState.formData,
+                                                                    [child.column]: checked
+                                                                }
+                                                            }),
+                                                            () => {
+                                                                if (checked && typeof w[child.column]?.focus === "function") {
+                                                                    w[child.column].focus();
+                                                                }
+                                                            }
+                                                        );
+                                                    }}
+                                                />
+                                                <label htmlFor={id}>
+                                                    {child.control === "check" ? "Turn on" : child.label}
+                                                </label>
+                                            </div>
+                                            : <label
+                                                key={child.key + "-label"}
+                                                className="form-label"
+                                                style={{ justifySelf: "end", marginRight: "0.5em" }}
+                                            >
+                                                {child.label && child.control !== "check" ? child.label + ":" : ""}
+                                            </label>
+                                        }
+                                        {child.control !== "label" &&
+                                            <div key={child.key + `-form-group-${index}`}
+                                                className="form-group"
+                                                style={child.getStyle()}
+                                            >
+                                                {child.check ? (
+                                                    <fieldset
+                                                        className="field-set-style"
+                                                        disabled={!formData?.[child.column]}
+                                                    >
+                                                        {renderInput(child)}
+                                                    </fieldset>
+                                                ) : (
+                                                    renderInput(child)
+                                                )}
+                                            </div>
+                                        }
+                                    </>
+                                );
+                            }
+                        })}
                     </div>
                 </fieldset>
             </div>

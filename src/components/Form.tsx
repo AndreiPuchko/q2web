@@ -258,89 +258,16 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         readOnly={false}
         form={this}
         valid={panel.metadata?.valid}
-      >
-        <fieldset
-          className="field-set-style"
-          disabled={hasCheck && !checked}
-        >
-          <div style={style}>
-            {panel.children.map((child: any, index: number) => {
-              const id = `${child.id}-control-cb`;
-              if (child.children) {
-                //render panel
-                return (
-                  <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2" }}>
-                    {this.renderPanel(child)}
-                  </div>
-                );
-              } else {
-                // render input fields
-                return (
-                  <>
-                    {/* label/checkbox  label for control */}
-                    {child.check ?
-                      // Checkbox
-                      <div style={{ justifySelf: "end", marginRight: "0.5em" }}>
-                        <input
-                          id={id}
-                          key={id}
-                          type="checkbox"
-                          checked={!!this.state.formData?.[child.column]}
-                          onChange={e => {
-                            const checked = e.target.checked;
-                            this.setState(
-                              prevState => ({
-                                formData: {
-                                  ...prevState.formData,
-                                  [child.column]: checked
-                                }
-                              }),
-                              () => {
-                                if (checked && typeof this.w[child.column].focus === "function") {
-                                  this.w[child.column].focus();
-                                }
-                              }
-                            );
-                          }}
-                        />
-                        <label htmlFor={id}>
-                          {child.control === "check" ? "Turn on" : child.label}
-                        </label>
-                      </div>
-                      // Label
-                      : <label
-                        key={child.key + "-label"}
-                        className="form-label"
-                        style={{ justifySelf: "end", marginRight: "0.5em" }}
-                      >
-                        {child.label && child.control !== "check" ? child.label + ":" : ""}
-                      </label>
-                    }
-                    {/* Control! */}
-                    {child.control !== "label" &&
-                      <div key={child.key + `-form-group-${index}`}
-                        className="form-group"
-                        style={child.getStyle()}
-                      >
-                        {child.check ? (
-                          <fieldset
-                            className="field-set-style"
-                            disabled={!this.state.formData?.[child.column]}
-                          >
-                            {this.renderInput(child)}
-                          </fieldset>
-                        ) : (
-                          this.renderInput(child)
-                        )}
-                      </div>
-                    }
-                  </>
-                );
-              }
-            })}
-          </div>
-        </fieldset>
-      </Q2Panel>
+        // Assign ref if tag exists
+        ref={panel.metadata?.tag ? (ref: any) => { this.w[panel.metadata.tag] = ref; } : undefined}
+        // Pass children and render helpers to Q2Panel
+        children={panel.children}
+        renderInput={this.renderInput}
+        renderPanel={this.renderPanel}
+        formData={this.state.formData}
+        w={this.w}
+        setState={this.setState.bind(this)}
+      />
     );
   };
 
