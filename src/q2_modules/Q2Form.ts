@@ -15,6 +15,8 @@ export class Q2Control {
     pic?: string;
     pi?: string;
     check?: boolean | string | number;
+    checked?: boolean | string | number;
+    tag?: string;
 
     constructor(
         column: string,
@@ -34,6 +36,8 @@ export class Q2Control {
             pic?: string,
             pi?: string,
             check?: boolean | string | number,
+            checked?: boolean | string | number,
+            tag?: string;
         } = {},
         key: string = "0"
     ) {
@@ -53,6 +57,8 @@ export class Q2Control {
         this.pic = options.pic;
         this.pi = options.pi;
         this.check = options.check;
+        this.checked = options.checked;
+        this.tag = options.tag;
 
         if (this.control === "check") {
             this.stretch = 0
@@ -133,7 +139,7 @@ export class Q2Form {
         return uid
     }
 
-    add_control(column: string, label: string, options: any = {}) {
+    add_control(column: string, label?: string, options: any = {}) {
         const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
         const ctrl = new Q2Control(column, label, options);
         // Sync all option keys to the control instance
