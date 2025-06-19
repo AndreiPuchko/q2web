@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
 import Form from '../Form';
+import { checkPrime } from "crypto";
 
 
 interface ContentProps {
@@ -38,7 +39,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");
     }
-    this.bordersControl = this.propsEditor.add_control("/h", "Borders", { alignment: 4, check: true });
+    this.bordersControl = this.propsEditor.add_control("/h", "Borders", { alignment: 4, check: true, checked: false });
     if (this.bordersControl) {
       this.propsEditor.add_control("border_left", "", { datalen: 3 });
       this.propsEditor.add_control("/v", "");
@@ -60,7 +61,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }
-    this.alignmentsControl = this.propsEditor.add_control("/v", "Aligments", { alignment: 8 });
+    this.alignmentsControl = this.propsEditor.add_control("/v", "Aligments");
     if (this.alignmentsControl) {
       this.propsEditor.add_control("text_align", "Horizontal", { pic: "Left;Center;Right;Justify", control: "radio", data: 1, check: true });
       this.propsEditor.add_control("vertical_align", "Vertical", { pic: "Top;Middle;Bottom", control: "radio", data: 2, check: true });

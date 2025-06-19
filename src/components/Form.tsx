@@ -8,6 +8,7 @@ import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
+import Q2Panel from './widgets/Panel';
 
 interface FormProps {
   metaData: Q2Form;
@@ -245,27 +246,19 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         : true)
       : true;
 
-    // Only disable the panel content, not the checkbox itself
-
+    // Use Q2Panel for rendering the panel
     return (
-      // Gropubox title
-      <div className={className} style={rootStyle} key={panel.key}>
-        {panel.label && (
-          hasCheck ? (
-            <div className="group-box-title">
-              <input
-                id={panel_id}
-                key={panel_id}
-                type="checkbox"
-                checked={checked}
-                onChange={this.handlePanelCheck(panel.key)}
-              />
-              <label htmlFor={panel_id}>{panel.label}</label>
-            </div>
-          ) : (
-            <div className="group-box-title">{panel.label}</div>
-          )
-        )}
+      <Q2Panel
+        key={panel.key}
+        id={panel_id}
+        name={panel.key}
+        col={panel.metadata}
+        data={checked}
+        onChange={this.handlePanelCheck(panel.key)}
+        readOnly={false}
+        form={this}
+        valid={panel.metadata?.valid}
+      >
         <fieldset
           className="field-set-style"
           disabled={hasCheck && !checked}
@@ -325,13 +318,11 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                     }
                     {/* Control! */}
                     {child.control !== "label" &&
-                      // <div key={child.key + `-form-group-${index}`} className="form-group" style={{flexGrow: }} >
                       <div key={child.key + `-form-group-${index}`}
                         className="form-group"
                         style={child.getStyle()}
                       >
                         {child.check ? (
-                          // control with checkbox
                           <fieldset
                             className="field-set-style"
                             disabled={!this.state.formData?.[child.column]}
@@ -339,7 +330,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                             {this.renderInput(child)}
                           </fieldset>
                         ) : (
-                          // Simple control
                           this.renderInput(child)
                         )}
                       </div>
@@ -350,7 +340,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             })}
           </div>
         </fieldset>
-      </div>
+      </Q2Panel>
     );
   };
 
