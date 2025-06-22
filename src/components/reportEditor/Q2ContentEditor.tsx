@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Q2Form } from "../../q2_modules/Q2Form";
 import Form from '../Form';
+import { getPage, getColsSet, getWidth, getRowSet, getHeight } from "./Q2Report";
 
 
 interface ContentProps {
@@ -11,45 +12,7 @@ interface ContentProps {
 
 class Q2ContentEditor extends Component<ContentProps> {
 
-    getPage() {
-        // const { type, pageIdx, colIdx, rowSetIdx, rowIdx, cellIdx, widthIdx, heightIdx } = this.props.selection;
-        const { pageIdx } = this.props.selection;
-        return this.props.report.pages?.[pageIdx]
-    }
-
-    getColsSet() {
-        const { colIdx } = this.props.selection;
-        const page = this.getPage()
-        return page?.columns?.[colIdx]
-    }
-
-    getWidth() {
-        const { widthIdx } = this.props.selection;
-        const columns = this.getColsSet()
-        return columns["widths"][widthIdx]
-    }
-
-
-    getRowSet() {
-        const { rowSetIdx } = this.props.selection;
-        const columns = this.getColsSet()
-        const real_rowIdx = rowSetIdx?.replace("-header", "").replace("-footer", "")
-        let rowSet = undefined;
-        if (rowSetIdx.includes("-header")) { rowSet = columns.rows?.[real_rowIdx].table_header }
-        else if (rowSetIdx.includes("-footer")) { rowSet = columns.rows?.[real_rowIdx].table_footer }
-        else { rowSet = columns.rows?.[real_rowIdx] };
-        return rowSet
-    }
-
-    getHeight() {
-        const { heightIdx } = this.props.selection;
-        const rowSet = this.getRowSet()
-        return rowSet.heights[heightIdx]
-    }
-
-
     defineSectionEditor() {
-        const rowSet = this.getRowSet()
 
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
@@ -61,7 +24,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineWidthEditor() {
-        const width = this.getWidth();
+        const width = getWidth(this.props.selection, this.props.report);
         console.log(width.includes("%"))
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
@@ -71,7 +34,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineHeightEditor() {
-        const heights = this.getHeight().split("-")
+        const heights = getHeight(this.props.selection, this.props.report).split("-")
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("h", "Height", { control: "label" });
@@ -84,7 +47,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     defineCellEditor() {
         const { rowIdx, cellIdx } = this.props.selection;
         const cellKey = `${rowIdx},${cellIdx}`;
-        const rowSet = this.getRowSet()
+        const rowSet = getRowSet(this.props.selection, this.props.report);
         const cell = rowSet.cells[cellKey];
 
         const editor = new Q2Form("", "", "");
@@ -100,6 +63,7 @@ class Q2ContentEditor extends Component<ContentProps> {
         const mode = this.props.selection?.type;
         return (
             <>
+
                 <div className="q2-report-content-editor">
                     {mode === "row" && <Form metaData={this.defineSectionEditor()} />}
                     {mode === "colwidth" && <Form metaData={this.defineWidthEditor()} />}

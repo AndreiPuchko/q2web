@@ -1,7 +1,6 @@
 import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
 import Form from '../Form';
-import { checkPrime } from "crypto";
 
 
 interface ContentProps {
@@ -17,8 +16,6 @@ class Q2PropsEditor extends Component<ContentProps> {
 
   defineUi() {
     const { report, selection } = this.props;
-
-    console.log(selection)
 
     this.propsEditor = new Q2Form("", "PropsEditor", "propsEditor", {
       description: "",
