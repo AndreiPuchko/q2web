@@ -1,6 +1,6 @@
 import React, { Component, CSSProperties } from "react";
 import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
-
+import { focusFirstFocusableElement } from '../../utils/dom';
 
 interface Q2PanelProps {
     id: string;
@@ -26,7 +26,18 @@ class Q2Panel extends Component<Q2PanelProps> {
         const { col } = this.props;
         this.props.onChange(e);
         col.checked = e.currentTarget.checked ? true : false;
+        if (col.checked) {
+            // Log all input elements in the panel
+            if (this.panelRef) {
+                const fieldset = this.panelRef.querySelector('fieldset.field-set-style');
+                setTimeout(() => {
+                    focusFirstFocusableElement(fieldset);
+                }, 100);
+            }
+        }
     };
+
+    panelRef: HTMLDivElement | null = null;
 
     render() {
         const { col, id, data, onChange, readOnly, form, children, renderInput, renderPanel, formData, w, setState } = this.props;
@@ -62,10 +73,15 @@ class Q2Panel extends Component<Q2PanelProps> {
         const panel_id = `${col.key}-${col.tag}-panel-id`;
         const hasCheck = col?.check;
         const checked = col.checked;
-        console.log(this.props.children)
+        // console.log(this.props.children)
 
         return (
-            <div className={className} style={rootStyle} key={col.key}>
+            <div
+                className={className}
+                style={rootStyle}
+                key={col.key}
+                ref={ref => { this.panelRef = ref; }}
+            >
                 {col.label && (
                     hasCheck ? (
                         // Has checkbox
