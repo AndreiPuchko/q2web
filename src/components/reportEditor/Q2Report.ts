@@ -15,7 +15,7 @@ export function getWidth(selection: any, report: any) {
     return columns["widths"][widthIdx];
 }
 
-export function getRowSet(selection: any, report: any) {
+export function getRowsSet(selection: any, report: any) {
     const { rowSetIdx } = selection;
     const columns = getColsSet(selection, report);
     const real_rowIdx = rowSetIdx?.replace("-header", "").replace("-footer", "");
@@ -28,6 +28,58 @@ export function getRowSet(selection: any, report: any) {
 
 export function getHeight(selection: any, report: any) {
     const { heightIdx } = selection;
-    const rowSet = getRowSet(selection, report);
+    const rowSet = getRowsSet(selection, report);
     return rowSet.heights[heightIdx];
+}
+
+export function getCell(selection: any, report: any) {
+    const { rowIdx, cellIdx } = selection
+    const cellKey = `${rowIdx},${cellIdx}`;
+    const rowSet = getRowsSet(selection, report);
+    return rowSet.cells[cellKey];
+}
+
+export function getReportStyle(selection: any, report: any) {
+    return { style: {}, parentStyle: report.style }
+}
+
+export function getPageStyle(selection: any, report: any) {
+    const page = getPage(selection, report)
+    return { style: page?.style, parentStyle: report.style }
+}
+
+
+export function getColsSetStyle(selection: any, report: any) {
+    let parentStyle = {};
+    const reportStyle = report.style;
+    const pageStyle = getPage(selection, report)?.style;
+    // Merge reportStyle and pageStyle into parentStyle (shallow merge)
+    parentStyle = { ...(reportStyle || {}), ...(pageStyle || {}) };
+    const columns = getColsSet(selection, report);
+    return { style: columns?.style, parentStyle: parentStyle }
+}
+
+
+export function getRowsSetStyle(selection: any, report: any) {
+    let parentStyle = {};
+    const reportStyle = report.style;
+    const pageStyle = getPage(selection, report)?.style;
+    const colsSetStyle = getColsSet(selection, report)?.style;
+    // Merge reportStyle and pageStyle into parentStyle (shallow merge)
+    parentStyle = { ...(reportStyle || {}), ...(pageStyle || {}), ...(colsSetStyle || {}) };
+    const rows = getRowsSet(selection, report);
+    return { style: rows?.style, parentStyle: parentStyle }
+}
+
+
+export function getCellStyle(selection: any, report: any) {
+    let parentStyle = {};
+    const reportStyle = report.style;
+    const pageStyle = getPage(selection, report)?.style;
+    const colsSetStyle = getColsSet(selection, report)?.style;
+    const rowsSetStyle = getRowsSet(selection, report)?.style;
+    // Merge reportStyle and pageStyle into parentStyle (shallow merge)
+    parentStyle = { ...(reportStyle || {}), ...(pageStyle || {}), ...(colsSetStyle || {}), ...(rowsSetStyle || {}) };
+    const cell = getCell(selection, report);
+    return { style: cell?.style, parentStyle: parentStyle }
 }

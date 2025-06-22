@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
+import { getPageStyle, getColsSetStyle,getCellStyle, getRowsSetStyle } from "./Q2Report";
 import Form from '../Form';
 
 
@@ -16,6 +17,23 @@ class Q2PropsEditor extends Component<ContentProps> {
 
   defineUi() {
     const { report, selection } = this.props;
+    let styles = {};
+
+    if (selection?.type === "page") {
+      styles = getPageStyle(selection, report);
+    }
+    else if (selection?.type === "column") {
+      styles = getColsSetStyle(selection, report);
+    }
+    else if (selection?.type === "row") {
+      styles = getColsSetStyle(selection, report);
+    }
+    else if (selection?.type === "cell") {
+      styles = getCellStyle(selection, report);
+    }
+
+
+    console.log(styles.style, styles.parentStyle)
 
     this.propsEditor = new Q2Form("", "PropsEditor", "propsEditor", {
       description: "",

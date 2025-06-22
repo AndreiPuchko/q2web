@@ -1,7 +1,7 @@
 import { Component } from "react";
 import { Q2Form } from "../../q2_modules/Q2Form";
 import Form from '../Form';
-import { getPage, getColsSet, getWidth, getRowSet, getHeight } from "./Q2Report";
+import { getPage, getColsSet, getWidth, getRowsSet, getHeight, getCell } from "./Q2Report";
 
 
 interface ContentProps {
@@ -45,10 +45,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineCellEditor() {
-        const { rowIdx, cellIdx } = this.props.selection;
-        const cellKey = `${rowIdx},${cellIdx}`;
-        const rowSet = getRowSet(this.props.selection, this.props.report);
-        const cell = rowSet.cells[cellKey];
+        const cell = getCell(this.props.selection, this.props.report);
 
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
