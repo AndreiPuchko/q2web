@@ -1,5 +1,5 @@
 import React, { Component, CSSProperties } from "react";
-import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
+import Q2CheckBox from './widgets/CheckBox';
 import { focusFirstFocusableElement } from '../../utils/dom';
 
 interface Q2PanelProps {
@@ -20,21 +20,31 @@ interface Q2PanelProps {
     setState: any;
 }
 
-class Q2Panel extends Component<Q2PanelProps> {
+class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
+    hasCheck: boolean;
+    constructor(props: Q2PanelProps) {
+        super(props);
+        const { col } = this.props;
+        this.hasCheck = col?.check;
+        // Use col.checkChecked for initial state
+        this.state = {
+            checkChecked: col.checkChecked
+        };
+    }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { col } = this.props;
+        const checked = e.currentTarget.checked ? true : false;
         this.props.onChange(e);
-        col.checked = e.currentTarget.checked ? true : false;
-        if (col.checked) {
-            // Log all input elements in the panel
-            if (this.panelRef) {
+        col.checkChecked = checked; // keep in sync
+        this.setState({ checkChecked: checked }, () => {
+            if (checked && this.panelRef) {
                 const fieldset = this.panelRef.querySelector('fieldset.field-set-style');
                 setTimeout(() => {
                     focusFirstFocusableElement(fieldset);
                 }, 100);
             }
-        }
+        });
     };
 
     panelRef: HTMLDivElement | null = null;
@@ -71,9 +81,10 @@ class Q2Panel extends Component<Q2PanelProps> {
         }
 
         const panel_id = `${col.key}-${col.tag}-panel-id`;
-        const hasCheck = col?.check;
-        const checked = col.checked;
-        // console.log(this.props.children)
+
+        // Use state.checkChecked for rendering
+        // const checkChecked = this.hasCheck ? this.state.checkChecked : undefined;
+        const checkChecked = this.state.checkChecked;
 
         return (
             <div
@@ -83,26 +94,24 @@ class Q2Panel extends Component<Q2PanelProps> {
                 ref={ref => { this.panelRef = ref; }}
             >
                 {col.label && (
-                    hasCheck ? (
-                        // Has checkbox
+                    this.hasCheck ? (
                         <div className="group-box-title">
                             <input
                                 id={panel_id}
                                 key={panel_id}
                                 type="checkbox"
-                                checked={checked}
+                                checked={!!checkChecked}
                                 onChange={this.handleChange}
                             />
                             <label htmlFor={panel_id}>{col.label}</label>
                         </div>
                     ) : (
-                        // Has label
                         <div className="group-box-title">{col.label}</div>
                     )
                 )}
                 <fieldset
                     className="field-set-style"
-                    disabled={hasCheck && !checked}
+                    disabled={this.hasCheck && !checkChecked}
                 >
                     <div style={style}>
                         {children && children.map((child: any, index: number) => {
@@ -115,7 +124,11 @@ class Q2Panel extends Component<Q2PanelProps> {
                                     </div>
                                 );
                             } else {
-                                // render input fields
+                                // render input
+                                // Ensure checkChecked is used for checkable controls
+                                if (child.check) {
+                                    child.checkChecked = typeof child.checkChecked !== "undefined" ? child.checkChecked : !!child.data;
+                                }
                                 return (
                                     <>
                                         {child.check ?
@@ -124,9 +137,11 @@ class Q2Panel extends Component<Q2PanelProps> {
                                                     id={id}
                                                     key={id}
                                                     type="checkbox"
-                                                    checked={!!formData?.[child.column]}
+                                                    checked={form.c[child.column]}
                                                     onChange={e => {
                                                         const checked = e.target.checked;
+                                                        child.checkChecked = checked;
+                                                        form.c[child.column] = checked;
                                                         setState(
                                                             (prevState: any) => ({
                                                                 formData: {
@@ -162,7 +177,7 @@ class Q2Panel extends Component<Q2PanelProps> {
                                                 {child.check ? (
                                                     <fieldset
                                                         className="field-set-style"
-                                                        disabled={!formData?.[child.column]}
+                                                        disabled={!form.c[child.column]}
                                                     >
                                                         {renderInput(child)}
                                                     </fieldset>

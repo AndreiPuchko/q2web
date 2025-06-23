@@ -20,9 +20,11 @@ interface FormProps {
 class Form extends Component<FormProps, { formData: { [key: string]: any }, panelChecks: { [key: string]: boolean } }> {
   w: { [key: string]: any } = {}; // Store references to the widgets
   s: { [key: string]: any } = {}; // widgets data
+  c: { [key: string]: boolean } = {}; // widgets data
   focus: string = "";
   prevFocus: string = "";
   formRef = React.createRef<HTMLDivElement>();
+  
   constructor(props: FormProps) {
     super(props);
     this.state = {
@@ -108,10 +110,16 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     }
   };
 
+  getWidgetCheck = (columnName: string) => {
+    return this.w[columnName]?.props.col.checkChecked;
+  };
+
+
   scanAndCopyValues = () => {
     Object.keys(this.w).forEach(key => {
       if (this.w[key] && typeof this.w[key].getData === 'function') {
         this.s[key] = this.getWidgetData(key);
+        this.c[key] = this.getWidgetCheck(key);
       }
     });
   };
@@ -120,6 +128,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     const { formData } = this.state;
     const data: any = formData[col.column] !== undefined ? formData[col.column] : "";
     col["id"] = `${col.column}-${col.key}`;
+    // Set initial checkChecked for checkable controls
+    if (col.check && typeof col.checkChecked === "undefined") {
+      col.checkChecked = !!col.data;
+    }
     const commonProps = {
       id: col["id"],
       name: col.column,
@@ -183,6 +195,12 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         }
       } else {
         col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`; // Ensure unique key for other columns
+        // Set initial checkChecked for checkable controls
+        if (col.check && typeof col.checkChecked === "undefined") {
+          col.checkChecked = !!col.data;
+        }
+        this.s[col.column] = col.data;
+        this.c[col.column] = col.checkChecked;
         stack[stack.length - 1].children.push(col);
       }
     });
@@ -239,12 +257,16 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     const panel_id = `${panel.key}-panel-id`;
 
     // Determine if this panel should be disabled
-    const hasCheck = panel.metadata?.check;
-    const checked = hasCheck
+    const checked = panel.metadata?.check
       ? (this.state.panelChecks[panel.key] !== undefined
         ? this.state.panelChecks[panel.key]
         : true)
       : true;
+
+    // Ensure checkChecked is set for panel's checkbox
+    if (panel.metadata?.check && typeof panel.metadata.checkChecked === "undefined") {
+      panel.metadata.checkChecked = false;
+    }
 
     // Use Q2Panel for rendering the panel
     return (
