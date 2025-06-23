@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
-import { getPageStyle, getColsSetStyle,getCellStyle, getRowsSetStyle } from "./Q2Report";
+import { getPageStyle, getColsSetStyle, getCellStyle, getRowsSetStyle } from "./Q2Report";
 import Form from '../Form';
 
 
@@ -26,60 +26,67 @@ class Q2PropsEditor extends Component<ContentProps> {
       styles = getColsSetStyle(selection, report);
     }
     else if (selection?.type === "row") {
-      styles = getColsSetStyle(selection, report);
+      styles = getRowsSetStyle(selection, report);
     }
     else if (selection?.type === "cell") {
       styles = getCellStyle(selection, report);
     }
+    else if (selection?.type === "report") {
+      styles = { style: report.style, parentStyle: undefined };
+    }
 
+
+    styles = { style: report.style, parentStyle: undefined };
 
     console.log(styles.style, styles.parentStyle)
 
-    this.propsEditor = new Q2Form("", "PropsEditor", "propsEditor", {
-      description: "",
-      menutoolbar: false,
-      icon: "form",
-      width: 800,
-      height: 600,
-      x: 0,
-      y: 0
-    });
+    this.propsEditor = new Q2Form();
 
     if (this.propsEditor.add_control("/f", "Font")) {
-      this.propsEditor.add_control("font_family", "Font family", { datalen: 15, check: true });
-      this.propsEditor.add_control("font_size", "Font size", { datalen: 3, check: true });
-      this.propsEditor.add_control("font_weight", "Bold", { control: "check", data: true, check: true });
-      this.propsEditor.add_control("font_italic", "Italic", { control: "check", data: true, check: true });
-      this.propsEditor.add_control("font_underline", "Unterline", { control: "check", data: true, check: true });
+      const fontSize = styles.style["font-size"].replace("pt", "")
+      const fontFamily = styles.style["font-family"].replace("pt", "")
+      const fontBold = styles.style["font-weight"]
+      const fontItalic = styles.style["font-italic"] ? styles.style["font-italic"] : "";
+      const fontUnderline = styles.style["font-underline"] ? styles.style["font-underline"] : "";
+
+      this.propsEditor.add_control("font_family", "Font family", { datalen: 15, data: fontFamily, check: true });
+      this.propsEditor.add_control("font_size", "Font size", { datalen: 3, data: fontSize, check: true, checked: true });
+      this.propsEditor.add_control("font_weight", "Bold", { control: "check", data: fontBold, check: true });
+      this.propsEditor.add_control("font_italic", "Italic", { control: "check", data: fontItalic, check: true });
+      this.propsEditor.add_control("font_underline", "Underline", { control: "check", data: fontUnderline, check: true });
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");
     }
     this.bordersControl = this.propsEditor.add_control("/h", "Borders", { alignment: 4, check: true, checked: false, tag: "borders" });
     if (this.bordersControl) {
-      this.propsEditor.add_control("border_left", "", { datalen: 3 });
+      const borders = styles.style["border-width"].split(" ")
+      this.propsEditor.add_control("border_left", "", { datalen: 3, data: borders[3] });
       this.propsEditor.add_control("/v", "");
-      this.propsEditor.add_control("border_top", "", { datalen: 3 });
-      this.propsEditor.add_control("border_bottom", "", { datalen: 3 });
+      this.propsEditor.add_control("border_top", "", { datalen: 3, data: borders[0] });
+      this.propsEditor.add_control("border_bottom", "", { datalen: 3, data: borders[2] });
       this.propsEditor.add_control("/");  // close layout
-      this.propsEditor.add_control("border_right", "", { datalen: 3 });
+      this.propsEditor.add_control("border_right", "", { datalen: 3, data: borders[1] });
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }
     this.paddingsControl = this.propsEditor.add_control("/h", "Paddings", { alignment: 4, check: true, checked: true, tag: "paddings" });
     if (this.paddingsControl) {
-      this.propsEditor.add_control("padding_left", "", { datalen: 5 });
-      this.propsEditor.add_control("/v", "", { datalen: 6 });
-      this.propsEditor.add_control("padding_top", "", { datalen: 5 });
-      this.propsEditor.add_control("padding_bottom", "", { datalen: 5 });
+      const paddings = styles.style["padding"].split(" ")
+      this.propsEditor.add_control("padding_left", "", { datalen: 5, data: paddings[3].replace("cm", "") });
+      this.propsEditor.add_control("/v");
+      this.propsEditor.add_control("padding_top", "", { datalen: 5, data: paddings[0].replace("cm", "") });
+      this.propsEditor.add_control("padding_bottom", "", { datalen: 5, data: paddings[2].replace("cm", "") });
       this.propsEditor.add_control("/");  // close layout
-      this.propsEditor.add_control("padding_right", "", { datalen: 5 });
+      this.propsEditor.add_control("padding_right", "", { datalen: 5, data: paddings[1].replace("cm", "") });
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }
     this.alignmentsControl = this.propsEditor.add_control("/v", "Aligments");
     if (this.alignmentsControl) {
-      this.propsEditor.add_control("text_align", "Horizontal", { pic: "Left;Center;Right;Justify", control: "radio", data: 1, check: true });
-      this.propsEditor.add_control("vertical_align", "Vertical", { pic: "Top;Middle;Bottom", control: "radio", data: 2, check: true });
+      const hAlignment = { "left": "Left", "center": "Center", "right": "Right", "justify": "Justify" }[styles.style["text-align"]]
+      const vAlignment = { "top": "Top", "middle": "Middle", "bottom": "Bottom" }[styles.style["vertical-align"]]
+      this.propsEditor.add_control("text_align", "Horizontal", { pic: "Left;Center;Right;Justify", control: "radio", data: hAlignment, check: true });
+      this.propsEditor.add_control("vertical_align", "Vertical", { pic: "Top;Middle;Bottom", control: "radio", data: vAlignment, check: true });
       this.propsEditor.add_control("/");  // close layout
     }
 

@@ -48,7 +48,6 @@ export function getPageStyle(selection: any, report: any) {
     return { style: page?.style, parentStyle: report.style }
 }
 
-
 export function getColsSetStyle(selection: any, report: any) {
     const pageStyleObj = getPageStyle(selection, report);
     const parentStyle = { ...(pageStyleObj.parentStyle || {}), ...(pageStyleObj.style || {}) };
@@ -56,14 +55,12 @@ export function getColsSetStyle(selection: any, report: any) {
     return { style: columns?.style, parentStyle: parentStyle }
 }
 
-
 export function getRowsSetStyle(selection: any, report: any) {
     const colsSetStyleObj = getColsSetStyle(selection, report);
     const parentStyle = { ...(colsSetStyleObj.parentStyle || {}), ...(colsSetStyleObj.style || {}) };
     const rows = getRowsSet(selection, report);
     return { style: rows?.style, parentStyle: parentStyle }
 }
-
 
 export function getCellStyle(selection: any, report: any) {
     const rowsSetStyleObj = getRowsSetStyle(selection, report);
