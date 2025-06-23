@@ -16,6 +16,7 @@ export class Q2Control {
     pi?: string;
     check?: boolean | string | number;
     checkChecked?: boolean | string | number;
+    checkDisabled?: boolean | string | number;
     tag?: string;
 
     constructor(
@@ -37,6 +38,7 @@ export class Q2Control {
             pi?: string,
             check?: boolean | string | number,
             checkChecked?: boolean | string | number,
+            checkDisabled?: boolean | string | number,
             tag?: string;
         } = {},
         key: string = "0"
@@ -58,6 +60,7 @@ export class Q2Control {
         this.pi = options.pi;
         this.check = options.check;
         this.checkChecked = options.checkChecked;
+        this.checkDisabled = options.checkDisabled;
         this.tag = options.tag;
 
         if (this.control === "check") {

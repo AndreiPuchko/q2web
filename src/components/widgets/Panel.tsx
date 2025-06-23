@@ -110,6 +110,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                 type="checkbox"
                                 checked={!!checkChecked}
                                 onChange={this.handleChange}
+                                disabled={!!col.checkDisabled}
                             />
                             <label htmlFor={panel_id}>{col.label}</label>
                         </div>
@@ -133,7 +134,6 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                 );
                             } else {
                                 // render input
-                                // Ensure checkChecked is used for checkable controls
                                 if (child.check) {
                                     child.checkChecked = typeof child.checkChecked !== "undefined" ? child.checkChecked : !!child.data;
                                 }
@@ -164,6 +164,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                             }
                                                         );
                                                     }}
+                                                    disabled={!!child.checkDisabled}
                                                 />
                                                 <label htmlFor={id}>
                                                     {child.control === "check" ? "Turn on" : child.label}

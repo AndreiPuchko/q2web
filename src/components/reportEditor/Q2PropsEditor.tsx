@@ -49,17 +49,59 @@ class Q2PropsEditor extends Component<ContentProps> {
       const fontItalic = styles.style["font-italic"] ? styles.style["font-italic"] : "";
       const fontUnderline = styles.style["font-underline"] ? styles.style["font-underline"] : "";
 
-      this.propsEditor.add_control("font_family", "Font family", { datalen: 15, data: fontFamily, check: true, checkChecked: this.getCheckChecked() });
-      this.propsEditor.add_control("font_size", "Font size", { datalen: 3, data: fontSize, check: true, checkChecked: true });
-      this.propsEditor.add_control("font_weight", "Bold", { control: "check", data: fontBold, check: true, checkChecked: this.getCheckChecked() });
-      this.propsEditor.add_control("font_italic", "Italic", { control: "check", data: fontItalic, check: true, checkChecked: this.getCheckChecked() });
-      this.propsEditor.add_control("font_underline", "Underline", { control: "check", data: fontUnderline, check: true, checkChecked: this.getCheckChecked() });
+      this.propsEditor.add_control("font_family", "Font family",
+        {
+          datalen: 15,
+          data: fontFamily,
+          check: true,
+          checkChecked: this.getCheckChecked(),
+          checkDisabled: this.getCheckDisabled(),
+        });
+      this.propsEditor.add_control("font_size", "Font size",
+        {
+          datalen: 3,
+          data: fontSize,
+          check: true,
+          checkChecked: true,
+          checkDisabled: this.getCheckDisabled(),
+        });
+      this.propsEditor.add_control("font_weight", "Bold",
+        {
+          control: "check",
+          data: fontBold,
+          check: true,
+          checkChecked: this.getCheckChecked(),
+          checkDisabled: this.getCheckDisabled(),
+        });
+      this.propsEditor.add_control("font_italic", "Italic",
+        {
+          control: "check",
+          data: fontItalic,
+          check: true,
+          checkChecked: this.getCheckChecked(),
+          checkDisabled: this.getCheckDisabled(),
+        });
+      this.propsEditor.add_control("font_underline", "Underline",
+        {
+          control: "check",
+          data: fontUnderline,
+          check: true,
+          checkChecked: this.getCheckChecked(),
+          checkDisabled: this.getCheckDisabled(),
+        });
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");
     }
 
 
-    this.bordersControl = this.propsEditor.add_control("/h", "Borders", { alignment: 4, check: true, checkChecked: !!this.getCheckChecked(), tag: "borders" });
+    this.bordersControl = this.propsEditor.add_control("/h", "Borders",
+      {
+        alignment: 4,
+        check: true,
+        checkChecked: !!this.getCheckChecked(),
+        checkDisabled: this.getCheckDisabled(),
+        tag: "borders"
+      });
     if (this.bordersControl) {
       const borders = styles.style["border-width"].split(" ")
       this.propsEditor.add_control("border_left", "", { datalen: 3, data: borders[3] });
@@ -72,7 +114,14 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("/");  // close layout
     }
 
-    this.paddingsControl = this.propsEditor.add_control("/h", "Paddings", { alignment: 4, check: true, checkChecked: !!this.getCheckChecked(), tag: "paddings" });
+    this.paddingsControl = this.propsEditor.add_control("/h", "Paddings",
+      {
+        alignment: 4,
+        check: true,
+        checkChecked: !!this.getCheckChecked(),
+        checkDisabled: this.getCheckDisabled(),
+        tag: "paddings"
+      });
     if (this.paddingsControl) {
       const paddings = styles.style["padding"].split(" ")
       this.propsEditor.add_control("padding_left", "", { datalen: 5, data: paddings[3].replace("cm", "") });
@@ -84,6 +133,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }
+
     this.alignmentsControl = this.propsEditor.add_control("/v", "Aligments");
     if (this.alignmentsControl) {
       const hAlignment = { "left": "Left", "center": "Center", "right": "Right", "justify": "Justify" }[styles.style["text-align"]]
@@ -94,7 +144,8 @@ class Q2PropsEditor extends Component<ContentProps> {
           control: "radio",
           data: hAlignment,
           check: true,
-          checkChecked: this.getCheckChecked()
+          checkChecked: this.getCheckChecked(),
+          checkDisabled: this.getCheckDisabled(),
         });
       this.propsEditor.add_control("vertical_align", "Vertical",
         {
@@ -102,8 +153,8 @@ class Q2PropsEditor extends Component<ContentProps> {
           control: "radio",
           data: vAlignment,
           check: true,
-          checkChecked: this.getCheckChecked()
-
+          checkChecked: this.getCheckChecked(),
+          checkDisabled: this.getCheckDisabled(),
         });
       this.propsEditor.add_control("/");  // close layout
     }
@@ -115,6 +166,11 @@ class Q2PropsEditor extends Component<ContentProps> {
   getCheckChecked() {
     const { report, selection } = this.props;
     // return false;
+    return (selection?.type === "report")
+  }
+
+  getCheckDisabled() {
+    const { report, selection } = this.props;
     return (selection?.type === "report")
   }
 
