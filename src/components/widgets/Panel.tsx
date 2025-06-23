@@ -32,6 +32,14 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         };
     }
 
+    static getDerivedStateFromProps(nextProps: Q2PanelProps, prevState: { checkChecked: boolean }) {
+        // Sync state with col.checkChecked if it changes from parent (e.g. on section switch)
+        if (nextProps.col.checkChecked !== prevState.checkChecked) {
+            return { checkChecked: nextProps.col.checkChecked };
+        }
+        return null;
+    }
+
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { col } = this.props;
         const checked = e.currentTarget.checked ? true : false;
