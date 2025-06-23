@@ -50,36 +50,24 @@ export function getPageStyle(selection: any, report: any) {
 
 
 export function getColsSetStyle(selection: any, report: any) {
-    let parentStyle = {};
-    const reportStyle = report.style;
-    const pageStyle = getPage(selection, report)?.style;
-    // Merge reportStyle and pageStyle into parentStyle (shallow merge)
-    parentStyle = { ...(reportStyle || {}), ...(pageStyle || {}) };
+    const pageStyleObj = getPageStyle(selection, report);
+    const parentStyle = { ...(pageStyleObj.parentStyle || {}), ...(pageStyleObj.style || {}) };
     const columns = getColsSet(selection, report);
     return { style: columns?.style, parentStyle: parentStyle }
 }
 
 
 export function getRowsSetStyle(selection: any, report: any) {
-    let parentStyle = {};
-    const reportStyle = report.style;
-    const pageStyle = getPage(selection, report)?.style;
-    const colsSetStyle = getColsSet(selection, report)?.style;
-    // Merge reportStyle and pageStyle into parentStyle (shallow merge)
-    parentStyle = { ...(reportStyle || {}), ...(pageStyle || {}), ...(colsSetStyle || {}) };
+    const colsSetStyleObj = getColsSetStyle(selection, report);
+    const parentStyle = { ...(colsSetStyleObj.parentStyle || {}), ...(colsSetStyleObj.style || {}) };
     const rows = getRowsSet(selection, report);
     return { style: rows?.style, parentStyle: parentStyle }
 }
 
 
 export function getCellStyle(selection: any, report: any) {
-    let parentStyle = {};
-    const reportStyle = report.style;
-    const pageStyle = getPage(selection, report)?.style;
-    const colsSetStyle = getColsSet(selection, report)?.style;
-    const rowsSetStyle = getRowsSet(selection, report)?.style;
-    // Merge reportStyle and pageStyle into parentStyle (shallow merge)
-    parentStyle = { ...(reportStyle || {}), ...(pageStyle || {}), ...(colsSetStyle || {}), ...(rowsSetStyle || {}) };
+    const rowsSetStyleObj = getRowsSetStyle(selection, report);
+    const parentStyle = { ...(rowsSetStyleObj.parentStyle || {}), ...(rowsSetStyleObj.style || {}) };
     const cell = getCell(selection, report);
     return { style: cell?.style, parentStyle: parentStyle }
 }
