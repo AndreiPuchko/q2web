@@ -21,6 +21,7 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         this.state = {
             selectedValue: props.col.data || ''
         };
+        // console.log("radi const")
     }
 
     getData() {
