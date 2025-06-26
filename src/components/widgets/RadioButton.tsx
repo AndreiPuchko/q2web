@@ -24,6 +24,14 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         // console.log("radi const")
     }
 
+    static getDerivedStateFromProps(nextProps: Q2RadioButtonProps, prevState: Q2RadioButtonState) {
+        // If the data prop changes, update the selectedValue in state
+        if (nextProps.col.data !== prevState.selectedValue) {
+            return { selectedValue: nextProps.col.data || '' };
+        }
+        return null;
+    }
+
     getData() {
         return this.state.selectedValue;
     }
