@@ -1,3 +1,16 @@
+export const defaultStyle = {
+    "font-family": "Arial",
+    "font-size": "12pt",
+    "font-weight": "normal",
+    "font-italic": "",
+    "font-underline": "",
+    "border-width": "1 1 1 1",
+    // "border-color": "black",
+    "padding": "0.05cm 0.05cm 0.05cm 0.05cm",
+    "text-align": "left",
+    "vertical-align": "top"
+}
+
 export function getPage(selection: any, report: any) {
     const { pageIdx } = selection;
     return report.pages?.[pageIdx];
@@ -40,12 +53,14 @@ export function getCell(selection: any, report: any) {
 }
 
 export function getReportStyle(selection: any, report: any) {
-    return { style: {}, parentStyle: report.style }
+    const reportStyle = {...defaultStyle, ...report.style}
+    return { style: reportStyle, parentStyle: undefined }
 }
 
 export function getPageStyle(selection: any, report: any) {
+    const reportStyleObj = getReportStyle(selection, report);
     const page = getPage(selection, report)
-    return { style: page?.style, parentStyle: report.style }
+    return { style: page?.style, parentStyle: reportStyleObj.style }
 }
 
 export function getColsSetStyle(selection: any, report: any) {
@@ -67,4 +82,21 @@ export function getCellStyle(selection: any, report: any) {
     const parentStyle = { ...(rowsSetStyleObj.parentStyle || {}), ...(rowsSetStyleObj.style || {}) };
     const cell = getCell(selection, report);
     return { style: cell?.style, parentStyle: parentStyle }
+}
+
+export function getStyle(report: any, selection: any) {
+    if (!selection || !selection.type) return getReportStyle(selection, report);
+
+    if (selection.type === "page") {
+        return getPageStyle(selection, report);
+    } else if (selection.type === "column" || selection.type === "colwidth") {
+        return getColsSetStyle(selection, report);
+    } else if (selection.type === "row" || selection.type === "rowheight") {
+        return getRowsSetStyle(selection, report);
+    } else if (selection.type === "cell") {
+        return getCellStyle(selection, report);
+    } else if (selection.type === "report") {
+        return getReportStyle(selection, report)
+    }
+    getReportStyle(selection, report)
 }
