@@ -25,7 +25,6 @@ class Q2ContentEditor extends Component<ContentProps> {
 
     defineWidthEditor() {
         const width = getWidth(this.props.selection, this.props.report);
-        console.log(width.includes("%"))
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("width", "Width", { datalen: 6, alignment: 6, data: width.replace("%", "") });

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { getReport } from "./Q2Report";
+import { Q2Report } from "./Q2Report";
 import Q2PropsEditor from "./Q2PropsEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
 import { Q2Form } from "../../q2_modules/Q2Form";
@@ -35,12 +35,18 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         zoomWidthPx: 700,
     };
 
-    state: Q2ReportEditorState = {
-        selection: { type: "report" },
-        contextMenu: undefined,
-    };
+    constructor(props: Q2ReportEditorProps) {
+        super(props);
+        this.state = {
+            selection: { type: "report" },
+            contextMenu: undefined,
+        };
+        this.report = get_report_json();
+        // ...any other initialization if needed...
+    }
 
     report = get_report_json();
+    q2report = new Q2Report(get_report_json());
 
     defaultMenu = ["Clone", "Add above", "Add below", "-"];
     reportMenu = ["HTML", "DOCX", "XLSX", "PDF"];
@@ -165,14 +171,14 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 <Q2ContentEditor selection={this.state.selection} report={this.report} />
                 {this.report.pages.map((page, pageIdx) => (
                     <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
-                        {this.RenderPage(page, pageIdx, this.report.style)}
+                        {this.RenderPage(page, pageIdx)}
                     </div>
                 ))}
             </div>
         );
     }
 
-    RenderPage(page: any, pageIdx: number, parentStyle: any) {
+    RenderPage(page: any, pageIdx: number) {
         const { zoomWidthPx } = this.props;
         const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
         const pxPerCm = zoomWidthPx / availableWidthCm;
@@ -180,7 +186,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             page.style = {}
         }
 
-        // this._currentPageIdx = pageIdx; // set for children
         const isSelected = this.state.selection?.type === "page" && this.state.selection.pageIdx === pageIdx;
         const pageSizes = new Q2Form("", "", "");
         pageSizes.add_control("/h", "")
@@ -231,7 +236,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     {page.columns.map((column: any, colIdx: number) => {
                         const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx } =
                             this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
-                        const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(page.style ? page.style : {}), ...(column.style ? column.style : {}) };
                         return (
                             <div
                                 key={colIdx}
@@ -244,7 +248,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                     width: gridWidthPx + firstColWidthPx + secondColWidthPx,
                                 }}
                             >
-                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, pageIdx, colIdx, nextStyle)}
+                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, pageIdx, colIdx)}
                             </div>
                         );
                     })}
@@ -260,7 +264,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         secondColWidthPx: number,
         pageIdx?: number,
         colIdx?: number,
-        parentStyle: any
     ) {
         const isSelected = this.state.selection?.type === "column" &&
             this.state.selection.pageIdx === pageIdx &&
@@ -268,8 +271,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         if (!column.style) {
             column.style = {};
         }
-
-        const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(column.style) };
 
         // Prepare header, section, footer
         const rowsContent: any[] = [];
@@ -283,7 +284,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         secondColWidthPx,
                         pageIdx,
                         colIdx,
-                        nextStyle,
                         rowSet.table_header,
                         `${rowSetIdx}-header`
                     )
@@ -298,7 +298,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     secondColWidthPx,
                     pageIdx,
                     colIdx,
-                    nextStyle,
                     rowSet,
                     `${rowSetIdx}`
                 )
@@ -312,7 +311,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         secondColWidthPx,
                         pageIdx,
                         colIdx,
-                        nextStyle,
                         rowSet.table_footer,
                         `${rowSetIdx}-footer`
                     )
@@ -371,7 +369,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 }}
                                 onContextMenu={e => {
                                     e.stopPropagation();
-                                    this.handleContextMenu(e, { type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, c: i });
+                                    this.handleContextMenu(e, { type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
                                 }}
                             >
                                 {column.widths[i]}
@@ -391,13 +389,11 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         secondColWidthPx: number,
         pageIdx?: number,
         colIdx?: number,
-        parentStyle?: any,
         rowSet?: any,
         rowSetIdx?: any
     ) {
         // Only render a single rowSet (not a map)
         const colCount = column.widths.length;
-        const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(column.style ? column.style : {}) };
 
         if (!rowSet) return null;
         const rowCount = rowSet.heights.length || 0;
@@ -428,7 +424,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             }
         });
         const rowClickParams = { type: "row", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx };
-        const nextRowStyle = { ...(parentStyle ? parentStyle : {}), ...rowSet.style };
         const rowHeights: string[] = [];
         rowSet.heights.forEach(element => {
             const elsplt = element.split("-")
@@ -509,7 +504,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             pageIdx!,
                             colIdx!,
                             rowSetIdx!,
-                            nextRowStyle
                         );
                     })
                 )}
@@ -525,7 +519,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         pageIdx: number,
         colIdx: number,
         rowSetIdx: number,
-        parentStyle: any
     ) {
         const clickParams = {
             type: "cell",
@@ -541,8 +534,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             cell.style = {};
         }
 
-        const nextStyle = { ...(parentStyle ? parentStyle : {}), ...(cell?.style ? cell.style : {}) };
-
         const isCurrent = this.state.selection?.type === "cell" &&
             this.state.selection.pageIdx === pageIdx &&
             this.state.selection.colIdx === colIdx &&
@@ -553,7 +544,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         // Merge cell.style if present
         const cellStyle: any = {
             backgroundColor: isCurrent ? "#ffe066" : "#fafafa",
-            fontSize: 14,
             gridColumn: `${cellIdx + 3}`,
             gridRow: `${rowIdx + 1}`,
         };
@@ -566,8 +556,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 cellStyle.gridRow = cellStyle.gridRow + ` / span ${cell.rowspan}`;
             }
         }
+
+        const selectedCell = { type: "cell", pageIdx: pageIdx, colIdx: colIdx, rowSetIdx: rowSetIdx, rowIdx: rowIdx, cellIdx: cellIdx };
+        const reportCellStyles = this.q2report.getCellStyle(selectedCell);
+        const reportCellStyle = { ...reportCellStyles.parentStyle, ...reportCellStyles.style };
+
         if (cell && cell.style) {
-            this.adaptStyle(cellStyle, nextStyle);
+            this.adaptStyle(cellStyle, reportCellStyle);
         }
 
         return (

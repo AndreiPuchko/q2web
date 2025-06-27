@@ -18,10 +18,9 @@ class Q2PropsEditor extends Component<ContentProps> {
   defineUi() {
     const { report, selection } = this.props;
     // Use getStyle to select the correct style object
-    let styles: any = getStyle(report, selection);
+    this.propsData = this.getPropsData()
 
     this.propsEditor = new Q2Form();
-    this.propsData = this.getPropsData(styles)
 
     if (this.propsEditor.add_control("/f", "Font")) {
 
@@ -44,7 +43,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("font_weight", "Bold",
         {
           control: "check",
-          data: (styles.style["font-weight"] || "") === "bold",
+          data: this.propsData["font-weight"].data,
           check: true,
           checkChecked: this.propsData["font-weight"].checked,
           checkDisabled: this.getCheckDisabled(),
@@ -52,7 +51,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("font_italic", "Italic",
         {
           control: "check",
-          data: (styles.style["font-italic"] || "") != "",
+          data: this.propsData["font-italic"].data,
           check: true,
           checkChecked: this.propsData["font-italic"].checked,
           checkDisabled: this.getCheckDisabled(),
@@ -60,7 +59,7 @@ class Q2PropsEditor extends Component<ContentProps> {
       this.propsEditor.add_control("font_underline", "Underline",
         {
           control: "check",
-          data: (styles.style["font-underline"] || "") != "",
+          data: this.propsData["font-underline"].data,
           check: true,
           checkChecked: this.propsData["font-underline"].checked,
           checkDisabled: this.getCheckDisabled(),
@@ -144,13 +143,15 @@ class Q2PropsEditor extends Component<ContentProps> {
     return (selection?.type === "report")
   }
 
-  getPropsData(style) {
+  getPropsData() {
     // Returns an object like: { "font-family": { data: ..., check: ... }, ... }
+    const { report, selection } = this.props;
+    let styles: any = getStyle(report, selection);
     const props: any = {};
 
-    if (!style) return props;
-    const styleObj = style.style || {};
-    const parentObj = style.parentStyle || {};
+    if (!styles) return props;
+    const styleObj = styles.style || {};
+    const parentObj = styles.parentStyle || {};
     const styleKeys = Object.keys(styleObj);
     const parentKeys = Object.keys(parentObj);
     const allKeys = Array.from(new Set([...styleKeys, ...parentKeys]));
