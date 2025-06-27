@@ -78,12 +78,12 @@ class Q2PropsEditor extends Component<ContentProps> {
       });
     if (this.bordersControl) {
       const borders = this.propsData["border-width"].data.split(" ");
-      this.propsEditor.add_control("border_left", "", { datalen: 3, data: borders[3] || "" });
+      this.propsEditor.add_control("border_left", "", { datalen: 3, datatype: "int", data: borders[3] || "" });
       this.propsEditor.add_control("/v", "");
-      this.propsEditor.add_control("border_top", "", { datalen: 3, data: borders[0] || "" });
-      this.propsEditor.add_control("border_bottom", "", { datalen: 3, data: borders[2] || "" });
+      this.propsEditor.add_control("border_top", "", { datalen: 3, datatype: "int", data: borders[0] || "" });
+      this.propsEditor.add_control("border_bottom", "", { datalen: 3, datatype: "int", data: borders[2] || "" });
       this.propsEditor.add_control("/");  // close layout
-      this.propsEditor.add_control("border_right", "", { datalen: 3, data: borders[1] || "" });
+      this.propsEditor.add_control("border_right", "", { datalen: 3, datatype: "int", data: borders[1] || "" });
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }
@@ -98,12 +98,12 @@ class Q2PropsEditor extends Component<ContentProps> {
       });
     if (this.paddingsControl) {
       const paddings = this.propsData["padding"].data.split(" ");
-      this.propsEditor.add_control("padding_left", "", { datalen: 5, data: (paddings[3] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_left", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[3] || "").replace("cm", "") });
       this.propsEditor.add_control("/v");
-      this.propsEditor.add_control("padding_top", "", { datalen: 5, data: (paddings[0] || "").replace("cm", "") });
-      this.propsEditor.add_control("padding_bottom", "", { datalen: 5, data: (paddings[2] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_top", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[0] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_bottom", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[2] || "").replace("cm", "") });
       this.propsEditor.add_control("/");  // close layout
-      this.propsEditor.add_control("padding_right", "", { datalen: 5, data: (paddings[1] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_right", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[1] || "").replace("cm", "") });
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }
@@ -164,7 +164,7 @@ class Q2PropsEditor extends Component<ContentProps> {
           data: parentStyle[key],
           checked: false
         };
-      } 
+      }
       // else {
       //   props[key] = {
       //     data: "",

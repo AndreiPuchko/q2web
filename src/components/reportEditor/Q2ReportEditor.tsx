@@ -190,12 +190,12 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const isSelected = this.state.selection?.type === "page" && this.state.selection.pageIdx === pageIdx;
         const pageSizes = new Q2Form("", "", "");
         pageSizes.add_control("/h", "")
-        pageSizes.add_control("page_width", "W", { datalen: 6, data: page.page_width });
-        pageSizes.add_control("page_height", "H after", { datalen: 6, data: page.page_height });
-        pageSizes.add_control("page_margin_left", "ML", { datalen: 6, data: page.page_margin_left });
-        pageSizes.add_control("page_margin_right", "MR", { datalen: 6, data: page.page_margin_right });
-        pageSizes.add_control("page_margin_top", "MT", { datalen: 6, data: page.page_margin_top });
-        pageSizes.add_control("page_margin_bottom", "MB", { datalen: 6, data: page.page_margin_bottom });
+        pageSizes.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width });
+        pageSizes.add_control("page_height", "H after", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_height });
+        pageSizes.add_control("page_margin_left", "ML", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_left });
+        pageSizes.add_control("page_margin_right", "MR", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_right });
+        pageSizes.add_control("page_margin_top", "MT", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_top });
+        pageSizes.add_control("page_margin_bottom", "MB", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_bottom });
 
 
         return (
