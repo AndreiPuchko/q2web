@@ -144,10 +144,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
     renderReport() {
         const buttonStyle = {
-            padding: "6px 18px",
+            padding: "3px 18px",
+            margin: "2px",
+            cursor: "pointer",
+            border: 0,
             fontSize: 12,
-            borderRadius: "10px",
-            width: "10cap"
+            borderRadius: "1px",
+            width: "9cap"
         };
         const isSelected = this.state.selection?.type === "report";
         return (
@@ -584,6 +587,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 if (key === "font-size") style["fontSize"] = reportStyle[key]
                 else if (key === "font-family") style["fontFamily"] = reportStyle[key]
                 else if (key === "font-weight") style["fontWeight"] = reportStyle[key]
+                else if (key === "font-italic") style["fontStyle"] = reportStyle[key] != "" ? "italic" : ""
+                else if (key === "font-underline") style["fontDecoration"] = reportStyle[key] != "" ? "underline" : ""
                 else if (key === "text-align") style["textAlign"] = reportStyle[key]
                 else if (key === "vertical-align") style["verticalAlign"] = reportStyle[key]
                 else if (key === "border-color") style["borderColor"] = reportStyle[key]
@@ -617,12 +622,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             }
         }
     }
-
-    // Helper to pass pageIdx/colIdx to renderRows/renderColumns
-    // private _currentPageIdx: number = 0;
-    // private _currentColIdx: number = 0;
-
-    // propsEditorRef = React.createRef<Q2PropsEditor>();
 
     render() {
         return (

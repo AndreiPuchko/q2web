@@ -9,7 +9,6 @@ interface ContentProps {
     q2report: any;
 }
 
-
 class Q2ContentEditor extends Component<ContentProps> {
 
     defineUi() {
