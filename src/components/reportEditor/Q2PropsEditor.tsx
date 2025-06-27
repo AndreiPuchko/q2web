@@ -1,6 +1,5 @@
 import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
-import { getStyle } from "./Q2Report";
 import Form from '../Form';
 
 interface ContentProps {
@@ -149,28 +148,29 @@ class Q2PropsEditor extends Component<ContentProps> {
     const styles: any = q2report.getStyle(selection);
     const props: any = {};
     if (!styles) return props;
-    const styleObj = styles.style || {};
-    const parentObj = styles.parentStyle || {};
-    const styleKeys = Object.keys(styleObj);
-    const parentKeys = Object.keys(parentObj);
-    const allKeys = Array.from(new Set([...styleKeys, ...parentKeys]));
+    const selectionStyle = styles.style || {};
+    const parentStyle = styles.parentStyle || {};
+    const selectionKeys = Object.keys(selectionStyle);
+    const parentKeys = Object.keys(parentStyle);
+    const allKeys = Array.from(new Set([...selectionKeys, ...parentKeys]));
     allKeys.forEach(key => {
-      if (styleObj && styleObj[key] !== undefined) {
+      if (selectionStyle && selectionStyle[key] !== undefined) {
         props[key] = {
-          data: styleObj[key],
-          checked: true
+          data: selectionStyle[key],
+          checked: parentStyle[key] != selectionStyle[key]
         };
-      } else if (parentObj && parentObj[key] !== undefined) {
+      } else if (parentStyle && parentStyle[key] !== undefined) {
         props[key] = {
-          data: parentObj[key],
+          data: parentStyle[key],
           checked: false
         };
-      } else {
-        props[key] = {
-          data: "",
-          checked: false
-        };
-      }
+      } 
+      // else {
+      //   props[key] = {
+      //     data: "",
+      //     checked: false
+      //   };
+      // }
     });
     return props;
   }
