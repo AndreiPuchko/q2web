@@ -34,7 +34,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     };
 
     state: Q2ReportEditorState = {
-        selection: undefined,
+        selection: { type: "report" },
         contextMenu: undefined,
     };
 
@@ -48,7 +48,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     columnMenu = ["Remove", "Resize"];
     rowsMenu = [...this.defaultMenu];
     cellMenu = [...this.defaultMenu];
-
 
     private calcColumnsWidths(column: any, availableWidthCm: number, pxPerCm: number) {
         let percentTotal = 0, cmTotal = 0, zeroCount = 0;
@@ -75,12 +74,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
     }
 
-    handleSelect = (sel: Selection, style: any) => {
-        this.setState({ selection: sel, contextMenu: undefined });
-        // Call Q2PropsEditor.setData if available
-        if (this.propsEditorRef && this.propsEditorRef.current && typeof this.propsEditorRef.current.setData === "function") {
-            this.propsEditorRef.current.setData(sel, style);
-        }
+    handleSelect = (selection: Selection, style: any) => {
+        this.setState({ selection: selection, contextMenu: undefined });
     };
 
     handleContextMenu = (e: React.MouseEvent, sel: Selection) => {

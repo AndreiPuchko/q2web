@@ -12,7 +12,7 @@ interface ContentProps {
 
 class Q2ContentEditor extends Component<ContentProps> {
 
-    defineSectionEditor() {
+    defineUi() {
 
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
@@ -62,7 +62,7 @@ class Q2ContentEditor extends Component<ContentProps> {
             <>
 
                 <div className="q2-report-content-editor">
-                    {mode === "row" && <Form metaData={this.defineSectionEditor()} />}
+                    {mode === "row" && <Form metaData={this.defineUi()} />}
                     {mode === "colwidth" && <Form metaData={this.defineWidthEditor()} />}
                     {mode === "rowheight" && <Form metaData={this.defineHeightEditor()} />}
                     {mode === "cell" && <Form metaData={this.defineCellEditor()} />}

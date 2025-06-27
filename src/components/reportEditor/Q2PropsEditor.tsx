@@ -20,16 +20,8 @@ class Q2PropsEditor extends Component<ContentProps> {
     // Use getStyle to select the correct style object
     let styles: any = getStyle(report, selection);
 
-    // Ensure styles.style and styles.parentStyle are always objects
-    styles = {
-      style: (styles && styles.style) ? styles.style : {},
-      parentStyle: (styles && styles.parentStyle) ? styles.parentStyle : {}
-    };
-
     this.propsEditor = new Q2Form();
     this.propsData = this.getPropsData(styles)
-    console.log(this.propsData)
-
 
     if (this.propsEditor.add_control("/f", "Font")) {
 
