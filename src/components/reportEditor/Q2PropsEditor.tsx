@@ -5,7 +5,7 @@ import Form from '../Form';
 
 interface ContentProps {
   selection: any;
-  report: any;
+  q2report: any;
 }
 
 class Q2PropsEditor extends Component<ContentProps> {
@@ -16,7 +16,7 @@ class Q2PropsEditor extends Component<ContentProps> {
   propsData: {};
 
   defineUi() {
-    const { report, selection } = this.props;
+    // const { selection } = this.props;
     // Use getStyle to select the correct style object
     this.propsData = this.getPropsData()
 
@@ -145,10 +145,9 @@ class Q2PropsEditor extends Component<ContentProps> {
 
   getPropsData() {
     // Returns an object like: { "font-family": { data: ..., check: ... }, ... }
-    const { report, selection } = this.props;
-    let styles: any = getStyle(report, selection);
+    const { q2report, selection } = this.props;
+    const styles: any = q2report.getStyle(selection);
     const props: any = {};
-
     if (!styles) return props;
     const styleObj = styles.style || {};
     const parentObj = styles.parentStyle || {};

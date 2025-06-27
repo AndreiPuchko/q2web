@@ -41,11 +41,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             selection: { type: "report" },
             contextMenu: undefined,
         };
-        this.report = get_report_json();
-        // ...any other initialization if needed...
     }
 
-    report = get_report_json();
+    // report = get_report_json();
     q2report = new Q2Report(get_report_json());
 
     defaultMenu = ["Clone", "Add above", "Add below", "-"];
@@ -168,8 +166,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         <button style={buttonStyle}>PDF</button>
                     </div>
                 </div>
-                <Q2ContentEditor selection={this.state.selection} report={this.report} />
-                {this.report.pages.map((page, pageIdx) => (
+                <Q2ContentEditor selection={this.state.selection} q2report={this.q2report} />
+                {this.q2report.getReport().pages.map((page, pageIdx) => (
                     <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
                         {this.RenderPage(page, pageIdx)}
                     </div>
@@ -633,7 +631,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     {this.renderReport()}
                     {this.renderContextMenu()}
                 </div>
-                <Q2PropsEditor selection={this.state.selection} report={this.report} />
+                <Q2PropsEditor selection={this.state.selection} q2report={this.q2report} />
             </div>
         );
     }

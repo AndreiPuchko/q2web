@@ -1,12 +1,12 @@
 import { Component } from "react";
 import { Q2Form } from "../../q2_modules/Q2Form";
 import Form from '../Form';
-import { getPage, getColsSet, getWidth, getRowsSet, getHeight, getCell } from "./Q2Report";
+// import { getPage, getColsSet, getWidth, getRowsSet, getHeight, getCell } from "./Q2Report";
 
 
 interface ContentProps {
     selection: any;
-    report: any;
+    q2report: any;
 }
 
 
@@ -24,7 +24,8 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineWidthEditor() {
-        const width = getWidth(this.props.selection, this.props.report);
+        // const width = getWidth(this.props.selection, this.props.report);
+        const width = this.props.q2report.getWidth(this.props.selection);
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("width", "Width", { datalen: 6, alignment: 6, data: width.replace("%", "") });
@@ -33,7 +34,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineHeightEditor() {
-        const heights = getHeight(this.props.selection, this.props.report).split("-")
+        const heights = this.props.q2report.getHeight(this.props.selection).split("-")
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("h", "Height", { control: "label" });
@@ -44,7 +45,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineCellEditor() {
-        const cell = getCell(this.props.selection, this.props.report);
+        const cell = this.props.q2report.getCell(this.props.selection);
 
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
