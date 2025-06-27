@@ -5,11 +5,16 @@ export const defaultStyle = {
     "font-italic": "",
     "font-underline": "",
     "border-width": "1 1 1 1",
-    // "border-color": "black",
+    "border-color": "black",
     "padding": "0.05cm 0.05cm 0.05cm 0.05cm",
     "text-align": "left",
     "vertical-align": "top"
 }
+
+export function getReport(report: any) {
+    return report;
+}
+
 
 export function getPage(selection: any, report: any) {
     const { pageIdx } = selection;

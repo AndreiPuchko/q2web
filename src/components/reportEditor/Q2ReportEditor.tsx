@@ -1,10 +1,12 @@
 import React, { Component } from "react";
+import { getReport } from "./Q2Report";
 import Q2PropsEditor from "./Q2PropsEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
 import { Q2Form } from "../../q2_modules/Q2Form";
 import Form from '../Form';
 import "./Q2ReportEditor.css";
 import get_report_json from "./test_report"
+
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
@@ -74,7 +76,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
     }
 
-    handleSelect = (selection: Selection, style: any) => {
+    handleSelect = (selection: Selection) => {
         this.setState({ selection: selection, contextMenu: undefined });
     };
 
@@ -149,7 +151,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 <div
                     className="q2-report-header"
                     style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
-                    onClick={() => this.handleSelect({ type: "report" }, this.report.style)}
+                    onClick={() => this.handleSelect({ type: "report" })}
                     onContextMenu={e => this.handleContextMenu(e, { type: "report" })}
                 >
                     <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
@@ -202,7 +204,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         alignItems: "center",
                         cursor: "pointer",
                     }}
-                    onClick={() => this.handleSelect({ type: "page", pageIdx }, page.style)}
+                    onClick={() => this.handleSelect({ type: "page", pageIdx })}
                     onContextMenu={e => this.handleContextMenu(e, { type: "page", pageIdx })}
                 >
                     <div
@@ -340,7 +342,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         }}
                         onClick={e => {
                             e.stopPropagation();
-                            this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! }, column.style);
+                            this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
                         }}
                         onContextMenu={e => {
                             e.stopPropagation();
@@ -455,7 +457,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         background: isSelected ? "#ffe066" : "#f0f8ff",
                         gridRow: `1 / span ${rowCount}`,
                     }}
-                    onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams, rowSet.style); }}
+                    onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams); }}
                     onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
                 >
                     {rowSet.role}
@@ -478,7 +480,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             }}
                             onClick={e => {
                                 e.stopPropagation();
-                                this.handleSelect(rowHeightsClickParams, rowSet.style);
+                                this.handleSelect(rowHeightsClickParams);
                             }}
                             onContextMenu={e => {
                                 e.stopPropagation();
@@ -573,7 +575,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 key={cellKey}
                 className="q2-report-cell"
                 style={cellStyle}
-                onClick={e => { e.stopPropagation(); this.handleSelect(clickParams, cell.style); }}
+                onClick={e => { e.stopPropagation(); this.handleSelect(clickParams); }}
                 onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, clickParams); }}
             >
                 {cell && cell.data

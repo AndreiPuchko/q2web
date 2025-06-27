@@ -140,7 +140,7 @@ class Q2PropsEditor extends Component<ContentProps> {
   }
 
   getCheckDisabled() {
-    const { report, selection } = this.props;
+    const { selection } = this.props;
     return (selection?.type === "report")
   }
 
