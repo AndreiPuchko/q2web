@@ -24,7 +24,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
   focus: string = "";
   prevFocus: string = "";
   formRef = React.createRef<HTMLDivElement>();
-  
+
   constructor(props: FormProps) {
     super(props);
     this.state = {
@@ -57,10 +57,12 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
   handleFocus = () => {
     // console.log("valid", this.prevFocus, this.focus)
     if (typeof this.w[this.prevFocus]?.props.col.valid === "function") {
-      this.scanAndCopyValues();
       const validResult = this.w[this.prevFocus].props.col.valid(this);
     }
-
+    this.scanAndCopyValues();
+    if (typeof this.props.metaData?.hookFocusChanged === "function") {
+      this.props.metaData.hookFocusChanged(this)
+    }
   }
 
   handleKeyDown = (event: any) => {

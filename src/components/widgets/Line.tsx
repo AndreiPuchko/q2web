@@ -54,6 +54,10 @@ class Q2Line extends Widget<Q2LineProps> {
         onChange && onChange(event);
     };
 
+    getData() {
+        return this.props.col.data;
+    }
+
     render() {
         const { col, onChange, readOnly, id, name } = this.props;
         const style: React.CSSProperties = {
