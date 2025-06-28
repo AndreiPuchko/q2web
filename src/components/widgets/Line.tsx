@@ -8,7 +8,8 @@ class Q2Line extends Widget<Q2LineProps> {
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { col, onChange } = this.props;
-        if (col?.datatype === "dec") {
+        
+        if (col?.datatype === "dec" || col?.datatype === "num") {
             // Allow only numbers and decimal separator, and limit decimal places
             let value = e.target.value.replace(/[^0-9.,-]/g, '');
             value = value.replace(',', '.');
@@ -23,11 +24,13 @@ class Q2Line extends Widget<Q2LineProps> {
             }
             e.target.value = value;
         }
-        if (col?.datatype === "int" || col?.datatype === "num") {
+        if (col?.datatype === "int") {
             // Only allow integer numbers (and minus sign)
             let value = e.target.value.replace(/[^0-9-]/g, '');
             e.target.value = value;
         }
+        col.data = e.target.value
+        // console.log(e.target.value)
         onChange && onChange(e);
     };
 
@@ -79,6 +82,7 @@ class Q2Line extends Widget<Q2LineProps> {
         }
 
         const showSpin = ["dec", "int", "num"].includes(col?.datatype);
+        const spinStyle = { padding: 0, width: "2cap", height: "1.5cap", fontSize: "1cap", lineHeight: 1, userSelect: "none", border: 0 };
 
         return (
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -87,7 +91,8 @@ class Q2Line extends Widget<Q2LineProps> {
                     className="Q2Line"
                     style={style}
                     value={value}
-                    onChange={showSpin ? this.handleChange : onChange}
+                    // onChange={showSpin ? this.handleChange : onChange}
+                    onChange={this.handleChange}
                     onBlur={this.focusOut}
                     onFocus={this.focusIn}
                     readOnly={readOnly}
@@ -102,13 +107,13 @@ class Q2Line extends Widget<Q2LineProps> {
                         <button
                             type="button"
                             tabIndex={-1}
-                            style={{ padding: 0, width: 18, height: 14, fontSize: 10, lineHeight: 1, userSelect: "none" }}
+                            style={spinStyle}
                             onClick={() => this.handleSpin(1)}
                         >▲</button>
                         <button
                             type="button"
                             tabIndex={-1}
-                            style={{ padding: 0, width: 18, height: 14, fontSize: 10, lineHeight: 1, userSelect: "none" }}
+                            style={spinStyle}
                             onClick={() => this.handleSpin(-1)}
                         >▼</button>
                     </span>
