@@ -192,9 +192,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const pageSizes = new Q2Form("", "", "");
         pageSizes.add_control("/h", "")
 
-
-        pageSizes.hookFocusChanged = function (form){
-            console.log(form.prevFocus, form.s[form.prevFocus])
+        // Pass q2report into hookFocusChanged via closure
+        const q2report = this.q2report;
+        pageSizes.hookFocusChanged = function (form) {
+            const dataChunk = {};
+            dataChunk[form.prevFocus] = form.s[form.prevFocus];
+            q2report.setPageData(pageIdx, dataChunk);
+            // console.log(form.prevFocus, dataChunk, q2report)
         }
 
         pageSizes.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width });

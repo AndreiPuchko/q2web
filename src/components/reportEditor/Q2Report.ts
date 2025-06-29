@@ -35,6 +35,20 @@ export class Q2Report {
         return this.report.pages?.[pageIdx];
     }
 
+    setPageData(pageIdx, data) {
+        // data is expected to be an object: { fieldName: value, ... }
+        const page = this.report.pages?.[pageIdx];
+        if (!page) return;
+        for (const key in data) {
+            if (Object.prototype.hasOwnProperty.call(data, key)) {
+                if (key in page && parseFloat(page[key]) != parseFloat(data[key])) {
+                    page[key] = data[key];
+                    console.log(data)
+                }
+            }
+        }
+    }
+
     getColsSet(selection: any) {
         const { colIdx } = selection;
         const page = this.getPage(selection);
