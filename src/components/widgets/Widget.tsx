@@ -28,7 +28,7 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     focus() {
         const { id } = this.props;
         document.getElementById(id)?.focus()
-        console.log(id)
+        // console.log(id)
     }
 
     // setValue(value: any) {

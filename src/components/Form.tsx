@@ -34,12 +34,15 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
   }
 
   componentDidMount() {
+    
     const { rowData } = this.props;
     const formData = this.props.metaData.columns.reduce((acc: any, column: any) => {
-      acc[column.column] = rowData ? rowData[column.column] : column.value || "";
+      acc[column.column] = rowData ? rowData[column.column] : column.data || "";
       return acc;
     }, {});
     this.setState({ formData });
+    // console.log(formData)
+    // console.log(this.state.formData)
 
     document.addEventListener("keydown", this.handleKeyDown);
 
@@ -82,6 +85,11 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         [name]: value,
       },
     }), this.handleResize);
+
+    // Also update the widget's col.data if possible
+    if (this.w[name] && this.w[name].props && this.w[name].props.col) {
+      this.w[name].props.col.data = value;
+    }
   };
 
   handleSubmit = () => {
@@ -129,6 +137,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
   renderInput = (col: any) => {
     const { formData } = this.state;
     const data: any = formData[col.column] !== undefined ? formData[col.column] : "";
+    // console.log(col.column, data)
+    // console.log(this.state.formData)
+
     col["id"] = `${col.column}-${col.key}`;
     // Set initial checkChecked for checkable controls
     if (col.check && typeof col.checkChecked === "undefined") {
