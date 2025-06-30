@@ -202,11 +202,11 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         }
 
         pageSizes.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width, range: "0" });
-        pageSizes.add_control("page_height", "H", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_height });
-        pageSizes.add_control("page_margin_left", "ML", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_left });
-        pageSizes.add_control("page_margin_right", "MR", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_right });
-        pageSizes.add_control("page_margin_top", "MT", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_top });
-        pageSizes.add_control("page_margin_bottom", "MB", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_bottom });
+        pageSizes.add_control("page_height", "H", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_height, range: "0" });
+        pageSizes.add_control("page_margin_left", "ML", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_left, range: "0" });
+        pageSizes.add_control("page_margin_right", "MR", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_right, range: "0" });
+        pageSizes.add_control("page_margin_top", "MT", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_top, range: "0" });
+        pageSizes.add_control("page_margin_bottom", "MB", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_bottom, range: "0" });
 
         return (
             <div>

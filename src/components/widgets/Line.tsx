@@ -15,12 +15,12 @@ class Q2Line extends Widget<Q2LineProps> {
         }
     }
 
-    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => {
         const { col, onChange } = this.props;
-        let value = e.target.value
+        let value = e.target.value;
         if (col?.datatype === "dec" || col?.datatype === "num") {
             // Allow only numbers and decimal separator, and limit decimal places
-            value = e.target.value.replace(/[^0-9.-]/g, '');
+            value = value.replace(/[^0-9.-]/g, '');
             value = value.replace(',', '.');
             const parts = value.split('.');
             if (parts.length > 2) {
@@ -34,18 +34,54 @@ class Q2Line extends Widget<Q2LineProps> {
         }
         else if (col?.datatype === "int") {
             // Only allow integer numbers (and minus sign)
-            let value = e.target.value.replace(/[^0-9-]/g, '');
+            value = value.replace(/[^0-9-]/g, '');
         }
-        // console.log(col.range, value, col.range[0] === "0",value[0])
-        // if (col.range && col.range[0] === "0" && value[0] === "-"){
-        //     console.log(col.range, value)
-        //     value = value.slice(1);
-        // }
-        e.target.value = value;
+        
 
-        col.data = e.target.value
-        console.log(e.target.value)
-        onChange && onChange(e);
+        // --- Range enforcement for int, num, dec ---
+        if (["int", "num", "dec"].includes(col?.datatype) && typeof col.range === "string" && value !== "") {
+            let numValue = Number(value);
+            if (!isNaN(numValue)) {
+                const rangeParts = col.range.trim().split(/\s+/);
+                if (rangeParts.length === 1) {
+                    if (col.range.trim() === "0") {
+                        // Only allow >= 0
+                        if (numValue < 0) numValue = Math.abs(numValue);
+                    } else {
+                        // Only upper bound
+                        const upper = Number(rangeParts[0]);
+                        if (!isNaN(upper) && numValue > upper) numValue = upper;
+                    }
+                } else if (rangeParts.length === 2) {
+                    const lower = rangeParts[0] === "" ? undefined : Number(rangeParts[0]);
+                    const upper = rangeParts[1] === "" ? undefined : Number(rangeParts[1]);
+                    if (lower !== undefined && !isNaN(lower) && numValue < lower) numValue = lower;
+                    if (upper !== undefined && !isNaN(upper) && numValue > upper) numValue = upper;
+                }
+                value = (col.datatype === "dec" && col.datadec !== undefined)
+                    ? numValue.toFixed(col.datadec)
+                    : numValue.toString();
+            }
+        }
+        // --- end range enforcement ---
+
+        col.data = value
+        e.target.value = value;
+        if (onChange) {
+            // If e is a React.ChangeEvent, just call onChange(e)
+            // If e is a synthetic event from handleKeyDown, create a synthetic event
+            if ('persist' in e) {
+                onChange(e as React.ChangeEvent<HTMLInputElement>);
+            } else {
+                // Create a synthetic event for onChange
+                onChange({
+                    target: {
+                        value: value,
+                        name: e.target.name
+                    }
+                } as any);
+            }
+        }
     };
 
     handleSpin = (delta: number) => {
@@ -69,22 +105,6 @@ class Q2Line extends Widget<Q2LineProps> {
         col.data = num.toString();
         onChange && onChange(event);
     };
-
-    fireOnChangeEvent(e: React.KeyboardEvent<HTMLInputElement>, input: HTMLInputElement, newValue: string) {
-        const { col } = this.props;
-        if (col) col.data = newValue;
-        if (this.props.onChange) {
-            const event = {
-                ...e,
-                target: {
-                    ...input,
-                    value: newValue,
-                    name: input.name
-                }
-            };
-            this.props.onChange(event as any);
-        }
-    }
 
     handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const { col } = this.props;
@@ -112,7 +132,13 @@ class Q2Line extends Widget<Q2LineProps> {
                         this.inputRef.current.value = newValue;
                         const newCursor = value.startsWith("-") ? Math.max(cursorPos - 1, 0) : cursorPos + 1;
                         this.setCursorPosition(newCursor);
-                        this.fireOnChangeEvent(e, input, newValue);
+                        // Call handleChange with a synthetic event
+                        this.handleChange({
+                            target: {
+                                value: newValue,
+                                name: input.name
+                            }
+                        });
                     }
                 }, 0);
             }
@@ -128,7 +154,13 @@ class Q2Line extends Widget<Q2LineProps> {
                         if (this.inputRef.current) {
                             this.inputRef.current.value = newValue;
                             this.setCursorPosition(1);
-                            this.fireOnChangeEvent(e, input, newValue);
+                            // Call handleChange with a synthetic event
+                            this.handleChange({
+                                target: {
+                                    value: newValue,
+                                    name: input.name
+                                }
+                            });
                         }
                     }, 0);
                 }
@@ -144,7 +176,12 @@ class Q2Line extends Widget<Q2LineProps> {
                         if (this.inputRef.current) {
                             this.inputRef.current.value = newValue;
                             this.setCursorPosition(cursorPos - 1);
-                            this.fireOnChangeEvent(e, input, newValue);
+                            this.handleChange({
+                                target: {
+                                    value: newValue,
+                                    name: input.name
+                                }
+                            });
                         }
                     }, 0);
                 }
@@ -161,7 +198,12 @@ class Q2Line extends Widget<Q2LineProps> {
                         if (this.inputRef.current) {
                             this.inputRef.current.value = newValue;
                             this.setCursorPosition(1);
-                            this.fireOnChangeEvent(e, input, newValue);
+                            this.handleChange({
+                                target: {
+                                    value: newValue,
+                                    name: input.name
+                                }
+                            });
                         }
                     }, 0);
                 }
@@ -173,7 +215,12 @@ class Q2Line extends Widget<Q2LineProps> {
                         if (this.inputRef.current) {
                             this.inputRef.current.value = newValue;
                             this.setCursorPosition(cursorPos);
-                            this.fireOnChangeEvent(e, input, newValue);
+                            this.handleChange({
+                                target: {
+                                    value: newValue,
+                                    name: input.name
+                                }
+                            });
                         }
                     }, 0);
                 }
@@ -224,6 +271,17 @@ class Q2Line extends Widget<Q2LineProps> {
                 }
             }
         }
+        // At the end, always call handleChange to ensure col.data stays in sync
+        setTimeout(() => {
+            if (this.inputRef.current) {
+                this.handleChange({
+                    target: {
+                        value: this.inputRef.current.value,
+                        name: this.inputRef.current.name
+                    }
+                });
+            }
+        }, 0);
     };
 
     private clearInput(echar: string, dotPos: number, col: any, input: EventTarget & HTMLInputElement) {
@@ -237,16 +295,15 @@ class Q2Line extends Widget<Q2LineProps> {
         setTimeout(() => {
             if (this.inputRef.current) {
                 this.inputRef.current.value = newValue;
-                // if (col) col.data = newValue;
-                if (newDotPos !== -1) {
-                    // this.inputRef.current.setSelectionRange(newDotPos, newDotPos);
-                    let newCursorPos = newDotPos;
-                } else {
-                    // this.inputRef.current.setSelectionRange(newValue.length, newValue.length);
-                    let newCursorPos = newValue.length;
-                }
+                let newCursorPos = newDotPos !== -1 ? newDotPos : newValue.length;
                 this.setCursorPosition(newCursorPos);
-                this.fireOnChangeEvent(echar, input, newValue);
+                // Call handleChange with a synthetic event
+                this.handleChange({
+                    target: {
+                        value: newValue,
+                        name: input.name
+                    }
+                });
             }
         }, 0);
     }
