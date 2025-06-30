@@ -1,6 +1,7 @@
 import React from 'react';
 import Widget from './Widget';
 import { WidgetProps } from './Widget';
+import { dot } from 'node:test/reporters';
 
 
 interface Q2LineProps extends WidgetProps { }
@@ -60,6 +61,8 @@ class Q2Line extends Widget<Q2LineProps> {
     };
 
     fireOnChangeEvent(e: React.KeyboardEvent<HTMLInputElement>, input: HTMLInputElement, newValue: string) {
+        const { col } = this.props;
+        if (col) col.data = newValue;
         if (this.props.onChange) {
             const event = {
                 ...e,
@@ -80,9 +83,9 @@ class Q2Line extends Widget<Q2LineProps> {
             const value = input.value;
             const cursorPos = input.selectionStart ?? 0;
             const dotPos = value.indexOf(".");
-            console.log(e.key, cursorPos, dotPos)
+            console.log(e.key, cursorPos, dotPos, cursorPos)
             // "." key: toggle cursor before/after decimal
-            if (e.key === "." && dotPos !== -1) {
+            if ((e.key === "." || e.key === ",") && dotPos !== -1) {
                 if (cursorPos > dotPos) {
                     setTimeout(() => {
                         if (this.inputRef.current) {
@@ -111,7 +114,7 @@ class Q2Line extends Widget<Q2LineProps> {
                 setTimeout(() => {
                     if (this.inputRef.current) {
                         this.inputRef.current.value = newValue;
-                        if (col) col.data = newValue;
+                        // if (col) col.data = newValue;
                         let newCursor = cursorPos;
                         if (value.startsWith("-")) {
                             newCursor = Math.max(cursorPos - 1, 0);
@@ -123,7 +126,6 @@ class Q2Line extends Widget<Q2LineProps> {
                     }
                 }, 0);
             }
-            // If only one digit before dot and del/backspace pressed, replace with 0 and set cursor before dot
             else if (e.key === "Backspace") {
                 if (input.selectionStart === 0 && input.selectionEnd === value.length) {
                     e.preventDefault();
@@ -135,7 +137,6 @@ class Q2Line extends Widget<Q2LineProps> {
                     setTimeout(() => {
                         if (this.inputRef.current) {
                             this.inputRef.current.value = newValue;
-                            if (col) col.data = newValue;
                             this.inputRef.current.setSelectionRange(1, 1);
                             this.fireOnChangeEvent(e, input, newValue);
                         }
@@ -145,10 +146,18 @@ class Q2Line extends Widget<Q2LineProps> {
                     e.preventDefault();
                     this.inputRef.current.setSelectionRange(dotPos, dotPos);
                 }
-                else if (cursorPos > dotPos) {
-                    this.inputRef.current.setSelectionRange(cursorPos - 1, cursorPos - 1);
+                // cursor is right of the DOT
+                else if (dotPos !== -1 && cursorPos > dotPos) {
+                    e.preventDefault();
+                    const newValue = value.slice(0, cursorPos - 1) + value.slice(cursorPos) + "0";
+                    setTimeout(() => {
+                        if (this.inputRef.current) {
+                            this.inputRef.current.value = newValue;
+                            this.inputRef.current.setSelectionRange(cursorPos - 1, cursorPos - 1);
+                            this.fireOnChangeEvent(e, input, newValue);
+                        }
+                    }, 0);
                 }
-
             }
             else if (e.key === "Delete") {
                 if (input.selectionStart === 0 && input.selectionEnd === value.length) {
@@ -161,15 +170,34 @@ class Q2Line extends Widget<Q2LineProps> {
                     setTimeout(() => {
                         if (this.inputRef.current) {
                             this.inputRef.current.value = newValue;
-                            if (col) col.data = newValue;
                             this.inputRef.current.setSelectionRange(1, 1);
+                            this.fireOnChangeEvent(e, input, newValue);
+                        }
+                    }, 0);
+                }
+                // cursor is right of the DOT
+                else if (dotPos !== -1 && cursorPos > dotPos) {
+                    e.preventDefault();
+                    const newValue = value.slice(0, cursorPos) + value.slice(cursorPos + 1) + "0";
+                    setTimeout(() => {
+                        if (this.inputRef.current) {
+                            this.inputRef.current.value = newValue;
+                            this.inputRef.current.setSelectionRange(cursorPos, cursorPos);
                             this.fireOnChangeEvent(e, input, newValue);
                         }
                     }, 0);
                 }
                 else if (cursorPos - dotPos === 0) {
                     e.preventDefault();
-                    this.inputRef.current.setSelectionRange(dotPos + 1, dotPos + 1);
+                    if (this.inputRef.current) {
+                        this.inputRef.current.setSelectionRange(dotPos + 1, dotPos + 1);
+                    }
+                }
+            }
+            else if (e.key == "End" && dotPos !== -1) {
+                e.preventDefault();
+                if (this.inputRef.current) {
+                    this.inputRef.current.setSelectionRange(value.length - 1, value.length - 1);
                 }
             }
             // do not allow to set cursor left of -
@@ -223,7 +251,7 @@ class Q2Line extends Widget<Q2LineProps> {
         setTimeout(() => {
             if (this.inputRef.current) {
                 this.inputRef.current.value = newValue;
-                if (col) col.data = newValue;
+                // if (col) col.data = newValue;
                 if (newDotPos !== -1) {
                     this.inputRef.current.setSelectionRange(newDotPos, newDotPos);
                 } else {
