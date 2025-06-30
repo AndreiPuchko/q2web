@@ -201,7 +201,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             // console.log(form.prevFocus, dataChunk, q2report)
         }
 
-        pageSizes.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width });
+        pageSizes.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width, range: "0" });
         pageSizes.add_control("page_height", "H", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_height });
         pageSizes.add_control("page_margin_left", "ML", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_left });
         pageSizes.add_control("page_margin_right", "MR", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_right });
