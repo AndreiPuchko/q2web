@@ -17,7 +17,9 @@ class Q2Line extends Widget<Q2LineProps> {
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => {
         const { col, onChange } = this.props;
-        let value = e.target.value;
+        console.log(e)
+        // Use this.inputRef.current for value and name
+        let value = this.inputRef.current ? this.inputRef.current.value : e.target.value;
         if (col?.datatype === "dec" || col?.datatype === "num") {
             // Allow only numbers and decimal separator, and limit decimal places
             value = value.replace(/[^0-9.-]/g, '');
@@ -36,8 +38,6 @@ class Q2Line extends Widget<Q2LineProps> {
             // Only allow integer numbers (and minus sign)
             value = value.replace(/[^0-9-]/g, '');
         }
-        
-
         // --- Range enforcement for int, num, dec ---
         if (["int", "num", "dec"].includes(col?.datatype) && typeof col.range === "string" && value !== "") {
             let numValue = Number(value);
@@ -64,46 +64,79 @@ class Q2Line extends Widget<Q2LineProps> {
             }
         }
         // --- end range enforcement ---
-
-        col.data = value
-        e.target.value = value;
+        col.data = value;
+        if (this.inputRef.current) this.inputRef.current.value = value;
         if (onChange) {
-            // If e is a React.ChangeEvent, just call onChange(e)
-            // If e is a synthetic event from handleKeyDown, create a synthetic event
-            if ('persist' in e) {
-                onChange(e as React.ChangeEvent<HTMLInputElement>);
-            } else {
-                // Create a synthetic event for onChange
-                onChange({
-                    target: {
-                        value: value,
-                        name: e.target.name
-                    }
-                } as any);
-            }
+            onChange({
+                target:
+                {
+                    value: this.inputRef.current ? this.inputRef.current.value : value,
+                    name: this.inputRef.current ? this.inputRef.current.name : e.target.name
+                }
+            } as any);
         }
     };
 
     handleSpin = (delta: number) => {
-        const { col, onChange } = this.props;
-        let value = col.data;
+        const { col } = this.props;
+        let value = this.inputRef.current ? this.inputRef.current.value : col.data;
+        let cursorPos = this.inputRef.current?.selectionStart ?? value.length;
+
+        // Find which digit to increment/decrement based on cursor position
         let num = Number(value);
         if (isNaN(num)) num = 0;
+
+        let newValue: string;
         if (col?.datatype === "dec") {
-            num = parseFloat((num + delta * (1 / Math.pow(10, col.datadec ?? 0))).toFixed(col.datadec ?? 0));
-        } else {
-            num = num + delta;
-        }
-        // Call onChange with a synthetic event
-        const event = {
-            target: {
-                value: num.toString(),
-                name: col.column
+            const dotPos = value.indexOf(".");
+            let step = 1;
+            if (dotPos !== -1) {
+                // Cursor left of dot: integer part
+                if (cursorPos <= dotPos) {
+                    const intDigits = dotPos;
+                    const digitIdx = dotPos - cursorPos - 1;
+                    step = Math.pow(10, digitIdx + 1);
+                } else {
+                    // Cursor right of dot: decimal part
+                    const decIdx = cursorPos - dotPos - 1;
+                    step = Math.pow(10, -(decIdx + 1));
+                }
             }
-        } as any;
-        // Update col.data to keep in sync
-        col.data = num.toString();
-        onChange && onChange(event);
+            num = parseFloat((num + delta * step).toFixed(col.datadec ?? 0));
+            newValue = num.toFixed(col.datadec ?? 0);
+        } else if (col?.datatype === "int" || col?.datatype === "num") {
+            // For int/num, step is based on digit left of cursor
+            let step = 1;
+            if (value.length > 0) {
+                const digitIdx = value.length - cursorPos - 1;
+                step = Math.pow(10, Math.max(0, digitIdx + 1));
+            }
+            num = num + delta * step;
+            newValue = num.toString();
+        } else {
+            newValue = value;
+        }
+
+        // Set the new value directly in the input
+        if (this.inputRef.current) {
+            this.inputRef.current.value = newValue;
+        }
+
+        // Range enforcement (reuse handleChange logic)
+        this.handleChange({
+            target: {
+                value: newValue,
+                name: this.inputRef.current ? this.inputRef.current.name : col.column
+            }
+        });
+
+        // Restore cursor position
+        setTimeout(() => {
+            if (this.inputRef.current) {
+                this.inputRef.current.focus();
+                this.inputRef.current.setSelectionRange(cursorPos, cursorPos);
+            }
+        }, 0);
     };
 
     handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -311,7 +344,7 @@ class Q2Line extends Widget<Q2LineProps> {
     getData() {
         // Defensive: avoid crash if col or col.data is undefined
         // return this.props.col && typeof this.props.col.data !== "undefined" ? this.props.col.data : "";
-        if (this.inputRef.current){
+        if (this.inputRef.current) {
             return this.inputRef.current?.value
         }
     }
