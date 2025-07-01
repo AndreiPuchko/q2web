@@ -19,21 +19,28 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         let value = (props.col && typeof props.col.data !== "undefined")
             ? props.col.data
             : (typeof props.data !== "undefined" ? props.data : "");
-        // Format decimals if needed
-        if (props.col?.datatype === "dec" && value !== undefined && value !== null && value !== "") {
+        // Format decimals if needed (dec and num are treated the same)
+        if ((props.col?.datatype === "dec" || props.col?.datatype === "num") && value !== undefined && value !== null && value !== "") {
             let num = Number(value);
             if (!isNaN(num)) {
                 value = num.toFixed(props.col.datadec ?? 0);
             }
         }
         this.state = { value: value };
+        // Call handleChange to ensure correct formatting for int/num/dec on first render
+        this.handleChange({
+            target: {
+                value: value,
+                name: props.name
+            }
+        });
     }
 
     componentDidUpdate(prevProps: Q2LineProps) {
         // If parent updates col.data, sync state
         if (this.props.col?.data !== prevProps.col?.data && this.props.col?.data !== this.state.value) {
             let value = this.props.col.data;
-            if (this.props.col?.datatype === "dec" && value !== undefined && value !== null && value !== "") {
+            if ((this.props.col?.datatype === "dec" || this.props.col?.datatype === "num") && value !== undefined && value !== null && value !== "") {
                 let num = Number(value);
                 if (!isNaN(num)) {
                     value = num.toFixed(this.props.col.datadec ?? 0);
@@ -52,7 +59,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     handleChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => {
         const { col, onChange } = this.props;
         let value = (e as any).target.value;
-        // ...existing code for value filtering and range enforcement...
+        // dec and num are treated the same
         if (col?.datatype === "dec" || col?.datatype === "num") {
             value = value.replace(/[^0-9.-]/g, '');
             value = value.replace(',', '.');
@@ -68,6 +75,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         else if (col?.datatype === "int") {
             value = value.replace(/[^0-9-]/g, '');
         }
+        // Range enforcement for int, num, dec
         if (["int", "num", "dec"].includes(col?.datatype) && typeof col.range === "string" && value !== "") {
             let numValue = Number(value);
             if (!isNaN(numValue)) {
@@ -85,7 +93,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     if (lower !== undefined && !isNaN(lower) && numValue < lower) numValue = lower;
                     if (upper !== undefined && !isNaN(upper) && numValue > upper) numValue = upper;
                 }
-                value = (col.datatype === "dec" && col.datadec !== undefined)
+                value = ((col.datatype === "dec" || col.datatype === "num") && col.datadec !== undefined)
                     ? numValue.toFixed(col.datadec)
                     : numValue.toString();
             }
@@ -105,14 +113,14 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
     handleSpin = (delta: number) => {
         const { col } = this.props;
-        let value = this.state.value ?? col.data ?? "";
+        const value = this.state.value ?? col.data ?? "";
         let cursorPos = this.inputRef.current?.selectionStart ?? value.length;
+        const prevLength = value.length;
 
         let num = Number(value);
         if (isNaN(num)) num = 0;
-
         let newValue: string;
-        if (col?.datatype === "dec") {
+        if (col?.datatype === "dec" || col?.datatype === "num") {
             const dotPos = value.indexOf(".");
             let step = 1;
             if (dotPos !== -1) {
@@ -120,13 +128,16 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     const digitIdx = dotPos - cursorPos - 1;
                     step = Math.pow(10, digitIdx + 1);
                 } else {
-                    const decIdx = cursorPos - dotPos - 1;
+                    let decIdx = cursorPos - dotPos - 1;
+                    if (decIdx >= parseInt(col.datadec)) decIdx = parseInt(col.datadec)-1;
+                    console.log(decIdx, col.datadec, decIdx > parseInt(col.datadec))
                     step = Math.pow(10, -(decIdx + 1));
                 }
             }
-            num = parseFloat((num + delta * step).toFixed(col.datadec ?? 0));
-            newValue = num.toFixed(col.datadec ?? 0);
-        } else if (col?.datatype === "int" || col?.datatype === "num") {
+            // num = parseFloat((num + delta * step).toFixed(col.datadec ?? 0));
+            // newValue = num.toFixed(col.datadec ?? 0);
+            newValue = (num + delta * step).toFixed(col.datadec ?? 0);
+        } else if (col?.datatype === "int") {
             let step = 1;
             if (value.length > 0) {
                 const digitIdx = value.length - cursorPos - 1;
@@ -137,7 +148,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         } else {
             newValue = value;
         }
-
+        cursorPos = cursorPos + (newValue.length - prevLength)
         // Update state and restore cursor position after render
         this.setState({ value: newValue }, () => {
             this.handleChange({
@@ -277,6 +288,14 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                 e.preventDefault();
                 this.setCursorPosition(1);
             }
+            else if (e.key == "ArrowUp") {
+                e.preventDefault();
+                this.handleSpin(1);
+            }
+            else if (e.key == "ArrowDown") {
+                e.preventDefault();
+                this.handleSpin(-1);
+            }
             else if (e.key.length === 1 && e.key >= "0" && e.key <= "9") {
                 if (dotPos !== -1 && cursorPos > dotPos) {
                     const intendedPos = cursorPos + 1;
@@ -355,7 +374,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
         const value = this.state.value;
 
-        const showSpin = ["dec", "int", "num"].includes(col?.datatype);
+        const showSpin = (col?.datatype === "dec" || col?.datatype === "num" || col?.datatype === "int");
         const spinStyle = { padding: 0, width: "2cap", height: "1.5cap", fontSize: "1cap", lineHeight: 1, userSelect: "none", border: 0 };
 
         return (
@@ -372,8 +391,8 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     readOnly={readOnly}
                     id={id}
                     name={name}
-                    inputMode={col?.datatype === "dec" ? "decimal" : (col?.datatype === "int" || col?.datatype === "num" ? "numeric" : undefined)}
-                    pattern={col?.datatype === "dec" ? "[0-9]*[.,]?[0-9]*" : (col?.datatype === "int" || col?.datatype === "num" ? "[0-9]*" : undefined)}
+                    inputMode={(col?.datatype === "dec" || col?.datatype === "num") ? "decimal" : (col?.datatype === "int" ? "numeric" : undefined)}
+                    pattern={(col?.datatype === "dec" || col?.datatype === "num") ? "[0-9]*[.,]?[0-9]*" : (col?.datatype === "int" ? "[0-9]*" : undefined)}
                     autoComplete="off"
                     ref={this.inputRef}
                 />

@@ -98,12 +98,12 @@ class Q2PropsEditor extends Component<ContentProps> {
       });
     if (this.paddingsControl) {
       const paddings = this.propsData["padding"].data.split(" ");
-      this.propsEditor.add_control("padding_left", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[3] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_left", "", { datalen: 5, datatype: "dec", datadec: 2, range: "0", data: (paddings[3] || "").replace("cm", "") });
       this.propsEditor.add_control("/v");
-      this.propsEditor.add_control("padding_top", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[0] || "").replace("cm", "") });
-      this.propsEditor.add_control("padding_bottom", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[2] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_top", "", { datalen: 5, datatype: "dec", datadec: 2, range: "0", data: (paddings[0] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_bottom", "", { datalen: 5, datatype: "dec", datadec: 2, range: "0", data: (paddings[2] || "").replace("cm", "") });
       this.propsEditor.add_control("/");  // close layout
-      this.propsEditor.add_control("padding_right", "", { datalen: 5, datatype: "dec", datadec: 2, data: (paddings[1] || "").replace("cm", "") });
+      this.propsEditor.add_control("padding_right", "", { datalen: 5, datatype: "dec", datadec: 2, range: "0", data: (paddings[1] || "").replace("cm", "") });
       this.propsEditor.add_control("/s", "");
       this.propsEditor.add_control("/");  // close layout
     }

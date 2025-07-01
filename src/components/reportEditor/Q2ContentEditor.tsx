@@ -11,7 +11,7 @@ interface ContentProps {
 
 class Q2ContentEditor extends Component<ContentProps> {
 
-    defineUi() {
+    defineSectionEditor() {
 
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
@@ -27,7 +27,7 @@ class Q2ContentEditor extends Component<ContentProps> {
         const width = this.props.q2report.getWidth(this.props.selection);
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
-        editor.add_control("width", "Width", { datalen: 6, alignment: 6, data: width.replace("%", "") });
+        editor.add_control("width", "Width", { datalen: 6, datadec: 2, datatype: "num", data: width.replace("%", ""), range: "0" });
         editor.add_control("pz", "%", { control: "check", data: width.includes("%") ? true : false });
         return editor
     }
@@ -37,8 +37,8 @@ class Q2ContentEditor extends Component<ContentProps> {
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("h", "Height", { control: "label" });
-        editor.add_control("h0", "minimal", { data: heights[0], datalen:6 });
-        editor.add_control("h1", "maximal", { data: heights[1], datalen:6 });
+        editor.add_control("h0", "minimal", { data: heights[0], datalen: 6, datadec: 2, datatype: "num", range: "0" });
+        editor.add_control("h1", "maximal", { data: heights[1], datalen: 6, datadec: 2, datatype: "num", range: "0" });
         editor.add_control("/s", "")
         return editor
     }
@@ -61,7 +61,7 @@ class Q2ContentEditor extends Component<ContentProps> {
             <>
 
                 <div className="q2-report-content-editor">
-                    {mode === "row" && <Form metaData={this.defineUi()} />}
+                    {mode === "row" && <Form metaData={this.defineSectionEditor()} />}
                     {mode === "colwidth" && <Form metaData={this.defineWidthEditor()} />}
                     {mode === "rowheight" && <Form metaData={this.defineHeightEditor()} />}
                     {mode === "cell" && <Form metaData={this.defineCellEditor()} />}
