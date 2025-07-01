@@ -38,15 +38,18 @@ export class Q2Report {
     setPageData(pageIdx, data) {
         // data is expected to be an object: { fieldName: value, ... }
         const page = this.report.pages?.[pageIdx];
-        if (!page) return;
+        if (!page) return false;
+        let changed = false;
         for (const key in data) {
             if (Object.prototype.hasOwnProperty.call(data, key)) {
                 if (key in page && parseFloat(page[key]) != parseFloat(data[key])) {
                     page[key] = data[key];
+                    changed = true;
                     console.log(data)
                 }
             }
         }
+        return changed;
     }
 
     getColsSet(selection: any) {
