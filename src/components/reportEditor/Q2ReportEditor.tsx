@@ -170,7 +170,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         <button style={buttonStyle}>PDF</button>
                     </div>
                 </div>
-                <Q2ContentEditor selection={this.state.selection} q2report={this.q2report} />
+                <Q2ContentEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
                 {this.q2report.getReport().pages.map((page, pageIdx) => (
                     <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
                         {this.RenderPage(page, pageIdx)}
@@ -234,7 +234,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     >
                         Page [{pageIdx}]
                     </div>
-                    <Form metaData={pageSizes} />
+                    <Form q2form={pageSizes} />
                 </div>
                 {/* Columns and rows for each column */}
                 <div
@@ -642,7 +642,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     {this.renderReport()}
                     {this.renderContextMenu()}
                 </div>
-                <Q2PropsEditor selection={this.state.selection} q2report={this.q2report} />
+                <Q2PropsEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
             </div>
         );
     }

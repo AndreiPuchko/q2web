@@ -5,9 +5,17 @@ import { WidgetProps } from './Widget';
 interface Q2CheckBoxProps extends WidgetProps {
     // onChange: (checked: boolean) => void;
 }
-class Q2CheckBox extends Component<Q2CheckBoxProps> {
+
+interface Q2CheckBoxState {
+    value: boolean;
+}
+
+class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
     constructor(props: Q2CheckBoxProps) {
         super(props);
+        this.state = {
+            value: !!props.col?.data
+        };
     }
 
     focus() {
@@ -18,6 +26,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
     setChecked(checked: boolean) {
         const { col } = this.props;
         col.data = checked;
+        this.setState({ value: checked });
         // Optionally trigger onChange if needed
         if (typeof this.props.onChange === "function") {
             // Create a synthetic event for compatibility
@@ -30,10 +39,23 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
         this.forceUpdate();
     }
 
+    getData() {
+        return this.state.value;
+    }
+
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { col } = this.props;
-        this.props.onChange(e);
-        col.data = e.currentTarget.checked ? true : false;
+        const checked = e.currentTarget.checked ? true : false;
+        this.setState({ value: checked }, () => {
+            // console.log("CB", checked)
+            this.props.onChange({
+                target: {
+                    value: checked,
+                    name: col.column
+                }
+            } as any);
+            col.data = checked;
+        });
     };
 
     render() {
@@ -46,7 +68,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps> {
                     id={id}
                     className="Q2CheckBox"
                     onChange={this.handleChange}
-                    checked={col.data}
+                    checked={this.state.value}
                 />
                 <label htmlFor={id} className="Q2CheckBox-label">{col.label}</label>
             </div>

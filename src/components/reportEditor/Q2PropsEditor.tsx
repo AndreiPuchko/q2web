@@ -5,6 +5,7 @@ import Form from '../Form';
 interface ContentProps {
   selection: any;
   q2report: any;
+  reportEditor: any;
 }
 
 class Q2PropsEditor extends Component<ContentProps> {
@@ -186,7 +187,7 @@ class Q2PropsEditor extends Component<ContentProps> {
         <div
           style={{ fontSize: "12px" }}
         >
-          <Form metaData={metaData} />
+          <Form q2form={metaData} />
         </div>
       </div>
     );

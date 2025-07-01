@@ -158,14 +158,14 @@ export class Q2Report {
         console.log(selection, dataChunk);
         let changed = false;
         const object = this.getObject(selection);
-        if (object) {
-            for (const key in dataChunk) {
-                if (key in object && (object[key]) != dataChunk[key]) {
-                    object[key] = dataChunk[key];
-                    changed = true;
-                }
+        if (selection.type === "colwidth") {
+            if (object.widths[selection.widthIdx] !== dataChunk.width) {
+                changed = true;
+                object.widths[selection.widthIdx] = dataChunk.width
             }
+            console.log(object.widths);
         }
+
         return changed;
     }
 

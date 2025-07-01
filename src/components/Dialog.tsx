@@ -243,7 +243,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
           {isDataGrid ? (
             <DataGrid metaData={metaData} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
           ) : (
-            <Form metaData={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
+            <Form q2form={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
           )}
         </div>
       </div>

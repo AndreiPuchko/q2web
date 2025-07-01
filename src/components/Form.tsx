@@ -9,9 +9,10 @@ import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
+import { GiConsoleController } from "react-icons/gi";
 
 interface FormProps {
-  metaData: Q2Form;
+  q2form: Q2Form;
   onClose: () => void;
   rowData?: any;
   isTopDialog: boolean;
@@ -31,12 +32,22 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
       formData: {},
       panelChecks: {}, // Track checkbox state for panels
     };
+    // Provide pointer to Form.s on Q2Form instance
+    this.updateQ2FormLinks();
+    // console.log("FC", this.s);
+  }
+
+  private updateQ2FormLinks() {
+    if (this.props.q2form) {
+      (this.props.q2form as any).s = this.s;
+      (this.props.q2form as any).w = this.w;
+    }
   }
 
   componentDidMount() {
-    
+
     const { rowData } = this.props;
-    const formData = this.props.metaData.columns.reduce((acc: any, column: any) => {
+    const formData = this.props.q2form.columns.reduce((acc: any, column: any) => {
       acc[column.column] = rowData ? rowData[column.column] : column.data || "";
       return acc;
     }, {});
@@ -50,6 +61,24 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     setTimeout(() => {
       focusFirstFocusableElement(this.formRef.current);
     }, 100);
+    // console.log("DM", this.s);
+  }
+
+  componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
+    // Focus input when a check-linked input becomes checked
+    // console.log("DU", this.s)
+    // this.scanAndCopyValues();
+    this.updateQ2FormLinks();
+    Object.keys(this.state.formData).forEach(column => {
+      if (
+        this.state.formData[column] &&
+        !prevState.formData?.[column] &&
+        this.w[column] &&
+        typeof this.w[column]?.focus === "function"
+      ) {
+        this.w[column].focus();
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -63,8 +92,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
       const validResult = this.w[this.prevFocus].props.col.valid(this);
     }
     this.scanAndCopyValues();
-    if (typeof this.props.metaData?.hookFocusChanged === "function") {
-      this.props.metaData.hookFocusChanged(this)
+    if (typeof this.props.q2form?.hookFocusChanged === "function") {
+      this.props.q2form.hookFocusChanged(this)
     }
   }
 
@@ -79,6 +108,12 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
   handleChange = (e: any) => {
     const { name, value } = e.target;
+    this.scanAndCopyValues();
+    // Call hookFocusChanged for the current input before rerender
+    if (typeof this.props.q2form?.hookInputChanged === "function") {
+      this.focus = name;
+      this.props.q2form.hookInputChanged(this);
+    }
     this.setState((prevState) => ({
       formData: {
         ...prevState.formData,
@@ -102,7 +137,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     if (action.label === "Exit") {
       this.props.onClose();
     } else {
-      console.log(action.label);
+      // console.log(action.label);
     }
   };
 
@@ -130,6 +165,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
       if (this.w[key] && typeof this.w[key].getData === 'function') {
         this.s[key] = this.getWidgetData(key);
         this.c[key] = this.getWidgetCheck(key);
+      }
+      else {
+        delete this.s[key];
+        delete this.w[key];
       }
     });
   };
@@ -175,7 +214,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         return <Q2RadioButton {...commonProps} />;
       case "form":
         col.data.subForm = true;
-        return <Form metaData={col.data} />
+        return <Form q2form={col.data} />
       case "widget":
         return <col.data />;
       default:
@@ -306,25 +345,11 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     );
   };
 
-  componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
-    // Focus input when a check-linked input becomes checked
-    Object.keys(this.state.formData).forEach(column => {
-      if (
-        this.state.formData[column] &&
-        !prevState.formData?.[column] &&
-        this.w[column] &&
-        typeof this.w[column]?.focus === "function"
-      ) {
-        this.w[column].focus();
-      }
-    });
-  }
-
   render() {
-    const { columns } = this.props.metaData;
-    const hasOkButton = this.props.metaData.hasOkButton;
-    const subForm = this.props.metaData?.subForm;
-    const hasCancelButton = this.props.metaData.hasCancelButton;
+    const { columns } = this.props.q2form;
+    const hasOkButton = this.props.q2form.hasOkButton;
+    const subForm = this.props.q2form?.subForm;
+    const hasCancelButton = this.props.q2form.hasCancelButton;
     const structuredColumns = this.createFormTree(columns);
 
     return (

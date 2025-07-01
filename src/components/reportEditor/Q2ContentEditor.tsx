@@ -7,6 +7,7 @@ import Form from '../Form';
 interface ContentProps {
     selection: any;
     q2report: any;
+    reportEditor: any;
 }
 
 class Q2ContentEditor extends Component<ContentProps> {
@@ -67,23 +68,30 @@ class Q2ContentEditor extends Component<ContentProps> {
         else if (mode === "cell") editor = this.defineCellEditor();
         else editor = "";
 
+
         if (editor !== "") {
-            editor.hookFocusChanged = (form) => {
+            console.log("render CE")
+            editor.hookInputChanged = (form) => {
                 const dataChunk: { [key: string]: number | string } = {};
-                dataChunk[form.prevFocus] = form.s[form.prevFocus];
-                console.log(selection.type)
+                
+                // console.log("!!", selection.type, form.focus)
                 if (selection.type === "colwidth") {
-                    console.log(editor)
+                    dataChunk["width"] = form.s["width"];
+                    if (editor.s.pz) {
+                        dataChunk["width"] = dataChunk["width"] + "%";
+                    }
                 }
                 // Rerender report layout if data were changed
                 if (q2report.setObjectContent(selection, dataChunk)) {
+                    console.log(this.props)
                     // this.forceUpdate();
+                    this.props.reportEditor.forceUpdate();
                 }
             }
             return (
                 <>
                     <div className="q2-report-content-editor">
-                        {editor !== "" && < Form metaData={editor} />}
+                        {editor !== "" && < Form q2form={editor} />}
                     </div>
                 </>
             );
