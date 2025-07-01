@@ -11,9 +11,11 @@ interface ContentProps {
 
 class Q2ContentEditor extends Component<ContentProps> {
 
-    defineSectionEditor() {
+    q2report = this.props.q2report;
 
+    defineSectionEditor() {
         const editor = new Q2Form("", "", "");
+
         editor.add_control("/h", "")
         editor.add_control("printwhen", "Print when");
         editor.add_control("calcafter", "Calc after");
@@ -24,7 +26,7 @@ class Q2ContentEditor extends Component<ContentProps> {
 
     defineWidthEditor() {
         // const width = getWidth(this.props.selection, this.props.report);
-        const width = this.props.q2report.getWidth(this.props.selection);
+        const width = this.q2report.getWidth(this.props.selection);
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("width", "Width", { datalen: 6, datadec: 2, datatype: "num", data: width.replace("%", ""), range: "0" });
@@ -33,7 +35,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineHeightEditor() {
-        const heights = this.props.q2report.getHeight(this.props.selection).split("-")
+        const heights = this.q2report.getHeight(this.props.selection).split("-")
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         editor.add_control("h", "Height", { control: "label" });
@@ -44,7 +46,7 @@ class Q2ContentEditor extends Component<ContentProps> {
     }
 
     defineCellEditor() {
-        const cell = this.props.q2report.getCell(this.props.selection);
+        const cell = this.q2report.getCell(this.props.selection);
 
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
@@ -54,21 +56,46 @@ class Q2ContentEditor extends Component<ContentProps> {
         return editor
     }
 
-
     render() {
+        const { selection, q2report } = this.props;
         const mode = this.props.selection?.type;
-        return (
-            <>
 
-                <div className="q2-report-content-editor">
-                    {mode === "row" && <Form metaData={this.defineSectionEditor()} />}
-                    {mode === "colwidth" && <Form metaData={this.defineWidthEditor()} />}
-                    {mode === "rowheight" && <Form metaData={this.defineHeightEditor()} />}
-                    {mode === "cell" && <Form metaData={this.defineCellEditor()} />}
-                    {mode === undefined && ""}
-                </div>
-            </>
-        );
+        let editor: Q2Form | string;
+        if (mode === "row") editor = this.defineSectionEditor();
+        else if (mode === "colwidth") editor = this.defineWidthEditor();
+        else if (mode === "rowheight") editor = this.defineHeightEditor();
+        else if (mode === "cell") editor = this.defineCellEditor();
+        else editor = "";
+
+        if (editor !== "") {
+            editor.hookFocusChanged = (form) => {
+                const dataChunk: { [key: string]: number | string } = {};
+                dataChunk[form.prevFocus] = form.s[form.prevFocus];
+                console.log(selection.type)
+                if (selection.type === "colwidth") {
+                    console.log(editor)
+                }
+                // Rerender report layout if data were changed
+                if (q2report.setObjectContent(selection, dataChunk)) {
+                    // this.forceUpdate();
+                }
+            }
+            return (
+                <>
+                    <div className="q2-report-content-editor">
+                        {editor !== "" && < Form metaData={editor} />}
+                    </div>
+                </>
+            );
+        }
+        else {
+            return (
+                <>
+                    <div className="q2-report-content-editor">
+
+                    </div>
+                </>)
+        }
     }
 }
 

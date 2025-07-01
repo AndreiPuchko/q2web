@@ -195,7 +195,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         // Pass q2report into hookFocusChanged via closure
         const q2report = this.q2report;
         pageSizes.hookFocusChanged = (form) => {
-            const dataChunk: { [key: string]: any } = {};
+            const dataChunk: { [key: string]: number|string } = {};
             dataChunk[form.prevFocus] = form.s[form.prevFocus];
             // Rerender report layout if data were changed
             if (q2report.setPageData(pageIdx, dataChunk)) {

@@ -26,6 +26,23 @@ export class Q2Report {
         return this.report.style;
     }
 
+    getObject(selection: any) {
+        if (!selection || !selection.type) return this.getReport(selection);
+
+        if (selection.type === "page") {
+            return this.getPage(selection);
+        } else if (selection.type === "column" || selection.type === "colwidth") {
+            return this.getColsSet(selection);
+        } else if (selection.type === "row" || selection.type === "rowheight") {
+            return this.getRowsSet(selection);
+        } else if (selection.type === "cell") {
+            return this.getCell(selection);
+        } else if (selection.type === "report") {
+            return this.getReport(selection)
+        }
+        return this.getReport(selection)
+    }
+
     getReport() {
         return this.report;
     }
@@ -35,7 +52,7 @@ export class Q2Report {
         return this.report.pages?.[pageIdx];
     }
 
-    setPageData(pageIdx, data) {
+    setPageData(pageIdx: number, data: { [key: string]: any }) {
         // data is expected to be an object: { fieldName: value, ... }
         const page = this.report.pages?.[pageIdx];
         if (!page) return false;
@@ -135,5 +152,81 @@ export class Q2Report {
             return this.getReportStyle(selection)
         }
         return this.getReportStyle(selection)
+    }
+
+    setObjectContent(selection: any, dataChunk: { [key: string]: number | string }) {
+        console.log(selection, dataChunk);
+        let changed = false;
+        const object = this.getObject(selection);
+        if (object) {
+            for (const key in dataChunk) {
+                if (key in object && (object[key]) != dataChunk[key]) {
+                    object[key] = dataChunk[key];
+                    changed = true;
+                }
+            }
+        }
+        return changed;
+    }
+
+    setStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+        if (selection.type === "report" || !selection || !selection.type) {
+            return this.setReportStyle(selection, dataChunk)
+        }
+        else if (selection.type === "page") {
+            return this.setPageStyle(selection, dataChunk);
+        } else if (selection.type === "column" || selection.type === "colwidth") {
+            return this.setColsSetStyle(selection, dataChunk);
+        } else if (selection.type === "row" || selection.type === "rowheight") {
+            return this.setRowsSetStyle(selection, dataChunk);
+        } else if (selection.type === "cell") {
+            return this.setCellStyle(selection, dataChunk);
+        }
+    }
+
+    setReportStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+        const reportStyle = { ...defaultStyle, ...this.report.style }
+        return { style: reportStyle, parentStyle: undefined }
+    }
+
+    setPageStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+        const reportStyleObj = this.getReportStyle(selection);
+        const page = this.getPage(selection)
+        return { style: page?.style, parentStyle: reportStyleObj.style }
+    }
+
+    setColsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+        const pageStyleObj = this.getPageStyle(selection);
+        const parentStyle = { ...(pageStyleObj.parentStyle || {}), ...(pageStyleObj.style || {}) };
+        const columns = this.getColsSet(selection);
+        return { style: columns?.style, parentStyle: parentStyle }
+    }
+
+    setRowsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+        const colsSetStyleObj = this.getColsSetStyle(selection);
+        const parentStyle = { ...(colsSetStyleObj.parentStyle || {}), ...(colsSetStyleObj.style || {}) };
+        const rows = this.getRowsSet(selection);
+        return { style: rows?.style, parentStyle: parentStyle }
+    }
+
+    setCellStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+        const rowsSetStyleObj = this.getRowsSetStyle(selection);
+        const parentStyle = { ...(rowsSetStyleObj.parentStyle || {}), ...(rowsSetStyleObj.style || {}) };
+        const cell = this.getCell(selection);
+        return this.setObjectStyle(parentStyle, cell, dataChunk)
+    }
+
+    setObjectStyle(parentStyle, object, dataChunk) {
+        let changed = false;
+        for (const key in dataChunk) {
+            if (Object.prototype.hasOwnProperty.call(dataChunk, key)) {
+                if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
+                    object[key] = dataChunk[key];
+                    changed = true;
+                    console.log(dataChunk)
+                }
+            }
+        }
+        return changed;
     }
 }
