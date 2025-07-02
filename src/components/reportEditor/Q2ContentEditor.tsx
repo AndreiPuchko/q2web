@@ -84,6 +84,11 @@ class Q2ContentEditor extends Component<ContentProps> {
                     dataChunk["height"] = `${form.s.h0}-${form.s.h1}`;
                     // console.log(form.s, dataChunk["height"], "<<")
                 }
+                else if (selection.type === "cell") {
+                    dataChunk["data"] = form.s.data;
+                    dataChunk["format"] = form.s.format;
+                    dataChunk["name"] = form.s.name;
+                }
                 // Rerender report layout if data were changed
                 if (q2report.setObjectContent(selection, dataChunk)) {
                     setTimeout(() => {

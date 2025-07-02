@@ -171,7 +171,15 @@ export class Q2Report {
             }
             console.log(object.heights);
         }
-
+        else if (selection.type === "cell") {
+            for (let el of ["data", "format", "name"]) {
+                if (object[el] !== dataChunk[el]) {
+                    changed = true;
+                    object[el] = dataChunk[el];
+                }
+            }
+            console.log(object.heights);
+        }
         return changed;
     }
 
