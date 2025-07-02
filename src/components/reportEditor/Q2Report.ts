@@ -169,7 +169,6 @@ export class Q2Report {
                 changed = true;
                 object.heights[selection.heightIdx] = dataChunk.height
             }
-            console.log(object.heights);
         }
         else if (selection.type === "cell") {
             for (let el of ["data", "format", "name"]) {
@@ -178,7 +177,15 @@ export class Q2Report {
                     object[el] = dataChunk[el];
                 }
             }
-            console.log(object.heights);
+        }
+        else if (selection.type === "row") {
+            console.log(object)
+            for (let el of ["print_when", "print_after", "new_page_before", "new_page_after"]) {
+                if (object[el] !== dataChunk[el]) {
+                    changed = true;
+                    object[el] = dataChunk[el];
+                }
+            }
         }
         return changed;
     }

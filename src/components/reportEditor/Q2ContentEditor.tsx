@@ -16,12 +16,14 @@ class Q2ContentEditor extends Component<ContentProps> {
 
     defineSectionEditor() {
         const editor = new Q2Form("", "", "");
+        const sectionData = this.q2report.getObject(this.props.selection);
+        console.log(sectionData)
 
         editor.add_control("/h", "")
-        editor.add_control("printwhen", "Print when");
-        editor.add_control("calcafter", "Calc after");
-        editor.add_control("onnewpage", "Make new page", { control: "check" });
-        editor.add_control("ejectpage", "Make new page after", { control: "check" });
+        editor.add_control("print_when", "Print when", { data: sectionData.print_when });
+        editor.add_control("print_after", "Calc after", { data: sectionData.print_after });
+        editor.add_control("new_page_before", "Make new page", { control: "check", data: sectionData.new_page_before });
+        editor.add_control("new_page_after", "Make new page after", { control: "check", data: sectionData.new_page_after });
         return editor
     }
 
@@ -70,10 +72,8 @@ class Q2ContentEditor extends Component<ContentProps> {
 
 
         if (editor !== "") {
-            console.log("render CE")
             editor.hookInputChanged = (form) => {
                 const dataChunk: { [key: string]: number | string } = {};
-                // console.log("!!", selection.type, form.focus)
                 if (selection.type === "colwidth") {
                     dataChunk["width"] = form.s["width"];
                     if (editor.s.pz) {
@@ -82,12 +82,17 @@ class Q2ContentEditor extends Component<ContentProps> {
                 }
                 else if (selection.type === "rowheight") {
                     dataChunk["height"] = `${form.s.h0}-${form.s.h1}`;
-                    // console.log(form.s, dataChunk["height"], "<<")
                 }
                 else if (selection.type === "cell") {
                     dataChunk["data"] = form.s.data;
                     dataChunk["format"] = form.s.format;
                     dataChunk["name"] = form.s.name;
+                }
+                else if (selection.type === "row") {
+                    dataChunk["print_when"] = form.s.print_when;
+                    dataChunk["print_after"] = form.s.print_after;
+                    dataChunk["new_page_before"] = form.s.new_page_before;
+                    dataChunk["new_page_after"] = form.s.new_page_after;
                 }
                 // Rerender report layout if data were changed
                 if (q2report.setObjectContent(selection, dataChunk)) {
@@ -96,6 +101,7 @@ class Q2ContentEditor extends Component<ContentProps> {
                     }, 0);
                 }
             }
+            
             return (
                 <>
                     <div className="q2-report-content-editor">
