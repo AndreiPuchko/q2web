@@ -240,14 +240,15 @@ export class Q2Report {
     setObjectStyle(parentStyle, object, dataChunk) {
         let changed = false;
         for (const key in dataChunk) {
-            if (Object.prototype.hasOwnProperty.call(dataChunk, key)) {
-                if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
-                    object[key] = dataChunk[key];
-                    changed = true;
-                    console.log(dataChunk)
-                }
+            // if (Object.prototype.hasOwnProperty.call(dataChunk, key)) {
+            if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
+                object.style[key] = dataChunk[key];
+                changed = true;
+                console.log(dataChunk)
             }
         }
+        // }
+        console.log(dataChunk);
         return changed;
     }
 }

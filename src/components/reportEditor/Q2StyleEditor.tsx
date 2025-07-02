@@ -249,10 +249,15 @@ class Q2StyleEditor extends Component<StyleProps> {
 
     render() {
         this.defineUi()
-        console.log("SE render")
+        // console.log("SE render")
         const { q2report, selection, reportEditor } = this.props;
         this.propsEditor.hookInputChanged = (form) => {
-            console.log("--", this.collectStyle(form))
+            if (q2report.setStyle(selection, this.collectStyle(form))) {
+                setTimeout(() => {
+                    this.props.reportEditor.forceUpdate();
+                }, 100);
+
+            }
         }
 
         return (
