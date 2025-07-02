@@ -2,13 +2,13 @@ import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
 import Form from '../Form';
 
-interface ContentProps {
+interface StyleProps {
   selection: any;
   q2report: any;
   reportEditor: any;
 }
 
-class Q2PropsEditor extends Component<ContentProps> {
+class Q2StyleEditor extends Component<StyleProps> {
   bordersControl: Q2Control;
   paddingsControl: Q2Control;
   alignmentsControl: Q2Control;
@@ -194,4 +194,4 @@ class Q2PropsEditor extends Component<ContentProps> {
   }
 }
 
-export default Q2PropsEditor;
+export default Q2StyleEditor;

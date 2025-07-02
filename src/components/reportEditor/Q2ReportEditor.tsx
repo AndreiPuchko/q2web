@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Q2Report } from "./Q2Report";
-import Q2PropsEditor from "./Q2PropsEditor";
+import Q2StyleEditor from "./Q2StyleEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
 import { Q2Form } from "../../q2_modules/Q2Form";
 import Form from '../Form';
@@ -642,7 +642,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     {this.renderReport()}
                     {this.renderContextMenu()}
                 </div>
-                <Q2PropsEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
+                <Q2StyleEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
             </div>
         );
     }
