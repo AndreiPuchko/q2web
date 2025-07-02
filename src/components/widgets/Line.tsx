@@ -318,14 +318,6 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                 }
             }
         }
-        setTimeout(() => {
-            this.handleChange({
-                target: {
-                    value: this.inputRef.current ? this.inputRef.current.value : this.state.value,
-                    name: this.inputRef.current ? this.inputRef.current.name : undefined
-                }
-            });
-        }, 0);
     };
 
     private clearInput(echar: string, dotPos: number, col: any, input: EventTarget & HTMLInputElement) {
