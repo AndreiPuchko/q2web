@@ -166,7 +166,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     Object.keys(this.w).forEach(key => {
       if (this.w[key] && typeof this.w[key].getData === 'function') {
         this.s[key] = this.getWidgetData(key);
-        this.c[key] = this.getWidgetCheck(key);
+        if (this.w[key]?.props.col.check) {
+          this.c[key] = this.getWidgetCheck(key);
+        }
       }
       else {
         delete this.s[key];
@@ -258,7 +260,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         stack[stack.length - 1].children.push(col);
       }
     });
-
     return root;
   };
 

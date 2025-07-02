@@ -178,41 +178,68 @@ class Q2StyleEditor extends Component<StyleProps> {
 
   collectStyle(form) {
     // Collect style values from the current form (this.propsEditor.s)
-    // Returns an object like: { "font-family": value, ... }
+    // Only collect if the corresponding input in w is enabled (not readOnly/disabled)
     const style: any = {};
     const s = form?.s || {};
     const w = form?.w || {};
+    const c = form?.c || {};
+    // console.log("CS", "collectStyle", form)
+    // console.log("collectStyle", c)
+    // Helper to check if input is enabled
+    const isEnabled = (key: string) => {
+      const widget = w[key];
+      if (!widget) return false;
+      // Try to check readOnly and disabled props
+      if (key in c) return c[key];
+      if (widget.props?.readOnly) return false;
+      if (widget.props?.disabled) return false;
+      // If input element, check disabled attribute
+      if (widget.inputRef && widget.inputRef.current && typeof widget.inputRef.current.disabled === "boolean") {
+        return !widget.inputRef.current.disabled;
+      }
+      return true;
+    };
+
     // Font
-    if ("font_family" in s) style["font-family"] = s.font_family;
-    if ("font_size" in s) style["font-size"] = s.font_size;
-    if ("font_weight" in s) style["font-weight"] = s.font_weight;
-    if ("font_italic" in s) style["font-italic"] = s.font_italic;
-    if ("font_underline" in s) style["font-underline"] = s.font_underline;
+    if ("font_family" in s && isEnabled("font_family")) style["font-family"] = s.font_family;
+    if ("font_size" in s && isEnabled("font_size")) style["font-size"] = s.font_size;
+    if ("font_weight" in s && isEnabled("font_weight")) style["font-weight"] = s.font_weight;
+    if ("font_italic" in s && isEnabled("font_italic")) style["font-italic"] = s.font_italic;
+    if ("font_underline" in s && isEnabled("font_underline")) style["font-underline"] = s.font_underline;
     // Borders
-    if ("border_left" in s || "border_top" in s || "border_right" in s || "border_bottom" in s) {
+    if (
+      (("border_left" in s && isEnabled("border_left")) ||
+        ("border_top" in s && isEnabled("border_top")) ||
+        ("border_right" in s && isEnabled("border_right")) ||
+        ("border_bottom" in s && isEnabled("border_bottom")))
+    ) {
       style["border-width"] = [
-        s.border_top ?? "",
-        s.border_right ?? "",
-        s.border_bottom ?? "",
-        s.border_left ?? ""
+        isEnabled("border_top") ? s.border_top ?? "" : "",
+        isEnabled("border_right") ? s.border_right ?? "" : "",
+        isEnabled("border_bottom") ? s.border_bottom ?? "" : "",
+        isEnabled("border_left") ? s.border_left ?? "" : ""
       ].join(" ");
     }
     // Paddings
-    if ("padding_left" in s || "padding_top" in s || "padding_right" in s || "padding_bottom" in s) {
+    if (
+      (("padding_left" in s && isEnabled("padding_left")) ||
+        ("padding_top" in s && isEnabled("padding_top")) ||
+        ("padding_right" in s && isEnabled("padding_right")) ||
+        ("padding_bottom" in s && isEnabled("padding_bottom")))
+    ) {
       style["padding"] = [
-        (s.padding_top ?? "") + "cm",
-        (s.padding_right ?? "") + "cm",
-        (s.padding_bottom ?? "") + "cm",
-        (s.padding_left ?? "") + "cm"
+        isEnabled("padding_top") ? (s.padding_top ?? "") + "cm" : "",
+        isEnabled("padding_right") ? (s.padding_right ?? "") + "cm" : "",
+        isEnabled("padding_bottom") ? (s.padding_bottom ?? "") + "cm" : "",
+        isEnabled("padding_left") ? (s.padding_left ?? "") + "cm" : ""
       ].join(" ");
     }
     // Alignments
-    if ("text_align" in s) {
-      // Map UI value to CSS value
+    if ("text_align" in s && isEnabled("text_align")) {
       const mapH = { "Left": "left", "Center": "center", "Right": "right", "Justify": "justify" };
       style["text-align"] = mapH[s.text_align] ?? s.text_align;
     }
-    if ("vertical_align" in s) {
+    if ("vertical_align" in s && isEnabled("vertical_align")) {
       const mapV = { "Top": "top", "Middle": "middle", "Bottom": "bottom" };
       style["vertical-align"] = mapV[s.vertical_align] ?? s.vertical_align;
     }
@@ -225,6 +252,7 @@ class Q2StyleEditor extends Component<StyleProps> {
 
   render() {
     this.defineUi()
+    console.log("SE render")
     const { q2report, selection, reportEditor } = this.props;
     this.propsEditor.hookInputChanged = (form) => {
       console.log("--", this.collectStyle(form))

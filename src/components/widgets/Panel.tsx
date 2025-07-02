@@ -40,7 +40,38 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         return null;
     }
 
-    checkStatusChanged() {
+    componentDidMount() {
+        // If panel has check, collect all input columns and set their check status in form.c
+        if (this.hasCheck && this.panelRef) {
+            // Find all input elements with a name attribute (assumed to be column name)
+            const inputs = this.panelRef.querySelectorAll('input[name]');
+            inputs.forEach((input: any) => {
+                if (input && input.name) {
+                    this.props.form.c[input.name] = !!this.state.checkChecked;
+                }
+            });
+            // console.log("DM", this.props.form)
+            // console.log("DM", this.props.form.c)
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<Q2PanelProps>, prevState: Readonly<{ checkChecked: boolean; }>, snapshot?: any): void {
+        this.componentDidMount();
+    }
+
+
+    checkStatusChanged(checkStatus) {
+        // If panel has check, update form.c for all children to match panel check status
+        // console.log(this.state.checkChecked);
+        if (this.hasCheck && this.panelRef) {
+            const inputs = this.panelRef.querySelectorAll('input[name]');
+            inputs.forEach((input: any) => {
+                if (input && input.name) {
+                    this.props.form.c[input.name] = !!checkStatus;
+                    // this.props.form.c[input.name] = !!this.state.checkChecked;
+                }
+            });
+        }
         this.props.form.handleChange({
             target: {
                 value: "",
@@ -49,13 +80,13 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         })
     }
 
-    handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleCheckStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { col } = this.props;
         const checked = e.currentTarget.checked ? true : false;
-        this.checkStatusChanged()
-        this.props.onChange(e);
-        col.checkChecked = checked; // keep in sync
+        this.checkStatusChanged(checked)
         this.setState({ checkChecked: checked }, () => {
+            this.props.onChange(e);
+            col.checkChecked = checked;
             if (checked && this.panelRef) {
                 const fieldset = this.panelRef.querySelector('fieldset.field-set-style');
                 setTimeout(() => {
@@ -119,7 +150,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                 key={panel_id}
                                 type="checkbox"
                                 checked={!!checkChecked}
-                                onChange={this.handleChange}
+                                onChange={this.handleCheckStatusChange}
                                 disabled={!!col.checkDisabled}
                             />
                             <label htmlFor={panel_id}>{col.label}</label>
