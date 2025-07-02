@@ -13,12 +13,12 @@ class Q2StyleEditor extends Component<StyleProps> {
   paddingsControl: Q2Control;
   alignmentsControl: Q2Control;
   propsEditor: Q2Form;
-  propsData: {};
+  propsData: { [key: string]: number | string | boolean };
 
   defineUi() {
     // const { selection } = this.props;
     // Use getStyle to select the correct style object
-    this.propsData = this.getPropsData()
+    this.propsData = this.getStyleData()
 
     this.propsEditor = new Q2Form();
 
@@ -143,7 +143,7 @@ class Q2StyleEditor extends Component<StyleProps> {
     return (selection?.type === "report")
   }
 
-  getPropsData() {
+  getStyleData() {
     // Returns an object like: { "font-family": { data: ..., check: ... }, ... }
     const { q2report, selection } = this.props;
     const styles: any = q2report.getStyle(selection);
@@ -176,18 +176,65 @@ class Q2StyleEditor extends Component<StyleProps> {
     return props;
   }
 
+  collectStyle(form) {
+    // Collect style values from the current form (this.propsEditor.s)
+    // Returns an object like: { "font-family": value, ... }
+    const style: any = {};
+    const s = form?.s || {};
+    // Font
+    if ("font_family" in s) style["font-family"] = s.font_family;
+    if ("font_size" in s) style["font-size"] = s.font_size;
+    if ("font_weight" in s) style["font-weight"] = s.font_weight;
+    if ("font_italic" in s) style["font-italic"] = s.font_italic;
+    if ("font_underline" in s) style["font-underline"] = s.font_underline;
+    // Borders
+    if ("border_left" in s || "border_top" in s || "border_right" in s || "border_bottom" in s) {
+      style["border-width"] = [
+        s.border_top ?? "",
+        s.border_right ?? "",
+        s.border_bottom ?? "",
+        s.border_left ?? ""
+      ].join(" ");
+    }
+    // Paddings
+    if ("padding_left" in s || "padding_top" in s || "padding_right" in s || "padding_bottom" in s) {
+      style["padding"] = [
+        (s.padding_top ?? "") + "cm",
+        (s.padding_right ?? "") + "cm",
+        (s.padding_bottom ?? "") + "cm",
+        (s.padding_left ?? "") + "cm"
+      ].join(" ");
+    }
+    // Alignments
+    if ("text_align" in s) {
+      // Map UI value to CSS value
+      const mapH = { "Left": "left", "Center": "center", "Right": "right", "Justify": "justify" };
+      style["text-align"] = mapH[s.text_align] ?? s.text_align;
+    }
+    if ("vertical_align" in s) {
+      const mapV = { "Top": "top", "Middle": "middle", "Bottom": "bottom" };
+      style["vertical-align"] = mapV[s.vertical_align] ?? s.vertical_align;
+    }
+    return style;
+  }
+
   setData(sel?: any, style?: any) {
     // console.log("set data", sel, style);
   }
 
   render() {
-    const metaData = this.defineUi()
+    this.defineUi()
+    const { q2report, selection, reportEditor } = this.props;
+    this.propsEditor.hookInputChanged = (form) => {
+      console.log("--", this.collectStyle(form))
+    }
+
     return (
       <div>
         <div
           style={{ fontSize: "12px" }}
         >
-          <Form q2form={metaData} />
+          <Form q2form={this.propsEditor} />
         </div>
       </div>
     );
