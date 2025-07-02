@@ -114,16 +114,18 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
       this.focus = name;
       this.props.q2form.hookInputChanged(this);
     }
-    this.setState((prevState) => ({
-      formData: {
-        ...prevState.formData,
-        [name]: value,
-      },
-    }), this.handleResize);
+    if (name !== "") {
+      this.setState((prevState) => ({
+        formData: {
+          ...prevState.formData,
+          [name]: value,
+        },
+      }), this.handleResize);
 
-    // Also update the widget's col.data if possible
-    if (this.w[name] && this.w[name].props && this.w[name].props.col) {
-      this.w[name].props.col.data = value;
+      // Also update the widget's col.data if possible
+      if (this.w[name] && this.w[name].props && this.w[name].props.col) {
+        this.w[name].props.col.data = value;
+      }
     }
   };
 

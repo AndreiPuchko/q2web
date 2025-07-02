@@ -181,6 +181,7 @@ class Q2StyleEditor extends Component<StyleProps> {
     // Returns an object like: { "font-family": value, ... }
     const style: any = {};
     const s = form?.s || {};
+    const w = form?.w || {};
     // Font
     if ("font_family" in s) style["font-family"] = s.font_family;
     if ("font_size" in s) style["font-size"] = s.font_size;

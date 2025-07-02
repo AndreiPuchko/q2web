@@ -40,9 +40,19 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         return null;
     }
 
+    checkStatusChanged() {
+        this.props.form.handleChange({
+            target: {
+                value: "",
+                name: ""
+            }
+        })
+    }
+
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { col } = this.props;
         const checked = e.currentTarget.checked ? true : false;
+        this.checkStatusChanged()
         this.props.onChange(e);
         col.checkChecked = checked; // keep in sync
         this.setState({ checkChecked: checked }, () => {
@@ -161,6 +171,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                                 if (checked && typeof w[child.column]?.focus === "function") {
                                                                     w[child.column].focus();
                                                                 }
+                                                                this.checkStatusChanged()
                                                             }
                                                         );
                                                     }}
