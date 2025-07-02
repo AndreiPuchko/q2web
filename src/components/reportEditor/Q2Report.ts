@@ -163,7 +163,13 @@ export class Q2Report {
                 changed = true;
                 object.widths[selection.widthIdx] = dataChunk.width
             }
-            console.log(object.widths);
+        }
+        else if (selection.type === "rowheight") {
+            if (object.heights[selection.heightIdx] !== dataChunk.height) {
+                changed = true;
+                object.heights[selection.heightIdx] = dataChunk.height
+            }
+            console.log(object.heights);
         }
 
         return changed;

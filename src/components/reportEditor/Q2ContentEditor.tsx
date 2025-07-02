@@ -73,7 +73,6 @@ class Q2ContentEditor extends Component<ContentProps> {
             console.log("render CE")
             editor.hookInputChanged = (form) => {
                 const dataChunk: { [key: string]: number | string } = {};
-                
                 // console.log("!!", selection.type, form.focus)
                 if (selection.type === "colwidth") {
                     dataChunk["width"] = form.s["width"];
@@ -81,11 +80,15 @@ class Q2ContentEditor extends Component<ContentProps> {
                         dataChunk["width"] = dataChunk["width"] + "%";
                     }
                 }
+                else if (selection.type === "rowheight") {
+                    dataChunk["height"] = `${form.s.h0}-${form.s.h1}`;
+                    // console.log(form.s, dataChunk["height"], "<<")
+                }
                 // Rerender report layout if data were changed
                 if (q2report.setObjectContent(selection, dataChunk)) {
-                    console.log(this.props)
-                    // this.forceUpdate();
-                    this.props.reportEditor.forceUpdate();
+                    setTimeout(() => {
+                        this.props.reportEditor.forceUpdate();
+                    }, 0);
                 }
             }
             return (
