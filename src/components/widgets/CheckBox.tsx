@@ -23,6 +23,13 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
         document.getElementById(id)?.focus()
     }
 
+    componentDidUpdate(prevProps: Q2CheckBoxProps) {
+        // If col.data changed, update state
+        if (prevProps.col?.data !== this.props.col?.data) {
+            this.setState({ value: !!this.props.col?.data });
+        }
+    }
+
     setChecked(checked: boolean) {
         const { col } = this.props;
         col.data = checked;
@@ -47,7 +54,6 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
         const { col } = this.props;
         const checked = e.currentTarget.checked ? true : false;
         this.setState({ value: checked }, () => {
-            // console.log("CB", checked)
             this.props.onChange({
                 target: {
                     value: checked,
