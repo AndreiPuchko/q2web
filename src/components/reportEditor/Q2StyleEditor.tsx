@@ -134,8 +134,6 @@ class Q2StyleEditor extends Component<StyleProps> {
                 });
             this.propsEditor.add_control("/");  // close layout
         }
-
-
         return this.propsEditor
     }
 
@@ -180,6 +178,13 @@ class Q2StyleEditor extends Component<StyleProps> {
     collectStyle(form) {
         // Collect style values from the current form (this.propsEditor.s)
         const style: any = {};
+        const checksChecked: string = []
+
+                    for (let key in this.propsData) {
+                if (key in style && form.c[key]) checksChecked.push(key)
+            }
+
+
         const s = form?.s || {};
         const w = form?.w || {};
         const c = form?.c || {};
@@ -188,10 +193,9 @@ class Q2StyleEditor extends Component<StyleProps> {
             const widget = w[key];
             if (!widget) return false;
             // Try to check readOnly and disabled props
-            if (key in c) return c[key];
+                
             if (widget.props?.readOnly) return false;
             if (widget.props?.disabled) return false;
-            // If input element, check disabled attribute
             if (widget.inputRef && widget.inputRef.current && typeof widget.inputRef.current.disabled === "boolean") {
                 return !widget.inputRef.current.disabled;
             }
@@ -200,7 +204,7 @@ class Q2StyleEditor extends Component<StyleProps> {
 
         // Font
         if ("font_family" in s && isEnabled("font_family")) style["font-family"] = s.font_family;
-        if ("font_size" in s && isEnabled("font_size")) style["font-size"] = `${s.font_size}pt` ;
+        if ("font_size" in s && isEnabled("font_size")) style["font-size"] = `${s.font_size}pt`;
         if ("font_weight" in s && isEnabled("font_weight")) style["font-weight"] = s.font_weight;
         if ("font_italic" in s && isEnabled("font_italic")) style["font-italic"] = s.font_italic;
         if ("font_underline" in s && isEnabled("font_underline")) style["font-underline"] = s.font_underline;
@@ -236,12 +240,13 @@ class Q2StyleEditor extends Component<StyleProps> {
         if ("text_align" in s && isEnabled("text_align")) {
             const mapH = { "Left": "left", "Center": "center", "Right": "right", "Justify": "justify" };
             style["text-align"] = mapH[s.text_align] ?? s.text_align;
+            checksChecked.push("text-align")
         }
         if ("vertical_align" in s && isEnabled("vertical_align")) {
             const mapV = { "Top": "top", "Middle": "middle", "Bottom": "bottom" };
             style["vertical-align"] = mapV[s.vertical_align] ?? s.vertical_align;
         }
-        return style;
+        return {style, checksChecked};
     }
 
     setData(sel?: any, style?: any) {
@@ -253,9 +258,10 @@ class Q2StyleEditor extends Component<StyleProps> {
         // console.log("SE render")
         const { q2report, selection, reportEditor } = this.props;
         this.propsEditor.hookInputChanged = (form) => {
-            const style = this.collectStyle(form);
-            // console.log("SE hook", style)
-            if (q2report.setStyle(selection, style)) {
+            // console.log("C")
+
+            const { style, checksChecked } = this.collectStyle(form);
+            if (q2report.setStyle(selection, style, checksChecked)) {
                 setTimeout(() => {
                     this.props.reportEditor.incrementVersion();
                 }, 100);

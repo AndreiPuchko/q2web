@@ -197,18 +197,18 @@ export class Q2Report {
         return changed;
     }
 
-    setStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+    setStyle(selection: any, dataChunk: { [key: string]: number | string }, checksChecked: [string]) {
         if (selection.type === "report" || !selection || !selection.type) {
             return this.setReportStyle(selection, dataChunk)
         }
         else if (selection.type === "page") {
-            return this.setPageStyle(selection, dataChunk);
+            return this.setPageStyle(selection, dataChunk, checksChecked);
         } else if (selection.type === "column" || selection.type === "colwidth") {
-            return this.setColsSetStyle(selection, dataChunk);
+            return this.setColsSetStyle(selection, dataChunk, checksChecked);
         } else if (selection.type === "row" || selection.type === "rowheight") {
-            return this.setRowsSetStyle(selection, dataChunk);
+            return this.setRowsSetStyle(selection, dataChunk, checksChecked);
         } else if (selection.type === "cell") {
-            return this.setCellStyle(selection, dataChunk);
+            return this.setCellStyle(selection, dataChunk, checksChecked);
         }
     }
 
@@ -219,34 +219,34 @@ export class Q2Report {
         return true
     }
 
-    setPageStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+    setPageStyle(selection: any, dataChunk: { [key: string]: number | string }, checksChecked: [string]) {
         const parentStyle = this.getReportStyle(selection).style;
         const page = this.getPage(selection)
-        return this.setObjectStyle(parentStyle, page, dataChunk)
+        return this.setObjectStyle(parentStyle, page, dataChunk, checksChecked)
     }
 
-    setColsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+    setColsSetStyle(selection: any, dataChunk: { [key: string]: number | string }, checksChecked: [string]) {
         const pageStyleObj = this.getPageStyle(selection);
         const parentStyle = { ...(pageStyleObj.parentStyle || {}), ...(pageStyleObj.style || {}) };
         const columns = this.getColsSet(selection);
-        return this.setObjectStyle(parentStyle, columns, dataChunk)
+        return this.setObjectStyle(parentStyle, columns, dataChunk, checksChecked)
     }
 
-    setRowsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+    setRowsSetStyle(selection: any, dataChunk: { [key: string]: number | string }, checksChecked: [string]) {
         const colsSetStyleObj = this.getColsSetStyle(selection);
         const parentStyle = { ...(colsSetStyleObj.parentStyle || {}), ...(colsSetStyleObj.style || {}) };
         const rows = this.getRowsSet(selection);
-        return this.setObjectStyle(parentStyle, rows, dataChunk)
+        return this.setObjectStyle(parentStyle, rows, dataChunk, checksChecked)
     }
 
-    setCellStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+    setCellStyle(selection: any, dataChunk: { [key: string]: number | string }, checksChecked: [string]) {
         const rowsSetStyleObj = this.getRowsSetStyle(selection);
         const parentStyle = { ...(rowsSetStyleObj.parentStyle || {}), ...(rowsSetStyleObj.style || {}) };
         const cell = this.getCell(selection);
-        return this.setObjectStyle(parentStyle, cell, dataChunk)
+        return this.setObjectStyle(parentStyle, cell, dataChunk, checksChecked)
     }
 
-    setObjectStyle(parentStyle, object, dataChunk) {
+    setObjectStyle(parentStyle, object, dataChunk, checksChecked: [string]) {
         let changed = false;
         // Remove keys from object.style that are not in dataChunk
         if (object.style) {
@@ -260,7 +260,7 @@ export class Q2Report {
             object.style = {};
         }
         for (const key in dataChunk) {
-            if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
+            if ((key in parentStyle && (parentStyle[key]) !== dataChunk[key]) || key in checksChecked ) {
                 object.style[key] = dataChunk[key];
                 changed = true;
             }
