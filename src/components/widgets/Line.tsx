@@ -387,6 +387,16 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         const showSpin = (col?.datatype === "dec" || col?.datatype === "num" || col?.datatype === "int");
         const spinStyle = { padding: 0, width: "2cap", height: "1.5cap", fontSize: "1cap", lineHeight: 1, userSelect: "none", border: 0 };
 
+        // Add onWheel handler for spin
+        const handleWheel = (e: React.WheelEvent<HTMLInputElement>) => {
+            if (!showSpin || readOnly) return;
+            if (e.deltaY < 0) {
+                this.handleSpin(1);
+            } else if (e.deltaY > 0) {
+                this.handleSpin(-1);
+            }
+        };
+
         return (
             <div style={{ display: "flex", alignItems: "center" }}>
                 <input
@@ -405,6 +415,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     pattern={(col?.datatype === "dec" || col?.datatype === "num") ? "[0-9]*[.,]?[0-9]*" : (col?.datatype === "int" ? "[0-9]*" : undefined)}
                     autoComplete="off"
                     ref={this.inputRef}
+                    onWheel={handleWheel}
                 />
                 {showSpin && !readOnly && (
                     <span style={{ display: "flex", flexDirection: "column", marginLeft: 2 }}>
