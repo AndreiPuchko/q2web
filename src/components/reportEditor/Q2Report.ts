@@ -62,7 +62,6 @@ export class Q2Report {
                 if (key in page && parseFloat(page[key]) != parseFloat(data[key])) {
                     page[key] = data[key];
                     changed = true;
-                    console.log(data)
                 }
             }
         }
@@ -155,7 +154,6 @@ export class Q2Report {
     }
 
     setObjectContent(selection: any, dataChunk: { [key: string]: number | string }) {
-        console.log(selection, dataChunk);
         let changed = false;
         const object = this.getObject(selection);
         if (selection.type === "colwidth") {
@@ -179,7 +177,6 @@ export class Q2Report {
             }
         }
         else if (selection.type === "row") {
-            console.log(object)
             for (let el of ["print_when", "print_after", "new_page_before", "new_page_after"]) {
                 if (object[el] !== dataChunk[el]) {
                     changed = true;
@@ -256,10 +253,8 @@ export class Q2Report {
             if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
                 object.style[key] = dataChunk[key];
                 changed = true;
-                console.log(dataChunk)
             }
         }
-        // console.log(dataChunk);
         return changed;
     }
 }
