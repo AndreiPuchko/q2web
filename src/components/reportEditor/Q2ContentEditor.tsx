@@ -17,7 +17,6 @@ class Q2ContentEditor extends Component<ContentProps> {
     defineSectionEditor() {
         const editor = new Q2Form("", "", "");
         const sectionData = this.q2report.getObject(this.props.selection);
-        console.log(sectionData)
 
         editor.add_control("/h", "")
         editor.add_control("print_when", "Print when", { data: sectionData.print_when });
@@ -102,7 +101,7 @@ class Q2ContentEditor extends Component<ContentProps> {
                     }, 0);
                 }
             }
-            
+
             return (
                 <>
                     <div className="q2-report-content-editor">

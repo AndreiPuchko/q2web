@@ -206,28 +206,30 @@ export class Q2Report {
     }
 
     setReportStyle(selection: any, dataChunk: { [key: string]: number | string }) {
-        const reportStyle = { ...defaultStyle, ...this.report.style }
-        return { style: reportStyle, parentStyle: undefined }
+        for (const key in dataChunk) {
+            this.report.style[key] = dataChunk[key];
+        }
+        return true
     }
 
     setPageStyle(selection: any, dataChunk: { [key: string]: number | string }) {
-        const reportStyleObj = this.getReportStyle(selection);
+        const parentStyle = this.getReportStyle(selection).style;
         const page = this.getPage(selection)
-        return { style: page?.style, parentStyle: reportStyleObj.style }
+        return this.setObjectStyle(parentStyle, page, dataChunk)
     }
 
     setColsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
         const pageStyleObj = this.getPageStyle(selection);
         const parentStyle = { ...(pageStyleObj.parentStyle || {}), ...(pageStyleObj.style || {}) };
         const columns = this.getColsSet(selection);
-        return { style: columns?.style, parentStyle: parentStyle }
+        return this.setObjectStyle(parentStyle, columns, dataChunk)
     }
 
     setRowsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
         const colsSetStyleObj = this.getColsSetStyle(selection);
         const parentStyle = { ...(colsSetStyleObj.parentStyle || {}), ...(colsSetStyleObj.style || {}) };
         const rows = this.getRowsSet(selection);
-        return { style: rows?.style, parentStyle: parentStyle }
+        return this.setObjectStyle(parentStyle, rows, dataChunk)
     }
 
     setCellStyle(selection: any, dataChunk: { [key: string]: number | string }) {
@@ -239,16 +241,25 @@ export class Q2Report {
 
     setObjectStyle(parentStyle, object, dataChunk) {
         let changed = false;
+        // Remove keys from object.style that are not in dataChunk
+        if (object.style) {
+            for (const key of Object.keys(object.style)) {
+                if (!(key in dataChunk)) {
+                    delete object.style[key];
+                    changed = true;
+                }
+            }
+        } else {
+            object.style = {};
+        }
         for (const key in dataChunk) {
-            // if (Object.prototype.hasOwnProperty.call(dataChunk, key)) {
             if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
                 object.style[key] = dataChunk[key];
                 changed = true;
                 console.log(dataChunk)
             }
         }
-        // }
-        console.log(dataChunk);
+        // console.log(dataChunk);
         return changed;
     }
 }

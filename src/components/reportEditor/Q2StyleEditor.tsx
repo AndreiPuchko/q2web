@@ -79,12 +79,12 @@ class Q2StyleEditor extends Component<StyleProps> {
             });
         if (this.bordersControl) {
             const borders = this.propsData["border-width"].data.split(" ");
-            this.propsEditor.add_control("border_left", "", { datalen: 3, datatype: "int", data: borders[3] || "" });
+            this.propsEditor.add_control("border_left", "", { datalen: 3, datatype: "int", range: "0", data: borders[3] || "" });
             this.propsEditor.add_control("/v", "");
-            this.propsEditor.add_control("border_top", "", { datalen: 3, datatype: "int", data: borders[0] || "" });
-            this.propsEditor.add_control("border_bottom", "", { datalen: 3, datatype: "int", data: borders[2] || "" });
+            this.propsEditor.add_control("border_top", "", { datalen: 3, datatype: "int", range: "0", data: borders[0] || "" });
+            this.propsEditor.add_control("border_bottom", "", { datalen: 3, datatype: "int", range: "0", data: borders[2] || "" });
             this.propsEditor.add_control("/");  // close layout
-            this.propsEditor.add_control("border_right", "", { datalen: 3, datatype: "int", data: borders[1] || "" });
+            this.propsEditor.add_control("border_right", "", { datalen: 3, datatype: "int", range: "0", data: borders[1] || "" });
             this.propsEditor.add_control("/s", "");
             this.propsEditor.add_control("/");  // close layout
         }
@@ -252,7 +252,9 @@ class Q2StyleEditor extends Component<StyleProps> {
         // console.log("SE render")
         const { q2report, selection, reportEditor } = this.props;
         this.propsEditor.hookInputChanged = (form) => {
-            if (q2report.setStyle(selection, this.collectStyle(form))) {
+            const style = this.collectStyle(form);
+            // console.log("SE hook", style)
+            if (q2report.setStyle(selection, style)) {
                 setTimeout(() => {
                     this.props.reportEditor.incrementVersion();
                 }, 100);
