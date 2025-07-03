@@ -84,7 +84,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         }
         else if (col?.datatype === "int") {
             value = value.replace(/[^0-9-]/g, '');
-            if (value === "") value= "0";
+            if (value === "") value = "0";
         }
         // Range enforcement for int, num, dec
         if (["int", "num", "dec"].includes(col?.datatype) && typeof col.range === "string" && value !== "") {
@@ -182,14 +182,16 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
     handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const { col } = this.props;
-        if (col?.datatype === "int") {
+        if (col?.datatype === "int" || col?.datatype === "dec" || col?.datatype === "num") {
             if (e.key == "ArrowUp") {
                 e.preventDefault();
                 this.handleSpin(1);
+                return;
             }
             else if (e.key == "ArrowDown") {
                 e.preventDefault();
                 this.handleSpin(-1);
+                return;
             }
         }
         if ((col?.datatype === "dec" || col?.datatype === "num")) {
@@ -311,14 +313,6 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
             else if (value[0] === "-" && (e.key == "Home" || (e.key == "ArrowLeft" && cursorPos === 1))) {
                 e.preventDefault();
                 this.setCursorPosition(1);
-            }
-            else if (e.key == "ArrowUp") {
-                e.preventDefault();
-                this.handleSpin(1);
-            }
-            else if (e.key == "ArrowDown") {
-                e.preventDefault();
-                this.handleSpin(-1);
             }
             else if (e.key.length === 1 && e.key >= "0" && e.key <= "9") {
                 if (dotPos !== -1 && cursorPos > dotPos) {
