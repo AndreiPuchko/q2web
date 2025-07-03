@@ -28,7 +28,6 @@ type Selection =
 interface Q2ReportEditorState {
     selection?: Selection;
     contextMenu?: { x: number; y: number; selection: Selection };
-    version?: number;
 }
 
 class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState> {
@@ -36,12 +35,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         zoomWidthPx: 700,
     };
 
+    version = 0;
+
     constructor(props: Q2ReportEditorProps) {
         super(props);
         this.state = {
             selection: { type: "report" },
             contextMenu: undefined,
-            version: 0,
         };
     }
 
@@ -57,31 +57,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     rowsMenu = [...this.defaultMenu];
     cellMenu = [...this.defaultMenu];
 
-
-    private calcColumnsWidths(column: any, availableWidthCm: number, pxPerCm: number) {
-        let percentTotal = 0, cmTotal = 0, zeroCount = 0;
-        column.widths.forEach((w: string) => {
-            if (parseFloat(w) === 0.00) zeroCount++;
-            else if (w.includes("%")) percentTotal += isNaN(parseFloat(w)) ? 0 : parseFloat(w);
-            else cmTotal += parseFloat(w);
-        });
-        const pzCm = (availableWidthCm - cmTotal) / 100;
-        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal;
-        const colWidthsCm = column.widths.map((w: string) => parseFloat(w) === 0.00
-            ? zeroCm / zeroCount
-            : w.endsWith("%")
-                ? parseFloat(w) * pzCm
-                : parseFloat(w)
-        );
-        const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
-        const scale = totalCm > 0 ? (this.props.zoomWidthPx! / (totalCm * pxPerCm)) : 1;
-        const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
-        const firstColWidthPx = 80;
-        const secondColWidthPx = 80;
-        const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
-        const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
-        return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
-    }
 
     handleSelect = (selection: Selection) => {
         this.setState({ selection: selection, contextMenu: undefined });
@@ -100,9 +75,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         console.log(command, contextMenu?.selection);
     }
 
-    incrementVersion() {
-        this.setState(state => ({ version: (state.version || 0) + 1 }));
-    }
+    // incrementVersion() {
+    //     this.version++;
+    //     console.log(this.version)
+    // }
 
     renderContextMenu() {
         const { contextMenu } = this.state;
@@ -149,61 +125,87 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         );
     }
 
-    renderReport() {
-        const buttonStyle = {
-            padding: "3px 18px",
-            margin: "2px",
-            cursor: "pointer",
-            border: 0,
-            fontSize: 12,
-            borderRadius: "1px",
-            width: "9cap"
-        };
-        const isSelected = this.state.selection?.type === "report";
+    incrementVersion() {
+        // this.version++;
+        // Instead of setState or forceUpdate, use a callback to update only ReportView
+        if (this.reportViewRef && this.reportViewRef.current) {
+            this.reportViewRef.current.incrementVersion();
+        }
+    }
+
+    reportViewRef = React.createRef<ReportView>();
+
+    render() {
         return (
-            <div>
-                <div
-                    className="q2-report-header"
-                    style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
-                    onClick={() => this.handleSelect({ type: "report" })}
-                    onContextMenu={e => this.handleContextMenu(e, { type: "report" })}
-                >
-                    <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
-                    <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
-                        <button style={buttonStyle}>HTML</button>
-                        <button style={buttonStyle}>DOCX</button>
-                        <button style={buttonStyle}>XLSX</button>
-                        <button style={buttonStyle}>PDF</button>
-                    </div>
+            <div className="q2-report-editor-container" >
+                <div className="q2-report-editor">
+                    <ReportView
+                        ref={this.reportViewRef}
+                        selection={this.state.selection}
+                        q2report={this.q2report}
+                        handleSelect={this.handleSelect}
+                        handleContextMenu={this.handleContextMenu}
+                        zoomWidthPx={this.props.zoomWidthPx}
+                        reportEditor={this}
+                    />
+                    {this.renderContextMenu()}
                 </div>
-                <Q2ContentEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
-                {this.q2report.getReport().pages.map((page, pageIdx) => (
-                    <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
-                        {this.RenderPage(page, pageIdx)}
-                    </div>
-                ))}
+                <Q2StyleEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
             </div>
         );
     }
+}
+
+class ReportView extends React.Component<any, { version: number }> {
+    constructor(props: any) {
+        super(props);
+        this.state = { version: 0 };
+    }
+
+    incrementVersion = () => {
+        this.setState(state => ({ version: state.version + 1 }));
+    };
+
+    calcColumnsWidths(column: any, availableWidthCm: number, pxPerCm: number) {
+        let percentTotal = 0, cmTotal = 0, zeroCount = 0;
+        column.widths.forEach((w: string) => {
+            if (parseFloat(w) === 0.00) zeroCount++;
+            else if (w.includes("%")) percentTotal += isNaN(parseFloat(w)) ? 0 : parseFloat(w);
+            else cmTotal += parseFloat(w);
+        });
+        const pzCm = (availableWidthCm - cmTotal) / 100;
+        const zeroCm = availableWidthCm - cmTotal - pzCm * percentTotal;
+        const colWidthsCm = column.widths.map((w: string) => parseFloat(w) === 0.00
+            ? zeroCm / zeroCount
+            : w.endsWith("%")
+                ? parseFloat(w) * pzCm
+                : parseFloat(w)
+        );
+        const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
+        const scale = totalCm > 0 ? (this.props.zoomWidthPx! / (totalCm * pxPerCm)) : 1;
+        const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
+        const firstColWidthPx = 80;
+        const secondColWidthPx = 80;
+        const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
+        const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
+        return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
+    }
 
     RenderPage(page: any, pageIdx: number) {
-        const { zoomWidthPx } = this.props;
+        const { selection, q2report, handleSelect, handleContextMenu, zoomWidthPx } = this.props;
         const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
-        const pxPerCm = zoomWidthPx / availableWidthCm;
+        const pxPerCm = this.props.zoomWidthPx / availableWidthCm;
         if (!page.style) {
             page.style = {}
         }
 
-        const isSelected = this.state.selection?.type === "page" && this.state.selection.pageIdx === pageIdx;
+        const isSelected = selection?.type === "page" && selection.pageIdx === pageIdx;
         const pageSizes = new Q2Form("", "", "");
         pageSizes.add_control("/h", "")
 
-        // Pass q2report into hookInputChanged via closure
-        const q2report = this.q2report;
         pageSizes.hookInputChanged = (form) => {
             const dataChunk: { [key: string]: number | string } = {};
             dataChunk[form.prevFocus] = form.s[form.prevFocus];
-            // Rerender report layout if data were changed
             if (q2report.setPageData(pageIdx, dataChunk)) {
                 this.incrementVersion();
             }
@@ -218,8 +220,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
         return (
             <div>
-
-                {/* Page info row */}
                 <div
                     style={{
                         display: "flex",
@@ -228,8 +228,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         alignItems: "center",
                         cursor: "pointer",
                     }}
-                    onClick={() => this.handleSelect({ type: "page", pageIdx })}
-                    onContextMenu={e => this.handleContextMenu(e, { type: "page", pageIdx })}
+                    onClick={() => handleSelect({ type: "page", pageIdx })}
+                    onContextMenu={e => handleContextMenu(e, { type: "page", pageIdx })}
                 >
                     <div
                         className="q2-report-page"
@@ -242,7 +242,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                     </div>
                     <Form q2form={pageSizes} />
                 </div>
-                {/* Columns and rows for each column */}
                 <div
                     style={{
                         display: "flex",
@@ -284,9 +283,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         pageIdx?: number,
         colIdx?: number,
     ) {
-        const isSelected = this.state.selection?.type === "column" &&
-            this.state.selection.pageIdx === pageIdx &&
-            this.state.selection.colIdx === colIdx;
+        const isSelected = this.props.selection?.type === "column" &&
+            this.props.selection.pageIdx === pageIdx &&
+            this.props.selection.colIdx === colIdx;
         if (!column.style) {
             column.style = {};
         }
@@ -359,20 +358,20 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         }}
                         onClick={e => {
                             e.stopPropagation();
-                            this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
+                            this.props.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
                         }}
                         onContextMenu={e => {
                             e.stopPropagation();
-                            this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
+                            this.props.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
                         }}
                     >
                         Columns
                     </div>
                     {cellWidthsPx.map((w, i) => {
-                        const isWidthSelected = (this.state.selection as any)?.type === "colwidth"
-                            && (this.state.selection as any).pageIdx === pageIdx
-                            && (this.state.selection as any).colIdx === colIdx
-                            && (this.state.selection as any).widthIdx === i;
+                        const isWidthSelected = (this.props.selection as any)?.type === "colwidth"
+                            && (this.props.selection as any).pageIdx === pageIdx
+                            && (this.props.selection as any).colIdx === colIdx
+                            && (this.props.selection as any).widthIdx === i;
                         return (
                             <div
                                 className="q2-report-colssection-widths"
@@ -384,11 +383,11 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                                 }}
                                 onClick={e => {
                                     e.stopPropagation();
-                                    this.handleSelect({ type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
+                                    this.props.handleSelect({ type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
                                 }}
                                 onContextMenu={e => {
                                     e.stopPropagation();
-                                    this.handleContextMenu(e, { type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
+                                    this.props.handleContextMenu(e, { type: "colwidth", pageIdx: pageIdx!, colIdx: colIdx!, widthIdx: i });
                                 }}
                             >
                                 {column.widths[i]}
@@ -416,10 +415,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
         if (!rowSet) return null;
         const rowCount = rowSet.heights.length || 0;
-        const isSelected = this.state.selection?.type === "row"
-            && this.state.selection.pageIdx === pageIdx
-            && this.state.selection.colIdx === colIdx
-            && this.state.selection.rowSetIdx === rowSetIdx;
+        const isSelected = this.props.selection?.type === "row"
+            && this.props.selection.pageIdx === pageIdx
+            && this.props.selection.colIdx === colIdx
+            && this.props.selection.rowSetIdx === rowSetIdx;
         const coveredCells = new Set<string>();
 
         if (!rowSet.cells) return null;
@@ -471,18 +470,18 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                         background: isSelected ? "#ffe066" : "#f0f8ff",
                         gridRow: `1 / span ${rowCount}`,
                     }}
-                    onClick={e => { e.stopPropagation(); this.handleSelect(rowClickParams); }}
-                    onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, rowClickParams); }}
+                    onClick={e => { e.stopPropagation(); this.props.handleSelect(rowClickParams); }}
+                    onContextMenu={e => { e.stopPropagation(); this.props.handleContextMenu(e, rowClickParams); }}
                 >
                     {rowSet.role}
                 </div>
                 {/* render rows's heights column */}
                 {Array.from({ length: rowCount }).map((_, rowIdx) => {
-                    const isHeightSelected = (this.state.selection as any)?.type === "rowheight"
-                        && (this.state.selection as any).pageIdx === pageIdx
-                        && (this.state.selection as any).colIdx === colIdx
-                        && (this.state.selection as any).rowSetIdx === rowSetIdx
-                        && (this.state.selection as any).heightIdx === rowIdx;
+                    const isHeightSelected = (this.props.selection as any)?.type === "rowheight"
+                        && (this.props.selection as any).pageIdx === pageIdx
+                        && (this.props.selection as any).colIdx === colIdx
+                        && (this.props.selection as any).rowSetIdx === rowSetIdx
+                        && (this.props.selection as any).heightIdx === rowIdx;
                     const rowHeightsClickParams = { type: "rowheight", pageIdx: pageIdx!, colIdx: colIdx!, rowSetIdx, heightIdx: rowIdx };
                     return (
                         <div
@@ -494,11 +493,11 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             }}
                             onClick={e => {
                                 e.stopPropagation();
-                                this.handleSelect(rowHeightsClickParams);
+                                this.props.handleSelect(rowHeightsClickParams);
                             }}
                             onContextMenu={e => {
                                 e.stopPropagation();
-                                this.handleContextMenu(e, rowHeightsClickParams);
+                                this.props.handleContextMenu(e, rowHeightsClickParams);
                             }}
                         >
                             {(rowSet.heights && rowSet.heights[rowIdx]) || ""}
@@ -548,17 +547,16 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             cellIdx
         };
 
-
         if (cell && !cell.style) {
             cell.style = {};
         }
 
-        const isCurrent = this.state.selection?.type === "cell" &&
-            this.state.selection.pageIdx === pageIdx &&
-            this.state.selection.colIdx === colIdx &&
-            this.state.selection.rowSetIdx === rowSetIdx &&
-            this.state.selection.rowIdx === rowIdx &&
-            this.state.selection.cellIdx === cellIdx;
+        const isCurrent = this.props.selection?.type === "cell" &&
+            this.props.selection.pageIdx === pageIdx &&
+            this.props.selection.colIdx === colIdx &&
+            this.props.selection.rowSetIdx === rowSetIdx &&
+            this.props.selection.rowIdx === rowIdx &&
+            this.props.selection.cellIdx === cellIdx;
 
         // Merge cell.style if present
         const cellStyle: any = {
@@ -577,7 +575,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         }
 
         const selectedCell = { type: "cell", pageIdx: pageIdx, colIdx: colIdx, rowSetIdx: rowSetIdx, rowIdx: rowIdx, cellIdx: cellIdx };
-        const reportCellStyles = this.q2report.getCellStyle(selectedCell);
+        const reportCellStyles = this.props.q2report.getCellStyle(selectedCell);
         const reportCellStyle = { ...reportCellStyles.parentStyle, ...reportCellStyles.style };
 
         if (cell && cell.style) {
@@ -589,8 +587,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 key={cellKey}
                 className="q2-report-cell"
                 style={cellStyle}
-                onClick={e => { e.stopPropagation(); this.handleSelect(clickParams); }}
-                onContextMenu={e => { e.stopPropagation(); this.handleContextMenu(e, clickParams); }}
+                onClick={e => { e.stopPropagation(); this.props.handleSelect(clickParams); }}
+                onContextMenu={e => { e.stopPropagation(); this.props.handleContextMenu(e, clickParams); }}
             >
                 {cell && cell.data
                     ? <span dangerouslySetInnerHTML={{ __html: cell.data }} />
@@ -642,16 +640,43 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     }
 
     render() {
+        const { selection, q2report, handleSelect, handleContextMenu, zoomWidthPx, reportEditor } = this.props;
+        const buttonStyle = {
+            padding: "3px 18px",
+            margin: "2px",
+            cursor: "pointer",
+            border: 0,
+            fontSize: 12,
+            borderRadius: "1px",
+            width: "9cap"
+        };
+        const isSelected = selection?.type === "report";
         return (
-            <div className="q2-report-editor-container" >
-                <div className="q2-report-editor">
-                    {this.renderReport()}
-                    {this.renderContextMenu()}
+            <div>
+                <div
+                    className="q2-report-header"
+                    style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
+                    onClick={() => handleSelect({ type: "report" })}
+                    onContextMenu={e => handleContextMenu(e, { type: "report" })}
+                >
+                    <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
+                    <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
+                        <button style={buttonStyle}>HTML</button>
+                        <button style={buttonStyle}>DOCX</button>
+                        <button style={buttonStyle}>XLSX</button>
+                        <button style={buttonStyle}>PDF</button>
+                    </div>
                 </div>
-                <Q2StyleEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
+                <Q2ContentEditor selection={selection} q2report={q2report} reportEditor={reportEditor} />
+                {q2report.getReport().pages.map((page: any, pageIdx: number) => (
+                    <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
+                        {this.RenderPage(page, pageIdx)}
+                    </div>
+                ))}
             </div>
         );
     }
 }
 
 export { Q2ReportEditor };
+
