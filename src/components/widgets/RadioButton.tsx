@@ -25,8 +25,11 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     }
 
     static getDerivedStateFromProps(nextProps: Q2RadioButtonProps, prevState: Q2RadioButtonState) {
-        // If the data prop changes, update the selectedValue in state
-        if (nextProps.col.data !== prevState.selectedValue) {
+        // Only update state if the prop value is different and not already in state
+        if (
+            typeof nextProps.col.data === "string" &&
+            nextProps.col.data !== prevState.selectedValue
+        ) {
             return { selectedValue: nextProps.col.data || '' };
         }
         return null;
@@ -44,10 +47,19 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     }
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // console.log("onChange")
+        const { col } = this.props;
         const newValue = event.target.value;
+        // Update props.col.data before setState to avoid getDerivedStateFromProps reverting state
+        this.props.col.data = newValue;
         this.prevValue = this.state.selectedValue;
-        this.setData(newValue)
+        this.setState({ selectedValue: newValue }, () => {
+            this.props.onChange({
+                target: {
+                    value: newValue,
+                    name: col.column
+                }
+            });
+        });
         if (typeof this.props.col.valid === "function") {
             const validResult = this.props.col.valid(this.props.form);
         }
