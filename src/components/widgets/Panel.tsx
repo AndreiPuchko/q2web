@@ -179,9 +179,9 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                     child.checkChecked = typeof child.checkChecked !== "undefined" ? child.checkChecked : !!child.data;
                                 }
                                 return (
-                                    <>
+                                    <React.Fragment key={child.key + `-fragment-${index}`}>
                                         {child.check ?
-                                            <div style={{ justifySelf: "end", marginRight: "0.5em" }}>
+                                            <div key={child.key + `-checkdiv-${index}`} style={{ justifySelf: "end", marginRight: "0.5em" }}>
                                                 <input
                                                     id={id}
                                                     key={id}
@@ -237,7 +237,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                 )}
                                             </div>
                                         }
-                                    </>
+                                    </React.Fragment>
                                 );
                             }
                         })}
