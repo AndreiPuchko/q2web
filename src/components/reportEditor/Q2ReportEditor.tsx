@@ -128,20 +128,23 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
     render() {
         return (
-            <div className="q2-report-editor-container" >
-                <div className="q2-report-editor">
-                    <ReportView
-                        ref={this.reportViewRef}
-                        selection={this.state.selection}
-                        q2report={this.q2report}
-                        handleSelect={this.handleSelect}
-                        handleContextMenu={this.handleContextMenu}
-                        zoomWidthPx={this.props.zoomWidthPx}
-                        reportEditor={this}
-                    />
-                    {this.renderContextMenu()}
+            <div>
+                <Q2ContentEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
+                <div className="q2-report-editor-container" >
+                    <div className="q2-report-editor">
+                        <ReportView
+                            ref={this.reportViewRef}
+                            selection={this.state.selection}
+                            q2report={this.q2report}
+                            handleSelect={this.handleSelect}
+                            handleContextMenu={this.handleContextMenu}
+                            zoomWidthPx={this.props.zoomWidthPx}
+                            reportEditor={this}
+                        />
+                        {this.renderContextMenu()}
+                    </div>
+                    <Q2StyleEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
                 </div>
-                <Q2StyleEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
             </div>
         );
     }
@@ -626,7 +629,7 @@ class ReportView extends React.Component<any, { version: number }> {
         const isSelected = selection?.type === "report";
         return (
             <div>
-                <Q2ContentEditor selection={selection} q2report={q2report} reportEditor={reportEditor} />
+                {/* <Q2ContentEditor selection={selection} q2report={q2report} reportEditor={reportEditor} /> */}
                 <div
                     className="q2-report-header"
                     style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
