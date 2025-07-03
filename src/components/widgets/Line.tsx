@@ -84,6 +84,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         }
         else if (col?.datatype === "int") {
             value = value.replace(/[^0-9-]/g, '');
+            if (value === "") value= "0";
         }
         // Range enforcement for int, num, dec
         if (["int", "num", "dec"].includes(col?.datatype) && typeof col.range === "string" && value !== "") {
@@ -135,12 +136,13 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
             const dotPos = value.indexOf(".");
             let step = 1;
             if (dotPos !== -1) {
+                if (cursorPos === 0 || cursorPos === value.length) cursorPos = dotPos;
                 if (cursorPos <= dotPos) {
                     const digitIdx = dotPos - cursorPos - 1;
                     step = Math.pow(10, digitIdx + 1);
                 } else {
                     let decIdx = cursorPos - dotPos - 1;
-                    if (decIdx >= parseInt(col.datadec)) decIdx = parseInt(col.datadec)-1;
+                    if (decIdx >= parseInt(col.datadec)) decIdx = parseInt(col.datadec) - 1;
                     console.log(decIdx, col.datadec, decIdx > parseInt(col.datadec))
                     step = Math.pow(10, -(decIdx + 1));
                 }
@@ -149,6 +151,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
             // newValue = num.toFixed(col.datadec ?? 0);
             newValue = (num + delta * step).toFixed(col.datadec ?? 0);
         } else if (col?.datatype === "int") {
+            if (cursorPos === 0) cursorPos = value.length;
             let step = 1;
             if (value.length > 0) {
                 const digitIdx = value.length - cursorPos - 1;
@@ -179,6 +182,16 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
     handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const { col } = this.props;
+        if (col?.datatype === "int") {
+            if (e.key == "ArrowUp") {
+                e.preventDefault();
+                this.handleSpin(1);
+            }
+            else if (e.key == "ArrowDown") {
+                e.preventDefault();
+                this.handleSpin(-1);
+            }
+        }
         if ((col?.datatype === "dec" || col?.datatype === "num")) {
             const input = e.currentTarget;
             const value = input.value;
