@@ -97,7 +97,8 @@ class Q2ContentEditor extends Component<ContentProps> {
                 // Rerender report layout if data were changed
                 if (q2report.setObjectContent(selection, dataChunk)) {
                     setTimeout(() => {
-                        this.props.reportEditor.forceUpdate();
+                        // this.props.reportEditor.forceUpdate();
+                        this.props.reportEditor.incrementVersion();
                     }, 0);
                 }
             }

@@ -254,7 +254,7 @@ class Q2StyleEditor extends Component<StyleProps> {
         this.propsEditor.hookInputChanged = (form) => {
             if (q2report.setStyle(selection, this.collectStyle(form))) {
                 setTimeout(() => {
-                    this.props.reportEditor.forceUpdate();
+                    this.props.reportEditor.incrementVersion();
                 }, 100);
 
             }

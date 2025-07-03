@@ -28,6 +28,7 @@ type Selection =
 interface Q2ReportEditorState {
     selection?: Selection;
     contextMenu?: { x: number; y: number; selection: Selection };
+    version?: number;
 }
 
 class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState> {
@@ -40,6 +41,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         this.state = {
             selection: { type: "report" },
             contextMenu: undefined,
+            version: 0,
         };
     }
 
@@ -96,6 +98,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     handleContextMenuItemClick(command: string) {
         const { contextMenu } = this.state;
         console.log(command, contextMenu?.selection);
+    }
+
+    incrementVersion() {
+        this.setState(state => ({ version: (state.version || 0) + 1 }));
     }
 
     renderContextMenu() {
@@ -192,14 +198,14 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const pageSizes = new Q2Form("", "", "");
         pageSizes.add_control("/h", "")
 
-        // Pass q2report into hookFocusChanged via closure
+        // Pass q2report into hookInputChanged via closure
         const q2report = this.q2report;
-        pageSizes.hookFocusChanged = (form) => {
-            const dataChunk: { [key: string]: number|string } = {};
+        pageSizes.hookInputChanged = (form) => {
+            const dataChunk: { [key: string]: number | string } = {};
             dataChunk[form.prevFocus] = form.s[form.prevFocus];
             // Rerender report layout if data were changed
             if (q2report.setPageData(pageIdx, dataChunk)) {
-                this.forceUpdate();
+                this.incrementVersion();
             }
         }
 
