@@ -13,6 +13,11 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
     inputRef = React.createRef<HTMLInputElement>();
 
+    // Fix: define state as a class property to avoid setState before mount
+    state: Q2LineState = {
+        value: ""
+    };
+
     constructor(props: Q2LineProps) {
         super(props);
         // Initialize state from col.data or props.data
@@ -26,12 +31,17 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                 value = num.toFixed(props.col.datadec ?? 0);
             }
         }
+        // Assign initial state directly
         this.state = { value: value };
-        // Call handleChange to ensure correct formatting for int/num/dec on first render
+        // Do NOT call setState or handleChange here to avoid setState before mount
+    }
+
+    componentDidMount() {
+        // Call handleChange here to ensure correct formatting for int/num/dec on first render
         this.handleChange({
             target: {
-                value: value,
-                name: props.name
+                value: this.state.value,
+                name: this.props.name
             }
         });
     }
@@ -102,7 +112,8 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         this.setState({ value }, () => {
             if (onChange) {
                 onChange({
-                    target: {
+                    target:
+                    {
                         value: value,
                         name: (e as any).target.name
                     }
