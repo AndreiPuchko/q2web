@@ -35,7 +35,8 @@ class Q2StyleEditor extends Component<StyleProps> {
             this.propsEditor.add_control("font_size", "Font size",
                 {
                     datalen: 3,
-                    data: this.propsData["font-size"].data,
+                    datatype: "int",
+                    data: this.propsData["font-size"].data.replace("pt", ""),
                     check: true,
                     checkChecked: this.propsData["font-size"].checked,
                     checkDisabled: this.getCheckDisabled(),
@@ -199,7 +200,7 @@ class Q2StyleEditor extends Component<StyleProps> {
 
         // Font
         if ("font_family" in s && isEnabled("font_family")) style["font-family"] = s.font_family;
-        if ("font_size" in s && isEnabled("font_size")) style["font-size"] = s.font_size;
+        if ("font_size" in s && isEnabled("font_size")) style["font-size"] = `${s.font_size}pt` ;
         if ("font_weight" in s && isEnabled("font_weight")) style["font-weight"] = s.font_weight;
         if ("font_italic" in s && isEnabled("font_italic")) style["font-italic"] = s.font_italic;
         if ("font_underline" in s && isEnabled("font_underline")) style["font-underline"] = s.font_underline;
