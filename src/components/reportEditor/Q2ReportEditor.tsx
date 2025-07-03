@@ -205,7 +205,7 @@ class ReportView extends React.Component<any, { version: number }> {
 
         pageSizes.hookInputChanged = (form) => {
             const dataChunk: { [key: string]: number | string } = {};
-            dataChunk[form.prevFocus] = form.s[form.prevFocus];
+            dataChunk[form.focus] = form.s[form.focus];
             if (q2report.setPageData(pageIdx, dataChunk)) {
                 this.incrementVersion();
             }
