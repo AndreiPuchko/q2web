@@ -121,11 +121,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                     [name]: value,
                 },
             }), this.handleResize);
-
-            // Also update the widget's col.data if possible
-            if (this.w[name] && this.w[name].props && this.w[name].props.col) {
-                this.w[name].props.col.data = value;
-            }
         }
     };
 
@@ -166,6 +161,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         Object.keys(this.w).forEach(key => {
             if (this.w[key] && typeof this.w[key].getData === 'function') {
                 this.s[key] = this.getWidgetData(key);
+
+                if (this.w[key] && this.w[key].props && this.w[key].props.col) {
+                    this.w[key].props.col.data = this.s[key];
+                }
                 if (this.w[key]?.props.col.check) {
                     this.c[key] = this.getWidgetCheck(key);
                 }
