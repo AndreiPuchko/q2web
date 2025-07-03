@@ -619,11 +619,11 @@ class ReportView extends React.Component<any, { version: number }> {
         const { selection, q2report, handleSelect, handleContextMenu, zoomWidthPx, reportEditor } = this.props;
         const buttonStyle = {
             padding: "3px 18px",
-            margin: "2px",
+            margin: "1px 10px",
             cursor: "pointer",
-            border: 0,
+            border: "1px solid",
             fontSize: 12,
-            borderRadius: "1px",
+            borderRadius: "7px",
             width: "9cap"
         };
         const isSelected = selection?.type === "report";
@@ -637,7 +637,8 @@ class ReportView extends React.Component<any, { version: number }> {
                     onContextMenu={e => handleContextMenu(e, { type: "report" })}
                 >
                     <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
-                    <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}>
+                    {/* <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}> */}
+                    <div>
                         <button style={buttonStyle}>HTML</button>
                         <button style={buttonStyle}>DOCX</button>
                         <button style={buttonStyle}>XLSX</button>
