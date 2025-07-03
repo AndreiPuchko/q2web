@@ -125,7 +125,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
     handleSpin = (delta: number) => {
         const { col } = this.props;
-        const value = this.state.value ?? col.data ?? "";
+        const value = this.inputRef.current.value;
         let cursorPos = this.inputRef.current?.selectionStart ?? value.length;
         const prevLength = value.length;
 
@@ -390,7 +390,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         // Add onWheel handler for spin
         const handleWheel = (e: React.WheelEvent<HTMLInputElement>) => {
             if (!showSpin || readOnly) return;
-            this.inputRef.current.focus();
+            if (this.inputRef.current !== document.activeElement) return;
             if (e.deltaY < 0) {
                 this.handleSpin(1);
             } else if (e.deltaY > 0) {

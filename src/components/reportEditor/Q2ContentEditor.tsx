@@ -14,6 +14,28 @@ class Q2ContentEditor extends Component<ContentProps> {
 
     q2report = this.props.q2report;
 
+    definePageEditor(){
+        const editor = new Q2Form("", "", "");
+        editor.add_control("/h", "")
+        const page = this.q2report.getObject(this.props.selection);
+
+        // editor.hookInputChanged = (form) => {
+        //     const dataChunk: { [key: string]: number | string } = {};
+        //     dataChunk[form.focus] = form.s[form.focus];
+        //     if (q2report.setPageData(pageIdx, dataChunk)) {
+        //         this.incrementVersion();
+        //         this.forceUpdate
+        //     }
+        // }
+        editor.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width, range: "0" });
+        editor.add_control("page_height", "H", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_height, range: "0" });
+        editor.add_control("page_margin_left", "ML", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_left, range: "0" });
+        editor.add_control("page_margin_right", "MR", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_right, range: "0" });
+        editor.add_control("page_margin_top", "MT", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_top, range: "0" });
+        editor.add_control("page_margin_bottom", "MB", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_bottom, range: "0" });
+        return editor
+    }
+    
     defineSectionEditor() {
         const editor = new Q2Form("", "", "");
         const sectionData = this.q2report.getObject(this.props.selection);
@@ -64,6 +86,7 @@ class Q2ContentEditor extends Component<ContentProps> {
 
         let editor: Q2Form | string;
         if (mode === "row") editor = this.defineSectionEditor();
+        else if (mode === "page") editor = this.definePageEditor();
         else if (mode === "colwidth") editor = this.defineWidthEditor();
         else if (mode === "rowheight") editor = this.defineHeightEditor();
         else if (mode === "cell") editor = this.defineCellEditor();
@@ -92,6 +115,14 @@ class Q2ContentEditor extends Component<ContentProps> {
                     dataChunk["print_after"] = form.s.print_after;
                     dataChunk["new_page_before"] = form.s.new_page_before;
                     dataChunk["new_page_after"] = form.s.new_page_after;
+                }
+                else if (selection.type === "page") {
+                    dataChunk["page_width"] = form.s.page_width;
+                    dataChunk["page_height"] = form.s.page_height;
+                    dataChunk["page_margin_left"] = form.s.page_margin_left;
+                    dataChunk["page_margin_right"] = form.s.page_margin_right;
+                    dataChunk["page_margin_top"] = form.s.page_margin_top;
+                    dataChunk["page_margin_bottom"] = form.s.page_margin_bottom;
                 }
                 // Rerender report layout if data were changed
                 if (q2report.setObjectContent(selection, dataChunk)) {

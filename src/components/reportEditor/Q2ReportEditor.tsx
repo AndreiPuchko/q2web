@@ -35,8 +35,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         zoomWidthPx: 700,
     };
 
-    version = 0;
-
     constructor(props: Q2ReportEditorProps) {
         super(props);
         this.state = {
@@ -74,11 +72,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const { contextMenu } = this.state;
         console.log(command, contextMenu?.selection);
     }
-
-    // incrementVersion() {
-    //     this.version++;
-    //     console.log(this.version)
-    // }
 
     renderContextMenu() {
         const { contextMenu } = this.state;
@@ -126,8 +119,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     }
 
     incrementVersion() {
-        // this.version++;
-        // Instead of setState or forceUpdate, use a callback to update only ReportView
         if (this.reportViewRef && this.reportViewRef.current) {
             this.reportViewRef.current.incrementVersion();
         }
@@ -164,6 +155,7 @@ class ReportView extends React.Component<any, { version: number }> {
 
     incrementVersion = () => {
         this.setState(state => ({ version: state.version + 1 }));
+
     };
 
     calcColumnsWidths(column: any, availableWidthCm: number, pxPerCm: number) {
@@ -200,24 +192,6 @@ class ReportView extends React.Component<any, { version: number }> {
         }
 
         const isSelected = selection?.type === "page" && selection.pageIdx === pageIdx;
-        const pageSizes = new Q2Form("", "", "");
-        pageSizes.add_control("/h", "")
-
-        pageSizes.hookInputChanged = (form) => {
-            const dataChunk: { [key: string]: number | string } = {};
-            dataChunk[form.focus] = form.s[form.focus];
-            if (q2report.setPageData(pageIdx, dataChunk)) {
-                this.incrementVersion();
-            }
-        }
-
-        pageSizes.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width, range: "0" });
-        pageSizes.add_control("page_height", "H", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_height, range: "0" });
-        pageSizes.add_control("page_margin_left", "ML", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_left, range: "0" });
-        pageSizes.add_control("page_margin_right", "MR", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_right, range: "0" });
-        pageSizes.add_control("page_margin_top", "MT", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_top, range: "0" });
-        pageSizes.add_control("page_margin_bottom", "MB", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_bottom, range: "0" });
-
         return (
             <div>
                 <div
@@ -240,7 +214,6 @@ class ReportView extends React.Component<any, { version: number }> {
                     >
                         Page [{pageIdx}]
                     </div>
-                    <Form q2form={pageSizes} />
                 </div>
                 <div
                     style={{
@@ -347,8 +320,8 @@ class ReportView extends React.Component<any, { version: number }> {
                         borderBottom: "1px solid #888",
                         cursor: "pointer",
                     }}
-                // onClick={() => this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
-                // onContextMenu={e => this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
+                    onClick={() => this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
+                    onContextMenu={e => this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
                 >
                     <div
                         className="q2-report-colssection-header"
@@ -653,6 +626,7 @@ class ReportView extends React.Component<any, { version: number }> {
         const isSelected = selection?.type === "report";
         return (
             <div>
+                <Q2ContentEditor selection={selection} q2report={q2report} reportEditor={reportEditor} />
                 <div
                     className="q2-report-header"
                     style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
@@ -667,7 +641,7 @@ class ReportView extends React.Component<any, { version: number }> {
                         <button style={buttonStyle}>PDF</button>
                     </div>
                 </div>
-                <Q2ContentEditor selection={selection} q2report={q2report} reportEditor={reportEditor} />
+
                 {q2report.getReport().pages.map((page: any, pageIdx: number) => (
                     <div key={`page-${pageIdx}`} style={{ marginBottom: 12 }}>
                         {this.RenderPage(page, pageIdx)}

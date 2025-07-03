@@ -154,9 +154,11 @@ export class Q2Report {
     }
 
     setObjectContent(selection: any, dataChunk: { [key: string]: number | string }) {
+        
         let changed = false;
         const object = this.getObject(selection);
         if (selection.type === "colwidth") {
+            if (dataChunk.width === undefined) return false;
             if (object.widths[selection.widthIdx] !== dataChunk.width) {
                 changed = true;
                 object.widths[selection.widthIdx] = dataChunk.width
@@ -178,6 +180,14 @@ export class Q2Report {
         }
         else if (selection.type === "row") {
             for (let el of ["print_when", "print_after", "new_page_before", "new_page_after"]) {
+                if (object[el] !== dataChunk[el]) {
+                    changed = true;
+                    object[el] = dataChunk[el];
+                }
+            }
+        }
+        else if (selection.type === "page") {
+            for (let el of ["page_width", "page_height", "page_margin_left", "page_margin_right", "page_margin_top", "page_margin_bottom"]) {
                 if (object[el] !== dataChunk[el]) {
                     changed = true;
                     object[el] = dataChunk[el];
