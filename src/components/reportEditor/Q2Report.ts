@@ -396,4 +396,48 @@ export class Q2Report {
         }
         return false;
     }
+
+    moveObject(selection: any, direction: "up" | "down") {
+        if (!selection || !selection.type) return false;
+        if (selection.type === "page") {
+            const pageIdx = selection.pageIdx;
+            const pages = this.report.pages;
+            if (!pages || pages.length <= 1) return false;
+            const targetIdx = direction === "up" ? pageIdx - 1 : pageIdx + 1;
+            if (targetIdx < 0 || targetIdx >= pages.length) return false;
+            const [item] = pages.splice(pageIdx, 1);
+            pages.splice(targetIdx, 0, item);
+            // Return new selection pointing to the moved page
+            return { ...selection, pageIdx: targetIdx };
+        } else if (selection.type === "column" || selection.type === "colwidth") {
+            const colIdx = selection.colIdx;
+            const page = this.getPage(selection);
+            if (!page || !page.columns || page.columns.length <= 1) return false;
+            const targetIdx = direction === "up" ? colIdx - 1 : colIdx + 1;
+            if (targetIdx < 0 || targetIdx >= page.columns.length) return false;
+            const [item] = page.columns.splice(colIdx, 1);
+            page.columns.splice(targetIdx, 0, item);
+            // Return new selection pointing to the moved column
+            return { ...selection, colIdx: targetIdx };
+        } else if (selection.type === "row" || selection.type === "rowheight") {
+            const rowSetIdx = selection.rowSetIdx;
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows || columns.rows.length <= 1) return false;
+            const realRowIdx = typeof rowSetIdx === "string"
+                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+                : rowSetIdx;
+            const targetIdx = direction === "up" ? realRowIdx - 1 : realRowIdx + 1;
+            if (targetIdx < 0 || targetIdx >= columns.rows.length) return false;
+            const [item] = columns.rows.splice(realRowIdx, 1);
+            columns.rows.splice(targetIdx, 0, item);
+            // Return new selection pointing to the moved row
+            if (typeof rowSetIdx === "string") {
+                // preserve "-header"/"-footer" suffix if present
+                const suffix = rowSetIdx.endsWith("-header") ? "-header" : rowSetIdx.endsWith("-footer") ? "-footer" : "";
+                return { ...selection, rowSetIdx: `${targetIdx}${suffix}` };
+            }
+            return { ...selection, rowSetIdx: targetIdx };
+        }
+        return false;
+    }
 }

@@ -97,6 +97,16 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             });
             return;
         }
+        if ((command === "Move Up" || command === "Move Down") && contextMenu?.selection) {
+            const direction = command === "Move Up" ? "up" : "down";
+            const newSelection = this.q2report.moveObject(contextMenu.selection, direction);
+            this.incrementVersion();
+            this.setState({ 
+                contextMenu: undefined,
+                selection: newSelection || this.state.selection
+            });
+            return;
+        }
         console.log(command, contextMenu?.selection);
     }
 
@@ -115,6 +125,40 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         else if (sel.type === "rowheight") menuItems = this.rowMenu;
         else if (sel.type === "cell") menuItems = this.cellMenu;
 
+        // Filter out "Move Up" and "Move Down" if only one object exists,
+        // or "Move Up" for first, "Move Down" for last
+        let filteredMenuItems = menuItems;
+        if (sel.type === "page") {
+            const count = this.q2report.pages.length;
+            const idx = sel.pageIdx;
+            filteredMenuItems = menuItems.filter(item =>
+                (item !== "Move Up" || idx > 0) &&
+                (item !== "Move Down" || idx < count - 1) &&
+                (count > 1 || (item !== "Move Up" && item !== "Move Down"))
+            );
+        } else if (sel.type === "column" || sel.type === "colwidth") {
+            const page = this.q2report.getPage(sel);
+            const count = page?.columns?.length ?? 0;
+            const idx = sel.colIdx;
+            filteredMenuItems = menuItems.filter(item =>
+                (item !== "Move Up" || idx > 0) &&
+                (item !== "Move Down" || idx < count - 1) &&
+                (count > 1 || (item !== "Move Up" && item !== "Move Down"))
+            );
+        } else if (sel.type === "row" || sel.type === "rowheight") {
+            const columns = this.q2report.getColsSet(sel);
+            const count = columns?.rows?.length ?? 0;
+            let idx = sel.rowSetIdx;
+            if (typeof idx === "string") {
+                idx = parseInt(idx.replace("-header", "").replace("-footer", ""));
+            }
+            filteredMenuItems = menuItems.filter(item =>
+                (item !== "Move Up" || idx > 0) &&
+                (item !== "Move Down" || idx < count - 1) &&
+                (count > 1 || (item !== "Move Up" && item !== "Move Down"))
+            );
+        }
+
         return (
             <div
                 className="q2-context-menu"
@@ -126,7 +170,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 onContextMenu={e => e.preventDefault()}
             >
                 <div>
-                    {menuItems.map((item, idx) =>
+                    {filteredMenuItems.map((item, idx) =>
                         item === "-" ? (
                             <div key={idx} className="q2-context-menu-separator" />
                         ) : (
