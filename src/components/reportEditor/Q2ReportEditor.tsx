@@ -46,14 +46,15 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     // report = get_report_json();
     q2report = new Q2Report(get_report_json());
 
-    defaultMenu = ["Clone", "Add above", "Add below", "-"];
+    defaultMenu = ["Clone", "Add above", "Add below", "-", "Hide/Show", "Move Up", "Move Down", "-", "❌Remove"];
+
     reportMenu = ["HTML", "DOCX", "XLSX", "PDF"];
     pageMenu = [...this.defaultMenu];
-    columnsMenu = [...this.defaultMenu];
-    rowMenu = ["Remove", "Resize"];
-    columnMenu = ["Remove", "Resize"];
-    rowsMenu = [...this.defaultMenu];
-    cellMenu = [...this.defaultMenu];
+    columnsSectionMenu = [...this.defaultMenu];
+    columnMenu = ["Add left", "Add right", "-", "Move left", "Move right", "-", "❌Remove"];
+    rowsSectionMenu = [...this.defaultMenu];
+    rowMenu = ["Add above", "Add below", "-", "Move up", "Move down", "-", "❌Remove"];
+    cellMenu = ["Merge selected cells", "Merge right", "Merge down", "-", "Unmerge cell"];
 
 
     handleSelect = (selection: Selection) => {
@@ -82,10 +83,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const sel = contextMenu.selection;
         if (sel.type === "report") menuItems = this.reportMenu;
         else if (sel.type === "page") menuItems = this.pageMenu;
-        else if (sel.type === "column") menuItems = this.columnMenu;
-        else if (sel.type === "colwidth") menuItems = this.columnsMenu;
-        else if (sel.type === "row") menuItems = this.rowMenu;
-        else if (sel.type === "rowheight") menuItems = this.rowsMenu;
+        else if (sel.type === "column") menuItems = this.columnsSectionMenu;
+        else if (sel.type === "colwidth") menuItems = this.columnMenu;
+        else if (sel.type === "row") menuItems = this.rowsSectionMenu;
+        else if (sel.type === "rowheight") menuItems = this.rowMenu;
         else if (sel.type === "cell") menuItems = this.cellMenu;
 
         return (
