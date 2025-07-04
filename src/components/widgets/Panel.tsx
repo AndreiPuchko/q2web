@@ -165,7 +165,9 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                 >
                     <div style={style}>
                         {children && children.map((child: any, index: number) => {
-                            const id = `${child.id}-control-cb`;
+                            // Ensure child.id is always defined and unique
+                            const childId = child.id || `${child.column}-${child.key || index}`;
+                            const id = `${childId}-control-cb`;
                             if (child.children) {
                                 // render nested panel
                                 return (
@@ -176,7 +178,11 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                             } else {
                                 // render input
                                 if (child.check) {
-                                    child.checkChecked = typeof child.checkChecked !== "undefined" ? child.checkChecked : !!child.data;
+                                    // Ensure form.c[child.column] is initialized
+                                    if (typeof form.c[child.column] === "undefined") {
+                                        form.c[child.column] = typeof child.checkChecked !== "undefined" ? child.checkChecked : !!child.data;
+                                    }
+                                    child.checkChecked = form.c[child.column];
                                 }
                                 return (
                                     <React.Fragment key={child.key + `-fragment-${index}`}>
@@ -186,7 +192,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                     id={id}
                                                     key={id}
                                                     type="checkbox"
-                                                    checked={form.c[child.column]}
+                                                    checked={typeof form.c[child.column] !== "undefined" ? form.c[child.column] : !!child.checkChecked}
                                                     onChange={e => {
                                                         const checked = e.target.checked;
                                                         child.checkChecked = checked;
@@ -213,6 +219,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                 </label>
                                             </div>
                                             : <label
+                                                htmlFor={id}
                                                 key={child.key + "-label"}
                                                 className="form-label"
                                                 style={{ justifySelf: "end", marginRight: "0.5em" }}

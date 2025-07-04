@@ -43,8 +43,8 @@ class Q2ContentEditor extends Component<ContentProps> {
         editor.add_control("/h", "")
         editor.add_control("print_when", "Print when", { data: sectionData.print_when });
         editor.add_control("print_after", "Calc after", { data: sectionData.print_after });
-        editor.add_control("new_page_before", "Make new page", { control: "check", data: sectionData.new_page_before });
-        editor.add_control("new_page_after", "Make new page after", { control: "check", data: sectionData.new_page_after });
+        editor.add_control("new_page_before", "On new page", { control: "check", data: sectionData.new_page_before });
+        editor.add_control("new_page_after", "New page after", { control: "check", data: sectionData.new_page_after });
         return editor
     }
 

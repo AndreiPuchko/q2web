@@ -29,7 +29,9 @@ class Q2StyleEditor extends Component<StyleProps> {
                     datalen: 15,
                     data: this.propsData["font-family"].data,
                     check: true,
-                    checkChecked: this.propsData["font-family"].checked,
+                    checkChecked: typeof this.propsEditor.c?.font_family !== "undefined"
+                        ? this.propsEditor.c.font_family
+                        : !!this.propsData["font-family"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
             this.propsEditor.add_control("font_size", "Font size",
@@ -38,7 +40,9 @@ class Q2StyleEditor extends Component<StyleProps> {
                     datatype: "int",
                     data: this.propsData["font-size"].data.replace("pt", ""),
                     check: true,
-                    checkChecked: this.propsData["font-size"].checked,
+                    checkChecked: typeof this.propsEditor.c?.font_size !== "undefined"
+                        ? this.propsEditor.c.font_size
+                        : !!this.propsData["font-size"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
             this.propsEditor.add_control("font_weight", "Bold",
@@ -46,7 +50,9 @@ class Q2StyleEditor extends Component<StyleProps> {
                     control: "check",
                     data: this.propsData["font-weight"].data,
                     check: true,
-                    checkChecked: this.propsData["font-weight"].checked,
+                    checkChecked: typeof this.propsEditor.c?.font_weight !== "undefined"
+                        ? this.propsEditor.c.font_weight
+                        : !!this.propsData["font-weight"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
             this.propsEditor.add_control("font_italic", "Italic",
@@ -54,7 +60,9 @@ class Q2StyleEditor extends Component<StyleProps> {
                     control: "check",
                     data: this.propsData["font-italic"].data,
                     check: true,
-                    checkChecked: this.propsData["font-italic"].checked,
+                    checkChecked: typeof this.propsEditor.c?.font_italic !== "undefined"
+                        ? this.propsEditor.c.font_italic
+                        : !!this.propsData["font-italic"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
             this.propsEditor.add_control("font_underline", "Underline",
@@ -62,19 +70,22 @@ class Q2StyleEditor extends Component<StyleProps> {
                     control: "check",
                     data: this.propsData["font-underline"].data,
                     check: true,
-                    checkChecked: this.propsData["font-underline"].checked,
+                    checkChecked: typeof this.propsEditor.c?.font_underline !== "undefined"
+                        ? this.propsEditor.c.font_underline
+                        : !!this.propsData["font-underline"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
             this.propsEditor.add_control("/s", "");
             this.propsEditor.add_control("/");
         }
 
-
         this.bordersControl = this.propsEditor.add_control("/h", "Borders",
             {
                 alignment: 4,
                 check: true,
-                checkChecked: this.propsData["border-width"].checked,
+                checkChecked: typeof this.propsEditor.c?.borders !== "undefined"
+                    ? this.propsEditor.c.borders
+                    : !!this.propsData["border-width"].checked,
                 checkDisabled: this.getCheckDisabled(),
                 tag: "borders"
             });
@@ -94,7 +105,9 @@ class Q2StyleEditor extends Component<StyleProps> {
             {
                 alignment: 4,
                 check: true,
-                checkChecked: this.propsData["padding"].checked,
+                checkChecked: typeof this.propsEditor.c?.paddings !== "undefined"
+                    ? this.propsEditor.c.paddings
+                    : !!this.propsData["padding"].checked,
                 checkDisabled: this.getCheckDisabled(),
                 tag: "paddings"
             });
@@ -120,7 +133,9 @@ class Q2StyleEditor extends Component<StyleProps> {
                     control: "radio",
                     data: hAlignment,
                     check: true,
-                    checkChecked: this.propsData["text-align"].checked,
+                    checkChecked: typeof this.propsEditor.c?.text_align !== "undefined"
+                        ? this.propsEditor.c.text_align
+                        : !!this.propsData["text-align"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
             this.propsEditor.add_control("vertical_align", "Vertical",
@@ -129,7 +144,9 @@ class Q2StyleEditor extends Component<StyleProps> {
                     control: "radio",
                     data: vAlignment,
                     check: true,
-                    checkChecked: this.propsData["vertical-align"].checked,
+                    checkChecked: typeof this.propsEditor.c?.vertical_align !== "undefined"
+                        ? this.propsEditor.c.vertical_align
+                        : !!this.propsData["vertical-align"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
             this.propsEditor.add_control("/");  // close layout
@@ -273,4 +290,5 @@ class Q2StyleEditor extends Component<StyleProps> {
     }
 }
 
+export default Q2StyleEditor;
 export default Q2StyleEditor;
