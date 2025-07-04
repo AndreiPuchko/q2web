@@ -329,4 +329,71 @@ export class Q2Report {
         }
         return false;
     }
+
+    addObjectAboveBelow(selection: any, position: "above" | "below") {
+        if (!selection || !selection.type) return false;
+        if (selection.type === "page") {
+            // Copy current page params, add columns/rows as described
+            const pageIdx = selection.pageIdx;
+            const page = this.getPage(selection);
+            if (!page) return false;
+            const newPage = {
+                ...JSON.parse(JSON.stringify(page)),
+                columns: [
+                    {
+                        widths: ["0", "0", "0"],
+                        rows: [
+                            {
+                                heights: ["0-0"],
+                                role: "free",
+                                cells: { "0,0": {} }
+                            }
+                        ]
+                    }
+                ]
+            };
+            // Remove data from newPage columns/rows/cells
+            newPage.columns.forEach(col => {
+                col.rows.forEach(row => {
+                    row.cells = { "0,0": {} };
+                });
+            });
+            const insertIdx = position === "above" ? pageIdx : pageIdx + 1;
+            this.report.pages.splice(insertIdx, 0, newPage);
+            return true;
+        } else if (selection.type === "column" || selection.type === "colwidth") {
+            const colIdx = selection.colIdx;
+            const page = this.getPage(selection);
+            if (!page || !page.columns) return false;
+            const newColumn = {
+                widths: ["0", "0", "0"],
+                rows: [
+                    {
+                        heights: ["0-0"],
+                        role: "free",
+                        cells: { "0,0": {} }
+                    }
+                ]
+            };
+            const insertIdx = position === "above" ? colIdx : colIdx + 1;
+            page.columns.splice(insertIdx, 0, newColumn);
+            return true;
+        } else if (selection.type === "row" || selection.type === "rowheight") {
+            const rowSetIdx = selection.rowSetIdx;
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+            const newRow = {
+                heights: ["0-0"],
+                role: "free",
+                cells: { "0,0": {} }
+            };
+            const realRowIdx = typeof rowSetIdx === "string"
+                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+                : rowSetIdx;
+            const insertIdx = position === "above" ? realRowIdx : realRowIdx + 1;
+            columns.rows.splice(insertIdx, 0, newRow);
+            return true;
+        }
+        return false;
+    }
 }

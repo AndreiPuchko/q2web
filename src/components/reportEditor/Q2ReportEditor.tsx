@@ -80,8 +80,16 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         if (command === "❌Remove" && contextMenu?.selection) {
             const sel = contextMenu.selection;
             this.q2report.removeObject(sel);
-            // let newSelection = undefined;
-            // newSelection = { type: "report" };
+            this.incrementVersion();
+            this.setState({ 
+                contextMenu: undefined,
+                selection: { type: "report" }
+            });
+            return;
+        }
+        if ((command === "Add above" || command === "Add below") && contextMenu?.selection) {
+            const position = command === "Add above" ? "above" : "below";
+            this.q2report.addObjectAboveBelow(contextMenu.selection, position);
             this.incrementVersion();
             this.setState({ 
                 contextMenu: undefined,
