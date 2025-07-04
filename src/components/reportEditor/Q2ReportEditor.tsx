@@ -52,7 +52,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     pageMenu = [...this.defaultMenu];
     columnsSectionMenu = [...this.defaultMenu];
     columnMenu = ["Add left", "Add right", "-", "Move left", "Move right", "-", "❌Remove"];
-    rowsSectionMenu = [...this.defaultMenu];
+    rowsSectionMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
     rowMenu = ["Add above", "Add below", "-", "Move up", "Move down", "-", "❌Remove"];
     cellMenu = ["Merge selected cells", "Merge right", "Merge down", "-", "Unmerge cell"];
 
@@ -81,7 +81,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             const sel = contextMenu.selection;
             this.q2report.removeObject(sel);
             this.incrementVersion();
-            this.setState({ 
+            this.setState({
                 contextMenu: undefined,
                 selection: { type: "report" }
             });
@@ -91,7 +91,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             const position = command === "Add above" ? "above" : "below";
             this.q2report.addObjectAboveBelow(contextMenu.selection, position);
             this.incrementVersion();
-            this.setState({ 
+            this.setState({
                 contextMenu: undefined,
                 selection: { type: "report" }
             });
@@ -101,10 +101,16 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             const direction = command === "Move Up" ? "up" : "down";
             const newSelection = this.q2report.moveObject(contextMenu.selection, direction);
             this.incrementVersion();
-            this.setState({ 
+            this.setState({
                 contextMenu: undefined,
                 selection: newSelection || this.state.selection
             });
+            return;
+        }
+        if (command === "Hide/Show" && contextMenu?.selection) {
+            this.q2report.toggleHideShow(contextMenu.selection);
+            this.incrementVersion();
+            this.setState({ contextMenu: undefined });
             return;
         }
         console.log(command, contextMenu?.selection);
@@ -124,6 +130,20 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         else if (sel.type === "row") menuItems = this.rowsSectionMenu;
         else if (sel.type === "rowheight") menuItems = this.rowMenu;
         else if (sel.type === "cell") menuItems = this.cellMenu;
+
+        // Replace "Hide/Show" with "Hide" or "Show" depending on current state
+        let hideShowLabel = "Hide/Show";
+        if (sel.type === "page") {
+            const page = this.q2report.getPage(sel);
+            hideShowLabel = page && page.hidden ? "Show" : "Hide";
+        } else if (sel.type === "column" || sel.type === "colwidth") {
+            const col = this.q2report.getColsSet(sel);
+            hideShowLabel = col && col.hidden ? "Show" : "Hide";
+        } else if (sel.type === "row" || sel.type === "rowheight") {
+            const row = this.q2report.getRowsSet(sel);
+            hideShowLabel = row && row.hidden ? "Show" : "Hide";
+        }
+        menuItems = menuItems.map(item => item === "Hide/Show" ? hideShowLabel : item);
 
         // Filter out "Move Up" and "Move Down" if only one object exists,
         // or "Move Up" for first, "Move Down" for last
@@ -177,7 +197,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             <div
                                 key={idx}
                                 className="q2-context-menu-item"
-                                onClick={() => { this.handleContextMenuItemClick(item) }}
+                                onClick={() => { this.handleContextMenuItemClick(item === "Hide" || item === "Show" ? "Hide/Show" : item) }}
                                 onMouseDown={e => e.stopPropagation()}
                             >
                                 {item}
@@ -266,8 +286,10 @@ class ReportView extends React.Component<any, { version: number }> {
         }
 
         const isSelected = selection?.type === "page" && selection.pageIdx === pageIdx;
+        // Add hidden indication
+        const isHidden = !!page.hidden;
         return (
-            <div>
+            <div style={isHidden ? {} : {}}>
                 <div
                     style={{
                         display: "flex",
@@ -275,6 +297,7 @@ class ReportView extends React.Component<any, { version: number }> {
                         borderBottom: "2px solid #888",
                         alignItems: "center",
                         cursor: "pointer",
+                        filter: isHidden ? "grayscale(0.5)" : undefined
                     }}
                     onClick={() => handleSelect({ type: "page", pageIdx })}
                     onContextMenu={e => handleContextMenu(e, { type: "page", pageIdx })}
@@ -284,9 +307,11 @@ class ReportView extends React.Component<any, { version: number }> {
                         style={{
                             background: isSelected ? "#ffe066" : "#f9fbe7",
                             minWidth: 161,
+                            textDecoration: isHidden ? "line-through" : undefined,
+                            color: isHidden ? "#888" : undefined
                         }}
                     >
-                        Page [{pageIdx}]
+                        Page [{pageIdx}]{isHidden ? " (hidden)" : ""}
                     </div>
                 </div>
                 <div
@@ -299,6 +324,21 @@ class ReportView extends React.Component<any, { version: number }> {
                     }}
                 >
                     {page.columns.map((column: any, colIdx: number) => {
+                        // If page is hidden, columns are visually hidden (height: 0), but page itself is shown with (hidden) mark
+                        if (isHidden) {
+                            return (
+                                <div key={colIdx} style={{ height: 0, overflow: "hidden" }}>
+                                    {this.renderColumns(column, [], 0, 0, pageIdx, colIdx)}
+                                </div>
+                            );
+                        }
+                        if (column.hidden) {
+                            return (
+                                <div key={colIdx}>
+                                    {this.renderColumns(column, [], 0, 0, pageIdx, colIdx, true)}
+                                </div>
+                            );
+                        }
                         const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx } =
                             this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
                         return (
@@ -329,24 +369,57 @@ class ReportView extends React.Component<any, { version: number }> {
         secondColWidthPx: number,
         pageIdx?: number,
         colIdx?: number,
+        forceAllRowsHidden?: boolean
     ) {
         const isSelected = this.props.selection?.type === "column" &&
             this.props.selection.pageIdx === pageIdx &&
             this.props.selection.colIdx === colIdx;
+        const isHidden = !!column.hidden || !!forceAllRowsHidden;
         if (!column.style) {
             column.style = {};
+        }
+
+        // Always recalculate widths, even if hidden
+        let widthsToUse = cellWidthsPx;
+        let firstColWidth = firstColWidthPx;
+        let secondColWidth = secondColWidthPx;
+        if (isHidden && (!cellWidthsPx || cellWidthsPx.length === 0)) {
+            // Recalculate widths if not provided (e.g. when called with [])
+            const page = this.props.q2report.getPage({ pageIdx });
+            const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
+            const pxPerCm = this.props.zoomWidthPx / availableWidthCm;
+            const calc = this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
+            widthsToUse = calc.cellWidthsPx;
+            firstColWidth = calc.firstColWidthPx;
+            secondColWidth = calc.secondColWidthPx;
         }
 
         // Prepare header, section, footer
         const rowsContent: any[] = [];
         column.rows.forEach((rowSet: any, rowSetIdx: number) => {
+            if (isHidden) {
+                rowsContent.push(
+                    <div key={rowSetIdx} style={{ height: 0, overflow: "hidden" }}>
+                        {this.renderRows(column, widthsToUse, firstColWidth, secondColWidth, pageIdx, colIdx, rowSet, rowSetIdx, true)}
+                    </div>
+                );
+                return;
+            }
+            if (rowSet.hidden) {
+                rowsContent.push(
+                    <div key={rowSetIdx} style={{ height: 0, overflow: "hidden" }}>
+                        {this.renderRows(column, widthsToUse, firstColWidth, secondColWidth, pageIdx, colIdx, rowSet, rowSetIdx)}
+                    </div>
+                );
+                return;
+            }
             if (rowSet.table_header) {
                 rowsContent.push(
                     this.renderRows(
                         column,
-                        cellWidthsPx,
-                        firstColWidthPx,
-                        secondColWidthPx,
+                        widthsToUse,
+                        firstColWidth,
+                        secondColWidth,
                         pageIdx,
                         colIdx,
                         rowSet.table_header,
@@ -358,9 +431,9 @@ class ReportView extends React.Component<any, { version: number }> {
             rowsContent.push(
                 this.renderRows(
                     column,
-                    cellWidthsPx,
-                    firstColWidthPx,
-                    secondColWidthPx,
+                    widthsToUse,
+                    firstColWidth,
+                    secondColWidth,
                     pageIdx,
                     colIdx,
                     rowSet,
@@ -371,9 +444,9 @@ class ReportView extends React.Component<any, { version: number }> {
                 rowsContent.push(
                     this.renderRows(
                         column,
-                        cellWidthsPx,
-                        firstColWidthPx,
-                        secondColWidthPx,
+                        widthsToUse,
+                        firstColWidth,
+                        secondColWidth,
                         pageIdx,
                         colIdx,
                         rowSet.table_footer,
@@ -390,9 +463,10 @@ class ReportView extends React.Component<any, { version: number }> {
                         display: "flex",
                         margin: 0,
                         padding: 0,
-                        background: isSelected ? "#ffe066" : "#e0eaff",
+                        background: isSelected ? "#ffe066" : "#d0eaff",
                         borderBottom: "1px solid #888",
                         cursor: "pointer",
+                        filter: isHidden ? "grayscale(0.7)" : undefined
                     }}
                     onClick={() => this.handleSelect({ type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
                     onContextMenu={e => this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! })}
@@ -400,8 +474,10 @@ class ReportView extends React.Component<any, { version: number }> {
                     <div
                         className="q2-report-colssection-header"
                         style={{
-                            width: `${firstColWidthPx + secondColWidthPx + 1}px`,
+                            width: `${firstColWidth + secondColWidth + 1}px`,
                             background: isSelected ? "#ffe066" : "#d0eaff",
+                            textDecoration: isHidden ? "line-through" : undefined,
+                            color: isHidden ? "#888" : undefined
                         }}
                         onClick={e => {
                             e.stopPropagation();
@@ -412,9 +488,10 @@ class ReportView extends React.Component<any, { version: number }> {
                             this.props.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, colIdx: colIdx! });
                         }}
                     >
-                        Columns
+                        Columns{isHidden ? " (hidden)" : ""}
                     </div>
-                    {cellWidthsPx.map((w, i) => {
+                    {/* Always render widths, even if hidden */}
+                    {widthsToUse.map((w, i) => {
                         const isWidthSelected = (this.props.selection as any)?.type === "colwidth"
                             && (this.props.selection as any).pageIdx === pageIdx
                             && (this.props.selection as any).colIdx === colIdx
@@ -426,7 +503,7 @@ class ReportView extends React.Component<any, { version: number }> {
                                 style={{
                                     width: `${w}px`,
                                     background: isWidthSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0eaff"),
-                                    borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
+                                    borderRight: i < widthsToUse.length - 1 ? "1px solid #b0c4de" : "none",
                                 }}
                                 onClick={e => {
                                     e.stopPropagation();
@@ -455,7 +532,8 @@ class ReportView extends React.Component<any, { version: number }> {
         pageIdx?: number,
         colIdx?: number,
         rowSet?: any,
-        rowSetIdx?: any
+        rowSetIdx?: any,
+        forceHidden?: boolean
     ) {
         // Only render a single rowSet (not a map)
         const colCount = column.widths.length;
@@ -466,6 +544,7 @@ class ReportView extends React.Component<any, { version: number }> {
             && this.props.selection.pageIdx === pageIdx
             && this.props.selection.colIdx === colIdx
             && this.props.selection.rowSetIdx === rowSetIdx;
+        const isHidden = !!rowSet?.hidden || !!forceHidden;
         const coveredCells = new Set<string>();
 
         if (!rowSet.cells) return null;
@@ -507,7 +586,11 @@ class ReportView extends React.Component<any, { version: number }> {
                     gridTemplateColumns: `${firstColWidthPx}px ${secondColWidthPx}px ${cellWidthsPx.map(w => `${w}px`).join(" ")}`,
                     gridTemplateRows: `${rowHeights.join(" ")}`,
                     borderBottom: rowSetIdx! < column.rows.length - 1 ? "1px solid #EEE" : undefined,
-                    background: isSelected ? "#ffe066" : "#EEE"
+                    height: isHidden ? 0 : undefined,
+                    overflow: isHidden ? "hidden" : undefined,
+                    background: isSelected ? "#ffe066" : "#EEE",
+                    opacity: isHidden ? 0.5 : 1,
+                    filter: isHidden ? "grayscale(0.7)" : undefined
                 }}
             >
                 {/* render rows's section "header" column  */}
@@ -516,11 +599,13 @@ class ReportView extends React.Component<any, { version: number }> {
                     style={{
                         background: isSelected ? "#ffe066" : "#f0f8ff",
                         gridRow: `1 / span ${rowCount}`,
+                        textDecoration: isHidden ? "line-through" : undefined,
+                        color: isHidden ? "#888" : undefined
                     }}
                     onClick={e => { e.stopPropagation(); this.props.handleSelect(rowClickParams); }}
                     onContextMenu={e => { e.stopPropagation(); this.props.handleContextMenu(e, rowClickParams); }}
                 >
-                    {rowSet.role}
+                    {rowSet.role}{isHidden ? " (hidden)" : ""}
                 </div>
                 {/* render rows's heights column */}
                 {Array.from({ length: rowCount }).map((_, rowIdx) => {

@@ -83,11 +83,21 @@ export class Q2Report {
     getRowsSet(selection: any) {
         const { rowSetIdx } = selection;
         const columns = this.getColsSet(selection);
-        const real_rowIdx = rowSetIdx?.replace("-header", "").replace("-footer", "");
+        // Defensive: only use replace if rowSetIdx is a string
+        let real_rowIdx = rowSetIdx;
+        if (typeof rowSetIdx === "string") {
+            real_rowIdx = rowSetIdx.replace("-header", "").replace("-footer", "");
+        }
         let rowSet = undefined;
-        if (rowSetIdx.includes("-header")) { rowSet = columns.rows?.[real_rowIdx].table_header }
-        else if (rowSetIdx.includes("-footer")) { rowSet = columns.rows?.[real_rowIdx].table_footer }
-        else { rowSet = columns.rows?.[real_rowIdx] };
+        if (typeof rowSetIdx === "string" && rowSetIdx.includes("-header")) {
+            rowSet = columns.rows?.[real_rowIdx].table_header;
+        }
+        else if (typeof rowSetIdx === "string" && rowSetIdx.includes("-footer")) {
+            rowSet = columns.rows?.[real_rowIdx].table_footer;
+        }
+        else {
+            rowSet = columns.rows?.[real_rowIdx];
+        }
         return rowSet;
     }
 
@@ -437,6 +447,32 @@ export class Q2Report {
                 return { ...selection, rowSetIdx: `${targetIdx}${suffix}` };
             }
             return { ...selection, rowSetIdx: targetIdx };
+        }
+        return false;
+    }
+
+    toggleHideShow(selection: any) {
+        if (!selection || !selection.type) return false;
+        if (selection.type === "page") {
+            const page = this.getPage(selection);
+            if (!page || !page.columns) return false;
+            // Hide/show all columns in the page
+            const hidden = !page.hidden;
+            page.hidden = hidden;
+            page.columns.forEach(col => {
+                col.hidden = hidden;
+                if (col.rows) {
+                    col.rows.forEach(row => row.hidden = hidden);
+                }
+            });
+            return true;
+        } else if (selection.type === "column" || selection.type === "colwidth") {
+            const col = this.getColsSet(selection);
+            if (!col || !col.rows) return false;
+            const hidden = !col.hidden;
+            col.hidden = hidden;
+            col.rows.forEach(row => row.hidden = hidden);
+            return true;
         }
         return false;
     }
