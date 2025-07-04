@@ -291,4 +291,3 @@ class Q2StyleEditor extends Component<StyleProps> {
 }
 
 export default Q2StyleEditor;
-export default Q2StyleEditor;
