@@ -70,7 +70,25 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     };
 
     handleContextMenuItemClick(command: string) {
-        const { contextMenu } = this.state;
+        const { contextMenu, selection } = this.state;
+        if (command === "Clone" && contextMenu?.selection) {
+            this.q2report.cloneObject(contextMenu.selection);
+            this.incrementVersion();
+            this.setState({ contextMenu: undefined });
+            return;
+        }
+        if (command === "❌Remove" && contextMenu?.selection) {
+            const sel = contextMenu.selection;
+            this.q2report.removeObject(sel);
+            // let newSelection = undefined;
+            // newSelection = { type: "report" };
+            this.incrementVersion();
+            this.setState({ 
+                contextMenu: undefined,
+                selection: { type: "report" }
+            });
+            return;
+        }
         console.log(command, contextMenu?.selection);
     }
 

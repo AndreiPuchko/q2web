@@ -268,4 +268,65 @@ export class Q2Report {
         }
         return changed;
     }
+
+    cloneObject(selection: any) {
+        if (!selection || !selection.type) return false;
+        if (selection.type === "page") {
+            const pageIdx = selection.pageIdx;
+            const page = this.getPage(selection);
+            if (!page) return false;
+            const clone = JSON.parse(JSON.stringify(page));
+            this.report.pages.splice(pageIdx + 1, 0, clone);
+            return true;
+        } else if (selection.type === "column" || selection.type === "colwidth") {
+            const colIdx = selection.colIdx;
+            const page = this.getPage(selection);
+            if (!page || !page.columns) return false;
+            const column = page.columns[colIdx];
+            if (!column) return false;
+            const clone = JSON.parse(JSON.stringify(column));
+            page.columns.splice(colIdx + 1, 0, clone);
+            return true;
+        } else if (selection.type === "row" || selection.type === "rowheight") {
+            const rowSetIdx = selection.rowSetIdx;
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+            // rowSetIdx may be a string with "-header" or "-footer"
+            const realRowIdx = typeof rowSetIdx === "string"
+                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+                : rowSetIdx;
+            const rowSet = columns.rows[realRowIdx];
+            if (!rowSet) return false;
+            const clone = JSON.parse(JSON.stringify(rowSet));
+            columns.rows.splice(realRowIdx + 1, 0, clone);
+            return true;
+        }
+        return false;
+    }
+
+    removeObject(selection: any) {
+        if (!selection || !selection.type) return false;
+        if (selection.type === "page") {
+            const pageIdx = selection.pageIdx;
+            if (typeof pageIdx !== "number" || !this.report.pages || this.report.pages.length <= 1) return false;
+            this.report.pages.splice(pageIdx, 1);
+            return true;
+        } else if (selection.type === "column" || selection.type === "colwidth") {
+            const colIdx = selection.colIdx;
+            const page = this.getPage(selection);
+            if (!page || !page.columns || page.columns.length <= 1) return false;
+            page.columns.splice(colIdx, 1);
+            return true;
+        } else if (selection.type === "row" || selection.type === "rowheight") {
+            const rowSetIdx = selection.rowSetIdx;
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows || columns.rows.length <= 1) return false;
+            const realRowIdx = typeof rowSetIdx === "string"
+                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+                : rowSetIdx;
+            columns.rows.splice(realRowIdx, 1);
+            return true;
+        }
+        return false;
+    }
 }
