@@ -583,7 +583,10 @@ class ReportView extends React.Component<any, { version: number }> {
                 else if (key === "font-weight") style["fontWeight"] = reportStyle[key]
                 else if (key === "font-italic") style["fontStyle"] = reportStyle[key] != "" ? "italic" : ""
                 else if (key === "font-underline") style["fontDecoration"] = reportStyle[key] != "" ? "underline" : ""
-                else if (key === "text-align") style["justifyContent"] = reportStyle[key]
+                else if (key === "text-align") {
+                    style["justifyContent"] = reportStyle[key]
+                    style["textAlign"] = reportStyle[key]
+                }
                 else if (key === "vertical-align") style["alignItems"] = reportStyle[key]
                     .replace("top", "start")
                     .replace("middle", "center")
