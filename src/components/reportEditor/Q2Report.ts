@@ -165,6 +165,7 @@ export class Q2Report {
             }
         }
         else if (selection.type === "rowheight") {
+            if (dataChunk.heights === undefined) return false;
             if (object.heights[selection.heightIdx] !== dataChunk.height) {
                 changed = true;
                 object.heights[selection.heightIdx] = dataChunk.height
