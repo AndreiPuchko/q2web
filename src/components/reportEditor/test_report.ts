@@ -21,10 +21,10 @@ const report_json = `{
               "new_page_before": "",
               "new_page_after": "",
               "heights": [
+                "0-5",
                 "0-0",
                 "0-0",
-                "0-0",
-                "0.00-0.30",
+                "0.00-5.30",
                 "0-0"
               ],
               "cells": {
@@ -86,7 +86,8 @@ const report_json = `{
                   "data": "{address}",
                   "style": {
                     "border-color": "black",
-                    "text-align": "left"
+                    "text-align": "right",
+                    "vertical-align": "top"
                   },
                   "rowspan": 1,
                   "colspan": 4
