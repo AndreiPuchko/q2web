@@ -367,6 +367,7 @@ export class Q2Report {
                 }
             })
             columns.widths.splice(selection.widthIdx, 0, columns.widths[selection.widthIdx])
+            return true;
         }
         return false;
     }
@@ -385,9 +386,41 @@ export class Q2Report {
             page.columns.splice(colIdx, 1);
             return true;
         } else if (selection.type === "colwidth") {
+            // TODO: do not remove last column and do not remove last 0 column
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
+            if (columns.widths.length === 1) return false;
+            if (parseFloat(columns.widths[selection.widthIdx]) === 0 && columns.widths.filter(w => {
+                return parseFloat(w) === 0;
+            }).length === 1) return false;
 
+            function removeColumnHelper(rowSet) {
+                const rowsCellsClone = {}
+                Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
+                    const colIndex = parseInt(cellKey.split(",")[1]);
+                    if (colIndex < selection.widthIdx) {
+                        rowsCellsClone[cellKey] = cell;
+                    }
+                    else if (colIndex > selection.widthIdx) {
+                        const newKey = `${cellKey.split(",")[0]},${colIndex - 1}`;
+                        rowsCellsClone[newKey] = cell;
+                    }
+                    // Adjust col spans
+                    if (cell.colspan > 1 && colIndex <= selection.widthIdx && colIndex + cell.colspan - 1 >= selection.widthIdx) {
+                        cell.colspan = cell.colspan - 1;
+                    }
+                })
+                return rowsCellsClone;
+            }
+
+            Object.entries(columns.rows).forEach(([key, rowSet]: [string, any]) => {
+                columns.rows[key].cells = removeColumnHelper(rowSet)
+                if (rowSet.role === "table") {
+                    if (rowSet?.table_header) rowSet.table_header.cells = removeColumnHelper(rowSet.table_header)
+                    if (rowSet?.table_footer) rowSet.table_footer.cells = removeColumnHelper(rowSet.table_footer)
+                }
+            })
+            columns.widths.splice(selection.widthIdx, 1)
             return true;
         } else if (selection.type === "row") {
             const rowSetIdx = selection.rowSetIdx;
