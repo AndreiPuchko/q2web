@@ -46,7 +46,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     // report = get_report_json();
     q2report = new Q2Report(get_report_json());
 
-    defaultMenu = ["Clone", "Add above", "Add below", "-", "Hide/Show", "Move Up", "Move Down", "-", "❌Remove"];
+    defaultMenu = ["Clone", "Add above", "Add below", "-", "Hide", "Show", "Move Up", "Move Down", "-", "❌Remove"];
 
     reportMenu = ["HTML", "DOCX", "XLSX", "PDF"];
     pageMenu = [...this.defaultMenu];
@@ -107,7 +107,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             });
             return;
         }
-        if (command === "Hide/Show" && contextMenu?.selection) {
+        if ((command === "Hide" || command === "Show") && contextMenu?.selection) {
             this.q2report.toggleHideShow(contextMenu.selection);
             this.incrementVersion();
             this.setState({ contextMenu: undefined });
@@ -131,36 +131,28 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         else if (sel.type === "rowheight") menuItems = this.rowMenu;
         else if (sel.type === "cell") menuItems = this.cellMenu;
 
-        // Replace "Hide/Show" with "Hide" or "Show" depending on current state
-        let hideShowLabel = "Hide/Show";
-        if (sel.type === "page") {
-            const page = this.q2report.getPage(sel);
-            hideShowLabel = page && page.hidden ? "Show" : "Hide";
-        } else if (sel.type === "column" || sel.type === "colwidth") {
-            const col = this.q2report.getColsSet(sel);
-            hideShowLabel = col && col.hidden ? "Show" : "Hide";
-        } else if (sel.type === "row" || sel.type === "rowheight") {
-            const row = this.q2report.getRowsSet(sel);
-            hideShowLabel = row && row.hidden ? "Show" : "Hide";
-        }
-        menuItems = menuItems.map(item => item === "Hide/Show" ? hideShowLabel : item);
-
         // Filter out "Move Up" and "Move Down" if only one object exists,
         // or "Move Up" for first, "Move Down" for last
         let filteredMenuItems = menuItems;
         if (sel.type === "page") {
             const count = this.q2report.pages.length;
             const idx = sel.pageIdx;
+            const page = this.q2report.getPage(sel);
             filteredMenuItems = menuItems.filter(item =>
+                (item !== "Show" || page.hidden) &&
+                (item !== "Hide" || !page.hidden) &&
                 (item !== "Move Up" || idx > 0) &&
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
             );
         } else if (sel.type === "column" || sel.type === "colwidth") {
             const page = this.q2report.getPage(sel);
+            const col = this.q2report.getColsSet(sel);
             const count = page?.columns?.length ?? 0;
             const idx = sel.colIdx;
             filteredMenuItems = menuItems.filter(item =>
+                (item !== "Show" || col.hidden) &&
+                (item !== "Hide" || !col.hidden) &&
                 (item !== "Move Up" || idx > 0) &&
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
@@ -197,7 +189,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             <div
                                 key={idx}
                                 className="q2-context-menu-item"
-                                onClick={() => { this.handleContextMenuItemClick(item === "Hide" || item === "Show" ? "Hide/Show" : item) }}
+                                onClick={() => { this.handleContextMenuItemClick( item) }}
                                 onMouseDown={e => e.stopPropagation()}
                             >
                                 {item}
