@@ -336,6 +336,83 @@ export class Q2Report {
                 : rowSetIdx;
             columns.rows.splice(realRowIdx, 1);
             return true;
+        } else if (selection.type === "rowheight") {
+            // Remove a row (by index) from a rowSet, handling cell spans
+            const { rowSetIdx, heightIdx } = selection;
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+            // Use selected rowSet directly
+            const rowSet = this.getRowsSet(selection);
+            if (!rowSet || !rowSet.heights || !rowSet.cells) return false;
+            const rowCount = rowSet.heights.length;
+            // Do not delete if only 1 row
+            if (rowCount <= 1) return false;
+
+            // 1. Remove/adjust spanned cells
+            // Find all cells that span into or from the row being removed
+            const cellsToDelete: string[] = [];
+            const cellsToAdjust: { key: string, newRowspan: number }[] = [];
+            Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
+                const [rowIdx, cellIdx] = key.split(',').map(Number);
+                const rowspan = cell?.rowspan > 1 ? cell.rowspan : 1;
+                // If the cell starts at the row being removed
+                if (rowIdx === heightIdx) {
+                    if (rowspan > 1) {
+                        // The cell spans down, so the next row will become the new "start" of the span
+                        // Remove this cell, and add a new cell at [rowIdx+1, cellIdx] with rowspan-1
+                        cellsToDelete.push(key);
+                        // Only add new cell if the next row exists
+                        if (rowIdx + 1 < rowCount) {
+                            // Copy cell, adjust rowspan
+                            const newCell = { ...cell, rowspan: rowspan - 1 };
+                            // Remove data if needed (optional)
+                            rowSet.cells[`${rowIdx + 1},${cellIdx}`] = newCell;
+                        }
+                    } else {
+                        // Normal cell, just remove
+                        cellsToDelete.push(key);
+                    }
+                } else if (rowIdx < heightIdx && rowIdx + rowspan > heightIdx) {
+                    // This cell spans over the row being removed, reduce its rowspan
+                    cellsToAdjust.push({ key, newRowspan: rowspan - 1 });
+                }
+            });
+            // Remove cells
+            for (const key of cellsToDelete) {
+                delete rowSet.cells[key];
+            }
+            // Adjust rowspans
+            for (const { key, newRowspan } of cellsToAdjust) {
+                if (rowSet.cells[key]) {
+                    rowSet.cells[key].rowspan = newRowspan;
+                }
+            }
+
+            // 2. Remove the row height
+            rowSet.heights.splice(heightIdx, 1);
+
+            // 3. Remove all cells in the removed row (should already be handled above)
+            // 4. Remove all cell keys that reference the removed row
+            Object.keys(rowSet.cells).forEach(key => {
+                const [rowIdx] = key.split(',').map(Number);
+                if (rowIdx === heightIdx) {
+                    delete rowSet.cells[key];
+                }
+            });
+
+            // 5. Shift all cell keys after the removed row up by 1
+            const newCells: { [key: string]: any } = {};
+            Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
+                const [rowIdx, cellIdx] = key.split(',').map(Number);
+                if (rowIdx > heightIdx) {
+                    newCells[`${rowIdx - 1},${cellIdx}`] = cell;
+                } else {
+                    newCells[key] = cell;
+                }
+            });
+            rowSet.cells = newCells;
+
+            return true;
         }
         return false;
     }
