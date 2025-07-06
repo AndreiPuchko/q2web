@@ -164,7 +164,7 @@ export class Q2Report {
     }
 
     setObjectContent(selection: any, dataChunk: { [key: string]: number | string }) {
-        
+
         let changed = false;
         const object = this.getObject(selection);
         if (selection.type === "colwidth") {
@@ -272,8 +272,8 @@ export class Q2Report {
         }
         for (const key in dataChunk) {
             // if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
-                object.style[key] = dataChunk[key];
-                changed = true;
+            object.style[key] = dataChunk[key];
+            changed = true;
             // }
         }
         return changed;
@@ -297,7 +297,7 @@ export class Q2Report {
             const clone = JSON.parse(JSON.stringify(column));
             page.columns.splice(colIdx + 1, 0, clone);
             return true;
-        } else if (selection.type === "row" ) {
+        } else if (selection.type === "row") {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
@@ -310,6 +310,63 @@ export class Q2Report {
             const clone = JSON.parse(JSON.stringify(rowSet));
             columns.rows.splice(realRowIdx + 1, 0, clone);
             return true;
+        } else if (selection.type === "rowheight") {
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+            const rowSet = columns.rows[selection.rowSetIdx];
+            const clone = {};
+            Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
+                const rowIndex = parseInt(key.split(",")[0]);
+                if (rowIndex === selection.heightIdx) {
+                    clone[key] = JSON.parse(JSON.stringify(cell));
+                    clone[key]["rowspan"] = 1;
+                }
+                if (rowIndex >= selection.heightIdx) {
+                    const newKey = `${rowIndex + 1},${key.split(",")[1]}`;
+                    clone[newKey] = cell;
+                }
+                else clone[key] = cell;
+
+                // Adjust col spans
+                if (cell.rowspan > 1 && colIndex <= selection.heightIdx && rowIndex + cell.rowspan - 1 >= selection.heightIdx) {
+                    cell.rowspan = cell.rowspan + 1;
+                }
+            })
+            rowSet.heights.splice(selection.heightIdx, 0, rowSet.heights[selection.heightIdx])
+            rowSet.cells = clone;
+        } else if (selection.type === "colwidth") {
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+            const clone = [];
+
+            function cloneColumnHelper(rowSet) {
+                const rowsCellsClone = {}
+                Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
+                    const colIndex = parseInt(cellKey.split(",")[1]);
+                    if (colIndex === selection.widthIdx) {
+                        rowsCellsClone[cellKey] = JSON.parse(JSON.stringify(cell));
+                        rowsCellsClone[cellKey]["colspan"] = 1;
+                    }
+                    if (colIndex >= selection.widthIdx) {
+                        const newKey = `${cellKey.split(",")[0]},${colIndex + 1}`;
+                        rowsCellsClone[newKey] = cell;
+                    }
+                    else rowsCellsClone[cellKey] = cell;
+                    // Adjust col spans
+                    if (cell.colspan > 1 && colIndex <= selection.widthIdx && colIndex + cell.colspan - 1 >= selection.widthIdx) {
+                        cell.colspan = cell.colspan + 1;
+                    }
+                })
+                return rowsCellsClone;
+            }
+            Object.entries(columns.rows).forEach(([key, rowSet]: [string, any]) => {
+                columns.rows[key].cells = cloneColumnHelper(rowSet)
+                if (rowSet.role === "table") {
+                    if (rowSet?.table_header) rowSet.table_header.cells = cloneColumnHelper(rowSet.table_header)
+                    if (rowSet?.table_footer) rowSet.table_footer.cells = cloneColumnHelper(rowSet.table_footer)
+                }
+            })
+            columns.widths.splice(selection.widthIdx, 0, columns.widths[selection.widthIdx])
         }
         return false;
     }
@@ -327,7 +384,12 @@ export class Q2Report {
             if (!page || !page.columns || page.columns.length <= 1) return false;
             page.columns.splice(colIdx, 1);
             return true;
-        } else if (selection.type === "row" ) {
+        } else if (selection.type === "colwidth") {
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+
+            return true;
+        } else if (selection.type === "row") {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows || columns.rows.length <= 1) return false;
