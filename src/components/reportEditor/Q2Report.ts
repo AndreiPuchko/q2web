@@ -288,7 +288,7 @@ export class Q2Report {
             const clone = JSON.parse(JSON.stringify(page));
             this.report.pages.splice(pageIdx + 1, 0, clone);
             return true;
-        } else if (selection.type === "column" || selection.type === "colwidth") {
+        } else if (selection.type === "column") {
             const colIdx = selection.colIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns) return false;
@@ -297,7 +297,7 @@ export class Q2Report {
             const clone = JSON.parse(JSON.stringify(column));
             page.columns.splice(colIdx + 1, 0, clone);
             return true;
-        } else if (selection.type === "row" || selection.type === "rowheight") {
+        } else if (selection.type === "row" ) {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
@@ -321,13 +321,13 @@ export class Q2Report {
             if (typeof pageIdx !== "number" || !this.report.pages || this.report.pages.length <= 1) return false;
             this.report.pages.splice(pageIdx, 1);
             return true;
-        } else if (selection.type === "column" || selection.type === "colwidth") {
+        } else if (selection.type === "column") {
             const colIdx = selection.colIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns || page.columns.length <= 1) return false;
             page.columns.splice(colIdx, 1);
             return true;
-        } else if (selection.type === "row" || selection.type === "rowheight") {
+        } else if (selection.type === "row" ) {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows || columns.rows.length <= 1) return false;
@@ -371,7 +371,7 @@ export class Q2Report {
             const insertIdx = position === "above" ? pageIdx : pageIdx + 1;
             this.report.pages.splice(insertIdx, 0, newPage);
             return true;
-        } else if (selection.type === "column" || selection.type === "colwidth") {
+        } else if (selection.type === "column") {
             const colIdx = selection.colIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns) return false;
@@ -388,7 +388,7 @@ export class Q2Report {
             const insertIdx = position === "above" ? colIdx : colIdx + 1;
             page.columns.splice(insertIdx, 0, newColumn);
             return true;
-        } else if (selection.type === "row" || selection.type === "rowheight") {
+        } else if (selection.type === "row") {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
@@ -419,7 +419,7 @@ export class Q2Report {
             pages.splice(targetIdx, 0, item);
             // Return new selection pointing to the moved page
             return { ...selection, pageIdx: targetIdx };
-        } else if (selection.type === "column" || selection.type === "colwidth") {
+        } else if (selection.type === "column") {
             const colIdx = selection.colIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns || page.columns.length <= 1) return false;
@@ -429,7 +429,7 @@ export class Q2Report {
             page.columns.splice(targetIdx, 0, item);
             // Return new selection pointing to the moved column
             return { ...selection, colIdx: targetIdx };
-        } else if (selection.type === "row" || selection.type === "rowheight") {
+        } else if (selection.type === "row") {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows || columns.rows.length <= 1) return false;
@@ -466,7 +466,7 @@ export class Q2Report {
                 }
             });
             return true;
-        } else if (selection.type === "column" || selection.type === "colwidth") {
+        } else if (selection.type === "column") {
             const col = this.getColsSet(selection);
             if (!col || !col.rows) return false;
             const hidden = !col.hidden;

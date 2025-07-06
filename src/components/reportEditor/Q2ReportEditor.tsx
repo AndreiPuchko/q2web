@@ -51,9 +51,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     reportMenu = ["HTML", "DOCX", "XLSX", "PDF"];
     pageMenu = [...this.defaultMenu];
     columnsSectionMenu = [...this.defaultMenu];
-    columnMenu = ["Add left", "Add right", "-", "Move left", "Move right", "-", "❌Remove"];
+    columnMenu = ["Clone", "Add left", "Add right", "-", "Move left", "Move right", "-", "❌Remove"];
     rowsSectionMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
-    rowMenu = ["Add above", "Add below", "-", "Move up", "Move down", "-", "❌Remove"];
+    rowMenu = ["Clone", "Add above", "Add below", "-", "Move up", "Move down", "-", "❌Remove"];
     cellMenu = ["Merge selected cells", "Merge right", "Merge down", "-", "Unmerge cell"];
 
 
@@ -189,7 +189,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                             <div
                                 key={idx}
                                 className="q2-context-menu-item"
-                                onClick={() => { this.handleContextMenuItemClick( item) }}
+                                onClick={() => { this.handleContextMenuItemClick(item) }}
                                 onMouseDown={e => e.stopPropagation()}
                             >
                                 {item}
