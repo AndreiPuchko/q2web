@@ -69,9 +69,9 @@ export class Q2Report {
     }
 
     getColsSet(selection: any) {
-        const { colIdx } = selection;
+        const { columnSetIdx } = selection;
         const page = this.getPage(selection);
-        return page?.columns?.[colIdx];
+        return page?.columns?.[columnSetIdx];
     }
 
     getWidth(selection: any) {
@@ -287,10 +287,10 @@ export class Q2Report {
             this.report.pages.splice(pageIdx, 1);
             return true;
         } else if (selection.type === "column") {
-            const colIdx = selection.colIdx;
+            const columnSetIdx = selection.columnSetIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns || page.columns.length <= 1) return false;
-            page.columns.splice(colIdx, 1);
+            page.columns.splice(columnSetIdx, 1);
             return true;
         } else if (selection.type === "colwidth") {
             // TODO: do not remove last column and do not remove last 0 column
@@ -460,13 +460,13 @@ export class Q2Report {
             this.report.pages.splice(insertIdx, 0, newPage);
             return true;
         } else if (selection.type === "column") {
-            const colIdx = selection.colIdx;
+            const columnSetIdx = selection.columnSetIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns) return false;
 
             let newColumn = {};
             if (cloneCurrent) {
-                const column = page.columns[colIdx];
+                const column = page.columns[columnSetIdx];
                 newColumn = JSON.parse(JSON.stringify(column));
             }
             else {
@@ -481,7 +481,7 @@ export class Q2Report {
                     ]
                 };
             }
-            const insertIdx = position === "above" ? colIdx : colIdx + 1;
+            const insertIdx = position === "above" ? columnSetIdx : columnSetIdx + 1;
             page.columns.splice(insertIdx, 0, newColumn);
             return true;
         } else if (selection.type === "row") {
@@ -584,12 +584,12 @@ export class Q2Report {
             // Return new selection pointing to the moved page
             return { ...selection, pageIdx: targetIdx };
         } else if (selection.type === "column") {
-            const colIdx = selection.colIdx;
+            const columnSetIdx = selection.columnSetIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns || page.columns.length <= 1) return false;
-            const targetIdx = direction === "up" ? colIdx - 1 : colIdx + 1;
+            const targetIdx = direction === "up" ? columnSetIdx - 1 : columnSetIdx + 1;
             if (targetIdx < 0 || targetIdx >= page.columns.length) return false;
-            const [item] = page.columns.splice(colIdx, 1);
+            const [item] = page.columns.splice(columnSetIdx, 1);
             page.columns.splice(targetIdx, 0, item);
             // Return new selection pointing to the moved column
             return { ...selection, colIdx: targetIdx };
