@@ -87,8 +87,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             });
             return;
         }
-        if ((command === "Add above" || command === "Add below") && contextMenu?.selection) {
-            const position = command === "Add above" ? "above" : "below";
+        if (command.startsWith("Add") && contextMenu?.selection) {
+            const position = (command === "Add above" || command === "Add left" ) ? "above" : "below";
             this.q2report.addObjectAboveBelow(contextMenu.selection, position);
             this.incrementVersion();
             this.setState({

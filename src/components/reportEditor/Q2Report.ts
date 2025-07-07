@@ -311,63 +311,9 @@ export class Q2Report {
             columns.rows.splice(realRowIdx + 1, 0, clone);
             return true;
         } else if (selection.type === "rowheight") {
-            const columns = this.getColsSet(selection);
-            if (!columns || !columns.rows) return false;
-            const rowSet = columns.rows[selection.rowSetIdx];
-            const clone = {};
-            Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
-                const rowIndex = parseInt(key.split(",")[0]);
-                if (rowIndex === selection.heightIdx) {
-                    clone[key] = JSON.parse(JSON.stringify(cell));
-                    clone[key]["rowspan"] = 1;
-                }
-                if (rowIndex >= selection.heightIdx) {
-                    const newKey = `${rowIndex + 1},${key.split(",")[1]}`;
-                    clone[newKey] = cell;
-                }
-                else clone[key] = cell;
-
-                // Adjust col spans
-                if (cell.rowspan > 1 && colIndex <= selection.heightIdx && rowIndex + cell.rowspan - 1 >= selection.heightIdx) {
-                    cell.rowspan = cell.rowspan + 1;
-                }
-            })
-            rowSet.heights.splice(selection.heightIdx, 0, rowSet.heights[selection.heightIdx])
-            rowSet.cells = clone;
+            return this.addObjectAboveBelow(selection, "above", true)
         } else if (selection.type === "colwidth") {
-            const columns = this.getColsSet(selection);
-            if (!columns || !columns.rows) return false;
-            const clone = [];
-
-            function cloneColumnHelper(rowSet) {
-                const rowsCellsClone = {}
-                Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
-                    const colIndex = parseInt(cellKey.split(",")[1]);
-                    if (colIndex === selection.widthIdx) {
-                        rowsCellsClone[cellKey] = JSON.parse(JSON.stringify(cell));
-                        rowsCellsClone[cellKey]["colspan"] = 1;
-                    }
-                    if (colIndex >= selection.widthIdx) {
-                        const newKey = `${cellKey.split(",")[0]},${colIndex + 1}`;
-                        rowsCellsClone[newKey] = cell;
-                    }
-                    else rowsCellsClone[cellKey] = cell;
-                    // Adjust col spans
-                    if (cell.colspan > 1 && colIndex <= selection.widthIdx && colIndex + cell.colspan - 1 >= selection.widthIdx) {
-                        cell.colspan = cell.colspan + 1;
-                    }
-                })
-                return rowsCellsClone;
-            }
-            Object.entries(columns.rows).forEach(([key, rowSet]: [string, any]) => {
-                columns.rows[key].cells = cloneColumnHelper(rowSet)
-                if (rowSet.role === "table") {
-                    if (rowSet?.table_header) rowSet.table_header.cells = cloneColumnHelper(rowSet.table_header)
-                    if (rowSet?.table_footer) rowSet.table_footer.cells = cloneColumnHelper(rowSet.table_footer)
-                }
-            })
-            columns.widths.splice(selection.widthIdx, 0, columns.widths[selection.widthIdx])
-            return true;
+            return this.addObjectAboveBelow(selection, "above", true)
         }
         return false;
     }
@@ -512,8 +458,10 @@ export class Q2Report {
         return false;
     }
 
-    addObjectAboveBelow(selection: any, position: "above" | "below") {
+    addObjectAboveBelow(selection: any, position: "above" | "below", cloneCurrent: boolean = false) {
         if (!selection || !selection.type) return false;
+        const positionDelta = position === "above" ? 0 : 1
+
         if (selection.type === "page") {
             // Copy current page params, add columns/rows as described
             const pageIdx = selection.pageIdx;
@@ -575,7 +523,65 @@ export class Q2Report {
             const insertIdx = position === "above" ? realRowIdx : realRowIdx + 1;
             columns.rows.splice(insertIdx, 0, newRow);
             return true;
+        } else if (selection.type === "rowheight") {
+            const rowSet = this.getRowsSet(selection)
+            const clone = {};
+            console.log(rowSet.cells)
+            Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
+                const rowIndex = parseInt(key.split(",")[0]);
+                if (cloneCurrent && rowIndex === selection.heightIdx) {
+                    clone[key] = JSON.parse(JSON.stringify(cell));
+                    clone[key]["rowspan"] = 1;
+                }
+                if (rowIndex >= selection.heightIdx + positionDelta) {
+                    const newKey = `${rowIndex + 1},${key.split(",")[1]}`;
+                    clone[newKey] = cell;
+                }
+                else clone[key] = cell;
+                // Adjust col spans
+                if (cell.rowspan > 1 && colIndex <= selection.heightIdx + positionDelta && rowIndex + cell.rowspan + positionDelta - 1 >= selection.heightIdx) {
+                    cell.rowspan = cell.rowspan + 1;
+                }
+            })
+            rowSet.heights.splice(selection.heightIdx, 0, rowSet.heights[selection.heightIdx])
+            rowSet.cells = clone;
+            console.log(clone)
+
+        } else if (selection.type === "colwidth") {
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+            // const clone = [];
+            function addColumnHelper(rowSet) {
+                const rowsCellsClone = {}
+                Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
+                    const colIndex = parseInt(cellKey.split(",")[1]);
+                    if (cloneCurrent && colIndex === selection.widthIdx) {
+                        rowsCellsClone[cellKey] = JSON.parse(JSON.stringify(cell));
+                        rowsCellsClone[cellKey]["colspan"] = 1;
+                    }
+                    if (colIndex >= selection.widthIdx + positionDelta) {
+                        const newKey = `${cellKey.split(",")[0]},${colIndex + 1}`;
+                        rowsCellsClone[newKey] = cell;
+                    }
+                    else rowsCellsClone[cellKey] = cell;
+                    // Adjust col spans
+                    if (cell.colspan > 1 && colIndex <= selection.widthIdx + positionDelta && colIndex + cell.colspan + positionDelta - 1 >= selection.widthIdx) {
+                        cell.colspan = cell.colspan + 1;
+                    }
+                })
+                return rowsCellsClone;
+            }
+            Object.entries(columns.rows).forEach(([key, rowSet]: [string, any]) => {
+                columns.rows[key].cells = addColumnHelper(rowSet)
+                if (rowSet.role === "table") {
+                    if (rowSet?.table_header) rowSet.table_header.cells = addColumnHelper(rowSet.table_header)
+                    if (rowSet?.table_footer) rowSet.table_footer.cells = addColumnHelper(rowSet.table_footer)
+                }
+            })
+            columns.widths.splice(selection.widthIdx, 0, columns.widths[selection.widthIdx])
+            return true;
         }
+
         return false;
     }
 

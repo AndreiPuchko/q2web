@@ -102,11 +102,6 @@ const report_json = `{
                     "border-color": "black"
                   }
                 },
-                "4,0": {
-                  "style": {
-                    "border-color": "black"
-                  }
-                },
                 "2,1": {
                   "style": {
                     "border-color": "black"
