@@ -54,7 +54,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     columnMenu = ["Clone", "Add left", "Add right", "-", "Move Left", "Move Right", "-", "❌Remove"];
     rowsSectionMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
     rowMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
-    cellMenu = ["Merge selected cells", "Merge right", "Merge down", "-", "Unmerge cell"];
+    cellMenu = ["Merge selected cells", "Merge right", "Merge down", "-", "Unmerge cells"];
 
 
     handleSelect = (selection: Selection) => {
@@ -71,14 +71,14 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
     handleContextMenuItemClick(command: string) {
         const { contextMenu, selection } = this.state;
-        if (command === "Clone" && contextMenu?.selection) {
+        if (!selection) return;
+        if (command === "Clone") {
             if (this.q2report.addObjectAboveBelow(selection, "above", true)) {
                 this.incrementVersion();
                 this.setState({ contextMenu: undefined });
             }
             return;
-        }
-        if (command === "❌Remove" && contextMenu?.selection) {
+        } else if (command === "❌Remove") {
             const sel = contextMenu.selection;
             if (this.q2report.removeObject(sel)) {
                 this.incrementVersion();
@@ -88,8 +88,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 });
             }
             return;
-        }
-        if (command.startsWith("Add") && contextMenu?.selection) {
+        } else if (command.startsWith("Add")) {
             const position = (command === "Add above" || command === "Add left") ? "above" : "below";
             if (this.q2report.addObjectAboveBelow(contextMenu.selection, position)) {
                 this.incrementVersion();
@@ -99,8 +98,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 });
             }
             return;
-        }
-        if (command.startsWith("Move") && contextMenu?.selection) {
+        } else if (command.startsWith("Move")) {
             const direction = (command === "Move Up" || command === "Move Left") ? "up" : "down";
             const newSelection = this.q2report.moveObject(contextMenu.selection, direction);
             this.incrementVersion();
@@ -109,14 +107,21 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 selection: newSelection || this.state.selection
             });
             return;
-        }
-        if ((command === "Hide" || command === "Show") && contextMenu?.selection) {
+        } else if ((command === "Hide" || command === "Show")) {
             this.q2report.toggleHideShow(contextMenu.selection);
             this.incrementVersion();
             this.setState({ contextMenu: undefined });
             return;
+        } else if (command === "Unmerge cells") {
+            this.q2report.unmergeCell(selection);
+            this.incrementVersion();
+            this.setState({
+                contextMenu: undefined,
+                selection: selection
+            });
+            return;
         }
-        console.log(command, contextMenu?.selection);
+        console.log(command, contextMenu?.selection === selection);
     }
 
     renderContextMenu() {
@@ -148,7 +153,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
             );
-        } else if (sel.type === "column" ) {
+        } else if (sel.type === "column") {
             const page = this.q2report.getPage(sel);
             const col = this.q2report.getColsSet(sel);
             const count = page?.columns?.length ?? 0;
@@ -160,7 +165,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
             );
-        } else if (sel.type === "colwidth" ) {
+        } else if (sel.type === "colwidth") {
             const col = this.q2report.getColsSet(sel);
             const count = col?.widths.length ?? 0;
             filteredMenuItems = menuItems.filter(item =>
@@ -185,6 +190,11 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             filteredMenuItems = menuItems.filter(item =>
                 (item !== "Move Up" || sel.heightIdx > 0) &&
                 (item !== "Move Down" || sel.heightIdx < count - 1)
+            );
+        } else if (sel.type === "cell") {
+            const cell = this.q2report.getCell(sel)
+            filteredMenuItems = menuItems.filter(item =>
+                (item !== "Unmerge cells" || cell.colspan <= 1 || cell.rowspan <= 1)
             );
         }
 

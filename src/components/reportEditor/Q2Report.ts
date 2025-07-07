@@ -649,8 +649,7 @@ export class Q2Report {
             const tmp = columns.widths[selection.widthIdx]
             columns.widths[selection.widthIdx] = columns.widths[selection.widthIdx + positionDelta]
             columns.widths[selection.widthIdx + positionDelta] = tmp;
-
-            return true;
+            return { ...selection, widthIdx: selection.widthIdx + positionDelta };
         } else if (selection.type === "rowheight") {
             const rowsSet = this.getRowsSet(selection);
             if (!rowsSet || !rowsSet.cells) return false;
@@ -677,10 +676,9 @@ export class Q2Report {
                 rowsSet.heights[selection.heightIdx] = rowsSet.heights[selection.heightIdx + positionDelta]
                 rowsSet.heights[selection.heightIdx + positionDelta] = tmp;
             })
-            return true;
+            return { ...selection, heightIdx: selection.heightIdx + positionDelta };
         }
-
-        return false;
+        return { ...selection };
     }
 
     toggleHideShow(selection: any) {
@@ -707,5 +705,11 @@ export class Q2Report {
             return true;
         }
         return false;
+    }
+
+    unmergeCell(selection: any) { 
+        const cell  = this.getCell(selection)
+        cell.rowspan = 0;
+        cell.colspan = 0;
     }
 }
