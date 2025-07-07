@@ -21,8 +21,8 @@ type Selection =
     | { type: string, pageIdx: number, columnSetIdx: number, rowSetIdx: number }
     | { type: "rowheight", pageIdx: number, columnSetIdx: number, rowSetIdx: number, heightIdx: number }
     | { type: string, pageIdx: number, columnSetIdx: number, rowSetIdx: number, heightIdx: number }
-    | { type: "cell", pageIdx: number, columnSetIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number }
-    | { type: string, pageIdx: number, columnSetIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number }
+    | { type: "cell", pageIdx: number, columnSetIdx: number, rowSetIdx: number, rowIdx: number, columnIdx: number }
+    | { type: string, pageIdx: number, columnSetIdx: number, rowSetIdx: number, rowIdx: number, columnIdx: number }
     | { type: "cellselection", pageIdx: number, columnSetIdx: number, rowSetIdx: number, rowIdx: number, cellKey0: string, cellKey1: string };
 
 
@@ -576,7 +576,7 @@ class ReportView extends React.Component<any, { version: number }> {
             rowSet.style = {};
         }
         Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
-            const [rowIdx, cellIdx] = key.split(',').map(Number);
+            const [rowIdx, columnIdx] = key.split(',').map(Number);
             if (!cell) return;
             const rowspan = cell.rowspan > 1 ? cell.rowspan : 1;
             const colspan = cell.colspan > 1 ? cell.colspan : 1;
@@ -584,7 +584,7 @@ class ReportView extends React.Component<any, { version: number }> {
                 for (let dr = 0; dr < rowspan; dr++) {
                     for (let dc = 0; dc < colspan; dc++) {
                         if (dr !== 0 || dc !== 0) {
-                            coveredCells.add(`${rowIdx + dr},${cellIdx + dc}`);
+                            coveredCells.add(`${rowIdx + dr},${columnIdx + dc}`);
                         }
                     }
                 }
@@ -661,8 +661,8 @@ class ReportView extends React.Component<any, { version: number }> {
                 })}
                 {/* render cells */}
                 {Array.from({ length: rowCount }).map((_, rowIdx) =>
-                    Array.from({ length: colCount }).map((_, cellIdx) => {
-                        const cellKey = `${rowIdx},${cellIdx}`;
+                    Array.from({ length: colCount }).map((_, columnIdx) => {
+                        const cellKey = `${rowIdx},${columnIdx}`;
                         // Exclude covered cells and parent cell (top-left of span)
                         if (coveredCells.has(cellKey)) return null;
                         if (rowSet.cells[cellKey] === undefined) {
@@ -671,8 +671,8 @@ class ReportView extends React.Component<any, { version: number }> {
                         const cell = rowSet.cells && rowSet.cells[cellKey];
                         return this.renderCell(
                             cell,
-                            `cell-${rowSetIdx}-${rowIdx}-${cellIdx}`,
-                            cellIdx,
+                            `cell-${rowSetIdx}-${rowIdx}-${columnIdx}`,
+                            columnIdx,
                             rowIdx,
                             pageIdx!,
                             columnSetIdx!,
@@ -687,7 +687,7 @@ class ReportView extends React.Component<any, { version: number }> {
     renderCell(
         cell: any,
         cellKey: string,
-        cellIdx: number,
+        columnIdx: number,
         rowIdx: number,
         pageIdx: number,
         columnSetIdx: number,
@@ -699,7 +699,7 @@ class ReportView extends React.Component<any, { version: number }> {
             columnSetIdx: columnSetIdx!,
             rowSetIdx,
             rowIdx,
-            cellIdx
+            columnIdx
         };
 
         if (cell && !cell.style) {
@@ -711,12 +711,12 @@ class ReportView extends React.Component<any, { version: number }> {
             this.props.selection.columnSetIdx === columnSetIdx &&
             this.props.selection.rowSetIdx === rowSetIdx &&
             this.props.selection.rowIdx === rowIdx &&
-            this.props.selection.cellIdx === cellIdx;
+            this.props.selection.columnIdx === columnIdx;
 
         // Merge cell.style if present
         const cellStyle: any = {
             backgroundColor: isCurrent ? "#ffe066" : "#fafafa",
-            gridColumn: `${cellIdx + 3}`,
+            gridColumn: `${columnIdx + 3}`,
             gridRow: `${rowIdx + 1}`,
         };
 
@@ -729,7 +729,7 @@ class ReportView extends React.Component<any, { version: number }> {
             }
         }
 
-        const selectedCell = { type: "cell", pageIdx: pageIdx, columnSetIdx: columnSetIdx, rowSetIdx: rowSetIdx, rowIdx: rowIdx, cellIdx: cellIdx };
+        const selectedCell = { type: "cell", pageIdx: pageIdx, columnSetIdx: columnSetIdx, rowSetIdx: rowSetIdx, rowIdx: rowIdx, columnIdx: columnIdx };
         const reportCellStyles = this.props.q2report.getCellStyle(selectedCell);
         const reportCellStyle = { ...reportCellStyles.parentStyle, ...reportCellStyles.style };
 

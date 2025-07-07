@@ -108,8 +108,8 @@ export class Q2Report {
     }
 
     getCell(selection: any) {
-        const { rowIdx, cellIdx } = selection
-        const cellKey = `${rowIdx},${cellIdx}`;
+        const { rowIdx, columnIdx } = selection
+        const cellKey = `${rowIdx},${columnIdx}`;
         const rowSet = this.getRowsSet(selection);
         return rowSet.cells[cellKey];
     }
@@ -355,20 +355,20 @@ export class Q2Report {
             const cellsToDelete: string[] = [];
             const cellsToAdjust: { key: string, newRowspan: number }[] = [];
             Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
-                const [rowIdx, cellIdx] = key.split(',').map(Number);
+                const [rowIdx, columnIdx] = key.split(',').map(Number);
                 const rowspan = cell?.rowspan > 1 ? cell.rowspan : 1;
                 // If the cell starts at the row being removed
                 if (rowIdx === heightIdx) {
                     if (rowspan > 1) {
                         // The cell spans down, so the next row will become the new "start" of the span
-                        // Remove this cell, and add a new cell at [rowIdx+1, cellIdx] with rowspan-1
+                        // Remove this cell, and add a new cell at [rowIdx+1, columnIdx] with rowspan-1
                         cellsToDelete.push(key);
                         // Only add new cell if the next row exists
                         if (rowIdx + 1 < rowCount) {
                             // Copy cell, adjust rowspan
                             const newCell = { ...cell, rowspan: rowspan - 1 };
                             // Remove data if needed (optional)
-                            rowSet.cells[`${rowIdx + 1},${cellIdx}`] = newCell;
+                            rowSet.cells[`${rowIdx + 1},${columnIdx}`] = newCell;
                         }
                     } else {
                         // Normal cell, just remove
@@ -405,9 +405,9 @@ export class Q2Report {
             // 5. Shift all cell keys after the removed row up by 1
             const newCells: { [key: string]: any } = {};
             Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
-                const [rowIdx, cellIdx] = key.split(',').map(Number);
+                const [rowIdx, columnIdx] = key.split(',').map(Number);
                 if (rowIdx > heightIdx) {
-                    newCells[`${rowIdx - 1},${cellIdx}`] = cell;
+                    newCells[`${rowIdx - 1},${columnIdx}`] = cell;
                 } else {
                     newCells[key] = cell;
                 }
