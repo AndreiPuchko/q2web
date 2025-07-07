@@ -72,29 +72,32 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     handleContextMenuItemClick(command: string) {
         const { contextMenu, selection } = this.state;
         if (command === "Clone" && contextMenu?.selection) {
-            this.q2report.cloneObject(contextMenu.selection);
-            this.incrementVersion();
-            this.setState({ contextMenu: undefined });
+            if (this.q2report.addObjectAboveBelow(selection, "above", true)) {
+                this.incrementVersion();
+                this.setState({ contextMenu: undefined });
+            }
             return;
         }
         if (command === "❌Remove" && contextMenu?.selection) {
             const sel = contextMenu.selection;
-            this.q2report.removeObject(sel);
-            this.incrementVersion();
-            this.setState({
-                contextMenu: undefined,
-                selection: { type: "report" }
-            });
+            if (this.q2report.removeObject(sel)) {
+                this.incrementVersion();
+                this.setState({
+                    contextMenu: undefined,
+                    selection: { type: "report" }
+                });
+            }
             return;
         }
         if (command.startsWith("Add") && contextMenu?.selection) {
-            const position = (command === "Add above" || command === "Add left" ) ? "above" : "below";
-            this.q2report.addObjectAboveBelow(contextMenu.selection, position);
-            this.incrementVersion();
-            this.setState({
-                contextMenu: undefined,
-                selection: { type: "report" }
-            });
+            const position = (command === "Add above" || command === "Add left") ? "above" : "below";
+            if (this.q2report.addObjectAboveBelow(contextMenu.selection, position)) {
+                this.incrementVersion();
+                this.setState({
+                    contextMenu: undefined,
+                    selection: { type: "report" }
+                });
+            }
             return;
         }
         if ((command === "Move Up" || command === "Move Down") && contextMenu?.selection) {

@@ -279,45 +279,6 @@ export class Q2Report {
         return changed;
     }
 
-    cloneObject(selection: any) {
-        if (!selection || !selection.type) return false;
-        if (selection.type === "page") {
-            const pageIdx = selection.pageIdx;
-            const page = this.getPage(selection);
-            if (!page) return false;
-            const clone = JSON.parse(JSON.stringify(page));
-            this.report.pages.splice(pageIdx + 1, 0, clone);
-            return true;
-        } else if (selection.type === "column") {
-            const colIdx = selection.colIdx;
-            const page = this.getPage(selection);
-            if (!page || !page.columns) return false;
-            const column = page.columns[colIdx];
-            if (!column) return false;
-            const clone = JSON.parse(JSON.stringify(column));
-            page.columns.splice(colIdx + 1, 0, clone);
-            return true;
-        } else if (selection.type === "row") {
-            const rowSetIdx = selection.rowSetIdx;
-            const columns = this.getColsSet(selection);
-            if (!columns || !columns.rows) return false;
-            // rowSetIdx may be a string with "-header" or "-footer"
-            const realRowIdx = typeof rowSetIdx === "string"
-                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
-                : rowSetIdx;
-            const rowSet = columns.rows[realRowIdx];
-            if (!rowSet) return false;
-            const clone = JSON.parse(JSON.stringify(rowSet));
-            columns.rows.splice(realRowIdx + 1, 0, clone);
-            return true;
-        } else if (selection.type === "rowheight") {
-            return this.addObjectAboveBelow(selection, "above", true)
-        } else if (selection.type === "colwidth") {
-            return this.addObjectAboveBelow(selection, "above", true)
-        }
-        return false;
-    }
-
     removeObject(selection: any) {
         if (!selection || !selection.type) return false;
         if (selection.type === "page") {
@@ -467,21 +428,28 @@ export class Q2Report {
             const pageIdx = selection.pageIdx;
             const page = this.getPage(selection);
             if (!page) return false;
-            const newPage = {
-                ...JSON.parse(JSON.stringify(page)),
-                columns: [
-                    {
-                        widths: ["0", "0", "0"],
-                        rows: [
-                            {
-                                heights: ["0-0"],
-                                role: "free",
-                                cells: { "0,0": {} }
-                            }
-                        ]
-                    }
-                ]
-            };
+            let newPage = {};
+
+            if (cloneCurrent) {
+                newPage = JSON.parse(JSON.stringify(page));
+            }
+            else {
+                newPage = {
+                    ...JSON.parse(JSON.stringify(page)),
+                    columns: [
+                        {
+                            widths: ["0", "0", "0"],
+                            rows: [
+                                {
+                                    heights: ["0-0"],
+                                    role: "free",
+                                    cells: { "0,0": {} }
+                                }
+                            ]
+                        }
+                    ]
+                };
+            }
             // Remove data from newPage columns/rows/cells
             newPage.columns.forEach(col => {
                 col.rows.forEach(row => {
@@ -495,16 +463,24 @@ export class Q2Report {
             const colIdx = selection.colIdx;
             const page = this.getPage(selection);
             if (!page || !page.columns) return false;
-            const newColumn = {
-                widths: ["0", "0", "0"],
-                rows: [
-                    {
-                        heights: ["0-0"],
-                        role: "free",
-                        cells: { "0,0": {} }
-                    }
-                ]
-            };
+
+            let newColumn = {};
+            if (cloneCurrent) {
+                const column = page.columns[colIdx];
+                newColumn = JSON.parse(JSON.stringify(column));
+            }
+            else {
+                newColumn = {
+                    widths: ["0", "0", "0"],
+                    rows: [
+                        {
+                            heights: ["0-0"],
+                            role: "free",
+                            cells: { "0,0": {} }
+                        }
+                    ]
+                };
+            }
             const insertIdx = position === "above" ? colIdx : colIdx + 1;
             page.columns.splice(insertIdx, 0, newColumn);
             return true;
@@ -512,11 +488,22 @@ export class Q2Report {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
-            const newRow = {
-                heights: ["0-0"],
-                role: "free",
-                cells: { "0,0": {} }
-            };
+            let newRow = {};
+            if (cloneCurrent) {
+                const realRowIdx = typeof rowSetIdx === "string"
+                    ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+                    : rowSetIdx;
+
+                const rowSet = columns.rows[realRowIdx];
+                newRow = JSON.parse(JSON.stringify(rowSet));
+            }
+            else {
+                newRow = {
+                    heights: ["0-0"],
+                    role: "free",
+                    cells: { "0,0": {} }
+                };
+            }
             const realRowIdx = typeof rowSetIdx === "string"
                 ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
                 : rowSetIdx;
@@ -581,7 +568,6 @@ export class Q2Report {
             columns.widths.splice(selection.widthIdx, 0, columns.widths[selection.widthIdx])
             return true;
         }
-
         return false;
     }
 
