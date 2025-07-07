@@ -572,12 +572,13 @@ export class Q2Report {
     }
 
     moveObject(selection: any, direction: "up" | "down") {
+        const positionDelta = direction === "up" ? - 1 : 1;
         if (!selection || !selection.type) return false;
         if (selection.type === "page") {
             const pageIdx = selection.pageIdx;
             const pages = this.report.pages;
             if (!pages || pages.length <= 1) return false;
-            const targetIdx = direction === "up" ? pageIdx - 1 : pageIdx + 1;
+            const targetIdx = pageIdx + positionDelta;
             if (targetIdx < 0 || targetIdx >= pages.length) return false;
             const [item] = pages.splice(pageIdx, 1);
             pages.splice(targetIdx, 0, item);
@@ -611,6 +612,44 @@ export class Q2Report {
                 return { ...selection, rowSetIdx: `${targetIdx}${suffix}` };
             }
             return { ...selection, rowSetIdx: targetIdx };
+        } else if (selection.type === "colwidth") {
+            const columns = this.getColsSet(selection);
+            if (!columns || !columns.rows) return false;
+            
+            function moveColumnHelper(rowSet) {
+                const rowsCellsClone = {}
+                Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
+                    const colIndex = parseInt(cellKey.split(",")[1]);
+                    if (colIndex === selection.widthIdx) {
+                        const newKey = `${cellKey.split(",")[0]},${colIndex + positionDelta}`;
+                        rowsCellsClone[newKey] = cell;
+                        if (cell.colspan > 1) {
+                            cell.colspan = cell.colspan - positionDelta;
+                        }
+                    }
+                    else if (colIndex === selection.widthIdx + positionDelta) {
+                        const newKey = `${cellKey.split(",")[0]},${selection.widthIdx}`;
+                        rowsCellsClone[newKey] = cell;
+                        if (cell.colspan > 1) {
+                            cell.colspan = cell.colspan + positionDelta;
+                        }
+
+                    }
+                    else rowsCellsClone[cellKey] = cell;
+                    // Adjust col spans
+                })
+                return rowsCellsClone;
+            }
+            Object.entries(columns.rows).forEach(([key, rowSet]: [string, any]) => {
+                columns.rows[key].cells = moveColumnHelper(rowSet)
+                if (rowSet.role === "table") {
+                    if (rowSet?.table_header) rowSet.table_header.cells = moveColumnHelper(rowSet.table_header)
+                    if (rowSet?.table_footer) rowSet.table_footer.cells = moveColumnHelper(rowSet.table_footer)
+                }
+            })
+            // columns.widths.splice(selection.widthIdx, 0, columns.widths[selection.widthIdx])
+            return true;
+
         }
         return false;
     }

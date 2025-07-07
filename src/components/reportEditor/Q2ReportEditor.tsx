@@ -51,9 +51,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     reportMenu = ["HTML", "DOCX", "XLSX", "PDF"];
     pageMenu = [...this.defaultMenu];
     columnsSectionMenu = [...this.defaultMenu];
-    columnMenu = ["Clone", "Add left", "Add right", "-", "Move left", "Move right", "-", "❌Remove"];
+    columnMenu = ["Clone", "Add left", "Add right", "-", "Move Left", "Move Right", "-", "❌Remove"];
     rowsSectionMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
-    rowMenu = ["Clone", "Add above", "Add below", "-", "Move up", "Move down", "-", "❌Remove"];
+    rowMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
     cellMenu = ["Merge selected cells", "Merge right", "Merge down", "-", "Unmerge cell"];
 
 
@@ -100,8 +100,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             }
             return;
         }
-        if ((command === "Move Up" || command === "Move Down") && contextMenu?.selection) {
-            const direction = command === "Move Up" ? "up" : "down";
+        if (command.startsWith("Move") && contextMenu?.selection) {
+            const direction = (command === "Move Up" || command === "Move Left") ? "up" : "down";
             const newSelection = this.q2report.moveObject(contextMenu.selection, direction);
             this.incrementVersion();
             this.setState({
@@ -148,7 +148,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
             );
-        } else if (sel.type === "column" || sel.type === "colwidth") {
+        } else if (sel.type === "column" ) {
             const page = this.q2report.getPage(sel);
             const col = this.q2report.getColsSet(sel);
             const count = page?.columns?.length ?? 0;
@@ -159,6 +159,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Up" || idx > 0) &&
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
+            );
+        } else if (sel.type === "colwidth" ) {
+            const col = this.q2report.getColsSet(sel);
+            const count = col?.widths.length ?? 0;
+            filteredMenuItems = menuItems.filter(item =>
+                (item !== "Move Left" || sel.widthIdx > 0) &&
+                (item !== "Move Right" || sel.widthIdx < count - 1)
             );
         } else if (sel.type === "row" || sel.type === "rowheight") {
             const columns = this.q2report.getColsSet(sel);
