@@ -22,7 +22,8 @@ type Selection =
     | { type: "rowheight", pageIdx: number, colIdx: number, rowSetIdx: number, heightIdx: number }
     | { type: string, pageIdx: number, colIdx: number, rowSetIdx: number, heightIdx: number }
     | { type: "cell", pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number }
-    | { type: string, pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number };
+    | { type: string, pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellIdx: number }
+    | { type: "cellselection", pageIdx: number, colIdx: number, rowSetIdx: number, rowIdx: number, cellKey0: string, cellKey1: string };
 
 
 interface Q2ReportEditorState {
@@ -265,6 +266,9 @@ class ReportView extends React.Component<any, { version: number }> {
         super(props);
         this.state = { version: 0 };
     }
+
+    selectionStartCell = undefined;
+    selectionEndCell = undefined;
 
     incrementVersion = () => {
         this.setState(state => ({ version: state.version + 1 }));
@@ -740,6 +744,9 @@ class ReportView extends React.Component<any, { version: number }> {
                 style={cellStyle}
                 onClick={e => { e.stopPropagation(); this.props.handleSelect(clickParams); }}
                 onContextMenu={e => { e.stopPropagation(); this.props.handleContextMenu(e, clickParams); }}
+                onMouseDown={(e) => this.cellMouseDown(e, clickParams)}
+                onMouseEnter={(e) => this.cellMouseEnter(e, clickParams)}
+                onMouseUp={(e) => this.cellMouseUp(e, clickParams)}
             >
                 {cell && cell.data
                     ? <span dangerouslySetInnerHTML={{ __html: cell.data }} />
@@ -747,6 +754,25 @@ class ReportView extends React.Component<any, { version: number }> {
             </div>
         );
     }
+
+    cellMouseDown(e, sel) {
+        this.selectionStartCell = sel;
+    }
+    cellMouseEnter(e, sel) {
+        if (!this.selectionStartCell) return
+        this.selectionEndCell = sel
+    }
+    cellMouseUp(e, sel) {
+        console.log(sel)
+        if (this.selectionStartCell === this.selectionEndCell) return;
+        console.log("====")
+        console.log(this.selectionStartCell)
+        console.log(this.selectionEndCell)
+        console.log("----")
+        this.selectionStartCell = undefined
+        this.selectionEndCell = undefined
+    }
+
 
     adaptStyle(style: any, reportStyle: any) {
         style["display"] = "flex"
