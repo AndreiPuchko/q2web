@@ -167,7 +167,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Left" || sel.widthIdx > 0) &&
                 (item !== "Move Right" || sel.widthIdx < count - 1)
             );
-        } else if (sel.type === "row" || sel.type === "rowheight") {
+        } else if (sel.type === "row") {
             const columns = this.q2report.getColsSet(sel);
             const count = columns?.rows?.length ?? 0;
             let idx = sel.rowSetIdx;
@@ -178,6 +178,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Up" || idx > 0) &&
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
+            );
+        } else if (sel.type === "rowheight") {
+            const rowsSet = this.q2report.getRowsSet(sel);
+            const count = rowsSet?.heights?.length ?? 0;
+            filteredMenuItems = menuItems.filter(item =>
+                (item !== "Move Up" || sel.heightIdx > 0) &&
+                (item !== "Move Down" || sel.heightIdx < count - 1)
             );
         }
 

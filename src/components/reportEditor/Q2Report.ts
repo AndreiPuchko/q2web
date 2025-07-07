@@ -513,7 +513,6 @@ export class Q2Report {
         } else if (selection.type === "rowheight") {
             const rowSet = this.getRowsSet(selection)
             const clone = {};
-            console.log(rowSet.cells)
             Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
                 const rowIndex = parseInt(key.split(",")[0]);
                 if (cloneCurrent && rowIndex === selection.heightIdx) {
@@ -615,7 +614,7 @@ export class Q2Report {
         } else if (selection.type === "colwidth") {
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
-            
+
             function moveColumnHelper(rowSet) {
                 const rowsCellsClone = {}
                 Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
@@ -636,7 +635,6 @@ export class Q2Report {
 
                     }
                     else rowsCellsClone[cellKey] = cell;
-                    // Adjust col spans
                 })
                 return rowsCellsClone;
             }
@@ -648,9 +646,40 @@ export class Q2Report {
                 }
             })
             // columns.widths.splice(selection.widthIdx, 0, columns.widths[selection.widthIdx])
-            return true;
+            const tmp = columns.widths[selection.widthIdx]
+            columns.widths[selection.widthIdx] = columns.widths[selection.widthIdx + positionDelta]
+            columns.widths[selection.widthIdx + positionDelta] = tmp;
 
+            return true;
+        } else if (selection.type === "rowheight") {
+            const rowsSet = this.getRowsSet(selection);
+            if (!rowsSet || !rowsSet.cells) return false;
+            const rowsCellsClone = {}
+            Object.entries(rowsSet.cells).forEach(([key, cell]: [string, any]) => {
+                const rowIndex = parseInt(key.split(",")[0]);
+                if (rowIndex === selection.heightIdx) {
+                    const newKey = `${rowIndex + positionDelta},${key.split(",")[1]}`;
+                    rowsCellsClone[newKey] = cell;
+                    if (cell.rowspan > 1) {
+                        cell.rowspan = cell.rowspan - positionDelta;
+                    }
+                }
+                else if (rowIndex === selection.heightIdx + positionDelta) {
+                    const newKey = `${selection.heightIdx},${key.split(",")[1]}`;
+                    rowsCellsClone[newKey] = cell;
+                    if (cell.rowspan > 1) {
+                        cell.rowspan = cell.rowspan + positionDelta;
+                    }
+                }
+                else rowsCellsClone[key] = cell;
+                rowsSet.cells = rowsCellsClone;
+                const tmp = rowsSet.heights[selection.heightIdx]
+                rowsSet.heights[selection.heightIdx] = rowsSet.heights[selection.heightIdx + positionDelta]
+                rowsSet.heights[selection.heightIdx + positionDelta] = tmp;
+            })
+            return true;
         }
+
         return false;
     }
 
