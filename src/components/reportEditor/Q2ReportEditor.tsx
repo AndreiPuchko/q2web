@@ -212,8 +212,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             );
         } else if (sel.type === "cell") {
             const cell = this.q2report.getCell(sel)
-            filteredMenuItems = menuItems.filter(item =>
-                (item !== "Unmerge cells" || cell.colspan <= 1 || cell.rowspan <= 1)
+            filteredMenuItems = menuItems.filter(item => {
+                if (item === "Unmerge cells" && !(cell.colspan > 1 || cell.rowspan > 1)) return false
+                if (item === "Unmerge cells" && this.reportViewRef.current?.isSelected(this.state.selection)) return false
+                else return true
+
+                // this.reportViewRef.current?.isSelected(this.state.selection))
+            }
             );
         }
 
