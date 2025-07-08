@@ -707,8 +707,56 @@ export class Q2Report {
         return false;
     }
 
-    unmergeCell(selection: any) { 
-        const cell  = this.getCell(selection)
+    mergeCellRight(selection: any) {
+        const columnSet = this.getColsSet(selection)
+        const cell = this.getCell(selection)
+        const cellRight = parseInt(cell.colspan) ? parseInt(cell.colspan) : 1
+        if (selection.columnIdx + cellRight < columnSet.widths.length)
+            cell.colspan = cellRight + 1;
+    }
+
+    mergeCellDown(selection: any) {
+        const rowSet = this.getRowsSet(selection)
+        const cell = this.getCell(selection)
+        const cellDown = parseInt(cell.rowspan) ? parseInt(cell.rowspan) : 1
+        if (selection.rowIdx + cellDown < rowSet.heights.length)
+            cell.rowspan = cellDown + 1;
+    }
+
+    getSelectionRanges(selStart, selEnd) {
+        const cellStart = this.getCell(selStart);
+        const cellStartRowspan = (parseInt(cellStart.rowspan) ? cellStart.rowspan : 1) - 1
+        const cellStartColspan = (parseInt(cellStart.colspan) ? cellStart.colspan : 1) - 1
+
+        const cellEnd = this.getCell(selEnd);
+        const cellEndRowspan = (parseInt(cellEnd.rowspan) ? cellEnd.rowspan : 1) - 1
+        const cellEndColspan = (parseInt(cellEnd.colspan) ? cellEnd.colspan : 1) - 1
+
+        const rMin = Math.min(selStart.rowIdx, selEnd.rowIdx);
+        const rMax = Math.max(selStart.rowIdx + cellStartRowspan, selEnd.rowIdx + cellEndRowspan);
+
+        const cMin = Math.min(selStart.columnIdx, selEnd.columnIdx);
+        const cMax = Math.max(selStart.columnIdx + cellStartColspan, selEnd.columnIdx + cellEndColspan);
+        return { rMin, rMax, cMin, cMax }
+
+    }
+
+    mergeSelectedCells(selection: any, selectionState: any) {
+        const rowSet = this.getRowsSet(selection)
+        const { selStart, selEnd, selList } = selectionState;
+        const { rMin, rMax, cMin, cMax } = this.getSelectionRanges(selStart, selEnd)
+
+        const firstCell = { ...selStart }
+        selStart.rowIdx = rMin
+        selStart.columnIdx = cMin
+        const cell = this.getCell(firstCell)
+        // console.log(rMin, cMin, rMax - rMin + 1, cMax - cMin + 1, cell)
+        cell.rowspan = rMax - rMin + 1
+        cell.colspan = cMax - cMin + 1
+    }
+
+    unmergeCell(selection: any) {
+        const cell = this.getCell(selection)
         cell.rowspan = 0;
         cell.colspan = 0;
     }

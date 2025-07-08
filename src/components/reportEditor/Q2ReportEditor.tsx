@@ -131,8 +131,30 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 selection: selection
             });
             return;
+        } else if (command === "Merge right") {
+            this.q2report.mergeCellRight(selection);
+            this.incrementVersion();
+            this.setState({
+                contextMenu: undefined,
+                selection: selection
+            });
+            return;
+        } else if (command === "Merge down") {
+            this.q2report.mergeCellDown(selection);
+            this.incrementVersion();
+            this.setState({
+                contextMenu: undefined,
+                selection: selection
+            });
+            return;
         } else if (command === "Merge selected cells") {
-            console.log(this.reportViewRef.current.state);
+            const { selStart, selEnd, selList } = this.reportViewRef.current?.state;
+            this.q2report.mergeSelectedCells(selection, { selStart, selEnd, selList });
+            this.incrementVersion();
+            this.setState({
+                contextMenu: undefined,
+                selection: selection
+            });
             return;
 
         }
@@ -210,6 +232,8 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             const columnSet = this.q2report.getColsSet(sel)
             const rowSet = this.q2report.getRowsSet(sel)
             const cell = this.q2report.getCell(sel)
+            const cellRight = parseInt(cell.colspan) ? parseInt(cell.colspan) : 1
+            const cellDown = parseInt(cell.rowspan) ? parseInt(cell.rowspan) : 1
             // console.log(this.state.selection)
             // console.log(columnSet.widths.length)
             // console.log(rowSet)
@@ -218,15 +242,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             if (this.reportViewRef.current?.isCellSelected(this.state.selection))
                 filteredMenuItems.push("Merge selected cells");
 
-            if (!this.reportViewRef.current?.isCellSelected(this.state.selection) &&
-                this.state.selection.columnIdx !== columnSet.widths.length - 1)
+            if (this.state.selection.columnIdx + cellRight < columnSet.widths.length)
                 filteredMenuItems.push("Merge right");
 
-            if (!this.reportViewRef.current?.isCellSelected(this.state.selection) &&
-                this.state.selection.rowIdx !== rowSet.heights.length - 1)
+            if (this.state.selection.rowIdx + cellDown < rowSet.heights.length)
                 filteredMenuItems.push("Merge down");
 
-            if ((cell.colspan > 1 || cell.rowspan > 1) && !this.reportViewRef.current?.isCellSelected(this.state.selection)) {
+            if ((cell.colspan > 1 || cell.rowspan > 1)) {
                 if (filteredMenuItems.length !== 0) filteredMenuItems.push("-");
                 filteredMenuItems.push("Unmerge cells");
             }
@@ -900,15 +922,13 @@ class ReportView extends React.Component<any, {
         const { selStart, selEnd } = this.state;
         if (this.state.selList.has(stableStringify(clickParams))) return true
         if (!selStart || !selEnd) return false;
+
         if (selStart.pageIdx !== pageIdx ||
             selStart.columnSetIdx !== columnSetIdx ||
             selStart.rowSetIdx !== rowSetIdx) return
 
-        const rMin = Math.min(selStart.rowIdx, selEnd.rowIdx);
-        const rMax = Math.max(selStart.rowIdx, selEnd.rowIdx);
-        const cMin = Math.min(selStart.columnIdx, selEnd.columnIdx);
-        const cMax = Math.max(selStart.columnIdx, selEnd.columnIdx);
-        // console.log(inSelList, this.state.selList, clickParams)
+        const { rMin, rMax, cMin, cMax } = this.props.q2report.getSelectionRanges(selStart, selEnd)
+
         return (rowIdx >= rMin && rowIdx <= rMax && columnIdx >= cMin && columnIdx <= cMax);
     };
 
