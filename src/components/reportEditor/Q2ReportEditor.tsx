@@ -55,7 +55,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     columnMenu = ["Clone", "Add left", "Add right", "-", "Move Left", "Move Right", "-", "❌Remove"];
     rowsSectionMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
     rowMenu = ["Clone", "Add above", "Add below", "-", "Move Up", "Move Down", "-", "❌Remove"];
-    cellMenu = ["Merge selected cells", "Merge right", "Merge down", "-", "Unmerge cells"];
 
     handleSelect = (selection: Selection) => {
         if (selection.type !== "cell") this.reportViewRef.current?.clearSelection()
@@ -131,23 +130,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 selection: selection
             });
             return;
-        } else if (command === "Merge right") {
-            this.q2report.mergeCellRight(selection);
-            this.incrementVersion();
-            this.setState({
-                contextMenu: undefined,
-                selection: selection
-            });
-            return;
-        } else if (command === "Merge down") {
-            this.q2report.mergeCellDown(selection);
-            this.incrementVersion();
-            this.setState({
-                contextMenu: undefined,
-                selection: selection
-            });
-            return;
-        } else if (command === "Merge selected cells") {
+        } else if (command === "Merge cells") {
             const { selStart, selEnd, selList } = this.reportViewRef.current?.state;
             this.q2report.mergeSelectedCells(selection, { selStart, selEnd, selList });
             this.incrementVersion();
@@ -174,7 +157,6 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         else if (sel.type === "colwidth") menuItems = this.columnMenu;
         else if (sel.type === "row") menuItems = this.rowsSectionMenu;
         else if (sel.type === "rowheight") menuItems = this.rowMenu;
-        else if (sel.type === "cell") menuItems = this.cellMenu;
 
         // Filter out "Move Up" and "Move Down" if only one object exists,
         // or "Move Up" for first, "Move Down" for last
@@ -229,25 +211,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Down" || sel.heightIdx < count - 1)
             );
         } else if (sel.type === "cell") {
-            const columnSet = this.q2report.getColsSet(sel)
-            const rowSet = this.q2report.getRowsSet(sel)
             const cell = this.q2report.getCell(sel)
-            const cellRight = parseInt(cell.colspan) ? parseInt(cell.colspan) : 1
-            const cellDown = parseInt(cell.rowspan) ? parseInt(cell.rowspan) : 1
-            // console.log(this.state.selection)
-            // console.log(columnSet.widths.length)
-            // console.log(rowSet)
-            // console.log(cell)
             filteredMenuItems = []
             if (this.reportViewRef.current?.isCellSelected(this.state.selection))
-                filteredMenuItems.push("Merge selected cells");
-
-            if (this.state.selection.columnIdx + cellRight < columnSet.widths.length)
-                filteredMenuItems.push("Merge right");
-
-            if (this.state.selection.rowIdx + cellDown < rowSet.heights.length)
-                filteredMenuItems.push("Merge down");
-
+                filteredMenuItems.push("Merge cells");
             if ((cell.colspan > 1 || cell.rowspan > 1)) {
                 if (filteredMenuItems.length !== 0) filteredMenuItems.push("-");
                 filteredMenuItems.push("Unmerge cells");

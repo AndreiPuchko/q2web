@@ -707,22 +707,6 @@ export class Q2Report {
         return false;
     }
 
-    mergeCellRight(selection: any) {
-        const columnSet = this.getColsSet(selection)
-        const cell = this.getCell(selection)
-        const cellRight = parseInt(cell.colspan) ? parseInt(cell.colspan) : 1
-        if (selection.columnIdx + cellRight < columnSet.widths.length)
-            cell.colspan = cellRight + 1;
-    }
-
-    mergeCellDown(selection: any) {
-        const rowSet = this.getRowsSet(selection)
-        const cell = this.getCell(selection)
-        const cellDown = parseInt(cell.rowspan) ? parseInt(cell.rowspan) : 1
-        if (selection.rowIdx + cellDown < rowSet.heights.length)
-            cell.rowspan = cellDown + 1;
-    }
-
     getSelectionRanges(selStart, selEnd) {
         const cellStart = this.getCell(selStart);
         const cellStartRowspan = (parseInt(cellStart.rowspan) ? cellStart.rowspan : 1) - 1
@@ -747,12 +731,12 @@ export class Q2Report {
                     const cell = rowSet.cells[cellKey];
                     const cRight = (parseInt(cell.colspan) ? cell.colspan : 1) - 1 + c
                     const rDown = (parseInt(cell.rowspan) ? cell.rowspan : 1) - 1 + r
-                    if (r < rMin && (rMin <= rDown ) && ((cMin <= c && c <= cMax) || (cMin <= cRight && cRight <= cMax)))
+                    if (r < rMin && (rMin <= rDown) && ((cMin <= c && c <= cMax) || (cMin <= cRight && cRight <= cMax)))
                         rMin = r
                     if (rDown > rMax && (rMin <= r && r <= rMax) && ((cMin <= c && c <= cMax) || (cMin <= cRight && cRight <= cMax)))
                         rMax = rDown
 
-                    if (c < cMin && (cMin <= cRight ) && ((rMin <= r && r <= rMax) || (rMin <= rDown && rDown <= rMax)))
+                    if (c < cMin && (cMin <= cRight) && ((rMin <= r && r <= rMax) || (rMin <= rDown && rDown <= rMax)))
                         cMin = c
                     if (cRight > cMax && (cMin <= c && c <= cMax) && ((rMin <= r && r <= rMax) || (rMin <= rDown && rDown <= rMax)))
                         cMax = cRight
