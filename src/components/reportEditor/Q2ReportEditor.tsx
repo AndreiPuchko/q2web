@@ -66,10 +66,15 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             this.reportViewRef.current?.clearSelection()
         else {
             if (!this.reportViewRef.current?.isCellSelected(selection)) {
-                const newList = new Set();
-                newList.add(selection)
                 this.reportViewRef.current?.clearSelection()
-                this.reportViewRef.current?.setState({ selStart: selection, selEnd: selection, selList: newList })
+                this.reportViewRef.current?.setState({ selStart: selection, selEnd: selection }, () => {
+                    e.preventDefault();
+                    this.setState({
+                        selection: selection,
+                        contextMenu: { x: e.clientX, y: e.clientY, selection: selection }
+                    });
+                })
+                return
             }
         }
         e.preventDefault();
@@ -213,7 +218,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         } else if (sel.type === "cell") {
             const cell = this.q2report.getCell(sel)
             filteredMenuItems = []
-            if (this.reportViewRef.current?.isCellSelected(this.state.selection))
+
+            if (this.reportViewRef.current?.isCellSelected(this.state.selection) &&
+                (stableStringify(this.reportViewRef.current?.state.selStart) !==
+                    stableStringify(this.reportViewRef.current?.state.selEnd)))
                 filteredMenuItems.push("Merge cells");
             if ((cell.colspan > 1 || cell.rowspan > 1)) {
                 if (filteredMenuItems.length !== 0) filteredMenuItems.push("-");
