@@ -732,25 +732,45 @@ export class Q2Report {
         const cellEndRowspan = (parseInt(cellEnd.rowspan) ? cellEnd.rowspan : 1) - 1
         const cellEndColspan = (parseInt(cellEnd.colspan) ? cellEnd.colspan : 1) - 1
 
-        const rMin = Math.min(selStart.rowIdx, selEnd.rowIdx);
-        const rMax = Math.max(selStart.rowIdx + cellStartRowspan, selEnd.rowIdx + cellEndRowspan);
+        let rMin = Math.min(selStart.rowIdx, selEnd.rowIdx);
+        let rMax = Math.max(selStart.rowIdx + cellStartRowspan, selEnd.rowIdx + cellEndRowspan);
 
-        const cMin = Math.min(selStart.columnIdx, selEnd.columnIdx);
-        const cMax = Math.max(selStart.columnIdx + cellStartColspan, selEnd.columnIdx + cellEndColspan);
+        let cMin = Math.min(selStart.columnIdx, selEnd.columnIdx);
+        let cMax = Math.max(selStart.columnIdx + cellStartColspan, selEnd.columnIdx + cellEndColspan);
+
+        const rowSet = this.getRowsSet(selStart);
+        const columnSet = this.getColsSet(selStart);
+        for (let r = 0; r < rowSet.heights.length; r++) {
+            for (let c = 0; c < columnSet.widths.length; c++) {
+                const cellKey = `${r},${c}`
+                if (rowSet.cells.hasOwnProperty(cellKey)) {
+                    const cell = rowSet.cells[cellKey];
+                    const cRight = (parseInt(cell.colspan) ? cell.colspan : 1) - 1 + c
+                    const rDown = (parseInt(cell.rowspan) ? cell.rowspan : 1) - 1 + r
+                    if (r < rMin && (rMin <= rDown ) && ((cMin <= c && c <= cMax) || (cMin <= cRight && cRight <= cMax)))
+                        rMin = r
+                    if (rDown > rMax && (rMin <= r && r <= rMax) && ((cMin <= c && c <= cMax) || (cMin <= cRight && cRight <= cMax)))
+                        rMax = rDown
+
+                    if (c < cMin && (cMin <= cRight ) && ((rMin <= r && r <= rMax) || (rMin <= rDown && rDown <= rMax)))
+                        cMin = c
+                    if (cRight > cMax && (cMin <= c && c <= cMax) && ((rMin <= r && r <= rMax) || (rMin <= rDown && rDown <= rMax)))
+                        cMax = cRight
+                }
+            }
+        }
         return { rMin, rMax, cMin, cMax }
-
     }
 
     mergeSelectedCells(selection: any, selectionState: any) {
-        const rowSet = this.getRowsSet(selection)
         const { selStart, selEnd, selList } = selectionState;
         const { rMin, rMax, cMin, cMax } = this.getSelectionRanges(selStart, selEnd)
 
         const firstCell = { ...selStart }
         selStart.rowIdx = rMin
         selStart.columnIdx = cMin
+
         const cell = this.getCell(firstCell)
-        // console.log(rMin, cMin, rMax - rMin + 1, cMax - cMin + 1, cell)
         cell.rowspan = rMax - rMin + 1
         cell.colspan = cMax - cMin + 1
     }
