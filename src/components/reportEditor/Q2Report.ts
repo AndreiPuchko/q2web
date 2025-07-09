@@ -751,8 +751,8 @@ export class Q2Report {
         const { rMin, rMax, cMin, cMax } = this.getSelectionRanges(selStart, selEnd)
 
         const firstCell = { ...selStart }
-        selStart.rowIdx = rMin
-        selStart.columnIdx = cMin
+        firstCell.rowIdx = rMin
+        firstCell.columnIdx = cMin
 
         const cell = this.getCell(firstCell)
         cell.rowspan = rMax - rMin + 1
