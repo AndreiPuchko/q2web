@@ -838,6 +838,11 @@ class ReportView extends React.Component<any, {
     }
 
     cellMouseEnter(e, sel) {
+        if (
+            this.state.selStart.pageIdx !== sel.pageIdx ||
+            this.state.selStart.columnSetIdx !== sel.columnSetIdx ||
+            this.state.selStart.rowSetIdx !== sel.rowSetIdx
+        ) return
         if (this.state.isDragging) {
             this.setState({ selEnd: sel });
         }
