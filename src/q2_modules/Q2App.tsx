@@ -42,7 +42,7 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
     this.setState({ theme });
   };
 
-  componentDidUpdate(prevProps: {}, prevState: any) {
+  componentDidUpdate(prevState: any) {
     if (prevState.theme !== this.state.theme) {
       this.applyTheme();
     }
@@ -90,7 +90,7 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
         <MainMenu showDialog={this.showDialog} />
 
         <div className='WorkSpace'>
-            <Q2ReportEditor />
+          <Q2ReportEditor />
 
           {this.state.dialogs.map((dialog: any, index: any) => (
             <Dialog

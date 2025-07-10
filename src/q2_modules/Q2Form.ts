@@ -1,3 +1,6 @@
+import Form from '../components/Form';
+
+
 export class Q2Control {
     column: string;
     label?: string;
@@ -100,6 +103,10 @@ export class Q2Form {
     height: number;
     x: number;
     y: number;
+    s: Record<string, any> = {};
+    w: Record<string, any> = {};
+    c: Record<string, any> = {};
+    hookInputChanged?: (form: Form) => void;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -147,7 +154,7 @@ export class Q2Form {
     }
 
     add_control(column: string, label?: string, options: any = {}) {
-        const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
+        // const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
         const ctrl = new Q2Control(column, label, options);
         // Sync all option keys to the control instance
         for (const key in options) {

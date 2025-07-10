@@ -1,3 +1,5 @@
+import { CellSelection } from "./Q2ReportEditor"
+
 export const defaultStyle = {
     "font-family": "Arial",
     "font-size": "12pt",
@@ -27,7 +29,7 @@ export class Q2Report {
     }
 
     getObject(selection: any) {
-        if (!selection || !selection.type) return this.getReport(selection);
+        if (!selection || !selection.type) return this.getReport();
 
         if (selection.type === "page") {
             return this.getPage(selection);
@@ -38,9 +40,9 @@ export class Q2Report {
         } else if (selection.type === "cell") {
             return this.getCell(selection);
         } else if (selection.type === "report") {
-            return this.getReport(selection)
+            return this.getReport()
         }
-        return this.getReport(selection)
+        return this.getReport()
     }
 
     getReport() {
@@ -114,13 +116,13 @@ export class Q2Report {
         return rowSet.cells[cellKey];
     }
 
-    getReportStyle(selection: any) {
+    getReportStyle() {
         const reportStyle = { ...defaultStyle, ...this.report.style }
         return { style: reportStyle, parentStyle: undefined }
     }
 
     getPageStyle(selection: any) {
-        const reportStyleObj = this.getReportStyle(selection);
+        const reportStyleObj = this.getReportStyle();
         const page = this.getPage(selection)
         return { style: page?.style, parentStyle: reportStyleObj.style }
     }
@@ -147,7 +149,7 @@ export class Q2Report {
     }
 
     getStyle(selection: any) {
-        if (!selection || !selection.type) return this.getReportStyle(selection);
+        if (!selection || !selection.type) return this.getReportStyle();
 
         if (selection.type === "page") {
             return this.getPageStyle(selection);
@@ -158,9 +160,9 @@ export class Q2Report {
         } else if (selection.type === "cell") {
             return this.getCellStyle(selection);
         } else if (selection.type === "report") {
-            return this.getReportStyle(selection)
+            return this.getReportStyle()
         }
-        return this.getReportStyle(selection)
+        return this.getReportStyle()
     }
 
     setObjectContent(selection: any, dataChunk: { [key: string]: number | string }) {
@@ -210,7 +212,7 @@ export class Q2Report {
 
     setStyle(selection: any, dataChunk: { [key: string]: number | string }) {
         if (selection.type === "report" || !selection || !selection.type) {
-            return this.setReportStyle(selection, dataChunk)
+            return this.setReportStyle(dataChunk)
         }
         else if (selection.type === "page") {
             return this.setPageStyle(selection, dataChunk);
@@ -223,7 +225,7 @@ export class Q2Report {
         }
     }
 
-    setReportStyle(selection: any, dataChunk: { [key: string]: number | string }) {
+    setReportStyle(dataChunk: { [key: string]: number | string }) {
         for (const key in dataChunk) {
             this.report.style[key] = dataChunk[key];
         }
@@ -231,33 +233,26 @@ export class Q2Report {
     }
 
     setPageStyle(selection: any, dataChunk: { [key: string]: number | string }) {
-        const parentStyle = this.getReportStyle(selection).style;
         const page = this.getPage(selection)
-        return this.setObjectStyle(parentStyle, page, dataChunk)
+        return this.setObjectStyle(page, dataChunk)
     }
 
     setColsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
-        const pageStyleObj = this.getPageStyle(selection);
-        const parentStyle = { ...(pageStyleObj.parentStyle || {}), ...(pageStyleObj.style || {}) };
         const columns = this.getColsSet(selection);
-        return this.setObjectStyle(parentStyle, columns, dataChunk)
+        return this.setObjectStyle(columns, dataChunk)
     }
 
     setRowsSetStyle(selection: any, dataChunk: { [key: string]: number | string }) {
-        const colsSetStyleObj = this.getColsSetStyle(selection);
-        const parentStyle = { ...(colsSetStyleObj.parentStyle || {}), ...(colsSetStyleObj.style || {}) };
         const rows = this.getRowsSet(selection);
-        return this.setObjectStyle(parentStyle, rows, dataChunk)
+        return this.setObjectStyle(rows, dataChunk)
     }
 
     setCellStyle(selection: any, dataChunk: { [key: string]: number | string }) {
-        const rowsSetStyleObj = this.getRowsSetStyle(selection);
-        const parentStyle = { ...(rowsSetStyleObj.parentStyle || {}), ...(rowsSetStyleObj.style || {}) };
         const cell = this.getCell(selection);
-        return this.setObjectStyle(parentStyle, cell, dataChunk)
+        return this.setObjectStyle(cell, dataChunk)
     }
 
-    setObjectStyle(parentStyle, object, dataChunk) {
+    setObjectStyle(object: any, dataChunk: Record<string, any>) {
         let changed = false;
         // Remove keys from object.style that are not in dataChunk
         if (object.style) {
@@ -271,7 +266,6 @@ export class Q2Report {
             object.style = {};
         }
         for (const key in dataChunk) {
-            // if (key in parentStyle && (parentStyle[key]) != dataChunk[key]) {
             object.style[key] = dataChunk[key];
             changed = true;
             // }
@@ -297,12 +291,12 @@ export class Q2Report {
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
             if (columns.widths.length === 1) return false;
-            if (parseFloat(columns.widths[selection.widthIdx]) === 0 && columns.widths.filter(w => {
+            if (parseFloat(columns.widths[selection.widthIdx]) === 0 && columns.widths.filter((w: any) => {
                 return parseFloat(w) === 0;
             }).length === 1) return false;
 
-            function removeColumnHelper(rowSet) {
-                const rowsCellsClone = {}
+            function removeColumnHelper(rowSet: any) {
+                const rowsCellsClone: Record<string, any> = {}
                 Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
                     const colIndex = parseInt(cellKey.split(",")[1]);
                     if (colIndex < selection.widthIdx) {
@@ -340,7 +334,7 @@ export class Q2Report {
             return true;
         } else if (selection.type === "rowheight") {
             // Remove a row (by index) from a rowSet, handling cell spans
-            const { rowSetIdx, heightIdx } = selection;
+            const { heightIdx } = selection;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
             // Use selected rowSet directly
@@ -428,7 +422,7 @@ export class Q2Report {
             const pageIdx = selection.pageIdx;
             const page = this.getPage(selection);
             if (!page) return false;
-            let newPage = {};
+            let newPage: any = {};
 
             if (cloneCurrent) {
                 newPage = JSON.parse(JSON.stringify(page));
@@ -451,8 +445,8 @@ export class Q2Report {
                 };
             }
             // Remove data from newPage columns/rows/cells
-            newPage.columns.forEach(col => {
-                col.rows.forEach(row => {
+            newPage.columns.forEach((col: any) => {
+                col.rows.forEach((row: any) => {
                     row.cells = { "0,0": {} };
                 });
             });
@@ -512,33 +506,33 @@ export class Q2Report {
             return true;
         } else if (selection.type === "rowheight") {
             const rowSet = this.getRowsSet(selection)
-            const clone = {};
+            const rowsCellsClone: Record<string, any> = {};
             Object.entries(rowSet.cells).forEach(([key, cell]: [string, any]) => {
                 const rowIndex = parseInt(key.split(",")[0]);
                 if (cloneCurrent && rowIndex === selection.heightIdx) {
-                    clone[key] = JSON.parse(JSON.stringify(cell));
-                    clone[key]["rowspan"] = 1;
+                    rowsCellsClone[key] = JSON.parse(JSON.stringify(cell));
+                    rowsCellsClone[key]["rowspan"] = 1;
                 }
                 if (rowIndex >= selection.heightIdx + positionDelta) {
                     const newKey = `${rowIndex + 1},${key.split(",")[1]}`;
-                    clone[newKey] = cell;
+                    rowsCellsClone[newKey] = cell;
                 }
-                else clone[key] = cell;
+                else rowsCellsClone[key] = cell;
                 // Adjust col spans
-                if (cell.rowspan > 1 && colIndex <= selection.heightIdx + positionDelta && rowIndex + cell.rowspan + positionDelta - 1 >= selection.heightIdx) {
+                if (cell.rowspan > 1 && rowIndex <= selection.heightIdx + positionDelta && rowIndex + cell.rowspan + positionDelta - 1 >= selection.heightIdx) {
                     cell.rowspan = cell.rowspan + 1;
                 }
             })
             rowSet.heights.splice(selection.heightIdx, 0, rowSet.heights[selection.heightIdx])
-            rowSet.cells = clone;
-            console.log(clone)
+            rowSet.cells = rowsCellsClone;
+            console.log(rowsCellsClone)
 
         } else if (selection.type === "colwidth") {
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
             // const clone = [];
-            function addColumnHelper(rowSet) {
-                const rowsCellsClone = {}
+            function addColumnHelper(rowSet: any) {
+                const rowsCellsClone: Record<string, any> = {}
                 Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
                     const colIndex = parseInt(cellKey.split(",")[1]);
                     if (cloneCurrent && colIndex === selection.widthIdx) {
@@ -615,8 +609,8 @@ export class Q2Report {
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows) return false;
 
-            function moveColumnHelper(rowSet) {
-                const rowsCellsClone = {}
+            function moveColumnHelper(rowSet: any) {
+                const rowsCellsClone: Record<string, any> = {}
                 Object.entries(rowSet.cells).forEach(([cellKey, cell]: [string, any]) => {
                     const colIndex = parseInt(cellKey.split(",")[1]);
                     if (colIndex === selection.widthIdx) {
@@ -653,7 +647,7 @@ export class Q2Report {
         } else if (selection.type === "rowheight") {
             const rowsSet = this.getRowsSet(selection);
             if (!rowsSet || !rowsSet.cells) return false;
-            const rowsCellsClone = {}
+            const rowsCellsClone: Record<string, any> = {}
             Object.entries(rowsSet.cells).forEach(([key, cell]: [string, any]) => {
                 const rowIndex = parseInt(key.split(",")[0]);
                 if (rowIndex === selection.heightIdx) {
@@ -689,10 +683,10 @@ export class Q2Report {
             // Hide/show all columns in the page
             const hidden = !page.hidden;
             page.hidden = hidden;
-            page.columns.forEach(col => {
+            page.columns.forEach((col: any) => {
                 col.hidden = hidden;
                 if (col.rows) {
-                    col.rows.forEach(row => row.hidden = hidden);
+                    col.rows.forEach((row: any) => row.hidden = hidden);
                 }
             });
             return true;
@@ -701,13 +695,15 @@ export class Q2Report {
             if (!col || !col.rows) return false;
             const hidden = !col.hidden;
             col.hidden = hidden;
-            col.rows.forEach(row => row.hidden = hidden);
+            col.rows.forEach((row: any) => row.hidden = hidden);
             return true;
         }
         return false;
     }
 
-    getSelectionRanges(selStart, selEnd) {
+    getSelectionRanges(selStart: CellSelection, selEnd: CellSelection) {
+        if (selEnd.type === "none" || selStart.type === "none") return
+
         const cellStart = this.getCell(selStart);
         const cellStartRowspan = (parseInt(cellStart.rowspan) ? cellStart.rowspan : 1) - 1
         const cellStartColspan = (parseInt(cellStart.colspan) ? cellStart.colspan : 1) - 1
@@ -746,9 +742,11 @@ export class Q2Report {
         return { rMin, rMax, cMin, cMax }
     }
 
-    mergeSelectedCells(selection: any, selectionState: any) {
-        const { selStart, selEnd, selList } = selectionState;
-        const { rMin, rMax, cMin, cMax } = this.getSelectionRanges(selStart, selEnd)
+    mergeSelectedCells(selectionState: any) {
+        const { selStart, selEnd } = selectionState;
+        const ranges = this.getSelectionRanges(selStart, selEnd)
+        if (!ranges) return;
+        const { rMin, rMax, cMin, cMax } = ranges;
 
         const firstCell = { ...selStart }
         firstCell.rowIdx = rMin

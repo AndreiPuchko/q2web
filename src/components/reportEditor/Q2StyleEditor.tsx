@@ -8,17 +8,25 @@ interface StyleProps {
     reportEditor: any;
 }
 
+type StylePropValue = {
+    data: string;
+    checked: boolean;
+};
+
 class Q2StyleEditor extends Component<StyleProps> {
-    bordersControl: Q2Control;
-    paddingsControl: Q2Control;
-    alignmentsControl: Q2Control;
     propsEditor: Q2Form;
-    propsData: { [key: string]: number | string | boolean };
+    propsData: Record<string, StylePropValue>;
+
+    constructor(props: StyleProps) {
+        super(props);
+        this.propsData = {};
+        this.propsEditor = new Q2Form();
+    }
 
     defineUi() {
         // const { selection } = this.props;
         // Use getStyle to select the correct style object
-        this.propsData = this.getStyleData()
+        this.propsData = this.getStyleData();
 
         this.propsEditor = new Q2Form();
 
@@ -79,7 +87,7 @@ class Q2StyleEditor extends Component<StyleProps> {
             this.propsEditor.add_control("/");
         }
 
-        this.bordersControl = this.propsEditor.add_control("/h", "Borders",
+        const bordersControl: Q2Control = this.propsEditor.add_control("/h", "Borders",
             {
                 alignment: 4,
                 check: true,
@@ -89,7 +97,7 @@ class Q2StyleEditor extends Component<StyleProps> {
                 checkDisabled: this.getCheckDisabled(),
                 tag: "borders"
             });
-        if (this.bordersControl) {
+        if (bordersControl) {
             const borders = this.propsData["border-width"].data.split(" ");
             this.propsEditor.add_control("border_left", "", { datalen: 3, datatype: "int", range: "0", data: borders[3] || "" });
             this.propsEditor.add_control("/v", "");
@@ -101,7 +109,7 @@ class Q2StyleEditor extends Component<StyleProps> {
             this.propsEditor.add_control("/");  // close layout
         }
 
-        this.paddingsControl = this.propsEditor.add_control("/h", "Paddings",
+        const paddingsControl: Q2Control = this.propsEditor.add_control("/h", "Paddings",
             {
                 alignment: 4,
                 check: true,
@@ -111,7 +119,7 @@ class Q2StyleEditor extends Component<StyleProps> {
                 checkDisabled: this.getCheckDisabled(),
                 tag: "paddings"
             });
-        if (this.paddingsControl) {
+        if (paddingsControl) {
             const paddings = this.propsData["padding"].data.split(" ");
             this.propsEditor.add_control("padding_left", "", { datalen: 5, datatype: "dec", datadec: 2, range: "0", data: (paddings[3] || "").replace("cm", "") });
             this.propsEditor.add_control("/v");
@@ -123,8 +131,8 @@ class Q2StyleEditor extends Component<StyleProps> {
             this.propsEditor.add_control("/");  // close layout
         }
 
-        this.alignmentsControl = this.propsEditor.add_control("/v", "Aligments");
-        if (this.alignmentsControl) {
+        const alignmentsControl: Q2Control = this.propsEditor.add_control("/v", "Aligments");
+        if (alignmentsControl) {
             const hAlignment = { "left": "Left", "center": "Center", "right": "Right", "justify": "Justify" }[this.propsData["text-align"].data];
             const vAlignment = { "top": "Top", "middle": "Middle", "bottom": "Bottom" }[this.propsData["vertical-align"].data];
             this.propsEditor.add_control("text_align", "Horizontal",
@@ -163,8 +171,8 @@ class Q2StyleEditor extends Component<StyleProps> {
         // Returns an object like: { "font-family": { data: ..., check: ... }, ... }
         const { q2report, selection } = this.props;
         const styles: any = q2report.getStyle(selection);
-        const props: any = {};
-        if (!styles) return props;
+        const styleProps: Record<string, StylePropValue> = {};
+        if (!styles) return styleProps;
         const selectionStyle = styles.style || {};
         const parentStyle = styles.parentStyle || {};
         const selectionKeys = Object.keys(selectionStyle);
@@ -172,12 +180,12 @@ class Q2StyleEditor extends Component<StyleProps> {
         const allKeys = Array.from(new Set([...selectionKeys, ...parentKeys]));
         allKeys.forEach(key => {
             if (selectionStyle && selectionStyle[key] !== undefined) {
-                props[key] = {
+                styleProps[key] = {
                     data: selectionStyle[key],
                     checked: parentStyle[key] != selectionStyle[key]
                 };
             } else if (parentStyle && parentStyle[key] !== undefined) {
-                props[key] = {
+                styleProps[key] = {
                     data: parentStyle[key],
                     checked: false
                 };
@@ -189,10 +197,10 @@ class Q2StyleEditor extends Component<StyleProps> {
             //   };
             // }
         });
-        return props;
+        return styleProps;
     }
 
-    collectStyle(form) {
+    collectStyle(form: Form) {
         // Collect style values from the current form (this.propsEditor.s)
         const style: any = {};
         const s = form?.s || {};
@@ -248,33 +256,30 @@ class Q2StyleEditor extends Component<StyleProps> {
         }
         // Alignments
         if ("text_align" in s && isEnabled("text_align")) {
-            const mapH = { "Left": "left", "Center": "center", "Right": "right", "Justify": "justify" };
+            const mapH: { [key: string]: string } = { "Left": "left", "Center": "center", "Right": "right", "Justify": "justify" };
             style["text-align"] = mapH[s.text_align] ?? s.text_align;
         }
         if ("vertical_align" in s && isEnabled("vertical_align")) {
-            const mapV = { "Top": "top", "Middle": "middle", "Bottom": "bottom" };
+            const mapV: { [key: string]: string } = { "Top": "top", "Middle": "middle", "Bottom": "bottom" };
             style["vertical-align"] = mapV[s.vertical_align] ?? s.vertical_align;
         }
         return style;
     }
 
-    setData(sel?: any, style?: any) {
-        // console.log("set data", sel, style);
-    }
+    // setData(sel?: any, style?: any) {
+    //     // console.log("set data", sel, style);
+    // }
 
     render() {
         this.defineUi()
         // console.log("SE render")
         const { q2report, selection, reportEditor } = this.props;
-        this.propsEditor.hookInputChanged = (form) => {
-            // console.log("C")
-
+        this.propsEditor.hookInputChanged = (form: Form) => {
             const style = this.collectStyle(form);
             if (q2report.setStyle(selection, style)) {
                 setTimeout(() => {
-                    this.props.reportEditor.incrementVersion();
+                    reportEditor.incrementVersion();
                 }, 100);
-
             }
         }
 

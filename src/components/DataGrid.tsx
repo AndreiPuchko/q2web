@@ -114,7 +114,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
     } else if (event.key === "Insert" && event.ctrlKey) {
       this.showCrud(this.props.metaData, this.props.metaData.data[selectedRow], COPY);
       event.preventDefault();
-    } else if (event.key === "Escape") {
+    } else if (event.key === "Escape" && this.props.onClose) {
       this.props.onClose();
       event.preventDefault();
     }
@@ -167,7 +167,9 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
 
     switch (action.label) {
       case "Exit":
-        this.props.onClose();
+        if (this.props.onClose) {
+          this.props.onClose();
+        }
         break;
       case "New":
         this.showCrud(this.props.metaData, rowData, NEW);

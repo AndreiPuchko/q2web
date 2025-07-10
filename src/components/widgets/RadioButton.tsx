@@ -57,46 +57,46 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
                 target: {
                     value: newValue,
                     name: col.column
-                }
-            });
-        });
-        if (typeof this.props.col.valid === "function") {
-            const validResult = this.props.col.valid(this.props.form);
-        }
-    };
+                } 
+        } as unknown as React.ChangeEvent<HTMLInputElement>);
+    });
+    // if (typeof this.props.col.valid === "function") {
+    //     const validResult = this.props.col.valid(this.props.form);
+    // }
+};
 
-    focus() {
-        const { id } = this.props;
-        const radio_id = `${id}-${0}`
-        document.getElementById(radio_id)?.focus()
-    }
+focus() {
+    const { id } = this.props;
+    const radio_id = `${id}-${0}`
+    document.getElementById(radio_id)?.focus()
+}
 
-    render() {
-        const { col, id } = this.props;
-        const options = col.pic.split(';');
-        return (
-            <div className="Q2RadioButton">
-                {options.map((opt: any, index: number) => {
-                    const radio_id = `${id}-${index}`
-                    return (
-                        <label key={index}>
-                            <input
-                                type="radio"
-                                name={col.column}
-                                id={radio_id}
-                                value={opt}
-                                checked={this.state.selectedValue === opt}
-                                onChange={this.handleChange}
-                                onBlur={this.focusOut}
-                                onFocus={this.focusIn}
-                            />
-                            {opt}
-                        </label>
-                    )
-                })}
-            </div>
-        );
-    }
+render() {
+    const { col, id } = this.props;
+    const options = col.pic.split(';');
+    return (
+        <div className="Q2RadioButton">
+            {options.map((opt: any, index: number) => {
+                const radio_id = `${id}-${index}`
+                return (
+                    <label key={index}>
+                        <input
+                            type="radio"
+                            name={col.column}
+                            id={radio_id}
+                            value={opt}
+                            checked={this.state.selectedValue === opt}
+                            onChange={this.handleChange}
+                            onBlur={this.focusOut}
+                            onFocus={this.focusIn}
+                        />
+                        {opt}
+                    </label>
+                )
+            })}
+        </div>
+    );
+}
 }
 
 export default Q2RadioButton;

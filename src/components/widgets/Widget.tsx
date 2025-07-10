@@ -5,7 +5,7 @@ export interface WidgetProps {
     name: string;
     value: any;
     col: any;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => void;
     readOnly: boolean;
     form: any;
     // valid: (form: any) => boolean;

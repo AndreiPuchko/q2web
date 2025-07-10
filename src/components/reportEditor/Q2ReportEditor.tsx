@@ -10,21 +10,30 @@ interface Q2ReportEditorProps {
     zoomWidthPx?: number;
 }
 
-function stableStringify(obj) {
+function stableStringify(obj: any) {
     return JSON.stringify(obj, Object.keys(obj).sort());
 }
+export type CellSelection = { type: "none" } |
+{
+    type: "cell",
+    pageIdx: number,
+    columnSetIdx: number,
+    rowSetIdx: number,
+    rowIdx: number,
+    columnIdx: number
+}
+type RowSetSelection = { type: "row", pageIdx: number, columnSetIdx: number, rowSetIdx: number }
 
-type Selection =
+export type Selection =
     | { type: "report" }
     | { type: "page", pageIdx: number }
     | { type: "column", pageIdx: number, columnSetIdx: number }
     | { type: "colwidth", pageIdx: number, columnSetIdx: number, widthIdx: number }
-    | { type: "row", pageIdx: number, columnSetIdx: number, rowSetIdx: number }
-    | { type: string, pageIdx: number, columnSetIdx: number, rowSetIdx: number }
+    | RowSetSelection
     | { type: "rowheight", pageIdx: number, columnSetIdx: number, rowSetIdx: number, heightIdx: number }
-    | { type: string, pageIdx: number, columnSetIdx: number, rowSetIdx: number, heightIdx: number }
-    | { type: "cell", pageIdx: number, columnSetIdx: number, rowSetIdx: number, rowIdx: number, columnIdx: number }
-    | { type: string, pageIdx: number, columnSetIdx: number, rowSetIdx: number, rowIdx: number, columnIdx: number }
+    | CellSelection
+
+
 
 interface Q2ReportEditorState {
     selection?: Selection;
@@ -87,6 +96,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     handleContextMenuItemClick(command: string) {
         const { contextMenu, selection } = this.state;
         if (!selection) return;
+        if (contextMenu === undefined) return;
         if (command === "Clone") {
             if (this.q2report.addObjectAboveBelow(selection, "above", true)) {
                 this.incrementVersion();
@@ -135,9 +145,9 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 selection: selection
             });
             return;
-        } else if (command === "Merge cells") {
-            const { selStart, selEnd, selList } = this.reportViewRef.current?.state;
-            this.q2report.mergeSelectedCells(selection, { selStart, selEnd, selList });
+        } else if (command === "Merge cells" && this.reportViewRef.current?.state !== undefined) {
+            const { selStart, selEnd } = this.reportViewRef.current.state;
+            this.q2report.mergeSelectedCells({ selStart, selEnd });
             this.incrementVersion();
             this.setState({
                 contextMenu: undefined,
@@ -199,9 +209,13 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         } else if (sel.type === "row") {
             const columns = this.q2report.getColsSet(sel);
             const count = columns?.rows?.length ?? 0;
-            let idx = sel.rowSetIdx;
-            if (typeof idx === "string") {
-                idx = parseInt(idx.replace("-header", "").replace("-footer", ""));
+            let idx: number = 0;
+            if (typeof sel.rowSetIdx === "string") {
+                let tmp: string = sel.rowSetIdx;
+                idx = parseInt(tmp.replace("-header", "").replace("-footer", ""));
+            }
+            else {
+                idx = sel.rowSetIdx;
             }
             filteredMenuItems = menuItems.filter(item =>
                 (item !== "Move Up" || idx > 0) &&
@@ -215,11 +229,12 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
                 (item !== "Move Up" || sel.heightIdx > 0) &&
                 (item !== "Move Down" || sel.heightIdx < count - 1)
             );
-        } else if (sel.type === "cell") {
+        } else if (sel?.type === "cell") {
             const cell = this.q2report.getCell(sel)
             filteredMenuItems = []
-
-            if (this.reportViewRef.current?.isCellSelected(this.state.selection) &&
+            if (this.state.selection !== undefined &&
+                this.state.selection.type === "cell" &&
+                this.reportViewRef.current?.isCellSelected(this.state.selection) &&
                 (stableStringify(this.reportViewRef.current?.state.selStart) !==
                     stableStringify(this.reportViewRef.current?.state.selEnd)))
                 filteredMenuItems.push("Merge cells");
@@ -293,14 +308,14 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
 class ReportView extends React.Component<any, {
     version: number,
-    selStart: {},
-    selEnd: {},
-    selList: Set,
+    selStart: CellSelection,
+    selEnd: CellSelection,
+    selList: Set<string>,
     isDragging: boolean
 }> {
     constructor(props: any) {
         super(props);
-        this.state = { version: 0, selStart: {}, selEnd: {}, isDragging: false, selList: new Set() };
+        this.state = { version: 0, selStart: { type: "none" }, selEnd: { type: "none" }, isDragging: false, selList: new Set() };
     }
 
     componentDidMount() {
@@ -317,7 +332,7 @@ class ReportView extends React.Component<any, {
     };
 
     clearSelection() {
-        this.setState({ selStart: {}, selEnd: {}, isDragging: false, selList: new Set() })
+        this.setState({ selStart: { type: "none" }, selEnd: { type: "none" }, isDragging: false, selList: new Set() })
     }
 
     incrementVersion = () => {
@@ -339,20 +354,20 @@ class ReportView extends React.Component<any, {
                 ? parseFloat(w) * pzCm
                 : parseFloat(w)
         );
-        const totalCm = colWidthsCm.reduce((a, b) => a + b, 0);
+        const totalCm = colWidthsCm.reduce((a: number, b: number) => a + b, 0);
         const scale = totalCm > 0 ? (this.props.zoomWidthPx! / (totalCm * pxPerCm)) : 1;
-        const scaledColWidthsCm = colWidthsCm.map(cm => cm * scale);
+        const scaledColWidthsCm = colWidthsCm.map((cm: number) => cm * scale);
         const firstColWidthPx = 80;
         const secondColWidthPx = 80;
-        const cellWidthsPx = scaledColWidthsCm.map(cm => cm * pxPerCm);
-        const gridWidthPx = cellWidthsPx.reduce((a, b) => a + b, 0);
+        const cellWidthsPx = scaledColWidthsCm.map((cm: number) => cm * pxPerCm);
+        const gridWidthPx = cellWidthsPx.reduce((a: number, b: number) => a + b, 0);
         return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
     }
 
     RenderPage(page: any, pageIdx: number) {
-        const { selection, q2report, handleSelect, handleContextMenu, zoomWidthPx } = this.props;
+        const { selection, handleSelect, handleContextMenu, zoomWidthPx } = this.props;
         const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
-        const pxPerCm = this.props.zoomWidthPx / availableWidthCm;
+        const pxPerCm = zoomWidthPx / availableWidthCm;
         if (!page.style) {
             page.style = {}
         }
@@ -540,8 +555,8 @@ class ReportView extends React.Component<any, {
                         cursor: "pointer",
                         filter: isHidden ? "grayscale(0.7)" : undefined
                     }}
-                    onClick={() => this.handleSelect({ type: "column", pageIdx: pageIdx!, columnSetIdx: columnSetIdx! })}
-                    onContextMenu={e => this.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, columnSetIdx: columnSetIdx! })}
+                    onClick={() => this.props.handleSelect({ type: "column", pageIdx: pageIdx!, columnSetIdx: columnSetIdx! })}
+                    onContextMenu={e => this.props.handleContextMenu(e, { type: "column", pageIdx: pageIdx!, columnSetIdx: columnSetIdx! })}
                 >
                     <div
                         className="q2-report-colssection-header"
@@ -641,7 +656,7 @@ class ReportView extends React.Component<any, {
         });
         const rowClickParams = { type: "row", pageIdx: pageIdx!, columnSetIdx: columnSetIdx!, rowSetIdx };
         const rowHeights: string[] = [];
-        rowSet.heights.forEach(element => {
+        rowSet.heights.forEach((element: string) => {
             const elsplt = element.split("-")
             if (parseFloat(elsplt[1]) !== 0) {
                 rowHeights.push(`${elsplt[1]}cm`)
@@ -742,7 +757,7 @@ class ReportView extends React.Component<any, {
         columnSetIdx: number,
         rowSetIdx: number,
     ) {
-        const clickParams = {
+        const clickParams: CellSelection = {
             type: "cell",
             pageIdx: pageIdx!,
             columnSetIdx: columnSetIdx!,
@@ -812,7 +827,7 @@ class ReportView extends React.Component<any, {
         );
     }
 
-    cellMouseDown(event, selection) {
+    cellMouseDown(event: React.MouseEvent, selection: CellSelection) {
         if (event?.button === 2) return
         this.props.handleSelect(selection)
         const isMulti = event?.ctrlKey || event?.metaKey;
@@ -837,7 +852,9 @@ class ReportView extends React.Component<any, {
         })
     }
 
-    cellMouseEnter(e, sel) {
+    cellMouseEnter(event: React.MouseEvent, sel: CellSelection) {
+        if (event?.button !== 0) return
+        if (this.state.selStart.type === "none" || sel.type === "none") return;
         if (
             this.state.selStart.pageIdx !== sel.pageIdx ||
             this.state.selStart.columnSetIdx !== sel.columnSetIdx ||
@@ -890,22 +907,24 @@ class ReportView extends React.Component<any, {
             else {
                 if (key === "padding") {
                     style["padding"] = reportStyle[key].split(" ")
-                        .map(x => x.includes("cm") ? x : `${x}cm`)
+                        .map((x: string) => x.includes("cm") ? x : `${x}cm`)
                         .join(" ");
                 }
             }
         }
     }
 
-    isCellSelected(clickParams) {
+    isCellSelected(clickParams: CellSelection) {
+        if (clickParams.type === "none") return;
         const { pageIdx, columnSetIdx, rowSetIdx, rowIdx, columnIdx } = clickParams
         const { selStart, selEnd } = this.state;
         if (this.state.selList.has(stableStringify(clickParams))) return true
         if (!selStart || !selEnd) return false;
+        if (selStart.type === "none" || selEnd.type === "none") return
 
-        if (selStart.pageIdx !== pageIdx ||
-            selStart.columnSetIdx !== columnSetIdx ||
-            selStart.rowSetIdx !== rowSetIdx) return
+        if (selStart?.pageIdx !== pageIdx ||
+            selStart?.columnSetIdx !== columnSetIdx ||
+            selStart?.rowSetIdx !== rowSetIdx) return
 
         const { rMin, rMax, cMin, cMax } = this.props.q2report.getSelectionRanges(selStart, selEnd)
 
@@ -913,7 +932,7 @@ class ReportView extends React.Component<any, {
     };
 
     render() {
-        const { selection, q2report, handleSelect, handleContextMenu, zoomWidthPx, reportEditor } = this.props;
+        const { selection, q2report, handleSelect, handleContextMenu } = this.props;
         const buttonStyle = {
             padding: "3px 18px",
             margin: "1px 10px",
@@ -928,7 +947,6 @@ class ReportView extends React.Component<any, {
 
         return (
             <div>
-                {/* <Q2ContentEditor selection={selection} q2report={q2report} reportEditor={reportEditor} /> */}
                 <div
                     className="q2-report-header"
                     style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}

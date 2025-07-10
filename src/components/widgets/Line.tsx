@@ -23,7 +23,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         // Initialize state from col.data or props.data
         let value = (props.col && typeof props.col.data !== "undefined")
             ? props.col.data
-            : (typeof props.data !== "undefined" ? props.data : "");
+            : (typeof props.col.data !== "undefined" ? props.col.data : "");
         // Format decimals if needed (dec and num are treated the same)
         if ((props.col?.datatype === "dec" || props.col?.datatype === "num") && value !== undefined && value !== null && value !== "") {
             let num = Number(value);
@@ -125,7 +125,8 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
     handleSpin = (delta: number) => {
         const { col } = this.props;
-        const value = this.inputRef.current.value;
+        const value = this.inputRef.current?.value;
+        if (value === undefined) return
         let cursorPos = this.inputRef.current?.selectionStart ?? value.length;
         const prevLength = value.length;
 
@@ -385,7 +386,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         const value = this.state.value;
 
         const showSpin = (col?.datatype === "dec" || col?.datatype === "num" || col?.datatype === "int");
-        const spinStyle = { padding: 0, width: "2cap", height: "1.5cap", fontSize: "1cap", lineHeight: 1, userSelect: "none", border: 0 };
+        const spinStyle = { padding: 0, width: "2cap", height: "1.5cap", fontSize: "1cap", lineHeight: 1, UserSelect: "none", border: 0 };
 
         // Add onWheel handler for spin
         const handleWheel = (e: React.WheelEvent<HTMLInputElement>) => {

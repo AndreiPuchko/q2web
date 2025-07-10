@@ -1,5 +1,4 @@
 import React, { Component, CSSProperties } from "react";
-import Q2CheckBox from './widgets/CheckBox';
 import { focusFirstFocusableElement } from '../../utils/dom';
 
 interface Q2PanelProps {
@@ -55,12 +54,12 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         }
     }
 
-    componentDidUpdate(prevProps: Readonly<Q2PanelProps>, prevState: Readonly<{ checkChecked: boolean; }>, snapshot?: any): void {
+    componentDidUpdate(): void {
         this.componentDidMount();
     }
 
 
-    checkStatusChanged(checkStatus) {
+    checkStatusChanged(checkStatus?: any) {
         // If panel has check, update form.c for all children to match panel check status
         // console.log(this.state.checkChecked);
         if (this.hasCheck && this.panelRef) {
@@ -89,9 +88,11 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
             col.checkChecked = checked;
             if (checked && this.panelRef) {
                 const fieldset = this.panelRef.querySelector('fieldset.field-set-style');
-                setTimeout(() => {
-                    focusFirstFocusableElement(fieldset);
-                }, 100);
+                if (fieldset instanceof HTMLElement) {
+                    setTimeout(() => {
+                        focusFirstFocusableElement(fieldset);
+                    }, 100);
+                }
             }
         });
     };
@@ -99,7 +100,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     panelRef: HTMLDivElement | null = null;
 
     render() {
-        const { col, id, data, onChange, readOnly, form, children, renderInput, renderPanel, formData, w, setState } = this.props;
+        const { col, form, children, renderInput, renderPanel, w, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
         let className = col.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
         let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };

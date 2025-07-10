@@ -9,13 +9,12 @@ import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
-import { GiConsoleController } from "react-icons/gi";
 
 interface FormProps {
     q2form: Q2Form;
-    onClose: () => void;
+    onClose?: () => void;
     rowData?: any;
-    isTopDialog: boolean;
+    isTopDialog?: boolean;
 }
 
 class Form extends Component<FormProps, { formData: { [key: string]: any }, panelChecks: { [key: string]: boolean } }> {
@@ -131,7 +130,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     };
 
     handleAction = (action: any) => {
-        if (action.label === "Exit") {
+        if (action.label === "Exit" && this.props.onClose) {
             this.props.onClose();
         } else {
             // console.log(action.label);
@@ -139,7 +138,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     };
 
     handleCancel = () => {
-        this.props.onClose();
+        if (this.props.onClose) {
+            this.props.onClose();
+        }
     };
 
     getWidgetData = (columnName: string) => {

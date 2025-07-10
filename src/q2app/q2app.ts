@@ -1,5 +1,5 @@
 import { Q2Form } from "../q2_modules/Q2Form"
-import {fileMenuAbout, fileMenuSettings, fileMenu} from "./fileMenu"
+import { fileMenu } from "./FileMenu"
 import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
 export const q2forms: Q2Form[] = [];
 

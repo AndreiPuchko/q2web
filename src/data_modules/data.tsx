@@ -48,7 +48,7 @@ export const forms: Q2Form[] = [];
 
 
 // Create forms using Q2Form class
-const form1 = new Q2Form("datagrid1", "Data Grid1", "Tables|Data Grid1", 1, {
+const form1 = new Q2Form("Tables|Data Grid1", "Data Grid1", "datagrid1", {
     columns,
     data: mockData1,
     actions: actions1,
@@ -61,7 +61,7 @@ const form1 = new Q2Form("datagrid1", "Data Grid1", "Tables|Data Grid1", 1, {
 });
 forms.push(form1);
 
-const form2 = new Q2Form("datagrid2", "Data Grid2", "Tables|Other|Data Grid2", true, {
+const form2 = new Q2Form("Tables|Other|Data Grid2", "Data Grid2", "datagrid2", {
     columns,
     data: mockData2,
     actions: actions1,
@@ -74,7 +74,7 @@ const form2 = new Q2Form("datagrid2", "Data Grid2", "Tables|Other|Data Grid2", t
 });
 forms.push(form2);
 
-const form3 = new Q2Form("datagrid3", "Data Grid3", "Tables|Other|Data Grid3", 0, {
+const form3 = new Q2Form("Tables|Other|Data Grid3", "Data Grid3", "datagrid3", {
     columns,
     data: mockData2,
     actions: actions1,
@@ -87,7 +87,7 @@ const form3 = new Q2Form("datagrid3", "Data Grid3", "Tables|Other|Data Grid3", 0
 });
 forms.push(form3);
 
-const messageBox = new Q2Form("messagebox", "Message Box 2", "Tables|About", true, {
+const messageBox = new Q2Form("Tables|About", "Message Box 2", "messagebox", {
     columns: [
         { key: "0", "column": "message", "label": "Message", "value": "Lorem ipsum", "readonly": true, "control": "text" },
         { key: "1", "column": "description", "label": "Description", "value": "This is a Description...", "readonly": true, "control": "text" },
@@ -104,7 +104,7 @@ const messageBox = new Q2Form("messagebox", "Message Box 2", "Tables|About", tru
 forms.push(messageBox);
 
 // Example usage:
-const exampleForm = new Q2Form("Layouts", "Example Form", "Examples|Layouts form", true, {
+const exampleForm = new Q2Form("Examples|Layouts form", "Example Form", "Layouts", {
     description: "This is an example form created using Q2Form",
     icon: "form",
     width: 800,
@@ -141,7 +141,7 @@ exampleForm.add_control("var4", "Radio button", { pic: "Red;White", control: "ra
 exampleForm.hasCancelButton = true;
 forms.push(exampleForm);
 
-const form4 = new Q2Form("form2", "Example Form 2", "Examples|Form2", true, {
+const form4 = new Q2Form("Examples|Form2", "Example Form 2", "form2", {
     description: "This is an example form created using Q2Form",
     icon: "form",
 });
