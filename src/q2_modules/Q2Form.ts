@@ -107,6 +107,7 @@ export class Q2Form {
     w: Record<string, any> = {};
     c: Record<string, any> = {};
     hookInputChanged?: (form: Form) => void;
+    hookFocusChanged?: (form: Form) => void;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;

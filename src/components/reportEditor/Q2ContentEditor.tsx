@@ -14,7 +14,7 @@ class Q2ContentEditor extends Component<ContentProps> {
 
     q2report = this.props.q2report;
 
-    definePageEditor(){
+    definePageEditor() {
         const editor = new Q2Form("", "", "");
         editor.add_control("/h", "")
         const page = this.q2report.getObject(this.props.selection);
@@ -35,7 +35,7 @@ class Q2ContentEditor extends Component<ContentProps> {
         editor.add_control("page_margin_bottom", "MB", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_bottom, range: "0" });
         return editor
     }
-    
+
     defineSectionEditor() {
         const editor = new Q2Form("", "", "");
         const sectionData = this.q2report.getObject(this.props.selection);
@@ -84,16 +84,17 @@ class Q2ContentEditor extends Component<ContentProps> {
         const { selection, q2report } = this.props;
         const mode = this.props.selection?.type;
 
-        let editor: Q2Form | string;
+        let editor: Q2Form;
         if (mode === "row") editor = this.defineSectionEditor();
         else if (mode === "page") editor = this.definePageEditor();
         else if (mode === "colwidth") editor = this.defineWidthEditor();
         else if (mode === "rowheight") editor = this.defineHeightEditor();
         else if (mode === "cell") editor = this.defineCellEditor();
-        else editor = "";
+        else return (
+            <><div className="q2-report-content-editor"></div></>
+        );
 
-
-        if (editor !== "") {
+        if (true) {
             editor.hookInputChanged = (form) => {
                 const dataChunk: { [key: string]: number | string } = {};
                 if (selection.type === "colwidth") {
@@ -136,18 +137,10 @@ class Q2ContentEditor extends Component<ContentProps> {
             return (
                 <>
                     <div className="q2-report-content-editor">
-                        {editor !== "" && < Form q2form={editor} />}
+                        {< Form q2form={editor} />}
                     </div>
                 </>
             );
-        }
-        else {
-            return (
-                <>
-                    <div className="q2-report-content-editor">
-
-                    </div>
-                </>)
         }
     }
 }

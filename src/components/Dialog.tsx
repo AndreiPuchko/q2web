@@ -19,12 +19,12 @@ interface DialogState {
 }
 
 class Dialog extends React.Component<DialogProps, DialogState> {
-  dialogRef: React.RefObject<HTMLDivElement>;
+  dialogRef: React.RefObject<HTMLDivElement | null>;
   prevStateRef: { width: string, height: string, left: string, top: string } | null;
 
   constructor(props: DialogProps) {
     super(props);
-    this.dialogRef = React.createRef();
+    this.dialogRef = React.createRef<HTMLDivElement>();
     this.prevStateRef = null;
     this.state = {
       isMaximized: false

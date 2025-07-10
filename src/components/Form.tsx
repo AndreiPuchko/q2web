@@ -63,7 +63,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         // console.log("DM", this.s);
     }
 
-    componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
+    // componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
+    componentDidUpdate(_: any, prevState: { formData: { [key: string]: any } }) {
         // Focus input when a check-linked input becomes checked
         // console.log("DU", this.s)
         // this.scanAndCopyValues();
@@ -88,7 +89,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     handleFocus = () => {
         // console.log("valid", this.prevFocus, this.focus)
         if (typeof this.w[this.prevFocus]?.props.col.valid === "function") {
-            const validResult = this.w[this.prevFocus].props.col.valid(this);
+            // const validResult = this.w[this.prevFocus].props.col.valid(this);
         }
         this.scanAndCopyValues();
         if (typeof this.props.q2form?.hookFocusChanged === "function") {
@@ -126,7 +127,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     handleSubmit = () => {
         // e.preventDefault();
         console.log("Form submitted:", this.state.formData);
-        this.props.onClose();
+        if (this.props.onClose) this.props.onClose();
     };
 
     handleAction = (action: any) => {

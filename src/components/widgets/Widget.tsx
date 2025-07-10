@@ -3,7 +3,7 @@ import { Component } from 'react';
 export interface WidgetProps {
     id: string;
     name: string;
-    value: any;
+    data?: any;
     col: any;
     onChange: (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => void;
     readOnly: boolean;
@@ -13,7 +13,7 @@ export interface WidgetProps {
 
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     getData() {
-        return this.props.value;
+        return this.props.data;
     }
 
     focusIn = () => {
