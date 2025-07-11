@@ -61,31 +61,30 @@ const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", 
 
 
 q2forms.push(...fileMenu);
-
 q2forms.push(exampleForm);
 q2forms.push(new Q2Form("Refs|-"));
 q2forms.push(messageBox);
 
 
 
-const messageBox1 = new Q2Form("1|1", "Message Box 1", "messagebox1", {
+const messageBox1 = new Q2Form("Dev|1", "Message Box 1", "messagebox1", {
     columns: [
         { key: "0", column: "message", label: "Message1", data: "Lorem ipsum1", readonly: true, control: "text" },
     ],
     hasOkButton: true
 });
 
-const messageBox2 = new Q2Form("1|2", "Message Box 2", "messagebox2", {
+const messageBox2 = new Q2Form("Dev|2", "Message Box 2", "messagebox2", {
     columns: [
         { key: "0", column: "message", label: "Message2", data: "Lorem ipsum2", readonly: true, control: "text" },
     ],
     hasOkButton: true
 });
 
-const messageBox0 = new Q2Form("1|0000000000000000", "Message Box 0", "messagebox0", {
+const reportEditor = new Q2Form("Dev|Report Editor", "Report Editor Dialog Demo", "redemo", {
     columns: [
-        { key: "0", column: "message1", label: "", data: messageBox1, control: "form" },
-        { key: "1", column: "message2", label: "", data: messageBox2, control: "form" },
+        // { key: "0", column: "message1", label: "", data: messageBox1, control: "form" },
+        // { key: "1", column: "message2", label: "", data: messageBox2, control: "form" },
         { key: "2", column: "red", label: "", data: Q2ReportEditor, control: "widget" },
     ],
     hasOkButton: true,
@@ -93,6 +92,7 @@ const messageBox0 = new Q2Form("1|0000000000000000", "Message Box 0", "messagebo
 });
 
 
+q2forms.push(reportEditor);
+q2forms.push(new Q2Form("Dev|-"));
 q2forms.push(messageBox1);
 q2forms.push(messageBox2);
-q2forms.push(messageBox0);
