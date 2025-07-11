@@ -11,49 +11,68 @@ interface MainMenuProps {
 
 function buildMenuStructure(forms: Q2Form[]): any {
   const structure: any = {};
-  // structure["File"] = {key: "121", label: "File", menutoolbar: 1}
-  forms.forEach((form) => {
-    if (!form.menubarpath) return; // Ignore forms without menubarpath
+
+  let uid: number = 0;
+  forms.forEach((form, index) => {
+    if (!form.menubarpath) return;
     const path = form.menubarpath.split('|');
     let currentLevel = structure;
-    path.forEach((part, index) => {
+
+    path.forEach((part, i) => {
       if (!currentLevel[part]) {
-        currentLevel[part] = index === path.length - 1 ? { key: form.key, label: part, menutoolbar: form.menutoolbar } : {};
+        uid++;
+
+        currentLevel[part] = {
+          __meta__: {
+            label: part,
+            seq: uid,
+            key: i === path.length - 1 ? form.key : null,
+            menutoolbar: i === path.length - 1 ? form.menutoolbar : null
+          },
+        };
       }
       currentLevel = currentLevel[part];
     });
   });
+  // console.log(structure)
   return structure;
-};
+}
+
 
 const renderMenu = (menuStructure: any, showDialog: (metaData: any) => void, hideDropdown: () => void) => {
-  return Object.keys(menuStructure).map((menu) => {
-    const item = menuStructure[menu];
-    if (item.key) {
-      if (item.label === "-") {
-        return (<hr key={item.key}/>)
-      }
-      else {
-        return (
-          <button key={item.key} onClick={() => {
-            showDialog(q2forms.find(form => form.key === item.key));
-            hideDropdown();
-          }}>
-            {item.label}
-          </button>
-        );
-      }
+  const items = Object.entries(menuStructure)
+    .filter(itm => itm[0] !== "__meta__")
+    .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))
+    .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
+
+  return items.map(item => {
+    if (item.key && item.label === '-') {
+      return <hr key={item.key} />;
     }
+
+    if (item.label !== "" && item.key && item.key !== null) {
+      return (
+        <button key={item.key} onClick={() => {
+          showDialog(q2forms.find(form => form.key === item.key));
+          hideDropdown();
+        }}>
+          {item.label}
+        </button>
+      );
+    }
+
+    // It's a submenu
     return (
-      <div className='submenu' key={menu}>
-        <button className='submenubtn'>{menu}</button>
+      <div className='submenu' key={item.label}>
+        <button className='submenubtn'>{item.label}</button>
         <div className='submenu-content'>
-          {renderMenu(item, showDialog, hideDropdown)}
+          {renderMenu(item.children, showDialog, hideDropdown)}
         </div>
       </div>
     );
   });
 };
+
 
 const renderToolButtons = (forms: Q2Form[], showDialog: (metaData: any) => void, hideDropdown: () => void) => {
   return forms.map((form) => {
@@ -74,7 +93,10 @@ const renderToolButtons = (forms: Q2Form[], showDialog: (metaData: any) => void,
 const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
   const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
   const menuStructure = buildMenuStructure(q2forms);
-  // console.log(menuStructure);
+
+  const items = Object.entries(menuStructure)
+    .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))
+    .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
 
   const openNewTab = () => {
     window.open('/', '_blank');
@@ -87,11 +109,14 @@ const MainMenu: React.FC<MainMenuProps> = ({ showDialog }) => {
   return (
     <nav className='MainMenuBar'>
       <div className='menuItems' onMouseLeave={hideDropdown}>
-        {Object.keys(menuStructure).map((mainMenu) => (
-          <div className='dropdown' key={mainMenu} onMouseEnter={() => setVisibleDropdown(mainMenu)}>
-            <button className='dropbtn'>{mainMenu}</button>
-            <div className='dropdown-content' style={{ display: visibleDropdown === mainMenu ? 'block' : 'none' }}>
-              {renderMenu(menuStructure[mainMenu], showDialog, hideDropdown)}
+        {items.map((item) => (
+          <div className='dropdown' key={item.seq} onMouseEnter={() => setVisibleDropdown(item.label)}>
+            <button className='dropbtn'>{item.label}</button>
+            <div
+              className='dropdown-content'
+              style={{ display: visibleDropdown === item.label ? 'block' : 'none' }}
+            >
+              {renderMenu(item.children, showDialog, hideDropdown)}
             </div>
           </div>
         ))}
