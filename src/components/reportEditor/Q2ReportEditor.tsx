@@ -658,7 +658,10 @@ class ReportView extends React.Component<any, {
         const rowHeights: string[] = [];
         rowSet.heights.forEach((element: string) => {
             const elsplt = element.split("-")
-            if (parseFloat(elsplt[1]) !== 0) {
+            if (parseFloat(elsplt[0]) !== 0) {
+                rowHeights.push(`${elsplt[0]}cm`)
+            }
+            else if (parseFloat(elsplt[1]) !== 0) {
                 rowHeights.push(`${elsplt[1]}cm`)
             }
             else {

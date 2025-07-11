@@ -177,10 +177,11 @@ export class Q2Report {
             }
         }
         else if (selection.type === "rowheight") {
-            if (dataChunk.heights === undefined) return false;
-            if (object.heights[selection.heightIdx] !== dataChunk.height) {
+            if (typeof dataChunk.heights !== "string") return false;
+            if (dataChunk.heights.includes("undefined")) return false;
+            if (object.heights[selection.heightIdx] !== dataChunk.heights) {
                 changed = true;
-                object.heights[selection.heightIdx] = dataChunk.height
+                object.heights[selection.heightIdx] = dataChunk.heights
             }
         }
         else if (selection.type === "cell") {

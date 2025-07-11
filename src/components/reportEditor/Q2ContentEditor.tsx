@@ -19,14 +19,6 @@ class Q2ContentEditor extends Component<ContentProps> {
         editor.add_control("/h", "")
         const page = this.q2report.getObject(this.props.selection);
 
-        // editor.hookInputChanged = (form) => {
-        //     const dataChunk: { [key: string]: number | string } = {};
-        //     dataChunk[form.focus] = form.s[form.focus];
-        //     if (q2report.setPageData(pageIdx, dataChunk)) {
-        //         this.incrementVersion();
-        //         this.forceUpdate
-        //     }
-        // }
         editor.add_control("page_width", "W", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_width, range: "0" });
         editor.add_control("page_height", "H", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_height, range: "0" });
         editor.add_control("page_margin_left", "ML", { datalen: 6, datatype: "dec", datadec: 2, data: page.page_margin_left, range: "0" });
@@ -104,7 +96,7 @@ class Q2ContentEditor extends Component<ContentProps> {
                     }
                 }
                 else if (selection.type === "rowheight") {
-                    dataChunk["height"] = `${form.s.h0}-${form.s.h1}`;
+                    dataChunk["heights"] = `${form.s.h0}-${form.s.h1}`;
                 }
                 else if (selection.type === "cell") {
                     dataChunk["data"] = form.s.data;
