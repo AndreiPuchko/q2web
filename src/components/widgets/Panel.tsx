@@ -2,10 +2,10 @@ import React, { Component, CSSProperties } from "react";
 import { focusFirstFocusableElement } from '../../utils/dom';
 
 interface Q2PanelProps {
-    id: string;
+    // id: string;
     name: string;
     col: any;
-    data: any;
+    // data: any;
     onChange: (e: any) => void;
     readOnly: boolean;
     form: any;

@@ -114,14 +114,14 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             this.focus = name;
             this.props.q2form.hookInputChanged(this);
         }
-        if (name !== "") {
-            this.setState((prevState) => ({
-                formData: {
-                    ...prevState.formData,
-                    [name]: value,
-                },
-            }), this.handleResize);
-        }
+        // if (name !== "") {
+        //     this.setState((prevState) => ({
+        //         formData: {
+        //             ...prevState.formData,
+        //             [name]: value,
+        //         },
+        //     }), this.handleResize);
+        // }
     };
 
     handleSubmit = () => {
@@ -277,28 +277,12 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     renderPanel = (panel: any) => {
         if (!panel || !panel.children) return null;
 
-        const panel_id = `${panel.key}-panel-id`;
-
-        // Determine if this panel should be disabled
-        const checked = panel.metadata?.check
-            ? (this.state.panelChecks[panel.key] !== undefined
-                ? this.state.panelChecks[panel.key]
-                : true)
-            : true;
-
-        // Ensure checkChecked is set for panel's checkbox
-        if (panel.metadata?.check && typeof panel.metadata.checkChecked === "undefined") {
-            panel.metadata.checkChecked = false;
-        }
-
         // Use Q2Panel for rendering the panel
         return (
             <Q2Panel
                 key={panel.key}
-                id={panel_id}
                 name={panel.key}
                 col={panel.metadata}
-                data={checked}
                 onChange={this.handlePanelCheck(panel.key)}
                 readOnly={false}
                 form={this}
