@@ -111,8 +111,8 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
             style = {
                 display: "grid",
                 gridTemplateColumns: "max-content 1fr",
-                gap: "0.2em",
-                padding: "0.5cap"
+                // gap: "0.2em",
+                // padding: "0.5cap"
             };
         } else if (col.column === "/v") {
             style.flexDirection = 'column';

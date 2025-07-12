@@ -305,9 +305,52 @@ const report_json = `{
   "module": "#"
 }`
 
+const data_sets_json = `{
+  "params": {
+    ":id": "1"
+  },
+  "header": [
+    {
+      "id": "1",
+      "date": "2022-06-12",
+      "cid": "2",
+      "q2_time": "20240424142243",
+      "q2_mode": "u",
+      "comment": "Free delivery",
+      "name": "Customer 1",
+      "address": "125 New Street Newcity"
+    }
+  ],
+  "lines": [
+    {
+      "id": "0",
+      "parent_id": "1",
+      "price": "45",
+      "qt": "2",
+      "product": "Product 1",
+      "q2_time": "20240424143641",
+      "q2_mode": "u",
+      "pid": "2",
+      "comment": ""
+    },
+    {
+      "id": "1",
+      "parent_id": "1",
+      "price": "3",
+      "qt": "5",
+      "product": "Product 2",
+      "q2_time": "20240424143645",
+      "q2_mode": "u",
+      "pid": "1",
+      "comment": ""
+    }
+  ]
+}`
 
-function get_report_json() {
-    return JSON.parse(report_json)
+export function get_report_json() {
+  return JSON.parse(report_json)
 }
 
-export default get_report_json;
+export function get_data_sets_json() {
+  return JSON.parse(data_sets_json)
+}

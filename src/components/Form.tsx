@@ -277,39 +277,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     renderPanel = (panel: any, root = false) => {
         if (!panel || !panel.children) return null;
 
-        let className = panel.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
-        let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
-        const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
-
-        if (panel.column === "/f") {
-            // 2-column grid: label right, input left
-            className += " panel-formgrid";
-            style = {
-                display: "grid",
-                gridTemplateColumns: "max-content 1fr",
-                // alignItems: "center",
-                gap: "0.2em",
-                padding: "0.5cap"
-            };
-        } else if (panel.column === "/v") {
-            style.flexDirection = 'column';
-        } else {
-            style.flexDirection = 'row';
-        }
-        style.alignItems = 'start';
-        style.justifyContent = 'flex-start';
-        if ([4, 5, 6].includes(panel?.metadata?.alignment)) {
-            style.alignItems = 'center';
-        }
-        if (panel.label === "") {
-            rootStyle.border = "none";
-            rootStyle.margin = "0px";
-            rootStyle.padding = "0px";
-        }
-
-        if (!root && (panel.column === "/v" || panel.column === "/f")) {
-            // rootStyle.width = '100%';
-        }
         const panel_id = `${panel.key}-panel-id`;
 
         // Determine if this panel should be disabled
