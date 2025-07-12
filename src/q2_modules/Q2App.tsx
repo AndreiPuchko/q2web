@@ -68,7 +68,7 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
   showDialog = (q2form: Q2Form) => {
     const newDialogIndex = this.state.dialogs.length;
     this.setState((prevState) => ({
-      dialogs: [...prevState.dialogs, { key: q2form.key, metaData: q2form }],
+      dialogs: [...prevState.dialogs, { key: q2form.key, q2form: q2form }],
       zIndexMap: { ...prevState.zIndexMap, [newDialogIndex]: newDialogIndex + 1 }
     }));
   };
@@ -95,7 +95,7 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
             <Dialog
               key={index}
               onClose={() => this.closeDialog(index)}
-              q2form={dialog.metaData}
+              q2form={dialog.q2form}
               isTopDialog={index === this.state.dialogs.length - 1}
               zIndex={this.state.zIndexMap[index] || 0}
               showDialog={this.showDialog}

@@ -213,12 +213,12 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   render() {
-    const { onClose, q2form: metaData, zIndex, isTopDialog, rowData, showDialog } = this.props;
+    const { onClose, q2form, zIndex, isTopDialog, rowData, showDialog } = this.props;
     const { isMaximized } = this.state;
-    const { data } = metaData;
+    const { data } = q2form;
     const isDataGrid = data && data.length > 0;
 
-    if (!metaData) {
+    if (!q2form) {
       return null;
     }
 
@@ -229,9 +229,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         style={{ zIndex }}
       >
         <div className="dialog-header" onMouseDown={this.onMoveMouseDown}>
-          <b>{metaData["title"]}</b>
+          <b>{q2form["title"]}</b>
           <div>
-            {metaData.hasMaxButton ? (
+            {q2form.hasMaxButton ? (
               <button className="max-button" onClick={this.handleMaximize}>
                 {isMaximized ? "🗗" : "🗖"}
               </button>
@@ -241,9 +241,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         </div>
         <div className="dialog-content">
           {isDataGrid ? (
-            <DataGrid q2form={metaData} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
+            <DataGrid q2form={q2form} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
           ) : (
-            <Form q2form={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
+            <Form q2form={q2form} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
           )}
         </div>
       </div>
