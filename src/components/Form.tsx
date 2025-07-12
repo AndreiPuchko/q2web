@@ -1,4 +1,4 @@
-import React, { Component, CSSProperties } from "react";
+import React, { Component } from "react";
 import './Form.css'; // Import the CSS file for styling
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Text from './widgets/Text'; // Import the Text widget
@@ -274,7 +274,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         }));
     };
 
-    renderPanel = (panel: any, root = false) => {
+    renderPanel = (panel: any) => {
         if (!panel || !panel.children) return null;
 
         const panel_id = `${panel.key}-panel-id`;
@@ -325,7 +325,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
         return (
             <div ref={this.formRef} className="FormComponent" >
-                {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel, true))}
+                {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel))}
 
                 {((hasOkButton || hasCancelButton) && !subForm) && (
                     <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>

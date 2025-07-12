@@ -119,7 +119,7 @@ export class Q2Form {
         this.menubarpath = menubarpath;
         this.menutoolbar = options.menutoolbar ?? false;
         this.subForm = false;
-        if (options.data) this.data = options.data;
+        if (options.data) this.data = options.data; else this.data = [];
         this.actions = [];
         this.title = title;
         this.icon = "form";

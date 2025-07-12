@@ -13,7 +13,7 @@ interface MainMenuState {
 }
 
 export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
-    menuRef: React.RefObject<HTMLDivElement>;
+    menuRef: React.RefObject<HTMLDivElement | null>;
 
     constructor(props: MainMenuProps) {
         super(props);
@@ -21,7 +21,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             visibleDropdown: null,
             activated: false,
         };
-        this.menuRef = React.createRef();
+        this.menuRef = React.createRef<HTMLDivElement>();
     }
 
     componentDidMount() {
@@ -66,7 +66,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         return structure;
     }
 
-    renderMenu = (menuStructure: any): JSX.Element[] => {
+    renderMenu = (menuStructure: any) => {
         const items = Object.entries(menuStructure)
             .filter(([key]) => key !== "__meta__")
             .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))
@@ -101,7 +101,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         });
     };
 
-    renderToolButtons = (): JSX.Element[] => {
+    renderToolButtons = () => {
         return q2forms.map((form) => {
             const menutoolbar = form.menutoolbar;
             if (menutoolbar === 1 || menutoolbar === true) {
@@ -117,7 +117,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 );
             }
             return null;
-        }).filter(Boolean) as JSX.Element[];
+        }).filter(Boolean);
     };
 
     openNewTab = () => {

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
-import { Q2Form } from "../q2_modules/Q2Form";
+import { Q2Form, Q2Control } from "../q2_modules/Q2Form";
 
 import "./DataGrid.css"
 
@@ -12,7 +12,7 @@ const COPY = "COPY";
 interface DataGridProps {
     q2form: Q2Form;
     onClose: () => void;
-    showDialog: (q2form: Q2Form, rowData: any) => void;
+    showDialog: (q2form: Q2Form) => void;
     isTopDialog: boolean;
 }
 
@@ -143,21 +143,30 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
 
     showCrud = (q2form: Q2Form, rowData: any, mode: string) => {
         if (typeof this.props.showDialog === 'function') {
-            const q2formCopy = { ...q2form }; // Make a copy of metaData
-            delete q2formCopy.data;
+            // const q2formCopy = { ...q2form }; // Make a copy of metaData
+
+            const q2formCopy = new Q2Form();
+            Object.assign(q2formCopy, q2form);
+
+            q2formCopy.data = [];
             q2formCopy.key += mode;
             q2formCopy.title += ".[" + mode + "]";
             q2formCopy.hasOkButton = true;
             q2formCopy.hasCancelButton = true;
 
             if (mode === EDIT || mode === COPY) {
-                q2formCopy.columns = q2formCopy.columns.map((column: any) => ({
-                    ...column,
-                    value: rowData[column.column] || column.value || ""
-                }));
+                q2formCopy.columns.map((column: Q2Control) => (
+                    column.data = rowData[column.column] || column.data || ""
+                ));
+            }
+            else {
+                q2formCopy.columns.map((column: Q2Control) => (
+                    column.data = ""
+                ));
             }
 
-            this.props.showDialog(q2formCopy, rowData); // Pass rowData for all modes
+
+            this.props.showDialog(q2formCopy); // Pass rowData for all modes
         } else {
             console.error('showDialog is not a function');
         }

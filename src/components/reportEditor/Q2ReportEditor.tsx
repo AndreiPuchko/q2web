@@ -3,7 +3,7 @@ import { Q2Report } from "./Q2Report";
 import Q2StyleEditor from "./Q2StyleEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
 import "./Q2ReportEditor.css";
-import { get_report_json, get_data_sets_json } from "./test_report"
+import { get_report_json } from "./test_report"
 
 
 interface Q2ReportEditorProps {
