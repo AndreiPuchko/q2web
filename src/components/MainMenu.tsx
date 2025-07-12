@@ -4,7 +4,7 @@ import { Q2Form } from "../q2_modules/Q2Form";
 import { q2forms } from '../q2app/q2app';
 
 interface MainMenuProps {
-    showDialog: (metaData: any) => void;
+    showDialog: (q2form: Q2Form) => void;
 }
 
 interface MainMenuState {

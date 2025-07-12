@@ -8,10 +8,10 @@ import { Q2Form } from "../q2_modules/Q2Form";
 interface DialogProps {
   onClose: () => void;
   zIndex: number;
-  metaData: Q2Form;
+  q2form: Q2Form;
   isTopDialog: boolean;
   rowData?: any;
-  showDialog: (metaData: any) => void;
+  showDialog: (q2form: Q2Form) => void;
 }
 
 interface DialogState {
@@ -70,7 +70,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       top: dialog.style.top,
     };
 
-    const title = this.props.metaData.title.replace(/\[.*?\]/g, '');
+    const title = this.props.q2form.title.replace(/\[.*?\]/g, '');
     Cookies.set(`dialogState_${title}`, JSON.stringify(dialogState));
   };
 
@@ -78,7 +78,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     const dialog = this.dialogRef.current;
     if (!dialog) return;
 
-    const title = this.props.metaData.title.replace(/\[.*?\]/g, '');
+    const title = this.props.q2form.title.replace(/\[.*?\]/g, '');
     const dialogState = Cookies.get(`dialogState_${title}`);
     if (dialogState) {
       const { width, height, left, top } = JSON.parse(dialogState);
@@ -213,7 +213,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   render() {
-    const { onClose, metaData, zIndex, isTopDialog, rowData, showDialog } = this.props;
+    const { onClose, q2form: metaData, zIndex, isTopDialog, rowData, showDialog } = this.props;
     const { isMaximized } = this.state;
     const { data } = metaData;
     const isDataGrid = data && data.length > 0;
@@ -241,7 +241,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         </div>
         <div className="dialog-content">
           {isDataGrid ? (
-            <DataGrid metaData={metaData} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
+            <DataGrid q2form={metaData} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
           ) : (
             <Form q2form={metaData} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
           )}

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
+import { Q2Form } from "../q2_modules/Q2Form";
+
 import "./DataGrid.css"
 
 const EDIT = "EDIT";
@@ -8,9 +10,9 @@ const COPY = "COPY";
 // const DELETE = "DELETE";
 
 interface DataGridProps {
-    metaData: Record<string, any>;
+    q2form: Q2Form;
     onClose: () => void;
-    showDialog: (metaData: Record<string, any>, rowData: any) => void;
+    showDialog: (q2form: Q2Form, rowData: any) => void;
     isTopDialog: boolean;
 }
 
@@ -74,7 +76,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
     handleKeyDown = (event: any) => {
         if (!this.props.isTopDialog) return;
         const { selectedRow, visibleRows } = this.state;
-        const dataLength = this.props.metaData.data.length;
+        const dataLength = this.props.q2form.data.length;
         const rowElement = this.tableBodyRef.current!.querySelector('tbody tr') as HTMLTableRowElement;
         const rowsPerPage = rowElement ? Math.floor(this.tableBodyRef.current!.clientHeight /
             rowElement.offsetHeight) : 0;
@@ -106,13 +108,13 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
             });
             event.preventDefault();
         } else if (event.key === " " && selectedRow >= 0 && selectedRow < dataLength) {
-            this.showCrud(this.props.metaData, this.props.metaData.data[selectedRow], EDIT);
+            this.showCrud(this.props.q2form, this.props.q2form.data[selectedRow], EDIT);
             event.preventDefault();
         } else if (event.key === "Insert" && !event.ctrlKey) {
-            this.showCrud(this.props.metaData, {}, NEW);
+            this.showCrud(this.props.q2form, {}, NEW);
             event.preventDefault();
         } else if (event.key === "Insert" && event.ctrlKey) {
-            this.showCrud(this.props.metaData, this.props.metaData.data[selectedRow], COPY);
+            this.showCrud(this.props.q2form, this.props.q2form.data[selectedRow], COPY);
             event.preventDefault();
         } else if (event.key === "Escape" && this.props.onClose) {
             this.props.onClose();
@@ -139,23 +141,23 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
         }
     };
 
-    showCrud = (metaData: any, rowData: any, mode: string) => {
+    showCrud = (q2form: Q2Form, rowData: any, mode: string) => {
         if (typeof this.props.showDialog === 'function') {
-            const metaDataCopy = { ...metaData }; // Make a copy of metaData
-            delete metaDataCopy.data;
-            metaDataCopy.key += mode;
-            metaDataCopy.title += ".[" + mode + "]";
-            metaDataCopy.hasOkButton = true;
-            metaDataCopy.hasCancelButton = true;
+            const q2formCopy = { ...q2form }; // Make a copy of metaData
+            delete q2formCopy.data;
+            q2formCopy.key += mode;
+            q2formCopy.title += ".[" + mode + "]";
+            q2formCopy.hasOkButton = true;
+            q2formCopy.hasCancelButton = true;
 
             if (mode === EDIT || mode === COPY) {
-                metaDataCopy.columns = metaDataCopy.columns.map((column: any) => ({
+                q2formCopy.columns = q2formCopy.columns.map((column: any) => ({
                     ...column,
                     value: rowData[column.column] || column.value || ""
                 }));
             }
 
-            this.props.showDialog(metaDataCopy, rowData); // Pass rowData for all modes
+            this.props.showDialog(q2formCopy, rowData); // Pass rowData for all modes
         } else {
             console.error('showDialog is not a function');
         }
@@ -163,7 +165,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
 
     handleAction = (action: any) => {
         const { selectedRow } = this.state;
-        const rowData = this.props.metaData.data[selectedRow];
+        const rowData = this.props.q2form.data[selectedRow];
 
         switch (action.label) {
             case "Exit":
@@ -172,13 +174,13 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
                 }
                 break;
             case "New":
-                this.showCrud(this.props.metaData, rowData, NEW);
+                this.showCrud(this.props.q2form, rowData, NEW);
                 break;
             case "Copy":
-                this.showCrud(this.props.metaData, rowData, COPY);
+                this.showCrud(this.props.q2form, rowData, COPY);
                 break;
             case "Edit":
-                this.showCrud(this.props.metaData, rowData, EDIT);
+                this.showCrud(this.props.q2form, rowData, EDIT);
                 break;
             case "Delete":
                 console.log("Delete action");
@@ -189,7 +191,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
     };
 
     render() {
-        const { columns, data, actions } = this.props.metaData;
+        const { columns, data, actions } = this.props.q2form;
         const { visibleRows, selectedRow } = this.state;
 
         // Add separator and Exit action at runtime
@@ -209,7 +211,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
                     <table>
                         <thead className="DataGrigHeader">
                             <tr>
-                                {columns.map((col: any, colIndex : number) => (
+                                {columns.map((col: any, colIndex: number) => (
                                     <th key={`header-${col.key}-${colIndex}`}>{col.label}</th>
                                 ))}
                             </tr>
@@ -221,7 +223,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
                                     onClick={() => this.handleRowClick(index)}
                                     style={{ backgroundColor: selectedRow === index ? 'Highlight' : 'transparent' }}
                                 >
-                                    {columns.map((col: any, colIndex : number) => (
+                                    {columns.map((col: any, colIndex: number) => (
                                         <td key={`cell-${col.key}-${colIndex}`}>{row[col.column]}</td>
                                     ))}
                                 </tr>

@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import MainMenu from '../components/MainMenu';
 import Dialog from '../components/Dialog';
+import { Q2Form } from "../q2_modules/Q2Form";
 import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
 
 
@@ -64,10 +65,10 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
     );
   };
 
-  showDialog = (metaData: { key: any; }) => {
+  showDialog = (q2form: Q2Form) => {
     const newDialogIndex = this.state.dialogs.length;
     this.setState((prevState) => ({
-      dialogs: [...prevState.dialogs, { key: metaData.key, metaData }],
+      dialogs: [...prevState.dialogs, { key: q2form.key, metaData: q2form }],
       zIndexMap: { ...prevState.zIndexMap, [newDialogIndex]: newDialogIndex + 1 }
     }));
   };
@@ -94,7 +95,7 @@ class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: 
             <Dialog
               key={index}
               onClose={() => this.closeDialog(index)}
-              metaData={dialog.metaData}
+              q2form={dialog.metaData}
               isTopDialog={index === this.state.dialogs.length - 1}
               zIndex={this.state.zIndexMap[index] || 0}
               showDialog={this.showDialog}
