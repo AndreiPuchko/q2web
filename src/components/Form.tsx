@@ -261,6 +261,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 stack[stack.length - 1].children.push(col);
             }
         });
+        console.log(root)
         return root;
     };
 

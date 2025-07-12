@@ -68,12 +68,10 @@ q2forms.push(messageBox);
 
 
 
-const messageBox1 = new Q2Form("Dev|1", "Message Box 1", "messagebox1", {
-    columns: [
-        { key: "0", column: "message", label: "Message1", data: "Lorem ipsum1", readonly: true, control: "text" },
-    ],
-    hasOkButton: true
-});
+const messageBox1 = new Q2Form("Dev|Tab Bar", "Message Box 1", "messagebox1", { hasOkButton: true, menutoolbar: true });
+
+messageBox1.add_control("i1", "Input 1")
+messageBox1.add_control("i2", "Input 2")
 
 const messageBox2 = new Q2Form("Dev|2", "Message Box 2", "messagebox2", {
     columns: [
@@ -84,8 +82,6 @@ const messageBox2 = new Q2Form("Dev|2", "Message Box 2", "messagebox2", {
 
 const reportEditor = new Q2Form("Dev|Report Editor", "Report Editor Dialog Demo", "redemo", {
     columns: [
-        // { key: "0", column: "message1", label: "", data: messageBox1, control: "form" },
-        // { key: "1", column: "message2", label: "", data: messageBox2, control: "form" },
         { key: "2", column: "red", label: "", data: Q2ReportEditor, control: "widget" },
     ],
     hasOkButton: true,
