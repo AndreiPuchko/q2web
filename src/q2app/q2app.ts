@@ -1,6 +1,7 @@
 import { Q2Form } from "../q2_modules/Q2Form"
 import { fileMenu } from "./FileMenu"
 import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
+import { get_data_sets_json } from "../components/reportEditor/test_report"
 export const q2forms: Q2Form[] = [];
 
 const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
@@ -96,3 +97,11 @@ q2forms.push(reportEditor);
 q2forms.push(new Q2Form("Dev|-"));
 q2forms.push(messageBox1);
 q2forms.push(messageBox2);
+
+const data_set = get_data_sets_json()["lines"];
+const dataGrid = new Q2Form("Grid|Open Grid", "DataGrid", "", { menutoolbar: true, data: data_set })
+dataGrid.add_control("product", "Product Id")
+dataGrid.add_control("price", "Price")
+dataGrid.add_control("qt", "Qt")
+
+q2forms.push(dataGrid);
