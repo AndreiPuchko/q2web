@@ -228,7 +228,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         ref={this.dialogRef}
         style={{ zIndex }}
       >
-        <div className="dialog-header" onMouseDown={this.onMoveMouseDown}>
+        <div className={`dialog-header ${isTopDialog ? '' : 'disabled'}`} onMouseDown={this.onMoveMouseDown}>
           <b>{q2form["title"]}</b>
           <div>
             {q2form.hasMaxButton ? (

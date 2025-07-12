@@ -2,6 +2,7 @@
 :root {
   --dialog-bg: rgb(76, 82, 82);
   --dialog-header-bg: rgb(4, 4, 5);
+  --dialog-header-disabled: lightgray;
   --dialog-border: #ccc;
   --dialog-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   --dialog-disabled-overlay: rgba(255, 255, 255, 0.3);
@@ -11,17 +12,19 @@
 
 .theme-light {
   --dialog-bg: #fff;
-  --dialog-header-bg: #d5d5d5;
+  --dialog-header-bg: #245c9c;
+  --dialog-header-disabled: lightgray;
   --dialog-border: #bbb;
   --dialog-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   --dialog-disabled-overlay: rgba(0, 0, 0, 0.07);
   --close-btn-hover: #e57373;
-  --title-color:rgb(88, 88, 88);
+  --title-color:rgb(255, 255, 255);
 }
 
 .theme-dark {
   --dialog-bg: rgb(76, 82, 82);
   --dialog-header-bg: rgb(4, 4, 5);
+  --dialog-header-disabled: gray;
   --dialog-border: #ccc;
   --dialog-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   --dialog-disabled-overlay: rgba(255, 255, 255, 0.3);
@@ -45,11 +48,9 @@
   overflow: auto;
 }
 
-
 .dialog-container.maximized {
   resize: none;
 }
-
 
 .dialog-container.disabled {
   pointer-events: none;
@@ -81,6 +82,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.dialog-header.disabled {
+  background-color: var(--dialog-header-disabled);
 }
 
 .dialog-content {
