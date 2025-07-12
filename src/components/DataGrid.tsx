@@ -210,7 +210,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
             { key: "edit", label: "Edit", icon: <MdEdit /> },
             { key: "delete", label: "Delete", icon: <MdClose /> },
             ...actions,
-            { key: "separator", label: "/", icon: "" },
+            { key: "separator", label: "-", icon: "" },
             { key: "exit", label: "Exit", icon: <MdOutlineExitToApp /> }
         ];
         return (
@@ -257,7 +257,7 @@ const DialogToolBar: React.FC<DialogToolBarProps> = ({ actions, onAction }) => {
                 <button className="gridBurgerButton">☰</button>
                 <div className="dropdown-content">
                     {actions.map((action: any, index: number) => (
-                        action.label !== "/" ? (
+                        action.label !== "-" ? (
                             <button key={index} onClick={() => onAction(action)}>
                                 {action.icon} {action.label}
                             </button>
@@ -268,7 +268,7 @@ const DialogToolBar: React.FC<DialogToolBarProps> = ({ actions, onAction }) => {
                 </div>
             </div>
             {actions.map((action: any, index: number) => (
-                action.icon && action.label !== "/" && (
+                action.icon && action.label !== "-" && (
                     <button key={index} className="gridToolButton" onClick={() => onAction(action)}>
                         {action.icon}
                     </button>
