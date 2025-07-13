@@ -186,7 +186,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         const commonProps = {
             column: col,
             id: `${col.column}-${col.key}`,
-            readOnly: col.readonly || false,
             form: this,
             ref: (ref: any) => { this.w[col.column] = ref; }, // Store reference to the widget
         };

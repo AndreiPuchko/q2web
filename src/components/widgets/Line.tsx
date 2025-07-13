@@ -142,7 +142,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     const digitIdx = dotPos - cursorPos - 1;
                     step = Math.pow(10, digitIdx + 1);
                 } else {
-                    let decIdx:number = cursorPos - dotPos - 1;
+                    let decIdx: number = cursorPos - dotPos - 1;
                     if (decIdx >= column.datadec) decIdx = column.datadec - 1;
                     step = Math.pow(10, -(decIdx + 1));
                 }
@@ -365,11 +365,11 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     }
 
     render() {
-        const { column, readOnly, id } = this.props;
+        const { column, id } = this.props;
         const style: React.CSSProperties = {
             width: '100%',
         };
-
+        const readOnly = !!column.readonly;
         if (column?.datalen) {
             style.maxWidth = `${column.datalen}cap`
         }

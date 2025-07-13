@@ -5,8 +5,6 @@ import { Q2Control } from "../../q2_modules/Q2Form";
 export interface WidgetProps {
     id?: string;
     column: Q2Control;
-    onChange: (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => void;
-    readOnly: boolean;
     form: any;
 }
 
