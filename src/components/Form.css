@@ -95,6 +95,10 @@ button {
   position: relative;
 }
 
+.tab-page {
+  padding: 0;
+}
+
 .group-box-title {
   position: absolute;
   border: 1px solid var(--form-border);
@@ -130,6 +134,7 @@ label {
 
 .Panel {
   min-width: 0;
+  color:var(--form-label);
   /* Ensure minWidth is set to 0 to prevent overflow */
 }
 

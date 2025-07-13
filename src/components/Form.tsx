@@ -239,7 +239,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             if (col.column === "/t") {
                 if ("children" in tabs) {
                     stack.pop();
-                    tabs.label = tabs.label+`|${col.label}`;
+                    tabs.label = tabs.label + `|${col.label}`;
+                    tabs.isTabWidget = true;
                 }
                 else { // First tab came
                     const panel = {
@@ -259,10 +260,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
             if (col.column === "/h" || col.column === "/v" || col.column === "/f" || col.column === "/t") {
                 const panel = {
-                    // column: col.column === "/t" ? "/v" : col.column,
                     label: col.label,
                     key: `${col.column}-${index}}`, // Generate unique key
                     children: [],
+                    isTabPage: col.column === "/t" ? true : false,
                     column: col,
                 };
                 stack[stack.length - 1].children.push(panel);

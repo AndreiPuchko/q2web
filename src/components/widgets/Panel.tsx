@@ -70,7 +70,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     }
 
     handleCheckStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {panel } = this.props;
+        const { panel } = this.props;
         const checked = e.currentTarget.checked ? true : false;
         this.checkStatusChanged(checked)
         this.setState({ checkChecked: checked }, () => {
@@ -93,6 +93,9 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
         let className = panel.column.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
+        if (panel.isTabPage) {
+            className += " tab-page";
+        }
         let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
         const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
@@ -104,7 +107,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                 // gap: "0.2em",
                 // padding: "0.5cap"
             };
-        } else if (panel.column.column === "/v") {
+        } else if (panel.column.column === "/v" || panel.column.column === "/t") {
             style.flexDirection = 'column';
         } else {
             style.flexDirection = 'row';
@@ -134,22 +137,28 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                 ref={ref => { this.panelRef = ref; }}
             >
                 {panel.column.label && (
-                    this.hasCheck ? (
-                        <div className="group-box-title">
-                            <input
-                                id={panel_id}
-                                key={panel_id}
-                                type="checkbox"
-                                checked={!!checkChecked}
-                                onChange={this.handleCheckStatusChange}
-                                disabled={!!panel.column.checkDisabled}
-                            />
-                            <label htmlFor={panel_id}>{panel.column.label}</label>
-                        </div>
-                    ) : (
-                        <div className="group-box-title">{panel.column.label}</div>
-                    )
-                )}
+                    panel?.isTabPage || panel?.isTabWidget ?
+                        ""  // no group box header for tab pages
+                        :
+                        (this.hasCheck ? ( // Group Box with checkbox
+                            <div className="group-box-title">
+                                <input
+                                    id={panel_id}
+                                    key={panel_id}
+                                    type="checkbox"
+                                    checked={!!checkChecked}
+                                    onChange={this.handleCheckStatusChange}
+                                    disabled={!!panel.column.checkDisabled}
+                                />
+                                <label htmlFor={panel_id}>{panel.column.label}</label>
+                            </div>
+                        ) :
+                            (  // Just Group Box Title
+                                <div className="group-box-title">{panel?.isTabs ? panel.label : (panel?.isTabPage ? "" : panel.column.label)}</div>
+                            )
+                        ))}
+                {/* {panel?.isTabPage ? "": panel.label} */}
+                {panel?.isTabWidget ? panel.label: ""}
                 <fieldset
                     className="field-set-style"
                     disabled={this.hasCheck && !checkChecked}
