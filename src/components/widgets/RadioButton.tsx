@@ -53,7 +53,7 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         column.data = newValue;
         this.prevValue = this.state.selectedValue;
         this.setState({ selectedValue: newValue }, () => {
-            this.props.onChange({
+            this.props.form.handleChange({
                 target: {
                     value: newValue,
                     name: column.column

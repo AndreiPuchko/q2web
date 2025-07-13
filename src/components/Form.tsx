@@ -106,7 +106,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     handleResize = () => {
     };
 
-    handleChange = (e: any) => {
+    handleChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => {
         const { name } = e.target;
         this.scanAndCopyValues();
         // Call hookFocusChanged for the current input before rerender
