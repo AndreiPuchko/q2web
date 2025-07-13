@@ -21,14 +21,14 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     constructor(props: Q2LineProps) {
         super(props);
         // Initialize state from col.data or props.data
-        let value = (props.col && typeof props.col.data !== "undefined")
-            ? props.col.data
-            : (typeof props.col.data !== "undefined" ? props.col.data : "");
+        let value = (props.column && typeof props.column.data !== "undefined")
+            ? props.column.data
+            : (typeof props.column.data !== "undefined" ? props.column.data : "");
         // Format decimals if needed (dec and num are treated the same)
-        if ((props.col?.datatype === "dec" || props.col?.datatype === "num") && value !== undefined && value !== null && value !== "") {
+        if ((props.column?.datatype === "dec" || props.column?.datatype === "num") && value !== undefined && value !== null && value !== "") {
             let num = Number(value);
             if (!isNaN(num)) {
-                value = num.toFixed(props.col.datadec ?? 0);
+                value = num.toFixed(props.column.datadec ?? 0);
             }
         }
         // Assign initial state directly
@@ -48,10 +48,10 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
 
     componentDidUpdate(prevProps: Q2LineProps) {
         // If parent updates col.data, sync state
-        if (this.props.column?.data !== prevProps.col?.data && this.props.column?.data !== this.state.value) {
+        if (this.props.column?.data !== prevProps.column?.data && this.props.column?.data !== this.state.value) {
             let value = this.props.column.data;
             if ((this.props.column?.datatype === "dec" || this.props.column?.datatype === "num") && value !== undefined && value !== null && value !== "") {
-                let num = Number(value);
+                const num = Number(value);
                 if (!isNaN(num)) {
                     value = num.toFixed(this.props.column.datadec ?? 0);
                 }

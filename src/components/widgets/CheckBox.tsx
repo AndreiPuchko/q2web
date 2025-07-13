@@ -14,7 +14,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
     constructor(props: Q2CheckBoxProps) {
         super(props);
         this.state = {
-            value: !!props.col?.data
+            value: !!props.column?.data
         };
     }
 
@@ -25,13 +25,13 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
 
     componentDidUpdate(prevProps: Q2CheckBoxProps) {
         // If col.data changed, update state
-        if (prevProps.col?.data !== this.props.col?.data) {
-            this.setState({ value: !!this.props.col?.data });
+        if (prevProps.column?.data !== this.props.column?.data) {
+            this.setState({ value: !!this.props.column?.data });
         }
     }
 
     setChecked(checked: boolean) {
-        const { col } = this.props;
+        const { column: col } = this.props;
         col.data = checked;
         this.setState({ value: checked });
         // Optionally trigger onChange if needed
@@ -51,7 +51,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
     }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { col } = this.props;
+        const { column: col } = this.props;
         const checked = e.currentTarget.checked ? true : false;
         this.setState({ value: checked }, () => {
             this.props.onChange({

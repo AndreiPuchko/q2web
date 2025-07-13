@@ -6,7 +6,7 @@ export interface WidgetProps {
     id: string;
     name: string;
     data?: any;
-    col: any;
+    column: any;
     column: Q2Control;
     onChange: (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => void;
     readOnly: boolean;
@@ -20,12 +20,12 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     }
 
     focusIn = () => {
-        this.props.form.focus = this.props.col.column
+        this.props.form.focus = this.props.column.column
         this.props.form.handleFocus()
     }
 
     focusOut = () => {
-        this.props.form.prevFocus = this.props.col.column;
+        this.props.form.prevFocus = this.props.column.column;
     }
 
     focus() {

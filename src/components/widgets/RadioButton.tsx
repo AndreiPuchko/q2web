@@ -19,7 +19,7 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         // this.props = props;
         this.prevValue = "";
         this.state = {
-            selectedValue: props.col.data || ''
+            selectedValue: props.column.data || ''
         };
         // console.log("radi const")
     }
@@ -27,10 +27,10 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     static getDerivedStateFromProps(nextProps: Q2RadioButtonProps, prevState: Q2RadioButtonState) {
         // Only update state if the prop value is different and not already in state
         if (
-            typeof nextProps.col.data === "string" &&
-            nextProps.col.data !== prevState.selectedValue
+            typeof nextProps.column.data === "string" &&
+            nextProps.column.data !== prevState.selectedValue
         ) {
-            return { selectedValue: nextProps.col.data || '' };
+            return { selectedValue: nextProps.column.data || '' };
         }
         return null;
     }
@@ -40,23 +40,23 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     }
 
     setData(data: any) {
-        this.props.col.data = data;
-        this.props.form.s[this.props.col.column] = data;
+        this.props.column.data = data;
+        this.props.form.s[this.props.column.column] = data;
         // console.log("setData", data)
         this.setState({ selectedValue: data });
     }
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { col } = this.props;
+        const { column } = this.props;
         const newValue = event.target.value;
         // Update props.col.data before setState to avoid getDerivedStateFromProps reverting state
-        this.props.col.data = newValue;
+        column.data = newValue;
         this.prevValue = this.state.selectedValue;
         this.setState({ selectedValue: newValue }, () => {
             this.props.onChange({
                 target: {
                     value: newValue,
-                    name: col.column
+                    name: column.column
                 } 
         } as unknown as React.ChangeEvent<HTMLInputElement>);
     });
@@ -72,8 +72,8 @@ focus() {
 }
 
 render() {
-    const { col, id } = this.props;
-    const options = col.pic.split(';');
+    const { column, id } = this.props;
+    const options = column.pic.split(';');
     return (
         <div className="Q2RadioButton">
             {options.map((opt: any, index: number) => {
@@ -82,7 +82,7 @@ render() {
                     <label key={index}>
                         <input
                             type="radio"
-                            name={col.column}
+                            name={column.column}
                             id={radio_id}
                             value={opt}
                             checked={this.state.selectedValue === opt}
