@@ -21,7 +21,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     w: { [key: string]: any } = {}; // Store references to the widgets
     s: { [key: string]: any } = {}; // widgets data
     c: { [key: string]: boolean } = {}; // widgets data
-    focus: string = "";
+    focus: string | undefined = "";
     prevFocus: string = "";
     formRef = React.createRef<HTMLDivElement>();
 
@@ -185,6 +185,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         }
         const commonProps = {
             column: col,
+            id: `${col.column}-${col.key}`,
             onChange: this.handleChange,
             readOnly: col.readonly || false,
             form: this,
@@ -270,7 +271,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 stack[stack.length - 1].children.push(col);
             }
         });
-        console.log(root)
+        // console.log(root)
         return root;
     };
 

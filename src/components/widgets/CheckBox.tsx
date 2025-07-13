@@ -1,18 +1,19 @@
-import React, { Component } from 'react';
-import './CheckBox.css'; // Import CSS for styling
+import React from 'react';
+import Widget from './Widget';
 import { WidgetProps } from './Widget';
+import './CheckBox.css'; // Import CSS for styling
 
-interface Q2CheckBoxProps extends WidgetProps {
-    // onChange: (checked: boolean) => void;
-}
+interface Q2CheckBoxProps extends WidgetProps { }
 
 interface Q2CheckBoxState {
     value: boolean;
 }
 
-class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
+class Q2CheckBox extends Widget<Q2CheckBoxProps, Q2CheckBoxState> {
+    _initialId: string | undefined;
     constructor(props: Q2CheckBoxProps) {
         super(props);
+        this._initialId = props.id;
         this.state = {
             value: !!props.column?.data
         };
@@ -28,6 +29,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
         if (prevProps.column?.data !== this.props.column?.data) {
             this.setState({ value: !!this.props.column?.data });
         }
+        // console.log("cb did update")
     }
 
     setChecked(checked: boolean) {
@@ -65,18 +67,18 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
     };
 
     render() {
-        const { column, id } = this.props;
+        const { column } = this.props;
         return (
             <div className="Q2CheckBox-container">
                 <input
                     type="checkbox"
-                    key={id}
-                    id={id}
+                    key={this._initialId}
+                    id={this._initialId}
                     className="Q2CheckBox"
                     onChange={this.handleChange}
                     checked={this.state.value}
                 />
-                <label htmlFor={id} className="Q2CheckBox-label">{column.label}</label>
+                <label htmlFor={this._initialId} className="Q2CheckBox-label">{column.label}</label>
             </div>
         );
     }
