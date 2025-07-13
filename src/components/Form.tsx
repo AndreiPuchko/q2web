@@ -298,23 +298,13 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
     renderPanel = (panel: any) => {
         if (!panel || !panel.children) return null;
-
         // Use Q2Panel for rendering the panel
         return (
             <Q2Panel
                 panel={panel}
-                onChange={this.handlePanelCheck(panel.key)}
-                // readOnly={false}
                 form={this}
-                // valid={panel.column?.valid}
-                // Assign ref if tag exists
-                // ref={panel.column?.tag ? (ref: any) => { this.w[panel.column.tag] = ref; } : undefined}
-                // Pass children and render helpers to Q2Panel
-                // children={panel.children}
-                renderInput={this.renderInput}
-                renderPanel={this.renderPanel}
+                onChange={this.handlePanelCheck(panel.key)}
                 formData={this.state.formData}
-                w={this.w}
                 setState={this.setState.bind(this)}
             />
         );

@@ -4,16 +4,9 @@ import { focusFirstFocusableElement } from '../../utils/dom';
 interface Q2PanelProps {
     panel: any;
     onChange: (e: any) => void;
-    // readOnly: boolean;
     form: any;
-    // valid: any;
-    // ref?: any;
-    // children: any[];
-    renderInput: (col: any) => React.ReactNode;
-    renderPanel: (panel: any, root?: boolean) => React.ReactNode;
     formData: any;
-    w: any;
-    setState: any;
+    // setState: any;
 }
 
 class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
@@ -97,7 +90,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     panelRef: HTMLDivElement | null = null;
 
     render() {
-        const { panel, form, renderInput, renderPanel, w, setState } = this.props;
+        const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
         let className = panel.column.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
         let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
@@ -170,7 +163,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                 // render nested panel
                                 return (
                                     <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2" }}>
-                                        {renderPanel(child)}
+                                        {form.renderPanel(child)}
                                     </div>
                                 );
                             } else {
@@ -203,8 +196,8 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                                 }
                                                             }),
                                                             () => {
-                                                                if (checked && typeof w[child.column]?.focus === "function") {
-                                                                    w[child.column].focus();
+                                                                if (checked && typeof form.w[child.column]?.focus === "function") {
+                                                                    form.w[child.column].focus();
                                                                 }
                                                                 this.checkStatusChanged()
                                                             }
@@ -235,10 +228,10 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                         className="field-set-style"
                                                         disabled={!form.c[child.column]}
                                                     >
-                                                        {renderInput(child)}
+                                                        {form.renderInput(child)}
                                                     </fieldset>
                                                 ) : (
-                                                    renderInput(child)
+                                                    form.renderInput(child)
                                                 )}
                                             </div>
                                         }
