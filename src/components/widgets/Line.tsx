@@ -142,9 +142,8 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     const digitIdx = dotPos - cursorPos - 1;
                     step = Math.pow(10, digitIdx + 1);
                 } else {
-                    let decIdx = cursorPos - dotPos - 1;
-                    if (decIdx >= parseInt(column.datadec)) decIdx = parseInt(column.datadec) - 1;
-                    console.log(decIdx, column.datadec, decIdx > parseInt(column.datadec))
+                    let decIdx:number = cursorPos - dotPos - 1;
+                    if (decIdx >= column.datadec) decIdx = column.datadec - 1;
                     step = Math.pow(10, -(decIdx + 1));
                 }
             }
@@ -366,7 +365,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     }
 
     render() {
-        const { column, readOnly } = this.props;
+        const { column, readOnly, id } = this.props;
         const style: React.CSSProperties = {
             width: '100%',
         };
@@ -411,7 +410,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     onBlur={this.focusOut}
                     onFocus={this.focusIn}
                     readOnly={readOnly}
-                    id={column.id}
+                    id={id}
                     name={column.column}
                     inputMode={(column?.datatype === "dec" || column?.datatype === "num") ? "decimal" : (column?.datatype === "int" ? "numeric" : undefined)}
                     pattern={(column?.datatype === "dec" || column?.datatype === "num") ? "[0-9]*[.,]?[0-9]*" : (column?.datatype === "int" ? "[0-9]*" : undefined)}

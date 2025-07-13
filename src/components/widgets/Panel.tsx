@@ -6,7 +6,7 @@ interface Q2PanelProps {
     onChange: (e: any) => void;
     form: any;
     formData: any;
-    // setState: any;
+    setState: any;
 }
 
 class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {

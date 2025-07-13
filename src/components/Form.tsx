@@ -184,15 +184,16 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         // console.log(col.column, data)
         // console.log(this.state.formData)
 
-        col["id"] = `${col.column}-${col.key}`;
+        // col["id"] = `${col.column}-${col.key}`;
         // Set initial checkChecked for checkable controls
         if (col.check && typeof col.checkChecked === "undefined") {
             col.checkChecked = !!col.data;
         }
         const commonProps = {
-            id: col["id"],
+            id: `${col.column}-${col.key}`,
             name: col.column,
             col: col,
+            column: col,
             data,
             onChange: this.handleChange,
             readOnly: col.readonly || false,

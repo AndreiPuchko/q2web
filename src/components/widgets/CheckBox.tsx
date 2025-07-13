@@ -65,7 +65,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
     };
 
     render() {
-        const { col, id } = this.props;
+        const { column, id } = this.props;
         return (
             <div className="Q2CheckBox-container">
                 <input
@@ -76,7 +76,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
                     onChange={this.handleChange}
                     checked={this.state.value}
                 />
-                <label htmlFor={id} className="Q2CheckBox-label">{col.label}</label>
+                <label htmlFor={id} className="Q2CheckBox-label">{column.label}</label>
             </div>
         );
     }
