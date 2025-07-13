@@ -104,6 +104,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
             style = {
                 display: "grid",
                 gridTemplateColumns: "max-content 1fr",
+                width: "100%",
                 // gap: "0.2em",
                 // padding: "0.5cap"
             };
