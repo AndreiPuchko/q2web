@@ -107,7 +107,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     };
 
     handleChange = (e: any) => {
-        const { name, value } = e.target;
+        const { name } = e.target;
         this.scanAndCopyValues();
         // Call hookFocusChanged for the current input before rerender
         if (typeof this.props.q2form?.hookInputChanged === "function") {
@@ -229,7 +229,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
     createFormTree = (columns: any) => {
         const stack: any[] = [];
-        const root = { column: 'root', children: [{ column: "/v", key: 'root-0', metadata: undefined }] };
+        const root = { column: 'root', children: [{ key: 'root-0', column: undefined }] };
         stack.push(root);
         if (!columns[0].column.startsWith("/")) {
             columns.splice(0, 0, { column: "/f", key: 'root-1' });
@@ -243,11 +243,11 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 }
                 else { // First tab came
                     const panel = {
-                        column: "tabWidget",
+                        // column: "tabWidget",
                         label: col.label,
                         key: `tabWidget-${col.column}-${index}}`, // Generate unique key
                         children: [],
-                        metadata: col,
+                        column: col,
                     };
 
                     stack[stack.length - 1].children.push(panel);
@@ -259,11 +259,11 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
             if (col.column === "/h" || col.column === "/v" || col.column === "/f" || col.column === "/t") {
                 const panel = {
-                    column: col.column === "/t" ? "/v" : col.column,
+                    // column: col.column === "/t" ? "/v" : col.column,
                     label: col.label,
                     key: `${col.column}-${index}}`, // Generate unique key
                     children: [],
-                    metadata: col,
+                    column: col,
                 };
                 stack[stack.length - 1].children.push(panel);
                 stack.push(panel);
@@ -272,13 +272,13 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                     stack.pop();
                 }
             } else {
-                col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substr(2, 9)}`; // Ensure unique key for other columns
+                col.key = col.key || `${col.column}-${index}-${Math.random().toString(36).substring(2, 9)}`; // Ensure unique key for other columns
                 // Set initial checkChecked for checkable controls
                 if (col.check && typeof col.checkChecked === "undefined") {
                     col.checkChecked = !!col.data;
                 }
                 this.s[col.column] = col.data;
-                this.c[col.column] = col.checkChecked;
+                this.c[col.column] = !!col.checkChecked;
                 stack[stack.length - 1].children.push(col);
             }
         });
@@ -303,17 +303,14 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         return (
             <Q2Panel
                 panel={panel}
-                key={panel.key}
-                name={panel.key}
-                col={panel.metadata}
                 onChange={this.handlePanelCheck(panel.key)}
-                readOnly={false}
+                // readOnly={false}
                 form={this}
-                valid={panel.metadata?.valid}
+                // valid={panel.column?.valid}
                 // Assign ref if tag exists
-                ref={panel.metadata?.tag ? (ref: any) => { this.w[panel.metadata.tag] = ref; } : undefined}
+                // ref={panel.column?.tag ? (ref: any) => { this.w[panel.column.tag] = ref; } : undefined}
                 // Pass children and render helpers to Q2Panel
-                children={panel.children}
+                // children={panel.children}
                 renderInput={this.renderInput}
                 renderPanel={this.renderPanel}
                 formData={this.state.formData}

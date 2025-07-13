@@ -2,16 +2,13 @@ import React, { Component, CSSProperties } from "react";
 import { focusFirstFocusableElement } from '../../utils/dom';
 
 interface Q2PanelProps {
-    // id: string;
-    name: string;
-    col: any;
-    // data: any;
+    panel: any;
     onChange: (e: any) => void;
-    readOnly: boolean;
+    // readOnly: boolean;
     form: any;
-    valid: any;
-    ref?: any;
-    children: any[];
+    // valid: any;
+    // ref?: any;
+    // children: any[];
     renderInput: (col: any) => React.ReactNode;
     renderPanel: (panel: any, root?: boolean) => React.ReactNode;
     formData: any;
@@ -23,18 +20,18 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     hasCheck: boolean;
     constructor(props: Q2PanelProps) {
         super(props);
-        const { col } = this.props;
-        this.hasCheck = col?.check;
-        // Use col.checkChecked for initial state
+        const { panel } = this.props;
+        this.hasCheck = panel.column?.check;
+        // Use panel.column.checkChecked for initial state
         this.state = {
-            checkChecked: col.checkChecked
+            checkChecked: panel.column.checkChecked
         };
     }
 
     static getDerivedStateFromProps(nextProps: Q2PanelProps, prevState: { checkChecked: boolean }) {
-        // Sync state with col.checkChecked if it changes from parent (e.g. on section switch)
-        if (nextProps.col.checkChecked !== prevState.checkChecked) {
-            return { checkChecked: nextProps.col.checkChecked };
+        // Sync state with panel.column.checkChecked if it changes from parent (e.g. on section switch)
+        if (nextProps.panel.column.checkChecked !== prevState.checkChecked) {
+            return { checkChecked: nextProps.panel.column.checkChecked };
         }
         return null;
     }
@@ -80,12 +77,12 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     }
 
     handleCheckStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { col } = this.props;
+        const {panel } = this.props;
         const checked = e.currentTarget.checked ? true : false;
         this.checkStatusChanged(checked)
         this.setState({ checkChecked: checked }, () => {
             this.props.onChange(e);
-            col.checkChecked = checked;
+            panel.column.checkChecked = checked;
             if (checked && this.panelRef) {
                 const fieldset = this.panelRef.querySelector('fieldset.field-set-style');
                 if (fieldset instanceof HTMLElement) {
@@ -100,13 +97,13 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     panelRef: HTMLDivElement | null = null;
 
     render() {
-        const { col, form, children, renderInput, renderPanel, w, setState } = this.props;
+        const { panel, form, renderInput, renderPanel, w, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
-        let className = col.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
+        let className = panel.column.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
         let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
         const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
-        if (col.column === "/f") {
+        if (panel.column.column === "/f") {
             className += " panel-formgrid";
             style = {
                 display: "grid",
@@ -114,23 +111,23 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                 // gap: "0.2em",
                 // padding: "0.5cap"
             };
-        } else if (col.column === "/v") {
+        } else if (panel.column.column === "/v") {
             style.flexDirection = 'column';
         } else {
             style.flexDirection = 'row';
         }
         style.alignItems = 'start';
         style.justifyContent = 'flex-start';
-        if ([4, 5, 6].includes(col?.alignment)) {
+        if ([4, 5, 6].includes(panel.column?.alignment)) {
             style.alignItems = 'center';
         }
-        if (col.label === "") {
+        if (panel.column.label === "") {
             rootStyle.border = "none";
             rootStyle.margin = "0px";
             rootStyle.padding = "0px";
         }
 
-        const panel_id = `${col.key}-${col.tag}-panel-id`;
+        const panel_id = `${panel.column.key}-${panel.column.tag}-panel-id`;
 
         // Use state.checkChecked for rendering
         // const checkChecked = this.hasCheck ? this.state.checkChecked : undefined;
@@ -140,10 +137,10 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
             <div
                 className={className}
                 style={rootStyle}
-                key={col.key}
+                key={panel.column.key}
                 ref={ref => { this.panelRef = ref; }}
             >
-                {col.label && (
+                {panel.column.label && (
                     this.hasCheck ? (
                         <div className="group-box-title">
                             <input
@@ -152,12 +149,12 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                 type="checkbox"
                                 checked={!!checkChecked}
                                 onChange={this.handleCheckStatusChange}
-                                disabled={!!col.checkDisabled}
+                                disabled={!!panel.column.checkDisabled}
                             />
-                            <label htmlFor={panel_id}>{col.label}</label>
+                            <label htmlFor={panel_id}>{panel.column.label}</label>
                         </div>
                     ) : (
-                        <div className="group-box-title">{col.label}</div>
+                        <div className="group-box-title">{panel.column.label}</div>
                     )
                 )}
                 <fieldset
@@ -165,7 +162,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                     disabled={this.hasCheck && !checkChecked}
                 >
                     <div style={style}>
-                        {children && children.map((child: any, index: number) => {
+                        {panel.children && panel.children.map((child: any, index: number) => {
                             // Ensure child.id is always defined and unique
                             const childId = child.id || `${child.column}-${child.key || index}`;
                             const id = `${childId}-control-cb`;
