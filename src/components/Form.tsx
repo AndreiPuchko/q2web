@@ -7,7 +7,7 @@ import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
 import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
-import { Q2Form } from "../q2_modules/Q2Form";
+import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
 
 interface FormProps {
@@ -234,11 +234,32 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         if (!columns[0].column.startsWith("/")) {
             columns.splice(0, 0, { column: "/f", key: 'root-1' });
         }
+        let tabs: any = {};
+        columns.forEach((col: Q2Control, index: number) => {
+            if (col.column === "/t") {
+                if ("children" in tabs) {
+                    stack.pop();
+                    tabs.label = tabs.label+`|${col.label}`;
+                }
+                else { // First tab came
+                    const panel = {
+                        column: "tabWidget",
+                        label: col.label,
+                        key: `tabWidget-${col.column}-${index}}`, // Generate unique key
+                        children: [],
+                        metadata: col,
+                    };
 
-        columns.forEach((col: any, index: number) => {
-            if (col.column === "/h" || col.column === "/v" || col.column === "/f") {
+                    stack[stack.length - 1].children.push(panel);
+                    tabs = panel
+                    stack.push(panel);
+                }
+
+            }
+
+            if (col.column === "/h" || col.column === "/v" || col.column === "/f" || col.column === "/t") {
                 const panel = {
-                    column: col.column,
+                    column: col.column === "/t" ? "/v" : col.column,
                     label: col.label,
                     key: `${col.column}-${index}}`, // Generate unique key
                     children: [],
@@ -281,6 +302,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         // Use Q2Panel for rendering the panel
         return (
             <Q2Panel
+                panel={panel}
                 key={panel.key}
                 name={panel.key}
                 col={panel.metadata}
