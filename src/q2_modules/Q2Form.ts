@@ -81,7 +81,7 @@ export class Q2Control {
         if (this.datalen)
             return { flex: `0 1 auto` }
         else
-            return { flex: `${this.stretch} 1 auto` }
+            return { flex: `${this.stretch} 1 auto`, width: "100%" }
     }
 }
 

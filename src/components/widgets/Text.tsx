@@ -13,7 +13,7 @@ class Q2Text extends Widget<Q2TextProps> {
         const { column, id } = this.props;
         const readOnly = !!column.readonly;
         const style: React.CSSProperties = {
-            width: '100%',
+            width: '98%',
         };
 
         return (

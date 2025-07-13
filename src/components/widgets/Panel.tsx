@@ -172,7 +172,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                             if (child.children) {
                                 // render nested panel
                                 return (
-                                    <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2" }}>
+                                    <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2", width: "100%" }}>
                                         {form.renderPanel(child)}
                                     </div>
                                 );
