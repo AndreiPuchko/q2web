@@ -3,20 +3,24 @@ import { Q2Control } from "../../q2_modules/Q2Form";
 
 
 export interface WidgetProps {
-    id: string;
-    name: string;
-    data?: any;
-    column: any;
+    id?: string;
     column: Q2Control;
     onChange: (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => void;
     readOnly: boolean;
     form: any;
-    // valid: (form: any) => boolean;
 }
 
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
+
+    constructor(props: P) {
+        super(props);
+        if (!props.id) {
+            props.id = `${props.column.column}-${props.column.key}`
+        }
+    }
+
     getData() {
-        return this.props.data;
+        return this.props.column.data;
     }
 
     focusIn = () => {
@@ -30,7 +34,7 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
 
     focus() {
         const { id } = this.props;
-        document.getElementById(id)?.focus()
+        if (id) document.getElementById(id)?.focus()
         // console.log(id)
     }
 

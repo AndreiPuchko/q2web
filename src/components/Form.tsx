@@ -88,8 +88,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
     handleFocus = () => {
         // console.log("valid", this.prevFocus, this.focus)
-        if (typeof this.w[this.prevFocus]?.props.col.valid === "function") {
-            // const validResult = this.w[this.prevFocus].props.col.valid(this);
+        if (typeof this.w[this.prevFocus]?.props.column.valid === "function") {
+            // const validResult = this.w[this.prevFocus].props.column.valid(this);
         }
         this.scanAndCopyValues();
         if (typeof this.props.q2form?.hookFocusChanged === "function") {
@@ -155,7 +155,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     };
 
     getWidgetCheck = (columnName: string) => {
-        return this.w[columnName]?.props.col.checkChecked;
+        return this.w[columnName]?.props.column.checkChecked;
     };
 
 
@@ -165,9 +165,9 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 this.s[key] = this.getWidgetData(key);
 
                 if (this.w[key] && this.w[key].props && this.w[key].props.col) {
-                    this.w[key].props.col.data = this.s[key];
+                    this.w[key].props.column.data = this.s[key];
                 }
-                if (this.w[key]?.props.col.check) {
+                if (this.w[key]?.props.column.check) {
                     this.c[key] = this.getWidgetCheck(key);
                 }
             }
@@ -178,32 +178,18 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         });
     };
 
-    renderInput = (col: any) => {
-        const { formData } = this.state;
-        const data: any = formData[col.column] !== undefined ? formData[col.column] : "";
-        // console.log(col.column, data)
-        // console.log(this.state.formData)
-
-        // col["id"] = `${col.column}-${col.key}`;
+    renderInput = (col: Q2Control) => {
         // Set initial checkChecked for checkable controls
         if (col.check && typeof col.checkChecked === "undefined") {
             col.checkChecked = !!col.data;
         }
         const commonProps = {
-            id: `${col.column}-${col.key}`,
-            name: col.column,
-            col: col,
             column: col,
-            data,
             onChange: this.handleChange,
             readOnly: col.readonly || false,
             form: this,
-            valid: col.valid || (() => true),
-            ref: (ref: any) => {
-                this.w[col.column] = ref;
-            }, // Store reference to the widget
+            ref: (ref: any) => { this.w[col.column] = ref; }, // Store reference to the widget
         };
-        // console.log('col.control', commonProps.value);
         if (col.column === "/s") {
             col.control = "spacer"
         }

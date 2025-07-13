@@ -20,7 +20,7 @@ class Q2CheckBox extends Component<Q2CheckBoxProps, Q2CheckBoxState> {
 
     focus() {
         const { id } = this.props;
-        document.getElementById(id)?.focus()
+        if (id) document.getElementById(id)?.focus()
     }
 
     componentDidUpdate(prevProps: Q2CheckBoxProps) {
