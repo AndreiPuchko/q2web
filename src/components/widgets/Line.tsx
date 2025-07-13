@@ -67,7 +67,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => {
-        const { column, onChange } = this.props;
+        const { column, form } = this.props;
         let value = (e as any).target.value;
         // dec and num are treated the same
         if (column?.datatype === "dec" || column?.datatype === "num") {
@@ -111,8 +111,8 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         }
         column.data = value;
         this.setState({ value }, () => {
-            if (onChange) {
-                onChange({
+            if (form.handleChange) {
+                form.handleChange({
                     target:
                     {
                         value: value,

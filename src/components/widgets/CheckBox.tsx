@@ -36,14 +36,13 @@ class Q2CheckBox extends Widget<Q2CheckBoxProps, Q2CheckBoxState> {
         const { column: col } = this.props;
         col.data = checked;
         this.setState({ value: checked });
-        // Optionally trigger onChange if needed
-        if (typeof this.props.onChange === "function") {
+        if (typeof this.props.form.handleChange === "function") {
             // Create a synthetic event for compatibility
             const event = {
                 target: { checked },
                 currentTarget: { checked }
             } as React.ChangeEvent<HTMLInputElement>;
-            this.props.onChange(event);
+            this.props.form.handleChange(event);
         }
         this.forceUpdate();
     }
@@ -56,7 +55,7 @@ class Q2CheckBox extends Widget<Q2CheckBoxProps, Q2CheckBoxState> {
         const { column: col } = this.props;
         const checked = e.currentTarget.checked ? true : false;
         this.setState({ value: checked }, () => {
-            this.props.onChange({
+            this.props.form.handleChange({
                 target: {
                     value: checked,
                     name: col.column
