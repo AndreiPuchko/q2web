@@ -41,19 +41,19 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         this.handleChange({
             target: {
                 value: this.state.value,
-                name: this.props.name
+                name: this.props.column.column
             }
         });
     }
 
     componentDidUpdate(prevProps: Q2LineProps) {
         // If parent updates col.data, sync state
-        if (this.props.col?.data !== prevProps.col?.data && this.props.col?.data !== this.state.value) {
-            let value = this.props.col.data;
-            if ((this.props.col?.datatype === "dec" || this.props.col?.datatype === "num") && value !== undefined && value !== null && value !== "") {
+        if (this.props.column?.data !== prevProps.col?.data && this.props.column?.data !== this.state.value) {
+            let value = this.props.column.data;
+            if ((this.props.column?.datatype === "dec" || this.props.column?.datatype === "num") && value !== undefined && value !== null && value !== "") {
                 let num = Number(value);
                 if (!isNaN(num)) {
-                    value = num.toFixed(this.props.col.datadec ?? 0);
+                    value = num.toFixed(this.props.column.datadec ?? 0);
                 }
             }
             this.setState({ value });
@@ -67,32 +67,32 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     }
 
     handleChange = (e: React.ChangeEvent<HTMLInputElement> | { target: { value: string, name?: string } }) => {
-        const { col, onChange } = this.props;
+        const { column, onChange } = this.props;
         let value = (e as any).target.value;
         // dec and num are treated the same
-        if (col?.datatype === "dec" || col?.datatype === "num") {
+        if (column?.datatype === "dec" || column?.datatype === "num") {
             value = value.replace(/[^0-9.-]/g, '');
             value = value.replace(',', '.');
             const parts = value.split('.');
             if (parts.length > 2) {
                 value = parts[0] + '.' + parts.slice(1).join('');
             }
-            if (col.datadec !== undefined && col.datadec >= 0 && value.includes('.')) {
+            if (column.datadec !== undefined && column.datadec >= 0 && value.includes('.')) {
                 const [intPart, decPart] = value.split('.');
-                value = intPart + '.' + decPart.slice(0, col.datadec);
+                value = intPart + '.' + decPart.slice(0, column.datadec);
             }
         }
-        else if (col?.datatype === "int") {
+        else if (column?.datatype === "int") {
             value = value.replace(/[^0-9-]/g, '');
             if (value === "") value = "0";
         }
         // Range enforcement for int, num, dec
-        if (["int", "num", "dec"].includes(col?.datatype) && typeof col.range === "string" && value !== "") {
+        if (["int", "num", "dec"].includes(column?.datatype) && typeof column.range === "string" && value !== "") {
             let numValue = Number(value);
             if (!isNaN(numValue)) {
-                const rangeParts = col.range.trim().split(/\s+/);
+                const rangeParts = column.range.trim().split(/\s+/);
                 if (rangeParts.length === 1) {
-                    if (col.range.trim() === "0") {
+                    if (column.range.trim() === "0") {
                         if (numValue < 0) numValue = Math.abs(numValue);
                     } else {
                         const upper = Number(rangeParts[0]);
@@ -104,12 +104,12 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     if (lower !== undefined && !isNaN(lower) && numValue < lower) numValue = lower;
                     if (upper !== undefined && !isNaN(upper) && numValue > upper) numValue = upper;
                 }
-                value = ((col.datatype === "dec" || col.datatype === "num") && col.datadec !== undefined)
-                    ? numValue.toFixed(col.datadec)
+                value = ((column.datatype === "dec" || column.datatype === "num") && column.datadec !== undefined)
+                    ? numValue.toFixed(column.datadec)
                     : numValue.toString();
             }
         }
-        col.data = value;
+        column.data = value;
         this.setState({ value }, () => {
             if (onChange) {
                 onChange({
@@ -124,7 +124,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     };
 
     handleSpin = (delta: number) => {
-        const { col } = this.props;
+        const { column } = this.props;
         const value = this.inputRef.current?.value;
         if (value === undefined) return
         let cursorPos = this.inputRef.current?.selectionStart ?? value.length;
@@ -133,7 +133,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
         let num = Number(value);
         if (isNaN(num)) num = 0;
         let newValue: string;
-        if (col?.datatype === "dec" || col?.datatype === "num") {
+        if (column?.datatype === "dec" || column?.datatype === "num") {
             const dotPos = value.indexOf(".");
             let step = 1;
             if (dotPos !== -1) {
@@ -143,15 +143,15 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     step = Math.pow(10, digitIdx + 1);
                 } else {
                     let decIdx = cursorPos - dotPos - 1;
-                    if (decIdx >= parseInt(col.datadec)) decIdx = parseInt(col.datadec) - 1;
-                    console.log(decIdx, col.datadec, decIdx > parseInt(col.datadec))
+                    if (decIdx >= parseInt(column.datadec)) decIdx = parseInt(column.datadec) - 1;
+                    console.log(decIdx, column.datadec, decIdx > parseInt(column.datadec))
                     step = Math.pow(10, -(decIdx + 1));
                 }
             }
             // num = parseFloat((num + delta * step).toFixed(col.datadec ?? 0));
             // newValue = num.toFixed(col.datadec ?? 0);
-            newValue = (num + delta * step).toFixed(col.datadec ?? 0);
-        } else if (col?.datatype === "int") {
+            newValue = (num + delta * step).toFixed(column.datadec ?? 0);
+        } else if (column?.datatype === "int") {
             if (cursorPos === 0) cursorPos = value.length;
             let step = 1;
             if (value.length > 0) {
@@ -169,7 +169,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
             this.handleChange({
                 target: {
                     value: newValue,
-                    name: this.inputRef.current ? this.inputRef.current.name : col.column
+                    name: this.inputRef.current ? this.inputRef.current.name : column.column
                 }
             });
             setTimeout(() => {
@@ -182,8 +182,8 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     };
 
     handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        const { col } = this.props;
-        if (col?.datatype === "int" || col?.datatype === "dec" || col?.datatype === "num") {
+        const { column } = this.props;
+        if (column?.datatype === "int" || column?.datatype === "dec" || column?.datatype === "num") {
             if (e.key == "ArrowUp") {
                 e.preventDefault();
                 this.handleSpin(1);
@@ -195,7 +195,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                 return;
             }
         }
-        if ((col?.datatype === "dec" || col?.datatype === "num")) {
+        if ((column?.datatype === "dec" || column?.datatype === "num")) {
             const input = e.currentTarget;
             const value = input.value;
             const cursorPos = input.selectionStart ?? 0;
@@ -230,7 +230,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
             else if (e.key === "Backspace") {
                 if (input.selectionStart === 0 && input.selectionEnd === value.length) {
                     e.preventDefault();
-                    this.clearInput("0", dotPos, col, input);
+                    this.clearInput("0", dotPos, column, input);
                 }
                 else if (dotPos === 1 && value.length > 1 && input.selectionStart === 1 && input.selectionEnd === 1) {
                     e.preventDefault();
@@ -270,7 +270,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
             else if (e.key === "Delete") {
                 if (input.selectionStart === 0 && input.selectionEnd === value.length) {
                     e.preventDefault();
-                    this.clearInput("0", dotPos, col, input);
+                    this.clearInput("0", dotPos, column, input);
                 }
                 else if (dotPos === 1 && value.length > 1 && input.selectionStart === 0 && input.selectionEnd === 0) {
                     e.preventDefault();
@@ -333,7 +333,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                 }
                 else if (input.selectionStart === 0 && input.selectionEnd === value.length) {
                     e.preventDefault();
-                    this.clearInput(e.key, dotPos, col, input);
+                    this.clearInput(e.key, dotPos, column, input);
                 }
             }
         }
@@ -366,26 +366,26 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     }
 
     render() {
-        const { col, readOnly, id, name } = this.props;
+        const { column, readOnly } = this.props;
         const style: React.CSSProperties = {
             width: '100%',
         };
 
-        if (col?.datalen) {
-            style.maxWidth = `${col.datalen}cap`
+        if (column?.datalen) {
+            style.maxWidth = `${column.datalen}cap`
         }
 
-        if (col?.stretch) {
-            style.flex = `${col?.stretch} 1 auto`
+        if (column?.stretch) {
+            style.flex = `${column?.stretch} 1 auto`
         }
 
-        if (["dec", "int", "num"].includes(col?.datatype)) {
+        if (["dec", "int", "num"].includes(column?.datatype)) {
             style.textAlign = "right";
         }
 
         const value = this.state.value;
 
-        const showSpin = (col?.datatype === "dec" || col?.datatype === "num" || col?.datatype === "int");
+        const showSpin = (column?.datatype === "dec" || column?.datatype === "num" || column?.datatype === "int");
         const spinStyle = { padding: 0, width: "2cap", height: "1.5cap", fontSize: "1cap", lineHeight: 1, UserSelect: "none", border: 0 };
 
         // Add onWheel handler for spin
@@ -411,10 +411,10 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     onBlur={this.focusOut}
                     onFocus={this.focusIn}
                     readOnly={readOnly}
-                    id={id}
-                    name={name}
-                    inputMode={(col?.datatype === "dec" || col?.datatype === "num") ? "decimal" : (col?.datatype === "int" ? "numeric" : undefined)}
-                    pattern={(col?.datatype === "dec" || col?.datatype === "num") ? "[0-9]*[.,]?[0-9]*" : (col?.datatype === "int" ? "[0-9]*" : undefined)}
+                    id={column.id}
+                    name={column.column}
+                    inputMode={(column?.datatype === "dec" || column?.datatype === "num") ? "decimal" : (column?.datatype === "int" ? "numeric" : undefined)}
+                    pattern={(column?.datatype === "dec" || column?.datatype === "num") ? "[0-9]*[.,]?[0-9]*" : (column?.datatype === "int" ? "[0-9]*" : undefined)}
                     autoComplete="off"
                     ref={this.inputRef}
                     onWheel={handleWheel}
