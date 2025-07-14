@@ -137,7 +137,7 @@ if (exampleForm.add_control("/v", "Vertical layout")) {
     }
     exampleForm.add_control("/");
 }
-exampleForm.add_control("var4", "Radio button", { pic: "Red;White", control: "radio", data: "White", pi: "some_pi_value" });
+exampleForm.add_control("var4", "Radio button", { pic: "Red;White", control: "radio", data: "White" });
 exampleForm.hasCancelButton = true;
 forms.push(exampleForm);
 
