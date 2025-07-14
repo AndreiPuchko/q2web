@@ -79,11 +79,12 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         if (column.pic) {
             const options = column.pic.split(';');
             return (
-                <div className="Q2RadioButton">
+                <div className="Q2RadioButton" ref={this.divRef} id={this.id}>
+                    <style>{column.style?.replaceAll("#", `#${this.id}`)}</style>
                     {options.map((opt: any, index: number) => {
                         const radio_id = `${this.id}-${index}`
                         return (
-                            <label key={index}>
+                            <>
                                 <input
                                     type="radio"
                                     name={column.column}
@@ -94,8 +95,10 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
                                     onBlur={this.focusOut}
                                     onFocus={this.focusIn}
                                 />
-                                {opt}
-                            </label>
+                                <label key={index} htmlFor={radio_id}>
+                                    {opt}
+                                </label>
+                            </>
                         )
                     })}
                 </div>

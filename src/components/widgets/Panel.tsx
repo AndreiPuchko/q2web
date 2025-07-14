@@ -139,7 +139,16 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         function tabWidgetValid(form: Q2Form) {
             console.log(form.s.m1)
         }
-        tabWidgetControl = new Q2Control("m1", "", { pic: panel.label, data: 1, valid: tabWidgetValid })
+        tabWidgetControl = new Q2Control("m1", "", {
+            pic: panel.label,
+            data: 1, valid: tabWidgetValid,
+            style: `# {padding: 3px 0px 0px; margin: 0px; padding-bottom:0px; background: none;}
+                    # input {display:none;}
+                    # label {border: 1px solid gray;margin-right:5px; background: var(--form-input-bg); padding: 0 1cap;}
+                    # label:hover { filter: brightness(90%)}
+                    # input[type="radio"]:checked + label {  background-color: lightgreen;}
+                    `
+        })
 
         tabWidgetControlProps = {
             column: tabWidgetControl,

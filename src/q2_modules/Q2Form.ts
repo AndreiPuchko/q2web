@@ -21,6 +21,7 @@ export class Q2Control {
     checkDisabled?: boolean | string | number;
     tag?: string;
     range?: string;
+    style?:string;
 
     constructor(
         column: string,
@@ -43,6 +44,7 @@ export class Q2Control {
             checkDisabled?: boolean | string | number,
             tag?: string;
             range?: string;
+            style?: string;
 
         } = {},
         key: string = "0"
@@ -66,6 +68,7 @@ export class Q2Control {
         this.checkDisabled = options.checkDisabled;
         this.tag = options.tag;
         this.range = options.range;
+        this.style = options?.style || "";
 
         if (this.control === "check") {
             this.stretch = 0
