@@ -120,9 +120,29 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         }
         style.alignItems = 'start';
         style.justifyContent = 'flex-start';
-        if ([4, 5, 6].includes(panel.column?.alignment)) {
+
+        if ([7, 8, 9].includes(panel.column?.alignment)) {
+            style.alignItems = 'start';
+        }
+        else if ([4, 5, 6].includes(panel.column?.alignment)) {
             style.alignItems = 'center';
         }
+        else if ([1, 2, 3].includes(panel.column?.alignment)) {
+            style.alignItems = 'end';
+        }
+
+
+        if ([7, 4, 1].includes(panel.column?.alignment)) {
+            style.textAlign = 'left';
+        }
+        else if ([8, 5, 2].includes(panel.column?.alignment)) {
+            style.textAlign = 'center';
+        }
+        else if ([9, 6, 3].includes(panel.column?.alignment)) {
+            style.textAlign = 'right';
+        }
+
+
         if (panel.column.label === "") {
             rootStyle.border = "none";
             rootStyle.margin = "0px";
