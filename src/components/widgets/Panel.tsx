@@ -132,14 +132,31 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         // const checkChecked = this.hasCheck ? this.state.checkChecked : undefined;
         const checkChecked = this.state.checkChecked;
 
-
-        let tabWidgetControl: Q2Control;
-        let tabWidgetControlProps
-
-        function tabWidgetValid(form: Q2Form) {
-            console.log(form.s.m1)
+        const tabs: any = [];
+        if (panel?.isTabWidget) {
+            panel.children.reduce((a, b) => {
+                tabs.push({ key: b.key, label: b.label, display: "" });
+            }, tabs)
         }
-        tabWidgetControl = new Q2Control("m1", "", {
+        function tabWidgetValid(form: Q2Form) {
+            let currentOption = form.s.tabWidget;
+            if (!!!currentOption) {
+                currentOption = tabs[0].label;
+            }
+            tabs.map((tab, idx) => {
+                const el = document.getElementById(tab.key)
+                if (el) {
+                    if (tab.label === currentOption) {
+                        el.style.display = "";
+                    }
+                    else {
+                        tabs[idx].display = el.style.display;
+                        el.style.display = "none";
+                    }
+                }
+            })
+        }
+        const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
             pic: panel.label,
             data: 1, valid: tabWidgetValid,
             style: `# {padding: 3px 0px 0px; margin: 0px; padding-bottom:0px; background: none;}
@@ -150,7 +167,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                     `
         })
 
-        tabWidgetControlProps = {
+        const tabWidgetControlProps = {
             column: tabWidgetControl,
             form: this.props.form,
             ref: (ref: any) => { this.props.form.w[tabWidgetControl.column] = ref; }
@@ -197,7 +214,9 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                             if (child.children) {
                                 // render nested panel
                                 return (
-                                    <div key={child.key + `-form-group1-${index}`} style={{ gridColumn: "1 / span 2", width: "100%" }}>
+                                    <div key={child.key + `-form-group1-${index}`}
+                                        id={child.key}
+                                        style={{ gridColumn: "1 / span 2", width: "100%" }}>
                                         {form.renderPanel(child)}
                                     </div>
                                 );

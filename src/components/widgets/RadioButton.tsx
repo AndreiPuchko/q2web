@@ -27,6 +27,12 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
             };
         }
     }
+    componentDidMount(): void {
+        if (typeof this.props.column.valid === "function") {
+            this.props.column.valid(this.props.form);
+        }
+
+    }
 
     static getDerivedStateFromProps(nextProps: Q2RadioButtonProps, prevState: Q2RadioButtonState) {
         // Only update state if the prop value is different and not already in state
@@ -79,8 +85,8 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
         if (column.pic) {
             const options = column.pic.split(';');
             return (
-                <div className="Q2RadioButton" ref={this.divRef} id={this.id}>
-                    <style>{column.style?.replaceAll("#", `#${this.id}`)}</style>
+                <div className="Q2RadioButton" id={this.id}>
+                    <style>{column.style?.replace(/#/g, `#${this.id}`)}</style>
                     {options.map((opt: any, index: number) => {
                         const radio_id = `${this.id}-${index}`
                         return (

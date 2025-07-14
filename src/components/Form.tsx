@@ -246,7 +246,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             if (col.column === "/h" || col.column === "/v" || col.column === "/f" || col.column === "/t") {
                 const panel = {
                     label: col.label,
-                    key: `${col.column}-${index}}`, // Generate unique key
+                    key: `${col.column}-${index}`, // Generate unique key
                     children: [],
                     isTabPage: col.column === "/t" ? true : false,
                     column: col,
