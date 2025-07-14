@@ -1,7 +1,7 @@
 import React, { Component, CSSProperties } from "react";
 import { focusFirstFocusableElement } from '../../utils/dom';
 import Q2RadioButton from "./RadioButton";
-import { Q2Control } from "../../q2_modules/Q2Form"
+import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 
 interface Q2PanelProps {
     panel: any;
@@ -133,24 +133,19 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const checkChecked = this.state.checkChecked;
 
 
-        // let tabWidget = ""
         let tabWidgetControl: Q2Control;
         let tabWidgetControlProps
-        if (panel?.isTabWidget) {
-            tabWidgetControl = new Q2Control("m1", "", { pic: panel.label, data: 1 })
-            
-            function tabWidgetValid(form) {
-                console.log(form.s.m1)
-            }
-            
-            tabWidgetControl.valid = tabWidgetValid;
 
-            tabWidgetControlProps = {
-                column: tabWidgetControl,
-                form: this.props.form,
-                ref: (ref: any) => { this.props.form.w[tabWidgetControl.column] = ref; }
-            };
+        function tabWidgetValid(form: Q2Form) {
+            console.log(form.s.m1)
         }
+        tabWidgetControl = new Q2Control("m1", "", { pic: panel.label, data: 1, valid: tabWidgetValid })
+
+        tabWidgetControlProps = {
+            column: tabWidgetControl,
+            form: this.props.form,
+            ref: (ref: any) => { this.props.form.w[tabWidgetControl.column] = ref; }
+        };
 
         return (
             <div
@@ -180,7 +175,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                 <div className="group-box-title">{panel?.isTabs ? panel.label : (panel?.isTabPage ? "" : panel.column.label)}</div>
                             )
                         ))}
-                {panel?.isTabWidget ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}
+                {(panel?.isTabWidget) ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}
                 <fieldset
                     className="field-set-style"
                     disabled={this.hasCheck && !checkChecked}
