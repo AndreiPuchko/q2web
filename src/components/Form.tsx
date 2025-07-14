@@ -185,7 +185,6 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         }
         const commonProps = {
             column: col,
-            id: `${col.column}-${col.key}`,
             form: this,
             ref: (ref: any) => { this.w[col.column] = ref; }, // Store reference to the widget
         };
@@ -225,7 +224,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             if (col.column === "/t") {
                 if ("children" in tabs) {
                     stack.pop();
-                    tabs.label = tabs.label + `|${col.label}`;
+                    tabs.label = tabs.label + `;${col.label}`;
                     tabs.isTabWidget = true;
                 }
                 else { // First tab came

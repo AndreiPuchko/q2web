@@ -365,7 +365,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
     }
 
     render() {
-        const { column, id } = this.props;
+        const { column } = this.props;
         const style: React.CSSProperties = {
             width: '100%',
         };
@@ -410,7 +410,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
                     onBlur={this.focusOut}
                     onFocus={this.focusIn}
                     readOnly={readOnly}
-                    id={id}
+                    id={this.id}
                     name={column.column}
                     inputMode={(column?.datatype === "dec" || column?.datatype === "num") ? "decimal" : (column?.datatype === "int" ? "numeric" : undefined)}
                     pattern={(column?.datatype === "dec" || column?.datatype === "num") ? "[0-9]*[.,]?[0-9]*" : (column?.datatype === "int" ? "[0-9]*" : undefined)}

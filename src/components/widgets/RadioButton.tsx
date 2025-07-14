@@ -11,17 +11,21 @@ interface Q2RadioButtonState {
 }
 
 class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
-    // state: any;
-    // props: any;
     prevValue: string;
     constructor(props: Q2RadioButtonProps) {
         super(props);
-        // this.props = props;
         this.prevValue = "";
-        this.state = {
-            selectedValue: props.column.data || ''
-        };
-        // console.log("radi const")
+
+        if (typeof props.column.data === "number") {
+            this.state = {
+                selectedValue: props.column.pic.split(";")[props.column.data - 1]
+            };
+        }
+        else {
+            this.state = {
+                selectedValue: props.column.data || ''
+            };
+        }
     }
 
     static getDerivedStateFromProps(nextProps: Q2RadioButtonProps, prevState: Q2RadioButtonState) {
@@ -59,26 +63,25 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
                     name: column.column
                 }
             } as unknown as React.ChangeEvent<HTMLInputElement>);
+            if (typeof this.props.column.valid === "function") {
+                this.props.column.valid(this.props.form);
+            }
         });
-        // if (typeof this.props.col.valid === "function") {
-        //     const validResult = this.props.col.valid(this.props.form);
-        // }
     };
 
     focus() {
-        const { id } = this.props;
-        const radio_id = `${id}-${0}`
+        const radio_id = `${this.id}-${0}`
         document.getElementById(radio_id)?.focus()
     }
 
     render() {
-        const { column, id } = this.props;
+        const { column } = this.props;
         if (column.pic) {
             const options = column.pic.split(';');
             return (
                 <div className="Q2RadioButton">
                     {options.map((opt: any, index: number) => {
-                        const radio_id = `${id}-${index}`
+                        const radio_id = `${this.id}-${index}`
                         return (
                             <label key={index}>
                                 <input
@@ -98,7 +101,7 @@ class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
                 </div>
             );
         }
-    else return (<></>)
+        else return (<></>)
     }
 }
 

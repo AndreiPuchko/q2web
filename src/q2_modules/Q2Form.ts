@@ -15,7 +15,7 @@ export class Q2Control {
     key: string;
     valid: any;
     data?: any;
-    pic?: string;
+    pic: string;
     pi?: string;
     check?: boolean | string | number;
     checkChecked?: boolean | string | number;
@@ -62,7 +62,7 @@ export class Q2Control {
         this.key = key;
         this.valid = options.valid ?? (() => true);
         this.data = options.data;
-        this.pic = options.pic;
+        this.pic = options?.pic || "";
         this.pi = options.pi;
         this.check = options.check;
         this.checkChecked = options.checkChecked;

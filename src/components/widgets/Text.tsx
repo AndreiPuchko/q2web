@@ -10,7 +10,7 @@ class Q2Text extends Widget<Q2TextProps> {
     }
 
     render() {
-        const { column, id } = this.props;
+        const { column } = this.props;
         const readOnly = !!column.readonly;
         const style: React.CSSProperties = {
             width: '98%',
@@ -18,12 +18,12 @@ class Q2Text extends Widget<Q2TextProps> {
 
         return (
             <textarea
-                key={id}
+                key={this.id}
                 className="Q2Text"
                 value={column.data}
                 readOnly={readOnly}
                 style={style}
-                id={id}
+                id={this.id}
                 name={column.column}
             />
         );

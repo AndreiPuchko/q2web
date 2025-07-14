@@ -9,11 +9,14 @@ export interface WidgetProps {
 }
 
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
-
+    id: string;
     constructor(props: P) {
         super(props);
         if (!props.id) {
-            props.id = `${props.column.column}-${props.column.key}`
+            this.id = `${props.column.column}-${props.column.key}`;
+        }
+        else{
+            this.id = props.id;
         }
     }
 

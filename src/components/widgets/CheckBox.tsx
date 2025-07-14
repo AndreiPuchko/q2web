@@ -10,10 +10,8 @@ interface Q2CheckBoxState {
 }
 
 class Q2CheckBox extends Widget<Q2CheckBoxProps, Q2CheckBoxState> {
-    _initialId: string | undefined;
     constructor(props: Q2CheckBoxProps) {
         super(props);
-        this._initialId = props.id;
         this.state = {
             value: !!props.column?.data
         };
@@ -71,13 +69,13 @@ class Q2CheckBox extends Widget<Q2CheckBoxProps, Q2CheckBoxState> {
             <div className="Q2CheckBox-container">
                 <input
                     type="checkbox"
-                    key={this._initialId}
-                    id={this._initialId}
+                    key={this.id}
+                    id={this.id}
                     className="Q2CheckBox"
                     onChange={this.handleChange}
                     checked={this.state.value}
                 />
-                <label htmlFor={this._initialId} className="Q2CheckBox-label">{column.label}</label>
+                <label htmlFor={this.id} className="Q2CheckBox-label">{column.label}</label>
             </div>
         );
     }
