@@ -223,14 +223,20 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         columns.forEach((col: Q2Control, index: number) => {
             if (col.column === "/t") {
                 if ("children" in tabs) {
+                    let idx = stack.length - 1;
+                    while (stack[idx]?.isTabPage !== true || idx === 0) {
+                        stack.pop();
+                        idx -= 1;
+                    }
                     stack.pop();
+
                     tabs.label = tabs.label + `;${col.label}`;
                     tabs.isTabWidget = true;
                 }
                 else { // First tab came
                     const panel = {
-                        // column: "tabWidget",
                         label: col.label,
+                        isTabWidget: true,
                         key: `tabWidget-${col.column}-${index}}`, // Generate unique key
                         children: [],
                         column: col,
@@ -255,6 +261,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 stack.push(panel);
             } else if (col.column === "/") {
                 if (stack.length > 1) {
+                    stack.pop();
+                }
+                if (stack[stack.length - 1]?.isTabWidget) {
+                    tabs = {};
                     stack.pop();
                 }
             } else {

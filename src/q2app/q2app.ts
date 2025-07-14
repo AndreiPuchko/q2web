@@ -71,9 +71,11 @@ q2forms.push(messageBox);
 const messageBox1 = new Q2Form("Dev|Tab Bar", "Message Box 1", "messagebox1", { hasOkButton: true, menutoolbar: true });
 
 messageBox1.add_control("/t", "tab1")
+messageBox1.add_control("/h", "")
+messageBox1.add_control("i1", "Input 1")
+messageBox1.add_control("/f", "")
 messageBox1.add_control("i1", "Input 1")
 messageBox1.add_control("i12", "Input 12")
-
 
 messageBox1.add_control("/t", "tab2")
 messageBox1.add_control("i2", "Input 2")
@@ -82,6 +84,15 @@ messageBox1.add_control("i22", "Input 22")
 messageBox1.add_control("/t", "tab3")
 messageBox1.add_control("i3", "Input 3")
 messageBox1.add_control("i32", "Input 32")
+messageBox1.add_control("/", "")
+messageBox1.add_control("/", "")
+messageBox1.add_control("/", "")
+messageBox1.add_control("/", "")
+messageBox1.add_control("/", "")
+
+messageBox1.add_control("/f", "-")
+messageBox1.add_control("fi1", "F Input 1")
+messageBox1.add_control("fi12", "F Input 12")
 
 const messageBox2 = new Q2Form("Dev|2", "Message Box 2", "messagebox2", {
     columns: [
