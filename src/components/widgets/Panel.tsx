@@ -95,6 +95,10 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
         let className = panel.column.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
+        if (panel.label !== "-" && panel.label !== "" && !panel?.isTabWidget) {
+            console.log(panel)
+            className += " group-box-border ";
+        }
         if (panel.isTabPage) {
             className += " tab-page";
         }
@@ -159,7 +163,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
             pic: panel.label,
             data: 1, valid: tabWidgetValid,
-            style: `# {padding: 3px 0px 0px; margin: 0px; padding-bottom:0px; background: none;}
+            style: `# {padding: 0px 0px 0px; margin: 0px; padding-bottom:0px; border:none; border-bottom: 2px solid }
                     # input {display:none;}
                     # label {border: 1px solid gray;margin-right:5px; background: var(--form-input-bg); padding: 0 1cap;}
                     # label:hover { filter: brightness(90%)}
@@ -198,7 +202,13 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                             </div>
                         ) :
                             (  // Just Group Box Title
-                                <div className="group-box-title">{panel?.isTabs ? panel.label : (panel?.isTabPage ? "" : panel.column.label)}</div>
+                                panel.label !== "-" ?
+                                    <div className="group-box-title">{panel?.isTabs ?
+                                        panel.label + "!" :
+                                        (panel?.isTabPage ?
+                                            "!" : (panel.label === "-" ? ""
+                                                : panel.column.label))}</div>
+                                    : <></>
                             )
                         ))}
                 {(panel?.isTabWidget) ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}

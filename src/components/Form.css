@@ -75,25 +75,42 @@ button {
   background-color: var(--form-input-disabled);
 }
 
-.flex-row {
+
+.Panel {
+  min-width: 0;
+  color: var(--form-label);
   display: flex;
+  position: relative;
+
+  /* Ensure minWidth is set to 0 to prevent overflow */
+}
+
+
+
+.flex-row {
   flex-direction: row;
 }
 
 .flex-column {
-  display: flex;
   flex-direction: column;
 }
 
 .group-box {
-  /* width: 100%; */
+  background: var(--form-groupbox-bg);
+  margin: 0.3cap ;
+  padding: 0px 0 ;
   border: 1px solid var(--form-border);
+  border-radius: 5px;
+}
+
+.group-box-border {
+  /* width: 100%; */
   background: var(--form-groupbox-bg);
   padding: 1.3cap 0.3cap 0.5cap;
   margin: 1cap 0.3cap 0.5cap;
   border-radius: 5px;
-  position: relative;
 }
+
 
 .tab-page {
   padding: 0;
@@ -107,6 +124,7 @@ button {
   left: 1cap;
   background-color: var(--form-groupbox-bg);
   padding: 0 5px;
+  margin: -2px;
   font-weight: bold;
   color: var(--form-label);
 }
@@ -130,12 +148,6 @@ label {
   box-sizing: border-box;
   /* Ensure padding and border are included in the element's total width and height */
   background: var(--form-bg);
-}
-
-.Panel {
-  min-width: 0;
-  color:var(--form-label);
-  /* Ensure minWidth is set to 0 to prevent overflow */
 }
 
 .FormComponent {

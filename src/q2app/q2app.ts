@@ -72,8 +72,12 @@ const messageBox1 = new Q2Form("Dev|Tab Bar", "Message Box 1", "messagebox1", { 
 
 messageBox1.add_control("/t", "tab1")
 messageBox1.add_control("/h", "")
+messageBox1.add_control("/v", "")
 messageBox1.add_control("i1", "Input 1")
-messageBox1.add_control("/f", "")
+messageBox1.add_control("f4i1", "Input 1")
+messageBox1.add_control("f4i1", "Input 1")
+messageBox1.add_control("/", "")
+messageBox1.add_control("/f", "Form")
 messageBox1.add_control("i1", "Input 1")
 messageBox1.add_control("i12", "Input 12")
 
