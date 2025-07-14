@@ -108,13 +108,13 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
             });
             event.preventDefault();
         } else if (event.key === " " && selectedRow >= 0 && selectedRow < dataLength) {
-            this.showCrud(this.props.q2form, this.props.q2form.data[selectedRow], EDIT);
+            this.showCrud(this.props.q2form, EDIT);
             event.preventDefault();
         } else if (event.key === "Insert" && !event.ctrlKey) {
-            this.showCrud(this.props.q2form, {}, NEW);
+            this.showCrud(this.props.q2form, NEW);
             event.preventDefault();
         } else if (event.key === "Insert" && event.ctrlKey) {
-            this.showCrud(this.props.q2form, this.props.q2form.data[selectedRow], COPY);
+            this.showCrud(this.props.q2form, COPY);
             event.preventDefault();
         } else if (event.key === "Escape" && this.props.onClose) {
             this.props.onClose();
@@ -141,7 +141,8 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
         }
     };
 
-    showCrud = (q2form: Q2Form, rowData: any, mode: string) => {
+    showCrud = (q2form: Q2Form, mode: string) => {
+
         if (typeof this.props.showDialog === 'function') {
             // const q2formCopy = { ...q2form }; // Make a copy of metaData
 
@@ -155,6 +156,9 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
             q2formCopy.hasCancelButton = true;
 
             if (mode === EDIT || mode === COPY) {
+                const { selectedRow } = this.state;
+                const rowData = this.props.q2form.data[selectedRow];
+
                 q2formCopy.columns.map((column: Q2Control) => (
                     column.data = rowData[column.column] || column.data || ""
                 ));
@@ -166,15 +170,13 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
             }
 
 
-            this.props.showDialog(q2formCopy); // Pass rowData for all modes
+            this.props.showDialog(q2formCopy);
         } else {
             console.error('showDialog is not a function');
         }
     };
 
     handleAction = (action: any) => {
-        const { selectedRow } = this.state;
-        const rowData = this.props.q2form.data[selectedRow];
 
         switch (action.label) {
             case "Exit":
@@ -183,13 +185,13 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
                 }
                 break;
             case "New":
-                this.showCrud(this.props.q2form, rowData, NEW);
+                this.showCrud(this.props.q2form, NEW);
                 break;
             case "Copy":
-                this.showCrud(this.props.q2form, rowData, COPY);
+                this.showCrud(this.props.q2form, COPY);
                 break;
             case "Edit":
-                this.showCrud(this.props.q2form, rowData, EDIT);
+                this.showCrud(this.props.q2form, EDIT);
                 break;
             case "Delete":
                 console.log("Delete action");

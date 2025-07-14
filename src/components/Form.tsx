@@ -13,7 +13,6 @@ import Q2Panel from './widgets/Panel';
 interface FormProps {
     q2form: Q2Form;
     onClose?: () => void;
-    rowData?: any;
     isTopDialog?: boolean;
 }
 
@@ -45,9 +44,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
     componentDidMount() {
 
-        const { rowData } = this.props;
         const formData = this.props.q2form.columns.reduce((acc: any, column: any) => {
-            acc[column.column] = rowData ? rowData[column.column] : column.data || "";
+            acc[column.column] = column.data || "";
             return acc;
         }, {});
         this.setState({ formData });

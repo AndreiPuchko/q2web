@@ -10,7 +10,6 @@ interface DialogProps {
   zIndex: number;
   q2form: Q2Form;
   isTopDialog: boolean;
-  rowData?: any;
   showDialog: (q2form: Q2Form) => void;
 }
 
@@ -213,7 +212,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   render() {
-    const { onClose, q2form, zIndex, isTopDialog, rowData, showDialog } = this.props;
+    const { onClose, q2form, zIndex, isTopDialog, showDialog } = this.props;
     const { isMaximized } = this.state;
     const { data } = q2form;
     const isDataGrid = data && data.length > 0;
@@ -239,13 +238,15 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             <button className="close-button" onClick={onClose}>&#10006;</button>
           </div>
         </div>
+
         <div className="dialog-content">
           {isDataGrid ? (
             <DataGrid q2form={q2form} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
           ) : (
-            <Form q2form={q2form} onClose={onClose} rowData={rowData} isTopDialog={isTopDialog} />
+            <Form q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
           )}
         </div>
+
       </div>
     );
   }

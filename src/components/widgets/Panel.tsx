@@ -96,7 +96,6 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         // Panel style logic (copied from Form.renderPanel)
         let className = panel.column.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
         if (panel.label !== "-" && panel.label !== "" && !panel?.isTabWidget) {
-            console.log(panel)
             className += " group-box-border ";
         }
         if (panel.isTabPage) {
@@ -138,7 +137,8 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
 
         const tabs: any = [];
         if (panel?.isTabWidget) {
-            panel.children.reduce((a, b) => {
+            panel.children.reduce((a: any, b:any) => {
+                a;
                 tabs.push({ key: b.key, label: b.label, display: "" });
             }, tabs)
         }
@@ -147,7 +147,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
             if (!!!currentOption) {
                 currentOption = tabs[0].label;
             }
-            tabs.map((tab, idx) => {
+            tabs.map((tab: any, idx: number) => {
                 const el = document.getElementById(tab.key)
                 if (el) {
                     if (tab.label === currentOption) {
