@@ -36,6 +36,7 @@ export const fileMenuAbout = new Q2Form("File|About", "Settings", "about", {
 });
 
 
+fileMenuAbout.add_control("/v");
 fileMenuAbout.add_control("text", "", { readonly: true,  data: "Q2App framework", control: "text"});
 
 

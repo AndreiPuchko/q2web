@@ -94,8 +94,11 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     render() {
         const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
-        let className = panel.column.column === "/h" ? "Panel flex-row group-box" : "Panel flex-column group-box";
-        if (panel.label !== "-" && panel.label !== "" && !panel?.isTabWidget) {
+        let className = panel.column.column === "/h" ? "Panel flex-row" : "Panel flex-column";
+        if (panel?.label !== "" && panel?.label !== undefined) {
+            className += " group-box ";
+        }
+        if (panel?.label !== "-" && panel?.label !== "" && !panel?.isTabWidget && panel?.label !== undefined) {
             className += " group-box-border ";
         }
         if (panel.isTabPage) {
@@ -291,14 +294,15 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                                     {child.control === "check" ? "Turn on" : child.label}
                                                 </label>
                                             </div>
-                                            : <label
-                                                htmlFor={id}
-                                                key={child.key + "-label"}
-                                                className="form-label"
-                                                style={{ justifySelf: "end", marginRight: "0.5em" }}
-                                            >
-                                                {child.label && child.control !== "check" ? child.label + ":" : ""}
-                                            </label>
+                                            : (child.label !== "" ?
+                                                <label
+                                                    htmlFor={id}
+                                                    key={child.key + "-label"}
+                                                    className="form-label"
+                                                    style={{ justifySelf: "end", marginRight: "0.5em" }}
+                                                >
+                                                    {child.label && child.control !== "check" ? child.label + ":" : ""}
+                                                </label> : <></>)
                                         }
                                         {child.control !== "label" &&
                                             <div key={child.key + `-form-group-${index}`}
