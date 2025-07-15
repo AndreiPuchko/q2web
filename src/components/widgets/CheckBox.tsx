@@ -75,7 +75,7 @@ class Q2CheckBox extends Widget<Q2CheckBoxProps, Q2CheckBoxState> {
                     onChange={this.handleChange}
                     checked={this.state.value}
                 />
-                <label htmlFor={this.id} className="Q2CheckBox-label">{column.label}</label>
+                <label htmlFor={this.id}>{column.label}</label>
             </div>
         );
     }

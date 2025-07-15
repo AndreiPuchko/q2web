@@ -79,9 +79,9 @@ export class Q2Control {
     getStyle() {
         // console.log(this.control, this.label, this.stretch)
         if (this.datalen)
-            return { flex: `0 1 auto` }
+            return { flex: `0 1 auto`, maxWidth: `${this.datalen*1.5}cap` }
         else
-            return { flex: `${this.stretch} 1 auto`, width: "100%" }
+            return { flex: `${this.stretch} ${this.stretch}`, width: "100%" }
     }
 }
 

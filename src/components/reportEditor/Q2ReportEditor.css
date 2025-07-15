@@ -63,7 +63,7 @@
     color: black;
     min-height: 2.7em;
     max-height: 2.7em;
-    border-bottom: 1px solid black;
+    border: 1px solid black;
 }
 
 .q2-report-page {

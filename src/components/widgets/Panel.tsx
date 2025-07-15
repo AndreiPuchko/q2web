@@ -157,7 +157,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
 
         const tabs: any = [];
         if (panel?.isTabWidget) {
-            panel.children.reduce((a: any, b:any) => {
+            panel.children.reduce((a: any, b: any) => {
                 a;
                 tabs.push({ key: b.key, label: b.label, display: "" });
             }, tabs)
@@ -183,11 +183,11 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
             pic: panel.label,
             data: 1, valid: tabWidgetValid,
-            style: `# {padding: 0px 0px 0px; margin: 0px; padding-bottom:0px; border:none; border-bottom: 2px solid }
+            style: `# {padding: 0; margin: 0; gap: 5px; border:none; border-bottom: 1px solid; display:flex; background:transparent }
                     # input {display:none;}
                     # label {border: 1px solid gray;margin-right:5px; background: var(--form-input-bg); padding: 0 1cap;}
                     # label:hover { filter: brightness(90%)}
-                    # input[type="radio"]:checked + label {  background-color: lightgreen;}
+                    # input[type="radio"]:checked + label {  background-color: LightSkyBlue;}
                     `
         })
 
@@ -232,10 +232,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                             )
                         ))}
                 {(panel?.isTabWidget) ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}
-                <fieldset
-                    className="field-set-style"
-                    disabled={this.hasCheck && !checkChecked}
-                >
+                <fieldset className="field-set-style" disabled={this.hasCheck && !checkChecked}>
                     <div style={style}>
                         {panel.children && panel.children.map((child: any, index: number) => {
                             // Ensure child.id is always defined and unique
@@ -246,7 +243,8 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                                 return (
                                     <div key={child.key + `-form-group1-${index}`}
                                         id={child.key}
-                                        style={{ gridColumn: "1 / span 2", width: "100%" }}>
+                                        // style={{ gridColumn: "1 / span 2", width: "100%" }}>
+                                        style={{ width: "100%" }}>
                                         {form.renderPanel(child)}
                                     </div>
                                 );

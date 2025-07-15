@@ -52,6 +52,12 @@ button {
   padding: 1px 2px;
 }
 
+.Q2RadioButton,
+.Q2CheckBox-container {
+  display: inline-block;
+  padding: 0 0cap;
+}
+
 .Q2CheckBox-container {
   /* padding: 0px; */
   /* height: 1.8cap; */
@@ -75,6 +81,12 @@ button {
   background-color: var(--form-input-disabled);
 }
 
+.Q2CheckBox-container label {
+  padding: 0 1cap;
+}
+.Q2RadioButton label {
+  padding: 0 1cap;
+}
 
 .Panel {
   min-width: 0;
