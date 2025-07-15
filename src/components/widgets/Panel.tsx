@@ -95,14 +95,17 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
         let className = panel.column.column === "/h" ? "Panel flex-row" : "Panel flex-column";
-        if (panel?.label !== "" && panel?.label !== undefined) {
+        if (panel?.label !== "" && panel?.label !== undefined  && !panel?.isTabWidget) {
             className += " group-box ";
         }
         if (panel?.label !== "-" && panel?.label !== "" && !panel?.isTabWidget && panel?.label !== undefined) {
             className += " group-box-border ";
         }
         if (panel.isTabPage) {
-            className += " tab-page";
+            className += " tab-page ";
+        }
+        if (panel.isTabWidget) {
+            className += " tab-widget ";
         }
         let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
         const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
@@ -186,11 +189,11 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
             pic: panel.label,
             data: 1, valid: tabWidgetValid,
-            style: `# {padding: 0; margin: 0; gap: 5px; border:none; border-bottom: 1px solid; display:flex; background:transparent }
+            style: `# {padding: 0; margin: 0; gap: 2px; border:none; border-bottom: 1px solid; display:flex; background:transparent }
                     # input {display:none;}
-                    # label {border: 1px solid gray;margin-right:5px; background: var(--form-input-bg); padding: 0 1cap;}
-                    # label:hover { filter: brightness(90%)}
-                    # input[type="radio"]:checked + label {  background-color: LightSkyBlue;}
+                    # label {border: 1px solid gray; background: var(--form-input-bg); padding: 0 1cap;}
+                    # label:hover { filter: brightness(90%); cursor: pointer;}
+                    # input[type="radio"]:checked + label { background-color: LightSkyBlue;}
                     `
         })
 

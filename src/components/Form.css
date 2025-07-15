@@ -111,16 +111,21 @@ button {
   background: var(--form-groupbox-bg);
   margin: 0.3cap;
   padding: 0px 0;
-  border: 1px solid var(--form-border);
-  border-radius: 5px;
+  border: none;
 }
 
 .group-box-border {
   /* width: 100%; */
-  background: var(--form-groupbox-bg);
-  padding: 1.3cap 0.3cap 0.5cap;
   margin: 1cap 0.3cap 0.5cap;
+  padding: 1.3cap 0.3cap 0.5cap;
+  border: 1px solid var(--form-border);
   border-radius: 5px;
+}
+
+.tab-widget {
+  border: 1px solid var(--form-border);
+  border-radius: 5px;
+  padding: 0;
 }
 
 
