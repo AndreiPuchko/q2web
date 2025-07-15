@@ -1,8 +1,9 @@
 import { Q2Form } from "../q2_modules/Q2Form"
 import { fileMenu } from "./FileMenu"
 import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
-import { get_data_sets_json } from "../components/reportEditor/test_report"
 import { JsonEditor } from 'json-edit-react'
+import { get_report_json, get_data_sets_json } from "../components/reportEditor/test_report"
+
 export const q2forms: Q2Form[] = [];
 
 const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
@@ -109,7 +110,7 @@ const reportEditor = new Q2Form("Dev|Report Editor", "Report Editor Dialog Demo"
     });
 
 reportEditor.add_control("/t", "Report Designer")
-reportEditor.add_control("repo", "", { control: "widget", data: { widget: Q2ReportEditor } })
+reportEditor.add_control("repo", "", { control: "widget", data: { widget: Q2ReportEditor, props: { q2report: get_report_json(), data_set: get_data_sets_json() } } })
 reportEditor.add_control("/t", "Data")
 const jsonData = get_data_sets_json();
 reportEditor.add_control("data", "", { control: "widget", data: { widget: JsonEditor, props: { data: jsonData } } });
@@ -126,3 +127,4 @@ dataGrid.add_control("price", "Price")
 dataGrid.add_control("qt", "Qt")
 
 q2forms.push(dataGrid);
+

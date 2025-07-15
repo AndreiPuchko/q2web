@@ -3,11 +3,13 @@ import { Q2Report } from "./Q2Report";
 import Q2StyleEditor from "./Q2StyleEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
 import "./Q2ReportEditor.css";
-import { get_report_json } from "./test_report"
-
+import Q2Button from "../widgets/Button";
+import { Q2Control } from "../../q2_modules/Q2Form"
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
+    q2report: any;
+    data_set: any;
 }
 
 function stableStringify(obj: any) {
@@ -54,7 +56,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
     }
 
     // report = get_report_json();
-    q2report = new Q2Report(get_report_json());
+    q2report = new Q2Report({ ...this.props.q2report });
 
     defaultMenu = ["Clone", "Add above", "Add below", "-", "Hide", "Show", "Move Up", "Move Down", "-", "❌Remove"];
 
@@ -947,7 +949,6 @@ class ReportView extends React.Component<any, {
         };
         const isSelected = selection?.type === "report";
 
-
         return (
             <div>
                 <div
@@ -963,6 +964,7 @@ class ReportView extends React.Component<any, {
                         <button style={buttonStyle}>DOCX</button>
                         <button style={buttonStyle}>XLSX</button>
                         <button style={buttonStyle}>PDF</button>
+                        <Q2Button  {...{ column: new Q2Control("b1", "View data") }} />
                     </div>
                 </div>
 
