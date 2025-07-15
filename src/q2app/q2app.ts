@@ -2,6 +2,7 @@ import { Q2Form } from "../q2_modules/Q2Form"
 import { fileMenu } from "./FileMenu"
 import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
 import { get_data_sets_json } from "../components/reportEditor/test_report"
+import { JsonEditor } from 'json-edit-react'
 export const q2forms: Q2Form[] = [];
 
 const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
@@ -37,7 +38,7 @@ if (exampleForm.add_control("/v", "Vertical layout")) {
         exampleForm.add_control("/");
 
     }
-    exampleForm.add_control("var44", "Radio button", { pic: "Red;White", control: "radio", data: "White"});
+    exampleForm.add_control("var44", "Radio button", { pic: "Red;White", control: "radio", data: "White" });
 }
 
 exampleForm.hasCancelButton = true;
@@ -59,14 +60,10 @@ const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", 
     hasOkButton: true
 });
 
-
-
 q2forms.push(...fileMenu);
 q2forms.push(exampleForm);
 q2forms.push(new Q2Form("Refs|-"));
 q2forms.push(messageBox);
-
-
 
 const messageBox1 = new Q2Form("Dev|Tab Bar", "Message Box 1", "messagebox1", { hasOkButton: true, menutoolbar: true });
 
@@ -105,14 +102,17 @@ const messageBox2 = new Q2Form("Dev|2", "Message Box 2", "messagebox2", {
     hasOkButton: true
 });
 
-const reportEditor = new Q2Form("Dev|Report Editor", "Report Editor Dialog Demo", "redemo", {
-    columns: [
-        { key: "2", column: "red", label: "", data: Q2ReportEditor, control: "widget" },
-    ],
-    hasOkButton: true,
-    menutoolbar: true
-});
+const reportEditor = new Q2Form("Dev|Report Editor", "Report Editor Dialog Demo", "redemo",
+    {
+        hasOkButton: true,
+        menutoolbar: true
+    });
 
+reportEditor.add_control("/t", "Report Designer")
+reportEditor.add_control("repo", "", { control: "widget", data: { widget: Q2ReportEditor } })
+reportEditor.add_control("/t", "Data")
+const jsonData = get_data_sets_json();
+reportEditor.add_control("data", "", { control: "widget", data: { widget: JsonEditor, props: { data: jsonData } } });
 
 q2forms.push(reportEditor);
 q2forms.push(new Q2Form("Dev|-"));

@@ -176,20 +176,20 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         });
     };
 
-    renderInput = (col: Q2Control) => {
+    renderInput = (column: Q2Control) => {
         // Set initial checkChecked for checkable controls
-        if (col.check && typeof col.checkChecked === "undefined") {
-            col.checkChecked = !!col.data;
+        if (column.check && typeof column.checkChecked === "undefined") {
+            column.checkChecked = !!column.data;
         }
         const commonProps = {
-            column: col,
+            column: column,
             form: this,
-            ref: (ref: any) => { this.w[col.column] = ref; }, // Store reference to the widget
+            ref: (ref: any) => { this.w[column.column] = ref; }, // Store reference to the widget
         };
-        if (col.column === "/s") {
-            col.control = "spacer"
+        if (column.column === "/s") {
+            column.control = "spacer"
         }
-        switch (col.control) {
+        switch (column.control) {
             case "text":
                 return <Q2Text {...commonProps} />;
             case "line":
@@ -201,10 +201,18 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             case "radio":
                 return <Q2RadioButton {...commonProps} />;
             case "form":
-                col.data.subForm = true;
-                return <Form q2form={col.data} />
+                column.data.subForm = true;
+                return <Form q2form={column.data} />
             case "widget":
-                return <col.data />;
+                {
+                    if (typeof column.data === "object" && column.data?.widget) {
+                        return <column.data.widget {...(column.data.props || {})} />;
+                    }
+                    else if (typeof column.data === "function") {
+                        return <column.data />;
+                    }
+                }
+                return null;
             default:
                 return <Q2Line {...commonProps} />;
         }
