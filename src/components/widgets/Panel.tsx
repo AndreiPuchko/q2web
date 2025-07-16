@@ -95,7 +95,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
         let className = panel.column.column === "/h" ? "Panel flex-row" : "Panel flex-column";
-        if (panel?.label !== "" && panel?.label !== undefined  && !panel?.isTabWidget) {
+        if (panel?.label !== "" && panel?.label !== undefined && !panel?.isTabWidget) {
             className += " group-box ";
         }
         if (panel?.label !== "-" && panel?.label !== "" && !panel?.isTabWidget && panel?.label !== undefined) {
@@ -116,6 +116,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                 display: "grid",
                 gridTemplateColumns: "max-content 1fr",
                 width: "100%",
+                paddingRight: "1cap",
                 // gap: "0.2em",
                 // padding: "0.5cap"
             };
@@ -170,7 +171,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         }
         function tabWidgetValid(form: Q2Form) {
             let currentOption = form.s.tabWidget;
-            if (!!!currentOption) {
+            if (!currentOption) {
                 currentOption = tabs[0].label;
             }
             tabs.map((tab: any, idx: number) => {
@@ -246,11 +247,22 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                             const id = `${childId}-control-cb`;
                             if (child.children) {
                                 // render nested panel
+                                const nestedPanelStyle: any = {}
+
+                                if (child.children.some((item: any) => {
+                                    return "children" in item || item?.datalen === undefined || item?.datalen === 0
+                                }))
+                                    nestedPanelStyle["width"] = "100%"
+                                else
+                                    nestedPanelStyle["display"] = "inline-block"
+
                                 return (
                                     <div key={child.key + `-form-group1-${index}`}
                                         id={child.key}
                                         // style={{ gridColumn: "1 / span 2", width: "100%" }}>
-                                        style={{ width: "100%" }}>
+                                        style={nestedPanelStyle}
+                                    // style={{ display: "inline-block" }}
+                                    >
                                         {form.renderPanel(child)}
                                     </div>
                                 );
@@ -329,8 +341,8 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                             }
                         })}
                     </div>
-                </fieldset>
-            </div>
+                </fieldset >
+            </div >
         );
     }
 }
