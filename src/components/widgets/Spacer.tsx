@@ -10,7 +10,7 @@ class Q2Spacer extends Widget<Q2SpacerProps> {
 
     render() {
         const column = this.props.column;
-        return <span className="Q2Spacer">{column.label}</span>;
+        return <div className="Q2Spacer">{column.label}</div>;
     }
 }
 
