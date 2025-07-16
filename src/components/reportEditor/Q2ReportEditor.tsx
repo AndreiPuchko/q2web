@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { Q2Report } from "./Q2Report";
+import { JsonEditor } from 'json-edit-react'
 import Q2StyleEditor from "./Q2StyleEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
 import "./Q2ReportEditor.css";
 import Q2Button from "../widgets/Button";
 import Q2Spacer from '../widgets/Spacer'
-
-import { Q2Control } from "../../q2_modules/Q2Form"
+import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
+import { showDialog } from '../../q2_modules/Q2DialogApi';
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
@@ -59,6 +60,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
     // report = get_report_json();
     q2report = new Q2Report({ ...this.props.q2report });
+    data_set = this.props.data_set;
 
     defaultMenu = ["Clone", "Add above", "Add below", "-", "Hide", "Show", "Move Up", "Move Down", "-", "❌Remove"];
 
@@ -938,6 +940,13 @@ class ReportView extends React.Component<any, {
         return (rowIdx >= rMin && rowIdx <= rMax && columnIdx >= cMin && columnIdx <= cMax);
     };
 
+    showDataSets = () => {
+        const dataViewer = new Q2Form("", "Data Viewer", "dw", { hasOkButton: true, });
+        const { data_set } = this.props.reportEditor;
+        dataViewer.add_control("data", "", { control: "widget", data: { widget: JsonEditor, props: { data: data_set } } });
+        showDialog(dataViewer)
+    }
+
     render() {
         const { selection, q2report, handleSelect, handleContextMenu } = this.props;
         const isSelected = selection?.type === "report";
@@ -953,12 +962,12 @@ class ReportView extends React.Component<any, {
                     <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
                     {/* <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}> */}
                     <div>
-                        <Q2Button  {...{ column: new Q2Control("b1", "HTML") }} />
-                        <Q2Button  {...{ column: new Q2Control("b1", "DOCX") }} />
-                        <Q2Button  {...{ column: new Q2Control("b1", "XLSX") }} />
-                        <Q2Button  {...{ column: new Q2Control("b1", "PDF", { disabled: true }) }} />
+                        <Q2Button {...{ column: new Q2Control("b1", "HTML") }} />
+                        <Q2Button {...{ column: new Q2Control("b1", "DOCX") }} />
+                        <Q2Button {...{ column: new Q2Control("b1", "XLSX") }} />
+                        <Q2Button {...{ column: new Q2Control("b1", "PDF", { disabled: true }) }} />
                         <Q2Spacer {...{ column: new Q2Control("/s", "-", { stretch: 9 }) }} />
-                        <Q2Button  {...{ column: new Q2Control("b1", "View data") }} />
+                        <Q2Button {...{ column: new Q2Control("b1", "View data", { valid: this.showDataSets }) }} />
                     </div>
                 </div>
 

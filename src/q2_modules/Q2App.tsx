@@ -8,9 +8,13 @@ import { Q2Form } from "../q2_modules/Q2Form";
 import './Q2App.css';
 
 
-class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: any, theme: string }> {
+export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: any, theme: string }> {
+  static instance: Q2App | null = null;
+
   constructor(props: object) {
     super(props);
+    Q2App.instance = this;
+
     this.state = {
       dialogs: [],
       zIndexMap: {},
