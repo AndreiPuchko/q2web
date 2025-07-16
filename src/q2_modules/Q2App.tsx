@@ -92,7 +92,7 @@ export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, di
   render() {
     return (
       <>
-        <MainMenu showDialog={this.showDialog} />
+        <MainMenu />
         <div className='WorkSpace'>
           {/* <Q2ReportEditor /> */}
           {this.state.dialogs.map((dialog: any, index: any) => (
@@ -102,7 +102,6 @@ export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, di
               q2form={dialog.q2form}
               isTopDialog={index === this.state.dialogs.length - 1}
               zIndex={this.state.zIndexMap[index] || 0}
-              showDialog={this.showDialog}
             />
           ))}
         </div>

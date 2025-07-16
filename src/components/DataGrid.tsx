@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
 import { Q2Form, Q2Control } from "../q2_modules/Q2Form";
-
 import "./DataGrid.css"
+import { showDialog } from '../q2_modules/Q2DialogApi';
+
 
 const EDIT = "EDIT";
 const NEW = "NEW";
@@ -12,7 +13,6 @@ const COPY = "COPY";
 interface DataGridProps {
     q2form: Q2Form;
     onClose: () => void;
-    showDialog: (q2form: Q2Form) => void;
     isTopDialog: boolean;
 }
 
@@ -143,37 +143,31 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
 
     showCrud = (q2form: Q2Form, mode: string) => {
 
-        if (typeof this.props.showDialog === 'function') {
-            // const q2formCopy = { ...q2form }; // Make a copy of metaData
+        // const q2formCopy = { ...q2form }; // Make a copy of metaData
 
-            const q2formCopy = new Q2Form();
-            Object.assign(q2formCopy, q2form);
+        const q2formCopy = new Q2Form();
+        Object.assign(q2formCopy, q2form);
 
-            q2formCopy.data = [];
-            q2formCopy.key += mode;
-            q2formCopy.title += ".[" + mode + "]";
-            q2formCopy.hasOkButton = true;
-            q2formCopy.hasCancelButton = true;
+        q2formCopy.data = [];
+        q2formCopy.key += mode;
+        q2formCopy.title += ".[" + mode + "]";
+        q2formCopy.hasOkButton = true;
+        q2formCopy.hasCancelButton = true;
 
-            if (mode === EDIT || mode === COPY) {
-                const { selectedRow } = this.state;
-                const rowData = this.props.q2form.data[selectedRow];
+        if (mode === EDIT || mode === COPY) {
+            const { selectedRow } = this.state;
+            const rowData = this.props.q2form.data[selectedRow];
 
-                q2formCopy.columns.map((column: Q2Control) => (
-                    column.data = rowData[column.column] || column.data || ""
-                ));
-            }
-            else {
-                q2formCopy.columns.map((column: Q2Control) => (
-                    column.data = ""
-                ));
-            }
-
-
-            this.props.showDialog(q2formCopy);
-        } else {
-            console.error('showDialog is not a function');
+            q2formCopy.columns.map((column: Q2Control) => (
+                column.data = rowData[column.column] || column.data || ""
+            ));
         }
+        else {
+            q2formCopy.columns.map((column: Q2Control) => (
+                column.data = ""
+            ));
+        }
+        showDialog(q2formCopy);
     };
 
     handleAction = (action: any) => {

@@ -10,7 +10,6 @@ interface DialogProps {
   zIndex: number;
   q2form: Q2Form;
   isTopDialog: boolean;
-  showDialog: (q2form: Q2Form) => void;
 }
 
 interface DialogState {
@@ -212,7 +211,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   render() {
-    const { onClose, q2form, zIndex, isTopDialog, showDialog } = this.props;
+    const { onClose, q2form, zIndex, isTopDialog } = this.props;
     const { isMaximized } = this.state;
     const { data } = q2form;
     const isDataGrid = data && data.length > 0;
@@ -241,9 +240,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         <div className="dialog-content">
           {isDataGrid ? (
-            <DataGrid q2form={q2form} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
+            <DataGrid q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
           ) : (
-            <Form q2form={q2form} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
+            <Form q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
           )}
         </div>
 

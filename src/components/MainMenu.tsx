@@ -2,10 +2,10 @@ import React from 'react';
 import './MainMenu.css';
 import { Q2Form } from "../q2_modules/Q2Form";
 import { q2forms } from '../q2app/q2app';
+import { showDialog } from '../q2_modules/Q2DialogApi';
 
-interface MainMenuProps {
-    showDialog: (q2form: Q2Form) => void;
-}
+
+interface MainMenuProps { }
 
 interface MainMenuState {
     visibleDropdown: string | null;
@@ -82,7 +82,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                     <button key={item.key} onClick={(e) => {
                         e.stopPropagation();
                         const form = q2forms.find(f => f.key === item.key);
-                        if (form) this.props.showDialog(form);
+                        if (form) showDialog(form);
                         this.hideDropdown();
                     }}>
                         {item.label}
@@ -109,7 +109,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 const label = pathParts[pathParts.length - 1];
                 return (
                     <button key={form.key} onClick={() => {
-                        this.props.showDialog(form);
+                        showDialog(form);
                         this.hideDropdown();
                     }} className='toolButton'>
                         {label}
