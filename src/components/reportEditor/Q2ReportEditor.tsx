@@ -4,6 +4,8 @@ import Q2StyleEditor from "./Q2StyleEditor";
 import Q2ContentEditor from "./Q2ContentEditor";
 import "./Q2ReportEditor.css";
 import Q2Button from "../widgets/Button";
+import Q2Spacer from '../widgets/Spacer'
+
 import { Q2Control } from "../../q2_modules/Q2Form"
 
 interface Q2ReportEditorProps {
@@ -960,10 +962,11 @@ class ReportView extends React.Component<any, {
                     <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
                     {/* <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}> */}
                     <div>
-                        <button style={buttonStyle}>HTML</button>
-                        <button style={buttonStyle}>DOCX</button>
-                        <button style={buttonStyle}>XLSX</button>
-                        <button style={buttonStyle}>PDF</button>
+                        <Q2Button  {...{ column: new Q2Control("b1", "HTML") }} />
+                        <Q2Button  {...{ column: new Q2Control("b1", "DOCX") }} />
+                        <Q2Button  {...{ column: new Q2Control("b1", "XLSX") }} />
+                        <Q2Button  {...{ column: new Q2Control("b1", "PDF", { disabled: true }) }} />
+                        <Q2Spacer {...{ column: new Q2Control("/s", "-", { stretch: 9 }) }} />
                         <Q2Button  {...{ column: new Q2Control("b1", "View data") }} />
                     </div>
                 </div>

@@ -1,19 +1,17 @@
-import { Component } from 'react';
+import Widget from './Widget';
+import { WidgetProps } from './Widget';
 
-class Spacer extends Component {
-    constructor(props: any) {
+interface Q2SpacerProps extends WidgetProps { }
+
+class Q2Spacer extends Widget<Q2SpacerProps> {
+    constructor(props: Q2SpacerProps) {
         super(props);
     }
 
     render() {
-        const style = {
-            flexGrow: 1, // Allow the spacer to take up remaining space
-            height: 'auto',
-            width: '100%'
-        };
-
-        return <div className="Q2Spacer" style={style}></div>;
+        const column = this.props.column;
+        return <span className="Q2Spacer">{column.label}</span>;
     }
 }
 
-export default Spacer;
+export default Q2Spacer;

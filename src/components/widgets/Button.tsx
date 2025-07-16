@@ -1,19 +1,22 @@
-import { Component } from 'react';
+import Widget from './Widget';
 import { WidgetProps } from './Widget';
 import './Button.css';
 
 interface Q2ButtonProps extends WidgetProps { }
 
-class Q2Button extends Component<Q2ButtonProps> {
+class Q2Button extends Widget<Q2ButtonProps> {
     constructor(props: Q2ButtonProps) {
         super(props);
     }
 
     render() {
         const { column } = this.props;
+        const disabled = column.disabled;
         return (
-            // <button onClick={this.props.onClick} className="Q2Button">
-            <button className="Q2Button">
+            <button className="Q2Button"
+                onClick={column.valid}
+                disabled={disabled}
+            >
                 {column?.label}
             </button>
         );

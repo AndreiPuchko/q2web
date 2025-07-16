@@ -191,7 +191,7 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
             data: 1, valid: tabWidgetValid,
             style: `# {padding: 0; margin: 0; gap: 2px; border:none; border-bottom: 1px solid; display:flex; background:transparent }
                     # input {display:none;}
-                    # label {border: 1px solid gray; background: var(--form-input-bg); padding: 0 1cap;}
+                    # label {border: 1px solid gray; background: var(--form-input-bg); padding: 0 1cap; border:none}
                     # label:hover { filter: brightness(90%); cursor: pointer;}
                     # input[type="radio"]:checked + label { background-color: LightSkyBlue;}
                     `

@@ -12,6 +12,7 @@ export class Q2Control {
     alignment?: number;
     control: string;
     readonly: boolean;
+    disabled: boolean;
     key: string;
     valid: any;
     data?: any;
@@ -35,6 +36,7 @@ export class Q2Control {
             alignment?: number,
             control?: string,
             readonly?: boolean,
+            disabled?: boolean;
             key?: string,
             valid?: any,
             data?: any,
@@ -59,6 +61,7 @@ export class Q2Control {
         this.alignment = options.alignment;
         this.control = options.control ?? 'line';
         this.readonly = options.readonly ?? false;
+        this.disabled = options.disabled ?? false;
         this.key = key;
         this.valid = options.valid ?? (() => true);
         this.data = options.data;

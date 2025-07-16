@@ -5,7 +5,7 @@ import { Q2Control } from "../../q2_modules/Q2Form";
 export interface WidgetProps {
     id?: string;
     column: Q2Control;
-    form: any;
+    form?: any;
 }
 
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
@@ -15,7 +15,7 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
         if (!props.id) {
             this.id = `${props.column.column}-${props.column.key}`;
         }
-        else{
+        else {
             this.id = props.id;
         }
     }
@@ -25,12 +25,14 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     }
 
     focusIn = () => {
-        this.props.form.focus = this.props.column.column
-        this.props.form.handleFocus()
+        if (this.props.form) {
+            this.props.form.focus = this.props.column.column
+            this.props.form?.handleFocus()
+        }
     }
 
     focusOut = () => {
-        this.props.form.prevFocus = this.props.column.column;
+        if (this.props.form) this.props.form.prevFocus = this.props.column.column;
     }
 
     focus() {

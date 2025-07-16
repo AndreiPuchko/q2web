@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import './Form.css'; // Import the CSS file for styling
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Text from './widgets/Text'; // Import the Text widget
-import Spacer from './widgets/Spacer'; // Import the Spacer widget
+import Q2Spacer from './widgets/Spacer'; // Import the Spacer widget
 import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
 import { focusFirstFocusableElement } from '../utils/dom';
 import Q2RadioButton from "./widgets/RadioButton";
@@ -195,7 +195,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
             case "line":
                 return <Q2Line {...commonProps} />
             case "spacer":
-                return <Spacer {...commonProps} />;
+                return <Q2Spacer {...commonProps} />;
             case "check":
                 return <Q2CheckBox {...commonProps} />;
             case "radio":
@@ -325,8 +325,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
                 {((hasOkButton || hasCancelButton) && !subForm) && (
                     <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        {hasOkButton && <Q2Button label="OK" onClick={this.handleSubmit} />}
-                        {hasCancelButton && <Q2Button label="Cancel" onClick={this.handleCancel} />}
+                        {/* {hasOkButton && <Q2Button label="OK" onClick={this.handleSubmit} />} */}
+                        {hasOkButton && <Q2Button  {...{ column: new Q2Control("ok", "Ok", { valid: this.handleSubmit }) }} />}
+                        {hasCancelButton && <Q2Button  {...{ column: new Q2Control("cancel", "Cancel", { valid: this.handleCancel }) }} />}
+
                     </div>
                 )}
 

@@ -1,21 +1,17 @@
 .Q2Button {
-    padding: 10px 15px;
-    border: none;
+    padding: 0.5cap 0.5cap;
+    border: 1px solid green;
+    border-radius: 3px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 0 4px;
+    margin: 2px 4px;
+}
+
+.Q2Button:hover:enabled {
     cursor: pointer;
-    border-radius: 5px;
+    filter: brightness(90%);
 }
 
-.Q2Button:active {
-    border-radius:  10px;
-    border:1px solid green;
-}
-
-.Q2Button:hover {
-    opacity: 0.9;
-    border:1px solid green;
+.Q2Button:disabled {
+    filter: grayscale() brightness(90%);
 }
