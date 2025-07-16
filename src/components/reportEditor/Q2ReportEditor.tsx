@@ -940,15 +940,6 @@ class ReportView extends React.Component<any, {
 
     render() {
         const { selection, q2report, handleSelect, handleContextMenu } = this.props;
-        const buttonStyle = {
-            padding: "3px 18px",
-            margin: "1px 10px",
-            cursor: "pointer",
-            border: "1px solid",
-            fontSize: 12,
-            borderRadius: "7px",
-            width: "9cap"
-        };
         const isSelected = selection?.type === "report";
 
         return (

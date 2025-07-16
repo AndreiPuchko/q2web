@@ -132,7 +132,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
       const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
-      const height = dialog.clientHeight - dialogHeader.clientHeight -  padding;
+      const height = dialog.clientHeight - dialogHeader.clientHeight - padding;
       child.style.height = `${height}px`;
     });
   };
@@ -196,7 +196,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         dialog.style.height = window.innerHeight + "px";
       }
       this.resizeChildren()
-      this.setState({ isMaximized: true },  this.dialogHandleMouseUp);
+      this.setState({ isMaximized: true }, this.dialogHandleMouseUp);
     } else {
       if (this.prevStateRef) {
         dialog.style.width = this.prevStateRef.width;
@@ -205,7 +205,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         dialog.style.top = this.prevStateRef.top;
       }
       this.resizeChildren()
-      this.setState({ isMaximized: false },  this.dialogHandleMouseUp);
+      this.setState({ isMaximized: false }, this.dialogHandleMouseUp);
     }
     // this.dialogHandleMouseUp();
     this.resizeChildren()
@@ -243,7 +243,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
           {isDataGrid ? (
             <DataGrid q2form={q2form} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
           ) : (
-            <Form q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
+            <Form q2form={q2form} onClose={onClose} showDialog={showDialog} isTopDialog={isTopDialog} />
           )}
         </div>
 

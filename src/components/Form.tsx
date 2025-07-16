@@ -13,6 +13,7 @@ import Q2Panel from './widgets/Panel';
 interface FormProps {
     q2form: Q2Form;
     onClose?: () => void;
+    showDialog?: (q2form: Q2Form) => void;
     isTopDialog?: boolean;
 }
 
@@ -202,7 +203,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 return <Q2RadioButton {...commonProps} />;
             case "form":
                 column.data.subForm = true;
-                return <Form q2form={column.data} />
+                return <Form q2form={column.data} showDialog={this.props.showDialog} />
             case "widget":
                 {
                     if (typeof column.data === "object" && column.data?.widget) {
