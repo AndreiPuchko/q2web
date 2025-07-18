@@ -52,7 +52,7 @@ async function waitForCompletion(task_id: string) {
                 stopPolling();
                 reject(err);
             }
-        }, 1000);
+        }, 1000)  as unknown as number;
     });
 
     // Return whichever resolves first

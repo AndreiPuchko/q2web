@@ -2,7 +2,9 @@ import { Component } from 'react';
 import MainMenu from '../components/MainMenu';
 import Dialog from '../components/Dialog';
 import { Q2Form } from "../q2_modules/Q2Form";
-// import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
+
+import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
+import { get_report_json, get_data_sets_json } from "../components/reportEditor/test_report"
 
 
 import './Q2App.css';
@@ -94,7 +96,7 @@ export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, di
       <>
         <MainMenu />
         <div className='WorkSpace'>
-          {/* <Q2ReportEditor /> */}
+          <Q2ReportEditor  q2report={get_report_json()} data_set={get_data_sets_json()}/>
           {this.state.dialogs.map((dialog: any, index: any) => (
             <Dialog
               key={index}
