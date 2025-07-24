@@ -312,6 +312,11 @@ class Q2StyleEditor extends Component<StyleProps> {
             const mapV: { [key: string]: string } = { "Top": "top", "Middle": "middle", "Bottom": "bottom" };
             style["vertical-align"] = mapV[s.vertical_align] ?? s.vertical_align;
         }
+        // Colors
+        if ("color" in s && isEnabled("color")) style["color"] = s.color;
+        if ("background" in s && isEnabled("background")) style["background"] = s.background;
+        if ("border_color" in s && isEnabled("border_color")) style["border-color"] = s.border_color;
+
         return style;
     }
 

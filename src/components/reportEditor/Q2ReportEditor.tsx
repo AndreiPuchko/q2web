@@ -40,6 +40,7 @@ export type Selection =
 
 const firstColWidthPx = 75;
 const secondColWidthPx = 55;
+const selectionColor = "#ffe066";
 
 interface Q2ReportEditorState {
     selection?: Selection;
@@ -385,7 +386,7 @@ class ReportView extends React.Component<any, {
                 <div
                     style={{
                         display: "flex",
-                        background: isSelected ? "#ffe066" : "#f9fbe7",
+                        background: isSelected ? selectionColor : "#f9fbe7",
                         borderBottom: "2px solid #888",
                         alignItems: "center",
                         cursor: "pointer",
@@ -397,7 +398,7 @@ class ReportView extends React.Component<any, {
                     <div
                         className="q2-report-page"
                         style={{
-                            background: isSelected ? "#ffe066" : "#f9fbe7",
+                            background: isSelected ? selectionColor : "#f9fbe7",
                             minWidth: firstColWidthPx + secondColWidthPx + 1,
                             textDecoration: isHidden ? "line-through" : undefined,
                             color: isHidden ? "#888" : undefined
@@ -539,7 +540,7 @@ class ReportView extends React.Component<any, {
                         display: "flex",
                         margin: 0,
                         padding: 0,
-                        background: isSelected ? "#ffe066" : "#d0eaff",
+                        background: isSelected ? selectionColor : "#d0eaff",
                         borderBottom: "1px solid #888",
                         cursor: "pointer",
                         filter: isHidden ? "grayscale(0.7)" : undefined
@@ -551,7 +552,7 @@ class ReportView extends React.Component<any, {
                         className="q2-report-colssection-header"
                         style={{
                             width: `${firstColWidthPx + secondColWidthPx + 1}px`,
-                            background: isSelected ? "#ffe066" : "#d0eaff",
+                            background: isSelected ? selectionColor : "#d0eaff",
                             textDecoration: isHidden ? "line-through" : undefined,
                             color: isHidden ? "#888" : undefined
                         }}
@@ -578,7 +579,7 @@ class ReportView extends React.Component<any, {
                                 key={`colwidth-${columnSetIdx}-${i}`}
                                 style={{
                                     width: `${w}px`,
-                                    background: isWidthSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0eaff"),
+                                    background: isWidthSelected ? selectionColor : (isSelected ? selectionColor : "#e0eaff"),
                                     borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
                                 }}
                                 onClick={e => {
@@ -665,7 +666,7 @@ class ReportView extends React.Component<any, {
                     borderBottom: rowSetIdx! < column.rows.length - 1 ? "1px solid #EEE" : undefined,
                     height: isHidden ? 0 : undefined,
                     overflow: isHidden ? "hidden" : undefined,
-                    background: isSelected ? "#ffe066" : "#EEE",
+                    background: isSelected ? selectionColor : "#EEE",
                     opacity: isHidden ? 0.5 : 1,
                     filter: isHidden ? "grayscale(0.7)" : undefined
                 }}
@@ -674,7 +675,7 @@ class ReportView extends React.Component<any, {
                 <div
                     className="q2-report-rowssection-header"
                     style={{
-                        background: isSelected ? "#ffe066" : "#f0f8ff",
+                        background: isSelected ? selectionColor : "#f0f8ff",
                         gridRow: `1 / span ${rowCount}`,
                         textDecoration: isHidden ? "line-through" : undefined,
                         color: isHidden ? "#888" : undefined
@@ -697,7 +698,7 @@ class ReportView extends React.Component<any, {
                             key={`height-${rowSetIdx}-${rowIdx}`}
                             className="q2-report-rowsheights-header"
                             style={{
-                                background: isHeightSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0f7fa"),
+                                background: isHeightSelected ? selectionColor : (isSelected ? selectionColor : "#e0f7fa"),
                                 gridRow: `${rowIdx + 1} / ${rowIdx + 2}`,
                             }}
                             onClick={e => {
@@ -762,7 +763,7 @@ class ReportView extends React.Component<any, {
 
         // Merge cell.style if present
         const cellStyle: any = {
-            backgroundColor: "#fafafa",
+            background: "#ffffff",
             gridColumn: `${columnIdx + 3}`,
             gridRow: `${rowIdx + 1}`,
         };
@@ -783,15 +784,6 @@ class ReportView extends React.Component<any, {
             this.props.selection.rowIdx === rowIdx &&
             this.props.selection.columnIdx === columnIdx;
 
-        if (isCurrent) {
-            // cellStyle.backgroundColor = "#ffe066"
-            cellStyle.outline = "2px solid lightgreen"
-            cellStyle.outlineOffset = "-2px"
-        }
-        if (this.isCellSelected(clickParams) || this.state.selList.has(stableStringify(clickParams))) {
-            cellStyle.backgroundColor = "#ffe066"
-        }
-
         const selectedCell = { type: "cell", pageIdx: pageIdx, columnSetIdx: columnSetIdx, rowSetIdx: rowSetIdx, rowIdx: rowIdx, columnIdx: columnIdx };
         const reportCellStyles = this.props.q2report.getCellStyle(selectedCell);
         const reportCellStyle = { ...reportCellStyles.parentStyle, ...reportCellStyles.style };
@@ -799,6 +791,25 @@ class ReportView extends React.Component<any, {
         if (cell && cell.style) {
             this.adaptStyle(cellStyle, reportCellStyle);
         }
+
+
+        if (isCurrent) {
+            cellStyle.outline = "2px solid lightgreen"
+            cellStyle.outlineOffset = "-2px"
+        }
+        else {
+            // cellStyle.background = `${cellStyle.background}`;
+        }
+        if (this.isCellSelected(clickParams) || this.state.selList.has(stableStringify(clickParams))) {
+            // console.log(cellStyle.background, typeof cellStyle.background)
+            if (["white", "#ffffff"].includes(cellStyle.background)) {
+                cellStyle.background = selectionColor
+            }
+            else {
+                cellStyle.boxShadow = `0.5cap 0.5cap 0.5cap ${selectionColor} inset, -0.5cap  -0.5cap 0.5cap ${selectionColor} inset`;
+            }
+        }
+
 
         return (
             <div
@@ -900,6 +911,9 @@ class ReportView extends React.Component<any, {
                         .map((x: string) => x.includes("cm") ? x : `${x}cm`)
                         .join(" ");
                 }
+                else if (key === "color") style["color"] = reportStyle[key]
+                else if (key === "background") style["background"] = reportStyle[key]
+
             }
         }
     }
@@ -940,7 +954,7 @@ class ReportView extends React.Component<any, {
             <div>
                 <div
                     className="q2-report-header"
-                    style={{ background: isSelected ? "#ffe066" : "#f0f0f0" }}
+                    style={{ background: isSelected ? selectionColor : "#f0f0f0" }}
                     onClick={() => handleSelect({ type: "report" })}
                     onContextMenu={e => handleContextMenu(e, { type: "report" })}
                 >

@@ -51,17 +51,38 @@ class Q2Color extends Widget<Q2ColorProps, Q2ColorState> {
     };
 
     handleColorChange = (newColor: string) => {
-        this.setState({ value: newColor });
-        this.props.onChange?.(newColor);
+        this.setState({ value: newColor }, () => {
+            this.changed(newColor)
+        });
+        // this.props.onChange?.(newColor);
     };
 
     handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputColor = e.target.value.trim();
-        this.setState({ value: inputColor });
-        if (isValidColor(inputColor)) {
-            this.props.onChange?.(inputColor);
-        }
+        this.setState({ value: inputColor }, () => {
+            if (isValidColor(inputColor)) {
+                this.changed(inputColor)
+            }
+        });
     };
+
+    changed(value: string) {
+        const { column, form } = this.props;
+        column.data = value;
+        this.setState({ value }, () => {
+            if (form.handleChange) {
+                form.handleChange({
+                    target:
+                    {
+                        value: value,
+                        name: column.column
+                    }
+                } as any);
+            }
+        });
+
+
+    }
 
     handleEyedropper = async () => {
         if ('EyeDropper' in window) {
