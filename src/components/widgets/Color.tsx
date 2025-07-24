@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { HexColorPicker } from 'react-colorful';
 import Widget from './Widget';
 import { WidgetProps } from './Widget';
@@ -38,9 +38,9 @@ class Q2Color extends Widget<Q2ColorProps, Q2ColorState> {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
-    componentDidUpdate(prevProps: Props) {
-        if (prevProps.value !== this.props.value && this.props.value !== this.state.color) {
-            this.setState({ value: this.props.value });
+    componentDidUpdate(prevProps: Q2ColorProps) {
+        if (prevProps.column.data !== this.props.column.data && this.props.column.data !== this.state.value) {
+            this.setState({ value: this.props.column.data });
         }
     }
 

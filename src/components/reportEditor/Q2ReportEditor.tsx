@@ -421,14 +421,14 @@ class ReportView extends React.Component<any, {
                         if (isHidden) {
                             return (
                                 <div key={columnSetIdx} style={{ height: 0, overflow: "hidden" }}>
-                                    {this.renderColumns(column, [], 0, 0, pageIdx, columnSetIdx)}
+                                    {this.renderColumns(column, [], pageIdx, columnSetIdx)}
                                 </div>
                             );
                         }
                         if (column.hidden) {
                             return (
                                 <div key={columnSetIdx}>
-                                    {this.renderColumns(column, [], 0, 0, pageIdx, columnSetIdx, true)}
+                                    {this.renderColumns(column, [], pageIdx, columnSetIdx, true)}
                                 </div>
                             );
                         }
@@ -468,13 +468,6 @@ class ReportView extends React.Component<any, {
         const isHidden = !!column.hidden || !!forceAllRowsHidden;
         if (!column.style) {
             column.style = {};
-        }
-
-        // Always recalculate widths, even if hidden
-        if (isHidden && (!cellWidthsPx || cellWidthsPx.length === 0)) {
-            // Recalculate widths if not provided (e.g. when called with [])
-            const page = this.props.q2report.getPage({ pageIdx });
-            const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
         }
 
         // Prepare header, section, footer
