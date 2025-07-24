@@ -39,8 +39,12 @@
 button {
   background-color: var(--form-input-bg);
   color: var(--form-input);
+  cursor: pointer;
 }
 
+button:disabled {
+  cursor: auto;
+}
 
 .Q2RadioButton,
 .Q2CheckBox-container,
@@ -84,6 +88,7 @@ button {
 .Q2CheckBox-container label {
   padding: 0 1cap;
 }
+
 .Q2RadioButton label {
   padding: 0 1cap;
 }

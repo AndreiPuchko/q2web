@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import './Form.css'; // Import the CSS file for styling
 import Q2Line from './widgets/Line'; // Import the Line widget
+import Q2Color from './widgets/Color'; // Import the Line widget
 import Q2Text from './widgets/Text'; // Import the Text widget
 import Q2Spacer from './widgets/Spacer'; // Import the Spacer widget
 import Q2CheckBox from './widgets/CheckBox'; // Import the CheckBox widget
@@ -194,6 +195,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 return <Q2Text {...commonProps} />;
             case "line":
                 return <Q2Line {...commonProps} />
+            case "color":
+                return <Q2Color {...commonProps} />
             case "spacer":
                 return <Q2Spacer {...commonProps} />;
             case "check":

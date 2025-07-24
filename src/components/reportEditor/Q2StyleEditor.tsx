@@ -162,7 +162,7 @@ class Q2StyleEditor extends Component<StyleProps> {
         if (colorsControl) {
             this.propsEditor.add_control("color", "Font",
                 {
-                    control: "line",
+                    control: "color",
                     data: this.propsData["color"].data,
                     check: true,
                     checkChecked: typeof this.propsEditor.c?.color !== "undefined"
@@ -173,7 +173,7 @@ class Q2StyleEditor extends Component<StyleProps> {
 
             this.propsEditor.add_control("background", "Background",
                 {
-                    control: "line",
+                    control: "color",
                     data: this.propsData["background"].data,
                     check: true,
                     checkChecked: typeof this.propsEditor.c?.background !== "undefined"
@@ -184,7 +184,7 @@ class Q2StyleEditor extends Component<StyleProps> {
 
             this.propsEditor.add_control("border_color", "Borders",
                 {
-                    control: "line",
+                    control: "color",
                     data: this.propsData["border-color"].data,
                     check: true,
                     checkChecked: typeof this.propsEditor.c?.border_color !== "undefined"
