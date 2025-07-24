@@ -38,7 +38,8 @@ export type Selection =
     | { type: "rowheight", pageIdx: number, columnSetIdx: number, rowSetIdx: number, heightIdx: number }
     | CellSelection
 
-
+const firstColWidthPx = 75;
+const secondColWidthPx = 55;
 
 interface Q2ReportEditorState {
     selection?: Selection;
@@ -363,11 +364,9 @@ class ReportView extends React.Component<any, {
         const totalCm = colWidthsCm.reduce((a: number, b: number) => a + b, 0);
         const scale = totalCm > 0 ? (this.props.zoomWidthPx! / (totalCm * pxPerCm)) : 1;
         const scaledColWidthsCm = colWidthsCm.map((cm: number) => cm * scale);
-        const firstColWidthPx = 80;
-        const secondColWidthPx = 80;
         const cellWidthsPx = scaledColWidthsCm.map((cm: number) => cm * pxPerCm);
         const gridWidthPx = cellWidthsPx.reduce((a: number, b: number) => a + b, 0);
-        return { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx };
+        return { gridWidthPx, cellWidthsPx };
     }
 
     RenderPage(page: any, pageIdx: number) {
@@ -399,7 +398,7 @@ class ReportView extends React.Component<any, {
                         className="q2-report-page"
                         style={{
                             background: isSelected ? "#ffe066" : "#f9fbe7",
-                            minWidth: 161,
+                            minWidth: firstColWidthPx + secondColWidthPx + 1,
                             textDecoration: isHidden ? "line-through" : undefined,
                             color: isHidden ? "#888" : undefined
                         }}
@@ -432,7 +431,7 @@ class ReportView extends React.Component<any, {
                                 </div>
                             );
                         }
-                        const { gridWidthPx, firstColWidthPx, secondColWidthPx, cellWidthsPx } =
+                        const { gridWidthPx, cellWidthsPx } =
                             this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
                         return (
                             <div
@@ -446,7 +445,7 @@ class ReportView extends React.Component<any, {
                                     width: gridWidthPx + firstColWidthPx + secondColWidthPx,
                                 }}
                             >
-                                {this.renderColumns(column, cellWidthsPx, firstColWidthPx, secondColWidthPx, pageIdx, columnSetIdx)}
+                                {this.renderColumns(column, cellWidthsPx, pageIdx, columnSetIdx)}
                             </div>
                         );
                     })}
@@ -458,8 +457,6 @@ class ReportView extends React.Component<any, {
     renderColumns(
         column: any,
         cellWidthsPx: number[],
-        firstColWidthPx: number,
-        secondColWidthPx: number,
         pageIdx?: number,
         columnSetIdx?: number,
         forceAllRowsHidden?: boolean
@@ -473,18 +470,10 @@ class ReportView extends React.Component<any, {
         }
 
         // Always recalculate widths, even if hidden
-        let widthsToUse = cellWidthsPx;
-        let firstColWidth = firstColWidthPx;
-        let secondColWidth = secondColWidthPx;
         if (isHidden && (!cellWidthsPx || cellWidthsPx.length === 0)) {
             // Recalculate widths if not provided (e.g. when called with [])
             const page = this.props.q2report.getPage({ pageIdx });
             const availableWidthCm = page.page_width - page.page_margin_left - page.page_margin_right;
-            const pxPerCm = this.props.zoomWidthPx / availableWidthCm;
-            const calc = this.calcColumnsWidths(column, availableWidthCm, pxPerCm);
-            widthsToUse = calc.cellWidthsPx;
-            firstColWidth = calc.firstColWidthPx;
-            secondColWidth = calc.secondColWidthPx;
         }
 
         // Prepare header, section, footer
@@ -493,7 +482,7 @@ class ReportView extends React.Component<any, {
             if (isHidden) {
                 rowsContent.push(
                     <div key={rowSetIdx} style={{ height: 0, overflow: "hidden" }}>
-                        {this.renderRows(column, widthsToUse, firstColWidth, secondColWidth, pageIdx, columnSetIdx, rowSet, rowSetIdx, true)}
+                        {this.renderRows(column, cellWidthsPx, pageIdx, columnSetIdx, rowSet, rowSetIdx, true)}
                     </div>
                 );
                 return;
@@ -501,7 +490,7 @@ class ReportView extends React.Component<any, {
             if (rowSet.hidden) {
                 rowsContent.push(
                     <div key={rowSetIdx} style={{ height: 0, overflow: "hidden" }}>
-                        {this.renderRows(column, widthsToUse, firstColWidth, secondColWidth, pageIdx, columnSetIdx, rowSet, rowSetIdx)}
+                        {this.renderRows(column, cellWidthsPx, pageIdx, columnSetIdx, rowSet, rowSetIdx)}
                     </div>
                 );
                 return;
@@ -510,9 +499,7 @@ class ReportView extends React.Component<any, {
                 rowsContent.push(
                     this.renderRows(
                         column,
-                        widthsToUse,
-                        firstColWidth,
-                        secondColWidth,
+                        cellWidthsPx,
                         pageIdx,
                         columnSetIdx,
                         rowSet.table_header,
@@ -524,9 +511,7 @@ class ReportView extends React.Component<any, {
             rowsContent.push(
                 this.renderRows(
                     column,
-                    widthsToUse,
-                    firstColWidth,
-                    secondColWidth,
+                    cellWidthsPx,
                     pageIdx,
                     columnSetIdx,
                     rowSet,
@@ -537,9 +522,7 @@ class ReportView extends React.Component<any, {
                 rowsContent.push(
                     this.renderRows(
                         column,
-                        widthsToUse,
-                        firstColWidth,
-                        secondColWidth,
+                        cellWidthsPx,
                         pageIdx,
                         columnSetIdx,
                         rowSet.table_footer,
@@ -567,7 +550,7 @@ class ReportView extends React.Component<any, {
                     <div
                         className="q2-report-colssection-header"
                         style={{
-                            width: `${firstColWidth + secondColWidth + 1}px`,
+                            width: `${firstColWidthPx + secondColWidthPx + 1}px`,
                             background: isSelected ? "#ffe066" : "#d0eaff",
                             textDecoration: isHidden ? "line-through" : undefined,
                             color: isHidden ? "#888" : undefined
@@ -584,7 +567,7 @@ class ReportView extends React.Component<any, {
                         Columns{isHidden ? " (hidden)" : ""}
                     </div>
                     {/* Always render widths, even if hidden */}
-                    {widthsToUse.map((w, i) => {
+                    {cellWidthsPx.map((w, i) => {
                         const isWidthSelected = (this.props.selection as any)?.type === "colwidth"
                             && (this.props.selection as any).pageIdx === pageIdx
                             && (this.props.selection as any).columnSetIdx === columnSetIdx
@@ -596,7 +579,7 @@ class ReportView extends React.Component<any, {
                                 style={{
                                     width: `${w}px`,
                                     background: isWidthSelected ? "#ffe066" : (isSelected ? "#ffe066" : "#e0eaff"),
-                                    borderRight: i < widthsToUse.length - 1 ? "1px solid #b0c4de" : "none",
+                                    borderRight: i < cellWidthsPx.length - 1 ? "1px solid #b0c4de" : "none",
                                 }}
                                 onClick={e => {
                                     e.stopPropagation();
@@ -620,8 +603,6 @@ class ReportView extends React.Component<any, {
     renderRows(
         column: any,
         cellWidthsPx: number[],
-        firstColWidthPx: number,
-        secondColWidthPx: number,
         pageIdx?: number,
         columnSetIdx?: number,
         rowSet?: any,
@@ -963,8 +944,7 @@ class ReportView extends React.Component<any, {
                     onClick={() => handleSelect({ type: "report" })}
                     onContextMenu={e => handleContextMenu(e, { type: "report" })}
                 >
-                    <div style={{ width: 161, borderRight: "1px solid #BBB" }}>Report</div>
-                    {/* <div style={{ flex: 1, paddingLeft: 16, display: "flex", gap: 12 }}> */}
+                    <div style={{ minWidth: firstColWidthPx + secondColWidthPx, borderRight: "1px solid #BBB" }}>Report</div>
                     <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
                         <Q2Button {...{ column: new Q2Control("b1", "HTML", { valid: () => this.runReport("html") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "DOCX", { valid: () => this.runReport("docx") }) }} />
