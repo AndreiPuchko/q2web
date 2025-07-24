@@ -83,10 +83,8 @@ class Q2StyleEditor extends Component<StyleProps> {
                         : !!this.propsData["font-underline"].checked,
                     checkDisabled: this.getCheckDisabled(),
                 });
-            this.propsEditor.add_control("/s", "");
             this.propsEditor.add_control("/");
         }
-
         const bordersControl: Q2Control = this.propsEditor.add_control("/h", "Borders",
             {
                 alignment: 5,
@@ -159,6 +157,48 @@ class Q2StyleEditor extends Component<StyleProps> {
                 });
             this.propsEditor.add_control("/");  // close layout
         }
+
+        const colorsControl: Q2Control = this.propsEditor.add_control("/f", "Colors");
+        if (colorsControl) {
+            this.propsEditor.add_control("color", "Font",
+                {
+                    control: "line",
+                    data: this.propsData["color"].data,
+                    check: true,
+                    checkChecked: typeof this.propsEditor.c?.color !== "undefined"
+                        ? this.propsEditor.c.color
+                        : !!this.propsData["color"].checked,
+                    checkDisabled: this.getCheckDisabled(),
+                });
+
+            this.propsEditor.add_control("background", "Background",
+                {
+                    control: "line",
+                    data: this.propsData["background"].data,
+                    check: true,
+                    checkChecked: typeof this.propsEditor.c?.background !== "undefined"
+                        ? this.propsEditor.c.background
+                        : !!this.propsData["background"].checked,
+                    checkDisabled: this.getCheckDisabled(),
+                });
+
+            this.propsEditor.add_control("border_color", "Borders",
+                {
+                    control: "line",
+                    data: this.propsData["border-color"].data,
+                    check: true,
+                    checkChecked: typeof this.propsEditor.c?.border_color !== "undefined"
+                        ? this.propsEditor.c.border_color
+                        : !!this.propsData["border-color"].checked,
+                    checkDisabled: this.getCheckDisabled(),
+                });
+            this.propsEditor.add_control("/");
+
+
+            this.propsEditor.add_control("/");
+        }
+
+
         return this.propsEditor
     }
 
@@ -172,6 +212,21 @@ class Q2StyleEditor extends Component<StyleProps> {
         const { q2report, selection } = this.props;
         const styles: any = q2report.getStyle(selection);
         const styleProps: Record<string, StylePropValue> = {};
+
+
+        styleProps["font-family"] = { data: "Arial", checked: selection?.type === "report" }
+        styleProps["font-size"] = { data: "10pt", checked: selection?.type === "report" }
+        styleProps["font-weight"] = { data: "normal", checked: selection?.type === "report" }
+        styleProps["text-decoration"] = { data: "", checked: selection?.type === "report" }
+        styleProps["font-style"] = { data: "", checked: selection?.type === "report" }
+        styleProps["color"] = { data: "black", checked: selection?.type === "report" }
+        styleProps["background"] = { data: "white", checked: selection?.type === "report" }
+        styleProps["border-color"] = { data: "black", checked: selection?.type === "report" }
+        styleProps["border-width"] = { data: "1 1 1 1", checked: selection?.type === "report" }
+        styleProps["padding"] = { data: "0.05cm 0.05cm 0.05cm 0.05cm", checked: selection?.type === "report" }
+        styleProps["text-align"] = { data: "left", checked: selection?.type === "report" }
+        styleProps["vertical-align"] = { data: "top", checked: selection?.type === "report" }
+
         if (!styles) return styleProps;
         const selectionStyle = styles.style || {};
         const parentStyle = styles.parentStyle || {};
@@ -190,12 +245,6 @@ class Q2StyleEditor extends Component<StyleProps> {
                     checked: false
                 };
             }
-            // else {
-            //   props[key] = {
-            //     data: "",
-            //     checked: false
-            //   };
-            // }
         });
         return styleProps;
     }
