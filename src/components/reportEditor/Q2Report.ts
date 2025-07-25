@@ -166,7 +166,6 @@ export class Q2Report {
     }
 
     setObjectContent(selection: any, dataChunk: { [key: string]: number | string }) {
-
         let changed = false;
         const object = this.getObject(selection);
         if (selection.type === "colwidth") {
@@ -194,9 +193,11 @@ export class Q2Report {
         }
         else if (selection.type === "row") {
             for (let el of ["print_when", "print_after", "new_page_before", "new_page_after", "role"]) {
-                if (object[el] !== dataChunk[el]) {
-                    changed = true;
-                    object[el] = dataChunk[el];
+                if (el in dataChunk) {
+                    if (object[el] !== dataChunk[el]) {
+                        changed = true;
+                        object[el] = dataChunk[el];
+                    }
                 }
             }
         }

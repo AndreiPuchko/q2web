@@ -33,7 +33,10 @@ class Q2ContentEditor extends Component<ContentProps> {
         const sectionData = this.q2report.getObject(this.props.selection);
 
         editor.add_control("/h", "")
-        editor.add_control("role", "Role", { data: sectionData.role, stretch: 1, control:"combo", pic: "free;table;header;footer", datalen:8 });
+        const roles = "free;table;header;footer";
+        if (roles.includes(sectionData.role)) {
+            editor.add_control("role", "Role", { data: sectionData.role, stretch: 1, control: "combo", pic: roles, datalen: 8 });
+        }
         editor.add_control("print_when", "Print when", { data: sectionData.print_when, stretch: 3 });
         editor.add_control("print_after", "Calc after", { data: sectionData.print_after, stretch: 3 });
         editor.add_control("new_page_before", "On new page", { control: "check", data: sectionData.new_page_before });
@@ -105,7 +108,9 @@ class Q2ContentEditor extends Component<ContentProps> {
                     dataChunk["name"] = form.s.name;
                 }
                 else if (selection.type === "row") {
-                    dataChunk["role"] = form.s.role;
+                    if ("role" in form.s) {
+                        dataChunk["role"] = form.s.role;
+                    }
                     dataChunk["print_when"] = form.s.print_when;
                     dataChunk["print_after"] = form.s.print_after;
                     dataChunk["new_page_before"] = form.s.new_page_before;
@@ -122,7 +127,6 @@ class Q2ContentEditor extends Component<ContentProps> {
                 // Rerender report layout if data were changed
                 if (q2report.setObjectContent(selection, dataChunk)) {
                     setTimeout(() => {
-                        // this.props.reportEditor.forceUpdate();
                         this.props.reportEditor.incrementVersion();
                     }, 0);
                 }
