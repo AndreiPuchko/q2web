@@ -8,6 +8,7 @@ import Q2Button from "../widgets/Button";
 import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 import { showDialog } from '../../q2_modules/Q2DialogApi';
 import uploadAndDownload from "./Q2ReportAPI"
+import { count } from "console";
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
@@ -607,7 +608,8 @@ class ReportView extends React.Component<any, {
         const colCount = column.widths.length;
 
         if (!rowSet) return null;
-        const rowCount = rowSet.heights.length || 0;
+        const rowCount = rowSet.heights?.length || 0;
+        if (rowCount === 0) return;
         const isSelected = this.props.selection?.type === "row"
             && this.props.selection.pageIdx === pageIdx
             && this.props.selection.columnSetIdx === columnSetIdx

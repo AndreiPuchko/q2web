@@ -326,14 +326,7 @@ export class Q2Report {
             columns.widths.splice(selection.widthIdx, 1)
             return true;
         } else if (selection.type === "row") {
-            const rowSetIdx = selection.rowSetIdx;
-            const columns = this.getColsSet(selection);
-            if (!columns || !columns.rows || columns.rows.length <= 1) return false;
-            const realRowIdx = typeof rowSetIdx === "string"
-                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
-                : rowSetIdx;
-            columns.rows.splice(realRowIdx, 1);
-            return true;
+            return this.removeRowSet(selection)
         } else if (selection.type === "rowheight") {
             // Remove a row (by index) from a rowSet, handling cell spans
             const { heightIdx } = selection;
@@ -413,6 +406,27 @@ export class Q2Report {
             return true;
         }
         return false;
+    }
+
+    removeRowSet(selection: any) {
+        const rowSetIdx = selection.rowSetIdx;
+        const columns = this.getColsSet(selection);
+        if (!columns || !columns.rows || columns.rows.length <= 1) return false;
+        if (!rowSetIdx.includes("-")) {
+            columns.rows.splice(rowSetIdx, 1);
+            return true
+        }
+        else {
+            const realRowIdx = parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+            const rowSet = columns.rows[realRowIdx]
+            if (rowSetIdx.includes("-header")) {
+                rowSet["table_header"] = {}
+            }
+            else if (rowSetIdx.includes("-footer")) {
+                rowSet["table_footer"] = {}
+            }
+            return true;
+        }
     }
 
     addObjectAboveBelow(selection: any, position: "above" | "below", cloneCurrent: boolean = false) {
