@@ -429,6 +429,36 @@ export class Q2Report {
         }
     }
 
+    getRealRowSetIdx(rowSetIdx) {
+        const realRowIdx = typeof rowSetIdx === "string"
+            ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+            : rowSetIdx;
+        return realRowIdx
+    }
+
+    addTableHeaderFooter(selection: any, mode: string) {
+        const rowSet = this.getRowsSet(selection)
+        const header = {
+            heights: ["0-0"],
+            role: mode,
+            cells: {}
+        };
+        rowSet[mode] = header;
+    }
+
+    addTableGrouping(selection: any) {
+        const rowSet = this.getRowsSet(selection)
+        const header = {
+            heights: ["0-0"],
+            role: "group_header",
+            cells: {}
+        };
+        const group: any = { group_header: header, group_footer: header }
+
+        rowSet["table_groups"].push(group)
+
+    }
+
     addObjectAboveBelow(selection: any, position: "above" | "below", cloneCurrent: boolean = false) {
         if (!selection || !selection.type) return false;
         const positionDelta = position === "above" ? 0 : 1
@@ -453,7 +483,7 @@ export class Q2Report {
                                 {
                                     heights: ["0-0"],
                                     role: "free",
-                                    cells: { "0,0": {} }
+                                    cells: {}
                                 }
                             ]
                         }
@@ -486,7 +516,7 @@ export class Q2Report {
                         {
                             heights: ["0-0"],
                             role: "free",
-                            cells: { "0,0": {} }
+                            cells: {}
                         }
                     ]
                 };
@@ -500,10 +530,7 @@ export class Q2Report {
             if (!columns || !columns.rows) return false;
             let newRow = {};
             if (cloneCurrent) {
-                const realRowIdx = typeof rowSetIdx === "string"
-                    ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
-                    : rowSetIdx;
-
+                const realRowIdx = this.getRealRowSetIdx(rowSetIdx)
                 const rowSet = columns.rows[realRowIdx];
                 newRow = JSON.parse(JSON.stringify(rowSet));
             }
@@ -511,12 +538,11 @@ export class Q2Report {
                 newRow = {
                     heights: ["0-0"],
                     role: "free",
-                    cells: { "0,0": {} }
+                    cells: {}
                 };
             }
-            const realRowIdx = typeof rowSetIdx === "string"
-                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
-                : rowSetIdx;
+
+            const realRowIdx = this.getRealRowSetIdx(rowSetIdx)
             const insertIdx = position === "above" ? realRowIdx : realRowIdx + 1;
             columns.rows.splice(insertIdx, 0, newRow);
             return true;
@@ -607,9 +633,7 @@ export class Q2Report {
             const rowSetIdx = selection.rowSetIdx;
             const columns = this.getColsSet(selection);
             if (!columns || !columns.rows || columns.rows.length <= 1) return false;
-            const realRowIdx = typeof rowSetIdx === "string"
-                ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
-                : rowSetIdx;
+            const realRowIdx = this.getRealRowSetIdx(rowSetIdx)
             const targetIdx = direction === "up" ? realRowIdx - 1 : realRowIdx + 1;
             if (targetIdx < 0 || targetIdx >= columns.rows.length) return false;
             const [item] = columns.rows.splice(realRowIdx, 1);

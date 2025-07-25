@@ -106,65 +106,42 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         const { contextMenu, selection } = this.state;
         if (!selection) return;
         if (contextMenu === undefined) return;
+        const nextState: Q2ReportEditorState = { contextMenu: undefined };
+        this.setState(nextState);
         if (command === "Clone") {
-            if (this.q2report.addObjectAboveBelow(selection, "above", true)) {
-                this.incrementVersion();
-                this.setState({ contextMenu: undefined });
-            }
-            return;
+            this.q2report.addObjectAboveBelow(selection, "above", true)
         } else if (command === "❌Remove") {
             const sel = contextMenu.selection;
-            if (this.q2report.removeObject(sel)) {
-                this.incrementVersion();
-                this.setState({
-                    contextMenu: undefined,
-                    selection: { type: "report" }
-                });
-            }
-            return;
+            this.q2report.removeObject(sel)
+            nextState.selection = { type: "report" };
+        } else if (command.startsWith("Add table header")) {
+            this.q2report.addTableHeaderFooter(contextMenu.selection, "table_header")
+            nextState.selection = { type: "report" };
+        } else if (command.startsWith("Add table footer")) {
+            this.q2report.addTableHeaderFooter(contextMenu.selection, "table_footer")
+            nextState.selection = { type: "report" };
+        } else if (command.startsWith("Add table grouping")) {
+            this.q2report.addTableGrouping(contextMenu.selection)
+            nextState.selection = { type: "report" };
         } else if (command.startsWith("Add")) {
             const position = (command === "Add above" || command === "Add left") ? "above" : "below";
-            if (this.q2report.addObjectAboveBelow(contextMenu.selection, position)) {
-                this.incrementVersion();
-                this.setState({
-                    contextMenu: undefined,
-                    selection: { type: "report" }
-                });
-            }
-            return;
+            this.q2report.addObjectAboveBelow(contextMenu.selection, position)
+            nextState.selection = { type: "report" };
         } else if (command.startsWith("Move")) {
             const direction = (command === "Move Up" || command === "Move Left") ? "up" : "down";
             const newSelection = this.q2report.moveObject(contextMenu.selection, direction);
-            this.incrementVersion();
-            this.setState({
-                contextMenu: undefined,
-                selection: newSelection || this.state.selection
-            });
-            return;
+            nextState.selection = newSelection || this.state.selection;
         } else if ((command === "Hide" || command === "Show")) {
             this.q2report.toggleHideShow(contextMenu.selection);
-            this.incrementVersion();
-            this.setState({ contextMenu: undefined });
-            return;
         } else if (command === "Unmerge cells") {
             this.q2report.unmergeCell(selection);
-            this.incrementVersion();
-            this.setState({
-                contextMenu: undefined,
-                selection: selection
-            });
-            return;
+            nextState.selection = selection;
         } else if (command === "Merge cells" && this.reportViewRef.current?.state !== undefined) {
             const { selStart, selEnd } = this.reportViewRef.current.state;
             this.q2report.mergeSelectedCells({ selStart, selEnd });
-            this.incrementVersion();
-            this.setState({
-                contextMenu: undefined,
-                selection: selection
-            });
-            return;
-
+            nextState.selection = selection;
         }
+        this.setState(nextState, () => this.incrementVersion());
         console.log(command, contextMenu?.selection === selection);
     }
 
@@ -173,23 +150,16 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         if (!contextMenu) return null;
 
         // Pick menu items based on selection type
-        let menuItems: string[] = [];
+        let filteredMenuItems: string[] = [];
         const sel = contextMenu.selection;
-        if (sel.type === "report") menuItems = this.reportMenu;
-        else if (sel.type === "page") menuItems = this.pageMenu;
-        else if (sel.type === "column") menuItems = this.columnsSectionMenu;
-        else if (sel.type === "colwidth") menuItems = this.columnMenu;
-        else if (sel.type === "row") menuItems = this.rowsSectionMenu;
-        else if (sel.type === "rowheight") menuItems = this.rowMenu;
 
-        // Filter out "Move Up" and "Move Down" if only one object exists,
-        // or "Move Up" for first, "Move Down" for last
-        let filteredMenuItems = menuItems;
-        if (sel.type === "page") {
+        if (sel.type === "report")
+            filteredMenuItems = this.reportMenu
+        else if (sel.type === "page") {
             const count = this.q2report.pages.length;
             const idx = sel.pageIdx;
             const page = this.q2report.getPage(sel);
-            filteredMenuItems = menuItems.filter(item =>
+            filteredMenuItems = this.pageMenu.filter(item =>
                 (item !== "Show" || page.hidden) &&
                 (item !== "Hide" || !page.hidden) &&
                 (item !== "Move Up" || idx > 0) &&
@@ -201,7 +171,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             const col = this.q2report.getColsSet(sel);
             const count = page?.columns?.length ?? 0;
             const idx = sel.columnSetIdx;
-            filteredMenuItems = menuItems.filter(item =>
+            filteredMenuItems = this.columnsSectionMenu.filter(item =>
                 (item !== "Show" || col.hidden) &&
                 (item !== "Hide" || !col.hidden) &&
                 (item !== "Move Up" || idx > 0) &&
@@ -211,7 +181,7 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
         } else if (sel.type === "colwidth") {
             const col = this.q2report.getColsSet(sel);
             const count = col?.widths.length ?? 0;
-            filteredMenuItems = menuItems.filter(item =>
+            filteredMenuItems = this.columnMenu.filter(item =>
                 (item !== "Move Left" || sel.widthIdx > 0) &&
                 (item !== "Move Right" || sel.widthIdx < count - 1)
             );
@@ -220,21 +190,28 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
             const count = columns?.rows?.length ?? 0;
             let idx: number = 0;
             if (typeof sel.rowSetIdx === "string") {
-                let tmp: string = sel.rowSetIdx;
+                const tmp: string = sel.rowSetIdx;
                 idx = parseInt(tmp.replace("-header", "").replace("-footer", ""));
             }
             else {
                 idx = sel.rowSetIdx;
             }
-            filteredMenuItems = menuItems.filter(item =>
+            filteredMenuItems = this.rowsSectionMenu.filter(item =>
                 (item !== "Move Up" || idx > 0) &&
                 (item !== "Move Down" || idx < count - 1) &&
                 (count > 1 || (item !== "Move Up" && item !== "Move Down"))
             );
+            const rowSet = this.q2report.getRowsSet(sel)
+            if (rowSet.role === "table") {
+                filteredMenuItems.push("-")
+                if (!rowSet.table_header || Object.keys(rowSet.table_header).length === 0) filteredMenuItems.push("Add table header")
+                if (!rowSet.table_footer || Object.keys(rowSet.table_footer).length === 0) filteredMenuItems.push("Add table footer")
+                filteredMenuItems.push("Add table grouping")
+            }
         } else if (sel.type === "rowheight") {
             const rowsSet = this.q2report.getRowsSet(sel);
             const count = rowsSet?.heights?.length ?? 0;
-            filteredMenuItems = menuItems.filter(item =>
+            filteredMenuItems = this.rowMenu.filter(item =>
                 (item !== "Move Up" || sel.heightIdx > 0) &&
                 (item !== "Move Down" || sel.heightIdx < count - 1)
             );
