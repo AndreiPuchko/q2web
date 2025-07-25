@@ -180,48 +180,46 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
         const { value, showList, filtered, highlightedIndex } = this.state;
 
         return (
-            <div className="Q2Combo" ref={this.wrapperRef}>
-                <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                    <input
-                        ref={this.inputRef}
-                        value={value}
-                        onChange={this.handleInputChange}
-                        // onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        onKeyDown={this.handleKeyDown}
-                        style={{ flex: 1, paddingRight: '3em' }}
-                    />
-                    {value && (
-                        <button
-                            onClick={this.handleClear}
-                            style={{
-                                position: 'absolute',
-                                top: 0,
-                                right: '1em',
-                                background: 'transparent',
-                                border: 'none',
-                                color: "red",
-                                fontSize: 'larger',
-                            }}
-                            title="Clear"
-                        >
-                            ×
-                        </button>
-                    )}
+            <div className="Q2Combo" ref={this.wrapperRef} style={{ display: "flex", alignItems: "center", position: 'relative' }}>
+                <input
+                    ref={this.inputRef}
+                    value={value}
+                    onChange={this.handleInputChange}
+                    // onFocus={this.handleFocus}
+                    onBlur={this.handleBlur}
+                    onKeyDown={this.handleKeyDown}
+                    style={{ flex: "1 auto", paddingRight: '3em', width: '100%' }}
+                />
+                {value && (
                     <button
-                        onClick={this.toggleDropdown}
-                        tabIndex={-1}
+                        onClick={this.handleClear}
                         style={{
                             position: 'absolute',
-                            right: '0px',
+                            top: 0,
+                            right: '1em',
                             background: 'transparent',
                             border: 'none',
+                            color: "red",
+                            fontSize: 'larger',
                         }}
-                        title="Toggle dropdown"
+                        title="Clear"
                     >
-                        ▼
+                        ×
                     </button>
-                </div>
+                )}
+                <button
+                    onClick={this.toggleDropdown}
+                    tabIndex={-1}
+                    style={{
+                        position: 'absolute',
+                        right: '0px',
+                        background: 'transparent',
+                        border: 'none',
+                    }}
+                    title="Toggle dropdown"
+                >
+                    ▼
+                </button>
                 {showList && filtered.length > 0 && (
                     <ul
                         ref={this.dropdownRef}

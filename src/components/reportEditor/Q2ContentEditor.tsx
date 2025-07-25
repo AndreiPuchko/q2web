@@ -33,7 +33,7 @@ class Q2ContentEditor extends Component<ContentProps> {
         const sectionData = this.q2report.getObject(this.props.selection);
 
         editor.add_control("/h", "")
-        editor.add_control("role", "Role", { data: sectionData.role, stretch: 1, control:"combo", pic: "free;table;header;footer" });
+        editor.add_control("role", "Role", { data: sectionData.role, stretch: 1, control:"combo", pic: "free;table;header;footer", datalen:8 });
         editor.add_control("print_when", "Print when", { data: sectionData.print_when, stretch: 3 });
         editor.add_control("print_after", "Calc after", { data: sectionData.print_after, stretch: 3 });
         editor.add_control("new_page_before", "On new page", { control: "check", data: sectionData.new_page_before });
