@@ -479,6 +479,21 @@ class ReportView extends React.Component<any, {
                     )
                 );
             }
+            // Grouping - header
+            if (rowSet?.table_groups.length > 0) {
+                rowSet?.table_groups.forEach((grp, index) => {
+                    rowsContent.push(
+                        this.renderRows(
+                            column,
+                            cellWidthsPx,
+                            pageIdx,
+                            columnSetIdx,
+                            grp.group_header,
+                            `${rowSetIdx}-group-header-${index}`
+                        )
+                    );
+                })
+            }
             // Main section
             rowsContent.push(
                 this.renderRows(
@@ -490,6 +505,22 @@ class ReportView extends React.Component<any, {
                     `${rowSetIdx}`
                 )
             );
+            // Grouping - header
+            if (rowSet?.table_groups.length > 0) {
+                for (let index = rowSet.table_groups.length - 1; index >= 0; index--) {
+                    rowsContent.push(
+                        this.renderRows(
+                            column,
+                            cellWidthsPx,
+                            pageIdx,
+                            columnSetIdx,
+                            rowSet.table_groups[index].group_footer,
+                            `${rowSetIdx}-group-footer-${index}`
+                        )
+                    )
+                }
+            }
+
             if (rowSet.table_footer) {
                 rowsContent.push(
                     this.renderRows(

@@ -88,10 +88,19 @@ export class Q2Report {
         // Defensive: only use replace if rowSetIdx is a string
         let real_rowIdx = rowSetIdx;
         if (typeof rowSetIdx === "string") {
-            real_rowIdx = rowSetIdx.replace("-header", "").replace("-footer", "");
+            real_rowIdx = rowSetIdx.split("-")[0];
         }
         let rowSet = undefined;
-        if (typeof rowSetIdx === "string" && rowSetIdx.includes("-header")) {
+
+        if (typeof rowSetIdx === "string" && rowSetIdx.includes("-group-header-")) {
+            const grpIdx = rowSetIdx.split("-")[3];
+            rowSet = columns.rows?.[real_rowIdx].table_groups[grpIdx].group_header;
+        }
+        else if (typeof rowSetIdx === "string" && rowSetIdx.includes("-group-footer-")) {
+            const grpIdx = rowSetIdx.split("-")[3];
+            rowSet = columns.rows?.[real_rowIdx].table_groups[grpIdx].group_footer;
+        }
+        else if (typeof rowSetIdx === "string" && rowSetIdx.includes("-header")) {
             rowSet = columns.rows?.[real_rowIdx].table_header;
         }
         else if (typeof rowSetIdx === "string" && rowSetIdx.includes("-footer")) {
