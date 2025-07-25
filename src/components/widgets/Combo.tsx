@@ -34,6 +34,13 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
         this.updateDropdownPosition();
     }
 
+    componentDidUpdate(prevProps: Q2ComboProps) {
+        if (this.props.column?.data !== prevProps.column?.data && this.props.column?.data !== this.state.value) {
+            const value = this.props.column.data;
+            this.setState({ value, showList: false });
+        }
+    }
+
     filterValues = (input: string) => {
         return this.values.filter((v) =>
             v.toLowerCase().includes(input.toLowerCase())
@@ -92,6 +99,8 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
             filtered,
             showList: true,
             highlightedIndex: -1,
+        }, () => {
+            this.changed(value)
         });
     };
 
@@ -101,15 +110,17 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
             showList: false,
             highlightedIndex: -1,
             filtered: this.filterValues(value),
+        }, () => {
+            this.changed(value)
         });
     };
 
-    handleFocus = () => {
-        this.setState({
-            showList: true,
-            filtered: this.filterValues(this.state.value),
-        }, () => this.updateDropdownPosition());
-    };
+    // handleFocus = () => {
+    //     this.setState({
+    //         showList: true,
+    //         filtered: this.filterValues(this.state.value),
+    //     }, () => this.updateDropdownPosition());
+    // };
 
     handleBlur = () => {
         setTimeout(() => this.setState({ showList: false }), 100);
@@ -146,10 +157,14 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
         this.setState({
             value: '',
             filtered: this.values,
-            showList: false,
+            showList: true,
             highlightedIndex: -1,
+        }, () => {
+            this.changed('')
+            this.inputRef.current?.focus()
+            this.updateDropdownPosition()
         });
-        this.inputRef.current?.focus();
+
     };
 
     toggleDropdown = () => {
@@ -171,7 +186,7 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
                         ref={this.inputRef}
                         value={value}
                         onChange={this.handleInputChange}
-                        onFocus={this.handleFocus}
+                        // onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
                         onKeyDown={this.handleKeyDown}
                         style={{ flex: 1, paddingRight: '3em' }}

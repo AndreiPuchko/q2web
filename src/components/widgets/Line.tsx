@@ -110,17 +110,7 @@ class Q2Line extends Widget<Q2LineProps, Q2LineState> {
             }
         }
         column.data = value;
-        this.setState({ value }, () => {
-            if (form.handleChange) {
-                form.handleChange({
-                    target:
-                    {
-                        value: value,
-                        name: (e as any).target.name
-                    }
-                } as any);
-            }
-        });
+        this.setState({ value }, () => { this.changed(value) });
     };
 
     handleSpin = (delta: number) => {

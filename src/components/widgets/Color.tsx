@@ -66,24 +66,6 @@ class Q2Color extends Widget<Q2ColorProps, Q2ColorState> {
         });
     };
 
-    changed(value: string) {
-        const { column, form } = this.props;
-        column.data = value;
-        this.setState({ value }, () => {
-            if (form.handleChange) {
-                form.handleChange({
-                    target:
-                    {
-                        value: value,
-                        name: column.column
-                    }
-                } as any);
-            }
-        });
-
-
-    }
-
     handleEyedropper = async () => {
         if ('EyeDropper' in window) {
             try {

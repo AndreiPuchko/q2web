@@ -193,7 +193,7 @@ export class Q2Report {
             }
         }
         else if (selection.type === "row") {
-            for (let el of ["print_when", "print_after", "new_page_before", "new_page_after"]) {
+            for (let el of ["print_when", "print_after", "new_page_before", "new_page_after", "role"]) {
                 if (object[el] !== dataChunk[el]) {
                     changed = true;
                     object[el] = dataChunk[el];
