@@ -37,6 +37,12 @@ class Q2ContentEditor extends Component<ContentProps> {
         if (roles.includes(sectionData.role)) {
             editor.add_control("role", "Role", { data: sectionData.role, stretch: 1, control: "combo", pic: roles, datalen: 8 });
         }
+        if (sectionData.role === "table") {
+            const arrayKeys = Object.keys(this.props.reportEditor.data_set).filter(
+                key => Array.isArray(this.props.reportEditor.data_set[key])
+            ).join(";");
+            editor.add_control("data_source", "Source", { data: sectionData.data_source, stretch: 1, control: "combo", pic: arrayKeys, datalen: 8 });
+        }
         editor.add_control("print_when", "Print when", { data: sectionData.print_when, stretch: 3 });
         editor.add_control("print_after", "Calc after", { data: sectionData.print_after, stretch: 3 });
         editor.add_control("new_page_before", "On new page", { control: "check", data: sectionData.new_page_before });
@@ -110,6 +116,9 @@ class Q2ContentEditor extends Component<ContentProps> {
                 else if (selection.type === "row") {
                     if ("role" in form.s) {
                         dataChunk["role"] = form.s.role;
+                    }
+                    if ("data_source" in form.s) {
+                        dataChunk["data_source"] = form.s.data_source;
                     }
                     dataChunk["print_when"] = form.s.print_when;
                     dataChunk["print_after"] = form.s.print_after;

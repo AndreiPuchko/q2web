@@ -671,12 +671,16 @@ class ReportView extends React.Component<any, {
                         background: isSelected ? selectionColor : "#f0f8ff",
                         gridRow: `1 / span ${rowCount}`,
                         textDecoration: isHidden ? "line-through" : undefined,
-                        color: isHidden ? "#888" : undefined
+                        color: isHidden ? "#888" : undefined,
+                        // display: "flex",
+                        // flexDirection: "row",
                     }}
                     onClick={e => { e.stopPropagation(); this.props.handleSelect(rowClickParams); }}
                     onContextMenu={e => { e.stopPropagation(); this.props.handleContextMenu(e, rowClickParams); }}
                 >
-                    {rowSet.role}{isHidden ? " (hidden)" : ""}
+                    {rowSet.role}
+                    {rowSet.role === "table" ? <div style={{ fontWeight: "normal" }}>[{rowSet.data_source}]</div> : ""}
+                    {isHidden ? " (hidden)" : ""}
                 </div>
                 {/* render rows's heights column */}
                 {Array.from({ length: rowCount }).map((_, rowIdx) => {
