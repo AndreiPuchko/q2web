@@ -426,9 +426,18 @@ export class Q2Report {
             return true
         }
         else {
-            const realRowIdx = parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
+            const realRowIdx = rowSetIdx.split("-")[0];
             const rowSet = columns.rows[realRowIdx]
-            if (rowSetIdx.includes("-header")) {
+            if (typeof rowSetIdx === "string" && rowSetIdx.includes("-group-header-")) {
+                const grpIdx = rowSetIdx.split("-")[3];
+                columns.rows[realRowIdx].table_groups.splice(grpIdx, 1);
+            }
+            else if (typeof rowSetIdx === "string" && rowSetIdx.includes("-group-footer-")) {
+                const grpIdx = rowSetIdx.split("-")[3];
+                columns.rows[realRowIdx].table_groups.splice(grpIdx, 1);
+            }
+
+            else if (rowSetIdx.includes("-header")) {
                 rowSet["table_header"] = {}
             }
             else if (rowSetIdx.includes("-footer")) {
