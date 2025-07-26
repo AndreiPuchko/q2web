@@ -678,7 +678,8 @@ class ReportView extends React.Component<any, {
                 <div
                     className="q2-report-rowssection-header"
                     style={{
-                        background: isSelected ? selectionColor : "#f0f8ff",
+                        background: isSelected ? selectionColor :(rowSet.role === "table" ? "#AAFFDD" : "#f0f8ff"),
+                        // color: rowSet.role === "table" ? "green" : "#f0f8ff",
                         gridRow: `1 / span ${rowCount}`,
                         textDecoration: isHidden ? "line-through" : undefined,
                         color: isHidden ? "#888" : undefined,
