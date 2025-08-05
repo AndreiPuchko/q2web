@@ -37,11 +37,15 @@ class Q2ContentEditor extends Component<ContentProps> {
         if (roles.includes(sectionData.role)) {
             editor.add_control("role", "Role", { data: sectionData.role, stretch: 1, control: "combo", pic: roles, datalen: 8 });
         }
+        else if (sectionData.role.includes("group")) {
+            editor.add_control("groupby", "GroupBy", { data: sectionData.groupby, stretch: 1, control: "line" });
+        }
+
         if (sectionData.role === "table") {
             const arrayKeys = Object.keys(this.props.reportEditor.data_set).filter(
                 key => Array.isArray(this.props.reportEditor.data_set[key])
             ).join(";");
-            editor.add_control("data_source", "Source", { data: sectionData.data_source, stretch: 1, control: "combo", pic: arrayKeys, datalen: 8 });
+            editor.add_control("data_source", "Source", { data: sectionData.data_source, stretch: 3, control: "combo", pic: arrayKeys });
         }
         editor.add_control("print_when", "Print when", { data: sectionData.print_when, stretch: 3 });
         editor.add_control("print_after", "Calc after", { data: sectionData.print_after, stretch: 3 });
@@ -116,6 +120,9 @@ class Q2ContentEditor extends Component<ContentProps> {
                 else if (selection.type === "row") {
                     if ("role" in form.s) {
                         dataChunk["role"] = form.s.role;
+                    }
+                    if ("groupby" in form.s) {
+                        dataChunk["groupby"] = form.s.groupby;
                     }
                     if ("data_source" in form.s) {
                         dataChunk["data_source"] = form.s.data_source;

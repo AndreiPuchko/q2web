@@ -1,3 +1,5 @@
+//@ts-nocheck 
+
 const report_json = `{
   "queries": {
     "header": "select invoice.* , customers.name, customers.address from invoice left join customers on invoice.cid = customers.cid where invoice.id = :id ",
@@ -305,7 +307,7 @@ const report_json = `{
   "module": "#"
 }`
 
-const report_json1= `{
+let report_json0= `{
   "queries": [
     {
       "name": "111",
@@ -681,7 +683,7 @@ const data_sets_json = `{
 }`
 
 
-const data_sets_json1 = `{
+let data_sets_json1 = `{
         "cursor": [
             {"data1": "XyDlguzuz", "num1": "5", "grp": 0, "tom": 1},
             {"data1": "XInjlysVB", "num1": "4", "grp": 0, "tom": 1},

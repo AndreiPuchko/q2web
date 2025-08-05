@@ -14,9 +14,9 @@ interface Q2ComboState {
 }
 
 class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
-    inputRef: React.RefObject<HTMLInputElement>;
-    wrapperRef: React.RefObject<HTMLDivElement>;
-    dropdownRef: React.RefObject<HTMLUListElement>;
+    inputRef: React.RefObject<HTMLInputElement | null>;
+    wrapperRef: React.RefObject<HTMLDivElement | null>;
+    dropdownRef: React.RefObject<HTMLUListElement | null>;
     values: Array<string>;
 
     constructor(props: Q2ComboProps) {
@@ -27,6 +27,8 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
             showList: false,
             filtered: this.values,
             highlightedIndex: -1,
+            dropdownAbove: true,
+            dropdownMaxHeight: -1,
         };
         this.inputRef = React.createRef();
         this.wrapperRef = React.createRef();
@@ -55,7 +57,7 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
 
         const rect = wrapper.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
+        // const viewportWidth = window.innerWidth;
 
         const spaceBelow = viewportHeight - rect.bottom;
         const spaceAbove = rect.top;

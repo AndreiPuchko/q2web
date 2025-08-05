@@ -201,12 +201,23 @@ export class Q2Report {
             }
         }
         else if (selection.type === "row") {
-            for (let el of ["print_when", "print_after", "new_page_before", "new_page_after", "role", "data_source"]) {
+            for (let el of ["print_when", "print_after", "new_page_before", "new_page_after", "role", "data_source", "groupby"]) {
                 if (el in dataChunk) {
                     if (object[el] !== dataChunk[el]) {
                         changed = true;
                         object[el] = dataChunk[el];
                     }
+                }
+                if (el === "groupby") {
+                    const newSelection = {...selection};
+                    if (selection.rowSetIdx.includes("-group-header-")){
+                        newSelection.rowSetIdx = newSelection.rowSetIdx.replace("-group-header-", "-group-footer-")
+                    }
+                    else{
+                        newSelection.rowSetIdx = newSelection.rowSetIdx.replace("-group-footer-", "-group-header-")
+                    }
+                    const newObject = this.getObject(newSelection);
+                    newObject.groupby = dataChunk[el];
                 }
             }
         }
@@ -447,7 +458,7 @@ export class Q2Report {
         }
     }
 
-    getRealRowSetIdx(rowSetIdx) {
+    getRealRowSetIdx(rowSetIdx: string) {
         const realRowIdx = typeof rowSetIdx === "string"
             ? parseInt(rowSetIdx.replace("-header", "").replace("-footer", ""))
             : rowSetIdx;

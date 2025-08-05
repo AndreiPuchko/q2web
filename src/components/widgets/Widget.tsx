@@ -44,17 +44,17 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     changed(value: string) {
         const { column, form } = this.props;
         column.data = value;
-        this.setState({ value }, () => {
-            if (form.handleChange) {
-                form.handleChange({
-                    target:
-                    {
-                        value: value,
-                        name: column.column
-                    }
-                } as any);
-            }
-        });
+
+        if (form?.handleChange) {
+            form.handleChange({
+                target:
+                {
+                    value: value,
+                    name: column.column
+                }
+            } as any);
+        }
+
     }
 
     // setValue(value: any) {

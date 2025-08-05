@@ -8,7 +8,7 @@ import Q2Button from "../widgets/Button";
 import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 import { showDialog } from '../../q2_modules/Q2DialogApi';
 import uploadAndDownload from "./Q2ReportAPI"
-import { count } from "console";
+
 
 interface Q2ReportEditorProps {
     zoomWidthPx?: number;
@@ -19,6 +19,25 @@ interface Q2ReportEditorProps {
 function stableStringify(obj: any) {
     return JSON.stringify(obj, Object.keys(obj).sort());
 }
+
+
+function darkenColor(baseColor: string, index: number) {
+    if (!/^#?[0-9a-fA-F]{6}$/.test(baseColor)) {
+        throw new Error("Invalid color format. Use #RRGGBB.");
+    }
+
+    const factor = 1 - (index * 0.09); // 0.92 для index=1, 0.2 для index=10
+    const hex = baseColor.startsWith('#') ? baseColor.slice(1) : baseColor;
+
+    const r = Math.max(0, Math.floor(parseInt(hex.slice(0, 2), 16) * factor));
+    const g = Math.max(0, Math.floor(parseInt(hex.slice(2, 4), 16) * factor));
+    const b = Math.max(0, Math.floor(parseInt(hex.slice(4, 6), 16) * factor));
+
+    const toHex = (v: any) => v.toString(16).padStart(2, '0');
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 export type CellSelection = { type: "none" } |
 {
     type: "cell",
@@ -39,7 +58,7 @@ export type Selection =
     | { type: "rowheight", pageIdx: number, columnSetIdx: number, rowSetIdx: number, heightIdx: number }
     | CellSelection
 
-const firstColWidthPx = 75;
+const firstColWidthPx = 80;
 const secondColWidthPx = 55;
 const selectionColor = "#ffe066";
 
@@ -481,7 +500,7 @@ class ReportView extends React.Component<any, {
             }
             // Grouping - header
             if (rowSet?.table_groups.length > 0) {
-                rowSet?.table_groups.forEach((grp, index) => {
+                rowSet?.table_groups.forEach((grp: any, index: number) => {
                     rowsContent.push(
                         this.renderRows(
                             column,
@@ -659,6 +678,12 @@ class ReportView extends React.Component<any, {
                 rowHeights.push("auto")
             }
         });
+        let bgColor = rowSet.role === "table" ? "#AAFFDD" : "#f0f8ff";
+        if (rowSet.role.includes("group")) {
+            const grpIdx = parseInt(rowSetIdx.split("-")[3])
+            bgColor = darkenColor("#EEFFBB", grpIdx);
+        }
+        if (isSelected) bgColor = selectionColor;
         return (
             <div
                 key={rowSetIdx}
@@ -678,18 +703,16 @@ class ReportView extends React.Component<any, {
                 <div
                     className="q2-report-rowssection-header"
                     style={{
-                        background: isSelected ? selectionColor :(rowSet.role === "table" ? "#AAFFDD" : "#f0f8ff"),
-                        // color: rowSet.role === "table" ? "green" : "#f0f8ff",
+                        background: bgColor,
                         gridRow: `1 / span ${rowCount}`,
                         textDecoration: isHidden ? "line-through" : undefined,
                         color: isHidden ? "#888" : undefined,
-                        // display: "flex",
-                        // flexDirection: "row",
                     }}
                     onClick={e => { e.stopPropagation(); this.props.handleSelect(rowClickParams); }}
                     onContextMenu={e => { e.stopPropagation(); this.props.handleContextMenu(e, rowClickParams); }}
                 >
-                    {rowSet.role}
+                    {rowSet.role.includes("group") ? rowSet.role.replace("group_", "g-") : rowSet.role}
+                    {rowSet.role.includes("group") ? <div style={{ fontWeight: "normal" }}>/{rowSet.groupby}/</div> : ""}
                     {rowSet.role === "table" ? <div style={{ fontWeight: "normal" }}>[{rowSet.data_source}]</div> : ""}
                     {isHidden ? " (hidden)" : ""}
                 </div>
