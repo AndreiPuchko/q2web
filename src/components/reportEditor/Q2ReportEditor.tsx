@@ -289,10 +289,10 @@ class Q2ReportEditor extends Component<Q2ReportEditorProps, Q2ReportEditorState>
 
     render() {
         return (
-            <div>
+            <div className="q2-report-editor-root">
                 <Q2ContentEditor selection={this.state.selection} q2report={this.q2report} reportEditor={this} />
                 <div className="q2-report-editor-container" >
-                    <div className="q2-report-editor">
+                    <div className="q2-report-editor scrollable">
                         <ReportView
                             ref={this.reportViewRef}
                             selection={this.state.selection}

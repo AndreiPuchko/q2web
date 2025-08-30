@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
 import Form from '../Form';
+import "./Q2ReportEditor.css";
 
 interface StyleProps {
     selection: any;
@@ -338,7 +339,7 @@ class Q2StyleEditor extends Component<StyleProps> {
         }
 
         return (
-            <div>
+            <div className="q2-style-editor">
                 <div
                     style={{ fontSize: "12px" }}
                 >
