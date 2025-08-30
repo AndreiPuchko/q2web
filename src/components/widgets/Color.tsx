@@ -84,14 +84,29 @@ class Q2Color extends Widget<Q2ColorProps, Q2ColorState> {
         this.setState((prev) => ({ showPicker: !prev.showPicker }));
     };
 
+    calculatePickerPosition = () => {
+        const button = this.pickerRef.current?.querySelector('button');
+        if (!button) return { top: '100%', marginTop: 6 };
+
+        const buttonRect = button.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - buttonRect.bottom;
+        const spaceAbove = buttonRect.top;
+
+        // Need about 250px for the picker
+        if (spaceBelow < 250 && spaceAbove > spaceBelow) {
+            return { bottom: '100%', marginBottom: 6 };
+        }
+        return { top: '100%', marginTop: 6 };
+    };
 
     render() {
         const { value, showPicker } = this.state;
         const valid = isValidColor(value);
+        const pickerPosition = this.calculatePickerPosition();
 
 
         return (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} ref={this.pickerRef}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }} ref={this.pickerRef}>
                 <button
                     style={{
                         width: 20,
@@ -117,8 +132,7 @@ class Q2Color extends Widget<Q2ColorProps, Q2ColorState> {
                         style={{
                             position: 'absolute',
                             zIndex: 999,
-                            top: '100%',
-                            marginTop: 6,
+                            ...pickerPosition,
                             padding: 10,
                             background: '#fff',
                             border: '1px solid #ccc',
