@@ -386,6 +386,7 @@ class ReportView extends React.Component<any, {
                         background: isSelected ? selectionColor : "#f9fbe7",
                         borderBottom: "2px solid #888",
                         alignItems: "center",
+                        minWidth: firstColWidthPx + secondColWidthPx + zoomWidthPx,
                         cursor: "pointer",
                         filter: isHidden ? "grayscale(0.5)" : undefined
                     }}
@@ -396,8 +397,8 @@ class ReportView extends React.Component<any, {
                         className="q2-report-page"
                         style={{
                             background: isSelected ? selectionColor : "#f9fbe7",
-                            minWidth: firstColWidthPx + secondColWidthPx + 1,
                             textDecoration: isHidden ? "line-through" : undefined,
+                            minWidth: firstColWidthPx + secondColWidthPx + 1,
                             color: isHidden ? "#888" : undefined
                         }}
                     >
@@ -978,26 +979,29 @@ class ReportView extends React.Component<any, {
     }
 
     render() {
-        const { selection, q2report, handleSelect, handleContextMenu } = this.props;
+        const { selection, q2report, handleSelect, handleContextMenu, zoomWidthPx } = this.props;
         const isSelected = selection?.type === "report";
-
         return (
             <div>
                 <div
                     className="q2-report-header"
-                    style={{ background: isSelected ? selectionColor : "#f0f0f0" }}
+                    style={{
+                        background: isSelected ? selectionColor : "#f0f0f0",
+                        minWidth: `${firstColWidthPx + secondColWidthPx + zoomWidthPx}px`
+                    }}
                     onClick={() => handleSelect({ type: "report" })}
                     onContextMenu={e => handleContextMenu(e, { type: "report" })}
                 >
-                    <div style={{ minWidth: firstColWidthPx + secondColWidthPx, borderRight: "1px solid #BBB" }}>Report</div>
-                    <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
+                    <div style={{ minWidth: firstColWidthPx + secondColWidthPx + 1, borderRight: "1px solid #BBB" }}>
+                        Report
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
                         <Q2Button {...{ column: new Q2Control("b1", "HTML", { valid: () => this.runReport("html") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "DOCX", { valid: () => this.runReport("docx") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "XLSX", { valid: () => this.runReport("xlsx") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "PDF", { disabled: true }) }} />
-                        <div style={{ flexGrow: 9 }}></div>
+                        <div style={{ width: "90px" }}></div>
                         <Q2Button {...{ column: new Q2Control("b1", "View data", { valid: this.showDataSets }) }} />
-                        <div style={{ flexGrow: 1 }}></div>
                     </div>
                 </div>
 
