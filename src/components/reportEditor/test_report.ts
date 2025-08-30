@@ -1,6 +1,6 @@
 //@ts-nocheck 
 
-const report_json = `{
+const report_json0 = `{
   "queries": {
     "header": "select invoice.* , customers.name, customers.address from invoice left join customers on invoice.cid = customers.cid where invoice.id = :id ",
     "lines": "select invoice_lines.* from invoice_lines where parent_id = :id norder by id"
@@ -307,7 +307,7 @@ const report_json = `{
   "module": "#"
 }`
 
-let report_json0= `{
+let report_json= `{
   "queries": [
     {
       "name": "111",
@@ -391,6 +391,7 @@ let report_json0= `{
                       },
                       "0,3": {
                         "data": "{sum:num1}",
+                        "format": "F2",
                         "style": {
                           "text-align": "right"
                         }
@@ -441,6 +442,7 @@ let report_json0= `{
                     "cells": {
                       "0,3": {
                         "data": "{sum:num1}",
+                        "format": "N2",
                         "style": {
                           "text-align": "right"
                         }
@@ -640,7 +642,7 @@ let report_json0= `{
 }`
 
 
-const data_sets_json = `{
+const data_sets_json0 = `{
   "params": {
     ":id": "1"
   },
@@ -683,15 +685,15 @@ const data_sets_json = `{
 }`
 
 
-let data_sets_json1 = `{
+let data_sets_json = `{
         "cursor": [
-            {"data1": "XyDlguzuz", "num1": "5", "grp": 0, "tom": 1},
-            {"data1": "XInjlysVB", "num1": "4", "grp": 0, "tom": 1},
-            {"data1": "rUKcWIPkl", "num1": "6", "grp": 0, "tom": 2},
-            {"data1": "fOBgKlaHr", "num1": "4", "grp": 0, "tom": 2},
-            {"data1": "KBmHYMYQs", "num1": "9", "grp": 0, "tom": 3},
-            {"data1": "FHuLGxKIe", "num1": "3", "grp": 0, "tom": 3},
-            {"data1": "wGDrDFdmd", "num1": "3", "grp": 1, "tom": 1},
+            {"data1": "XyDlguzuz", "num1": "51234", "grp": 0, "tom": 1},
+            {"data1": "XInjlysVB", "num1": "41244", "grp": 0, "tom": 1},
+            {"data1": "rUKcWIPkl", "num1": "66543", "grp": 0, "tom": 2},
+            {"data1": "fOBgKlaHr", "num1": "42456", "grp": 0, "tom": 2},
+            {"data1": "KBmHYMYQs", "num1": "987545", "grp": 0, "tom": 3},
+            {"data1": "FHuLGxKIe", "num1": "33467", "grp": 0, "tom": 3},
+            {"data1": "wGDrDFdmd", "num1": "3865", "grp": 1, "tom": 1},
             {"data1": "jEHyRbKGx", "num1": "7", "grp": 1, "tom": 1},
             {"data1": "neLrvZQRP", "num1": "5", "grp": 1, "tom": 2},
             {"data1": "BXPKaXFSa", "num1": "9", "grp": 1, "tom": 2}
