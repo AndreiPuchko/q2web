@@ -45,7 +45,7 @@
   background-color: var(--dialog-bg);
   box-shadow: var(--dialog-shadow);
   resize: both;
-  overflow: auto;
+  overflow: hidden; /* keep header fixed, move scrolling into .dialog-content */
 }
 
 .dialog-container.maximized {
@@ -82,6 +82,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky; /* keep header visible when content scrolls */
+  top: 0;
+  z-index: 3;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06); /* subtle separation from content */
 }
 
 .dialog-header.disabled {
@@ -92,6 +96,10 @@
   padding: 0 2px 0 2px;
   position: relative;
   z-index: 2;
+  /* make content area independently scrollable */
+  /* overflow: auto;  */
+  /* reserve space for sticky header (header height = 2em) */
+  max-height: calc(100% - 2em); 
 }
 
 .max-button, .close-button {
