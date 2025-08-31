@@ -130,7 +130,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
     childrenArray.forEach(child => {
-      const padding = parseFloat(window.getComputedStyle(dialogContent).paddingTop) + parseFloat(window.getComputedStyle(dialogContent).paddingBottom);
+      const computedStyle = window.getComputedStyle(dialogContent);
+      const padding = parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
       const height = dialog.clientHeight - dialogHeader.clientHeight - padding;
       child.style.height = `${height}px`;
     });
