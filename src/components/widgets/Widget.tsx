@@ -8,15 +8,16 @@ export interface WidgetProps {
     form?: any;
 }
 
-interface WidgetState {
-    value: string;
-}
+// interface WidgetState {
+//     value: string;
+// }
 
 
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     id: string;
 
-    state: WidgetState = {
+    // loosen state typing so subclasses (with their own state types) remain compatible
+    state: any = {
         value: ""
     };
 
@@ -34,7 +35,8 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
         return this.props.column.data;
     }
 
-    setData = (value: String | Number) => {
+    // setData = (value: String | Number | boolean) => {
+    setData (value: string | number | boolean) {
         // normalize to a primitive string/number
         const normalized = value === null || value === undefined ? "" : (typeof value === "string" ? value : String(value));
         // always update the shared column data

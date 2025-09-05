@@ -48,7 +48,9 @@ async function waitForCompletion(task_id: string) {
             reject(e);
         };
         ws.onclose = () => {
-            // if (!isDone) console.log("WebSocket closed before done");
+            if (!isDone) {
+                // console.log("WebSocket closed before done");
+            }
         };
     });
 
@@ -133,7 +135,7 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
     a.remove();
     window.URL.revokeObjectURL(url);
     // console.log("Download completed");
-    progressDialog.w.progressText.setData(`Download completed.` )
+    progressDialog.w.progressText.setData(`Download completed.`)
     await new Promise(resolve => setTimeout(resolve, 1000));
     progressDialog.closeDialog();
 }

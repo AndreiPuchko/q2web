@@ -242,7 +242,7 @@ class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
                             zIndex: 500,
                         }}
                     >
-                        {filtered.map((item, idx) => (
+                        {filtered.map((item: string, idx: number) => (
                             <li
                                 key={idx}
                                 onMouseDown={() => this.handleItemClick(item)}
