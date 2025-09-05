@@ -35,11 +35,17 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     }
 
     setData = (value: String | Number) => {
-        console.log(value + "!!!")
-        this.state.value = value;
-        this.props.column.data = value;
-        // this.props.form.forceUpdate();
-        this.forceUpdate();
+        // normalize to a primitive string/number
+        const normalized = value === null || value === undefined ? "" : (typeof value === "string" ? value : String(value));
+        // always update the shared column data
+        this.props.column.data = normalized;
+        // If subclass maintains internal state.value (e.g. Q2Line), update it via setState so the input updates.
+        // Otherwise fall back to forceUpdate so column-driven components (e.g. Q2Text) refresh.
+        if ((this as any).state && Object.prototype.hasOwnProperty.call((this as any).state, "value") && typeof (this as any).setState === "function") {
+            (this as any).setState({ value: normalized });
+        } else {
+            // this.forceUpdate();
+        }
     }
 
     focusIn = () => {
