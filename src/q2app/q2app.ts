@@ -120,11 +120,13 @@ q2forms.push(new Q2Form("Dev|-"));
 q2forms.push(messageBox1);
 q2forms.push(messageBox2);
 
-const data_set = get_data_sets_json()["lines"];
+const data_set = get_data_sets_json()["cursor"];
 const dataGrid = new Q2Form("Grid|Open Grid", "DataGrid", "", { menutoolbar: true, data: data_set })
-dataGrid.add_control("product", "Product Id")
-dataGrid.add_control("price", "Price")
-dataGrid.add_control("qt", "Qt")
+
+dataGrid.add_control("data1", "Text data")
+dataGrid.add_control("num1", "Num data")
+dataGrid.add_control("grp", "Group data 1")
+dataGrid.add_control("tom", "Group data 2")
 
 q2forms.push(dataGrid);
 
