@@ -4,7 +4,11 @@ import { WidgetProps } from './Widget';
 
 interface Q2TextProps extends WidgetProps { }
 
-class Q2Text extends Widget<Q2TextProps> {
+interface Q2TextState {
+    value: string;
+}
+
+class Q2Text extends Widget<Q2TextProps, Q2TextState> {
     constructor(props: Q2TextProps) {
         super(props);
     }

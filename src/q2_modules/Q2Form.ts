@@ -111,6 +111,7 @@ export class Q2Form {
     c: Record<string, any> = {};
     hookInputChanged?: (form: Form) => void;
     hookFocusChanged?: (form: Form) => void;
+    dialogIndex: number;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -130,6 +131,7 @@ export class Q2Form {
         this.height = 600;
         this.x = 0;
         this.y = 0;
+        this.dialogIndex = -1;
         if (key === "") {
             this.key = this.get_random_key();
         }

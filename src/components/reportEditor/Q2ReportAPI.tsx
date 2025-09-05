@@ -1,5 +1,22 @@
 import JSZip from "jszip";
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
+import { Q2Form } from "../../q2_modules/Q2Form"
+import { showDialog, closeDialog } from '../../q2_modules/Q2DialogApi';
+
+
+async function showProgressDialog(): Q2Form {
+    const progressBar = new Q2Form("", "Progress of report generation", "progress", {
+        menutoolbar: true,
+        hasMaxButton: false,
+        hasOkButton: true,
+    });
+
+    progressBar.add_control("/v");
+    progressBar.add_control("progressText", "", { readonly: true, data: "Wait...", control: "line" });
+    progressBar.add_control("progressDescription", "", { readonly: true, data: "", control: "text" });
+    showDialog(progressBar)
+    return progressBar
+}
 
 
 async function waitForCompletion(task_id: string) {
@@ -52,7 +69,7 @@ async function waitForCompletion(task_id: string) {
                 stopPolling();
                 reject(err);
             }
-        }, 1000)  as unknown as number;
+        }, 1000) as unknown as number;
     });
 
     // Return whichever resolves first
@@ -63,6 +80,7 @@ async function waitForCompletion(task_id: string) {
 async function uploadAndDownload(report: any, data_set: any, format: string) {
 
     // console.log(JSON.stringify(report, null, 2));
+    const progressDialog: Q2Form = await showProgressDialog()
     const zip = new JSZip();
 
     zip.file("report.json", JSON.stringify(report.report, null, 2));
@@ -74,6 +92,11 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
     const formData = new FormData();
     formData.append("file", blob, "report.zip");
     formData.append("format", format);
+
+    // console.log("Task is ready", progressDialog.s.progressText);
+
+    progressDialog.w.progressText.setData("Sending data...")
+    progressDialog.w.progressDescription.setData("The first report may take longer while the server wakes up (Render.com).")
 
     const uploadResp = await fetch(`${API_BASE}/upload/`, {
         method: "POST",
@@ -87,6 +110,8 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
     }
 
     console.log("Task started:", task_id);
+    progressDialog.w.progressText.setData("Task started...")
+    progressDialog.w.progressDescription.setData("Backend is working")
 
     // 2. Connect to WebSocket for progress
 
@@ -94,6 +119,9 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
 
 
     // 4. Download result
+    progressDialog.w.progressText.setData("Processing completed, starting download…")
+    progressDialog.w.progressDescription.setData("")
+
     const downloadResp = await fetch(`${API_BASE}/download/${task_id}`);
     const blobResult = await downloadResp.blob();
 
@@ -106,6 +134,9 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
     a.remove();
     window.URL.revokeObjectURL(url);
     console.log("Download completed");
+    progressDialog.w.progressText.setData(`Download completed.` )
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    closeDialog(progressDialog.dialogIndex);
 }
 
 export default uploadAndDownload

@@ -109,7 +109,7 @@ const reportEditor = new Q2Form("Dev|Report Editor", "Report Editor Dialog Demo"
         menutoolbar: true
     });
 
-// reportEditor.add_control("/t", "Report Designer")
+// reportEditor.add_control("/h")
 reportEditor.add_control("repo", "", { control: "widget", data: { widget: Q2ReportEditor, props: { q2report: get_report_json(), data_set: get_data_sets_json() } } })
 // reportEditor.add_control("/t", "Data")
 // const jsonData = get_data_sets_json();

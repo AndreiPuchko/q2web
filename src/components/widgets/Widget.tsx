@@ -8,8 +8,18 @@ export interface WidgetProps {
     form?: any;
 }
 
+interface WidgetState {
+    value: string;
+}
+
+
 class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     id: string;
+
+    state: WidgetState = {
+        value: ""
+    };
+
     constructor(props: P) {
         super(props);
         if (!props.id) {
@@ -22,6 +32,14 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
 
     getData() {
         return this.props.column.data;
+    }
+
+    setData = (value: String | Number) => {
+        console.log(value + "!!!")
+        this.state.value = value;
+        this.props.column.data = value;
+        // this.props.form.forceUpdate();
+        this.forceUpdate();
     }
 
     focusIn = () => {
