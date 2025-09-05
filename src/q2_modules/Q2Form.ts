@@ -1,4 +1,5 @@
 import Form from '../components/Form';
+import { showDialog, closeDialog } from './Q2DialogApi';
 
 
 export class Q2Control {
@@ -22,7 +23,7 @@ export class Q2Control {
     checkDisabled?: boolean | string | number;
     tag?: string;
     range?: string;
-    style?:string;
+    style?: string;
 
     constructor(
         column: string,
@@ -82,7 +83,7 @@ export class Q2Control {
     getStyle() {
         // console.log(this.control, this.label, this.stretch)
         if (this.datalen)
-            return { flex: `0 1 auto`, maxWidth: `${this.datalen*1.5}cap` }
+            return { flex: `0 1 auto`, maxWidth: `${this.datalen * 1.5}cap` }
         else
             return { flex: `${this.stretch} ${this.stretch}`, width: "100%" }
     }
@@ -170,5 +171,13 @@ export class Q2Form {
         }
         this.columns.push(ctrl);
         return ctrl;
+    }
+
+    showDialog() {
+        showDialog(this);
+    }
+
+    closeDialog() {
+        closeDialog(this.dialogIndex);
     }
 }

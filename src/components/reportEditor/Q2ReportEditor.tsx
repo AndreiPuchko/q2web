@@ -971,7 +971,7 @@ class ReportView extends React.Component<any, {
         const dataViewer = new Q2Form("", "Data Viewer", "dw", { hasOkButton: true, });
         const { data_set } = this.props.reportEditor;
         dataViewer.add_control("data", "", { control: "widget", data: { widget: JsonEditor, props: { data: data_set } } });
-        showDialog(dataViewer)
+        dataViewer.showDialog()
     }
 
     runReport(fmt: string) {

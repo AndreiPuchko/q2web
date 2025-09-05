@@ -5,7 +5,7 @@ import { showDialog, closeDialog } from '../../q2_modules/Q2DialogApi';
 
 
 async function showProgressDialog(): Q2Form {
-    const progressBar = new Q2Form("", "Progress of report generation", "progress", {
+    const progressBar = new Q2Form("", "Report Generation Progress", "progress", {
         menutoolbar: true,
         hasMaxButton: false,
         hasOkButton: true,
@@ -14,7 +14,7 @@ async function showProgressDialog(): Q2Form {
     progressBar.add_control("/v");
     progressBar.add_control("progressText", "", { readonly: true, data: "Wait...", control: "line" });
     progressBar.add_control("progressDescription", "", { readonly: true, data: "", control: "text" });
-    showDialog(progressBar)
+    progressBar.showDialog()
     return progressBar
 }
 
@@ -136,7 +136,7 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
     console.log("Download completed");
     progressDialog.w.progressText.setData(`Download completed.` )
     await new Promise(resolve => setTimeout(resolve, 1000));
-    closeDialog(progressDialog.dialogIndex);
+    progressDialog.closeDialog();
 }
 
 export default uploadAndDownload
