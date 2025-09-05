@@ -1,8 +1,8 @@
 import React from 'react';
 import './Dialog.css';
 import Cookies from 'js-cookie';
-import DataGrid from './DataGrid';
 import Form from './Form';
+
 import { Q2Form } from "../q2_modules/Q2Form";
 
 interface DialogProps {
@@ -215,9 +215,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   render() {
     const { onClose, q2form, zIndex, isTopDialog, dialogIndex } = this.props;
     const { isMaximized } = this.state;
-    const { data } = q2form;
-    console.log(q2form);
-    const isDataGrid = data && data.length > 0;
     q2form.dialogIndex = dialogIndex;
 
     if (!q2form) {
@@ -243,16 +240,13 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         </div>
 
         <div className="dialog-content">
-          {isDataGrid ? (
-            <DataGrid q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
-          ) : (
-            <Form q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
-          )}
+          <Form q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
         </div>
 
       </div>
     );
   }
 }
+
 
 export default Dialog;

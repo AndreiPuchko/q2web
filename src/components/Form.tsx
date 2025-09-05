@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import './Form.css'; // Import the CSS file for styling
+import DataGrid from './DataGrid';
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Color from './widgets/Color'; // Import the Line widget
 import Q2Combo from './widgets/Combo'; // Import the Line widget
@@ -319,7 +320,13 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     };
 
     render() {
-        const { columns } = this.props.q2form;
+        const { q2form, onClose, isTopDialog } = this.props;
+        // If q2form contains tabular data, render DataGrid instead of the standard form
+        if (q2form?.data && Array.isArray(q2form.data) && q2form.data.length > 0) {
+            return <DataGrid q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />;
+        }
+
+        const { columns } = q2form;
         const hasOkButton = this.props.q2form.hasOkButton;
         const subForm = this.props.q2form?.subForm;
         const hasCancelButton = this.props.q2form.hasCancelButton;
