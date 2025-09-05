@@ -143,24 +143,31 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     if (!dialog) return;
     const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
     const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
+    console.log(hasVerticalScrollbar, hasHorizontalScrollbar)
     const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text]") as unknown as HTMLCollectionOf<HTMLElement>)
-    if (elements) {
-      elements.forEach(element => {
-        element.style.height = "auto";
-      });
-    }
+    // const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text], [class^=DataGrid]") as unknown as HTMLCollectionOf<HTMLElement>)
+    
+    // if (elements) {
+    //   elements.forEach(element => {
+    //     element.style.height = "auto";
+    //   });
+    // }
+
     if (hasVerticalScrollbar) {
       dialog.style.height = `${dialog.scrollHeight + 3}px`;
     }
+
     if (hasHorizontalScrollbar) {
       dialog.style.width = `${dialog.scrollWidth + 3}px`;
     }
+
     if (elements.length > 0) {
       while (dialog.scrollHeight === dialog.clientHeight) {
         elements.forEach(element => {
           element.style.height = `${element.clientHeight + 1}px`;
         });
       }
+
       if (dialog.scrollHeight > dialog.clientHeight) {
         elements.forEach(element => {
           element.style.height = `${element.clientHeight - 10}px`;

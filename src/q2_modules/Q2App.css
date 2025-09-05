@@ -34,7 +34,7 @@ body, html {
 
 .DataGrid {
   background-color: var(--datagrid-bg);
-  height: 200px;
+  max-height: 100vx;
   overflow: auto;
 }
 
