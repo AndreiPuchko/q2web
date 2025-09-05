@@ -1,10 +1,9 @@
 import JSZip from "jszip";
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 import { Q2Form } from "../../q2_modules/Q2Form"
-import { showDialog, closeDialog } from '../../q2_modules/Q2DialogApi';
 
 
-async function showProgressDialog(): Q2Form {
+function showProgressDialog(): Q2Form {
     const progressBar = new Q2Form("", "Report Generation Progress", "progress", {
         menutoolbar: true,
         hasMaxButton: false,
@@ -49,7 +48,7 @@ async function waitForCompletion(task_id: string) {
             reject(e);
         };
         ws.onclose = () => {
-            if (!isDone) console.log("WebSocket closed before done");
+            // if (!isDone) console.log("WebSocket closed before done");
         };
     });
 
@@ -59,13 +58,13 @@ async function waitForCompletion(task_id: string) {
                 const res = await fetch(`${API_BASE}/status/${task_id}`);
                 const data = await res.json();
                 if (data.status === "done") {
-                    console.log("Progress (poll): done");
+                    // console.log("Progress (poll): done");
                     stopPolling(); // ✅ safe cleanup
                     if (ws.readyState === WebSocket.OPEN) ws.close();
                     resolve();
                 }
             } catch (err) {
-                console.warn("Polling error:", err);
+                // console.warn("Polling error:", err);
                 stopPolling();
                 reject(err);
             }
@@ -109,7 +108,7 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
         return;
     }
 
-    console.log("Task started:", task_id);
+    // console.log("Task started:", task_id);
     progressDialog.w.progressText.setData("Task started...")
     progressDialog.w.progressDescription.setData("Backend is working")
 
@@ -133,7 +132,7 @@ async function uploadAndDownload(report: any, data_set: any, format: string) {
     a.click();
     a.remove();
     window.URL.revokeObjectURL(url);
-    console.log("Download completed");
+    // console.log("Download completed");
     progressDialog.w.progressText.setData(`Download completed.` )
     await new Promise(resolve => setTimeout(resolve, 1000));
     progressDialog.closeDialog();
