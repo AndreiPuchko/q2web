@@ -323,7 +323,8 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         const { q2form, onClose, isTopDialog } = this.props;
         // If q2form contains tabular data, render DataGrid instead of the standard form
         if (q2form?.data && Array.isArray(q2form.data) && q2form.data.length > 0) {
-            return <DataGrid q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />;
+            // ensure non-optional props for DataGrid
+            return <DataGrid q2form={q2form} onClose={onClose ?? (() => {})} isTopDialog={!!isTopDialog} />;
         }
 
         const { columns } = q2form;

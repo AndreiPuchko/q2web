@@ -10,7 +10,7 @@ import { get_report_json, get_data_sets_json } from "../components/reportEditor/
 import './Q2App.css';
 
 
-export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: any, theme: string }> {
+export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, dialogs: any, theme: string|null }> {
   static instance: Q2App | null = null;
 
   constructor(props: object) {
