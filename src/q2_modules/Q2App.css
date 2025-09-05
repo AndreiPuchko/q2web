@@ -26,7 +26,7 @@ body, html {
 
 .theme-dark {
   --datagrid-bg: rgb(76, 82, 82);
-  --datagrid-header-bg: rgb(16, 128, 219);
+  --datagrid-header-bg: rgb(192, 196, 188);
   --datagrid-border: black;
   --datagrid-cell-color: #fff;
   --workspace-bg: rgb(135, 141, 155);
@@ -41,9 +41,9 @@ body, html {
 .DataGrid table {
   border-collapse: collapse;
   /* width: auto; */
-  background: var(--datagrid-bg);
-  color: var(--datagrid-cell-color);
-  border-color: var(--datagrid-border);
+  /* background: var(--datagrid-bg); */
+  /* color: var(--datagrid-cell-color); */
+  /* border-color: var(--datagrid-border); */
 }
 
 .DataGrigHeader {
@@ -51,6 +51,7 @@ body, html {
   top: 0;
   z-index: 10;
   background: var(--datagrid-header-bg);
+  color: black;
   border-top: 2px solid var(--datagrid-border);
 }
 
@@ -58,7 +59,7 @@ body, html {
   border: 1px solid var(--datagrid-border);
   padding: 1px;
   text-align: left;
-  color: var(--datagrid-cell-color);
+  /* color: var(--datagrid-cell-color); */
 }
 
 .WorkSpace {

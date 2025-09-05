@@ -26,6 +26,7 @@ export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, di
 
   detectTheme = () => {
     // Try to get from localStorage first
+    return 'light';
     const saved = localStorage.getItem('theme');
     if (saved === 'light' || saved === 'dark') return saved;
     // Otherwise, use system preference
