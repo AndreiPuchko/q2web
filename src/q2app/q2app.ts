@@ -121,7 +121,7 @@ q2forms.push(messageBox1);
 q2forms.push(messageBox2);
 
 const data_set = get_data_sets_json()["cursor"];
-const dataGrid = new Q2Form("Grid|Open Grid", "DataGrid", "", { menutoolbar: true, data: data_set })
+const dataGrid = new Q2Form("Grid|Open Grid (old)", "DataGrid", "", { menutoolbar: true, data: data_set })
 
 dataGrid.add_control("data1", "Text data")
 dataGrid.add_control("num1", "Num data")
@@ -130,3 +130,7 @@ dataGrid.add_control("tom", "Group data 2")
 
 q2forms.push(dataGrid);
 
+
+const dataGrid2 = new Q2Form("Grid|Open Grid (new)", "DataGrid2", "", { menutoolbar: true })
+dataGrid2.add_control("datagrid", "", { control: "form", data: dataGrid })
+q2forms.push(dataGrid2);
