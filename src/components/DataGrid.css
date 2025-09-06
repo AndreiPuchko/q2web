@@ -20,10 +20,15 @@
 }
 
 table {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-    /* background: var(--datagrid-bg); */
-    /* color: var(--datagrid-cell-color); */
-    border-color: var(--datagrid-border);
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  /* background: var(--datagrid-bg); */
+  /* color: var(--datagrid-cell-color); */
+  border-color: var(--datagrid-border);
+}
+
+.DataGrid tbody {
+  height: auto;
+  overflow: auto;
 }

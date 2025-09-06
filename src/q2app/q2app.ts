@@ -132,5 +132,7 @@ q2forms.push(dataGrid);
 
 
 const dataGrid2 = new Q2Form("Grid|Open Grid (new)", "DataGrid2", "", { menutoolbar: true })
+// dataGrid2.add_control("/v", "")
+// dataGrid2.add_control("txt", "", { control: "text", data: "12" })
 dataGrid2.add_control("datagrid", "", { control: "form", data: dataGrid })
 q2forms.push(dataGrid2);

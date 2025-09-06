@@ -138,6 +138,119 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     });
   };
 
+
+  dialogHandleMouseUp1 = () => {
+    const dialog = this.dialogRef.current;
+    if (!dialog) return;
+
+    const content = dialog.querySelector(".dialog-content") as HTMLElement;
+    if (!content) return;
+
+    //
+    // 1. First pass: compute minimum required size from children
+    //
+    const { minW, minH } = this.computeMinSize(content);
+
+    const clientW = content.clientWidth;
+    const clientH = content.clientHeight;
+
+    // Grow only if dialog is smaller than min
+    const finalW = Math.max(clientW, minW);
+    const finalH = Math.max(clientH, minH);
+
+    if (finalW > clientW) dialog.style.width = `${finalW}px`;
+    if (finalH > clientH) dialog.style.height = `${finalH}px`;
+
+    //
+    // 2. Second pass (deferred): wait for browser to recalc layout
+    //
+    requestAnimationFrame(() => {
+      const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
+      const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
+
+      // Debug
+      console.log("scrollbars?", { hasVerticalScrollbar, hasHorizontalScrollbar });
+
+      // Collect resizable elements (textarea, DataGrid)
+      const resizableElements = Array.from(
+        dialog.querySelectorAll(
+          "textarea.Q2Text, .DataGrid"
+        )
+      ) as HTMLElement[];
+
+      // Adjust resizable elements if scrollbars remain
+      if (resizableElements.length > 0) {
+        if (hasVerticalScrollbar) {
+          resizableElements.forEach(el => {
+            const minH = parseInt(el.dataset.minHeight || "50");
+            el.style.height = Math.max(minH, el.clientHeight - 10) + "px";
+          });
+        }
+
+        if (hasHorizontalScrollbar) {
+          resizableElements.forEach(el => {
+            const minW = parseInt(el.dataset.minWidth || "50");
+            el.style.width = Math.max(minW, el.clientWidth - 10) + "px";
+          });
+        }
+      }
+    });
+  };
+
+
+  // Compute min-size recursively
+  computeMinSize = (element: HTMLElement): { minW: number; minH: number } => {
+    const isColumn = element.classList.contains("flex-column");
+
+    if (element.classList.contains("Q2Text") ||
+      element.classList.contains("DataGrid")) {
+      // Growable leaf
+      const minW = parseInt(element.dataset.minWidth || element.style.minWidth || "50");
+      const minH = parseInt(element.dataset.minHeight || element.style.minHeight || "50");
+      console.log(element, minW, minH)
+      return { minW, minH };
+    }
+
+    if (element.classList.contains("ReportEditor")) {
+      // Fixed-size leaf
+      return {
+        minW: element.offsetWidth,
+        minH: element.offsetHeight,
+      };
+    }
+
+    if (element.children.length > 0) {
+      // Panel container
+      const children = Array.from(element.children) as HTMLElement[];
+      if (isColumn) {
+        let minW = 0, minH = 0;
+        children.forEach(child => {
+          const { minW: cW, minH: cH } = this.computeMinSize(child);
+          minW = Math.max(minW, cW);
+          minH += cH;
+        });
+        return { minW, minH };
+      } else {
+        let minW = 0, minH = 0;
+        children.forEach(child => {
+          const { minW: cW, minH: cH } = this.computeMinSize(child);
+          minW += cW;
+          minH = Math.max(minH, cH);
+        });
+        return { minW, minH };
+      }
+    }
+
+    // Default: fixed-size leaf
+    return {
+      minW: element.offsetWidth,
+      minH: element.offsetHeight,
+    };
+  };
+
+
+
+
   dialogHandleMouseUp = () => {
     const dialog = this.dialogRef.current;
     if (!dialog) return;
@@ -146,12 +259,12 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     console.log(hasVerticalScrollbar, hasHorizontalScrollbar)
     const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text]") as unknown as HTMLCollectionOf<HTMLElement>)
     // const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text], [class^=DataGrid]") as unknown as HTMLCollectionOf<HTMLElement>)
-    
-    // if (elements) {
-    //   elements.forEach(element => {
-    //     element.style.height = "auto";
-    //   });
-    // }
+
+    if (elements) {
+      elements.forEach(element => {
+        element.style.height = "auto";
+      });
+    }
 
     if (hasVerticalScrollbar) {
       dialog.style.height = `${dialog.scrollHeight + 3}px`;
