@@ -23,12 +23,43 @@ table {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
-  /* background: var(--datagrid-bg); */
-  /* color: var(--datagrid-cell-color); */
   border-color: var(--datagrid-border);
+  /* width: 100%; */
+  border-collapse: collapse;
 }
 
-.DataGrid tbody {
-  height: auto;
+/* DataGrid root and scrollable body */
+.DataGridRoot,
+.DataGrid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0; /* critical for flex children to shrink */
+  min-width: 0
+  box-sizing: border-box;
+  background: var(--datagrid-bg);
+  color: var(--datagrid-cell-color);
+}
+
+/* The actual scrolling container (not tbody) */
+.DataGridBody {
+  flex: 1 1 auto;
   overflow: auto;
+  min-height: 0; /* critical when nested inside flex parents */
+  min-width: 0; /* critical when nested inside flex parents */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* keep header visible on scroll */
+.DataGrid thead {
+  position: sticky;
+  top: 0;
+  background: var(--datagrid-header-bg);
+  z-index: 2;
+}
+
+/* remove previous tbody overflow rules */
+.DataGrid tbody {
+  /* no overflow on tbody — scrolling handled by .DataGridBody */
 }

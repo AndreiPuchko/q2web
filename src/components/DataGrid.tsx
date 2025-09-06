@@ -209,37 +209,40 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
             { key: "separator", label: "-", icon: "" },
             { key: "exit", label: "Exit", icon: <MdOutlineExitToApp /> }
         ];
+        // Root contains toolbar and a DataGrid root; the actual scrollable area is .DataGridBody
         return (
-            <div ref={this.dataGridRef} style={{ height: '100%' }}>
+            <div ref={this.dataGridRef} className="DataGridRoot" style={{ height: '100%' }}>
                 <DialogToolBar actions={runtimeActions} onAction={this.handleAction} />
-                <div className="DataGrid" ref={this.tableBodyRef} onScroll={this.handleScroll}>
-                    <table>
-                        <thead className="DataGrigHeader">
-                            <tr>
-                                {columns.map((col: any, colIndex: number) => (
-                                    <th key={`header-${col.key}-${colIndex}`}>{col.label}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.slice(0, visibleRows).map((row: any, index: number) => {
-                                const isSelected = selectedRow === index;
-                                const backgroundColor = isSelected ? 'Highlight' : (index % 2 === 1 ? '#e7f7f7' : 'white');
-                                const color = isSelected ? '#FFAA99' : 'black';
-                                return (
-                                    <tr
-                                        key={`row-${index}`}
-                                        onClick={() => this.handleRowClick(index)}
-                                        style={{ backgroundColor, color }}
-                                    >
-                                        {columns.map((col: any, colIndex: number) => (
-                                            <td key={`cell-${col.key}-${colIndex}`}>{row[col.column]}</td>
-                                        ))}
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                <div className="DataGrid">
+                    <div className="DataGridBody" ref={this.tableBodyRef} onScroll={this.handleScroll}>
+                        <table>
+                            <thead className="DataGrigHeader">
+                                <tr>
+                                    {columns.map((col: any, colIndex: number) => (
+                                        <th key={`header-${col.key}-${colIndex}`}>{col.label}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.slice(0, visibleRows).map((row: any, index: number) => {
+                                    const isSelected = selectedRow === index;
+                                    const backgroundColor = isSelected ? 'Highlight' : (index % 2 === 1 ? '#e7f7f7' : 'white');
+                                    const color = isSelected ? '#FFAA99' : 'black';
+                                    return (
+                                        <tr
+                                            key={`row-${index}`}
+                                            onClick={() => this.handleRowClick(index)}
+                                            style={{ backgroundColor, color }}
+                                        >
+                                            {columns.map((col: any, colIndex: number) => (
+                                                <td key={`cell-${col.key}-${colIndex}`}>{row[col.column]}</td>
+                                            ))}
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         );

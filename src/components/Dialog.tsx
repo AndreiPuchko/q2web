@@ -133,8 +133,30 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     childrenArray.forEach(child => {
       const computedStyle = window.getComputedStyle(dialogContent);
       const padding = parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
+      const paddingHor = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
       const height = dialog.clientHeight - dialogHeader.clientHeight - padding;
+      const width = dialog.clientWidth - dialogHeader.clientWidth - paddingHor;
       child.style.height = `${height}px`;
+      child.style.width = `${width}px`;
+
+      // Propagate a usable height down to nested wrappers so deeply-nested grids receive a finite height.
+      // Set pixel height for DataGrid roots and set 100% + min-height:0 for common wrapper elements.
+      const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot')) as HTMLElement[];
+      pxTargets.forEach(el => {
+        el.style.height = `${height-5}px`;
+        el.style.width = `${width-5}px`;
+        el.style.minHeight = '0';
+        el.style.minWidth = '0';
+        el.style.boxSizing = 'border-box';
+      });
+
+      // const percentTargets = Array.from(child.querySelectorAll('.FormComponent, .Panel, .field-set-style, .form-group, .flex-column')) as HTMLElement[];
+      // percentTargets.forEach(el => {
+      //   // use 100% so these wrappers fill the pixel-sized ancestor
+      //   el.style.height = '100%';
+      //   el.style.minHeight = '0';
+      //   el.style.boxSizing = 'border-box';
+      // });
     });
   };
 
