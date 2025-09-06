@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import Form from './Form';
 
 import { Q2Form } from "../q2_modules/Q2Form";
+import { GiConsoleController } from 'react-icons/gi';
 
 interface DialogProps {
   onClose: () => void;
@@ -46,8 +47,13 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
 
-    // Call dialogHandleMouseUp when the form is shown
-    this.dialogHandleMouseUp();
+    // ensure layout is settled: resize children and run mouse-up sizing logic
+    requestAnimationFrame(() => {
+      this.resizeChildren();
+      this.dialogHandleMouseUp();
+      // extra pass to catch deferred layout changes
+      requestAnimationFrame(() => this.dialogHandleMouseUp());
+    });
   }
 
   componentWillUnmount() {
@@ -80,7 +86,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   loadDialogState = () => {
     const dialog = this.dialogRef.current;
     if (!dialog) return;
-
+    
     const title = this.props.q2form.title.replace(/\[.*?\]/g, '');
     const dialogState = Cookies.get(`dialogState_${title}`);
     if (dialogState) {
@@ -134,7 +140,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     const dialogContent = dialog.querySelector('.dialog-content') as HTMLElement;
 
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
-    console.log("----")
     childrenArray.forEach(child => {
       const computedStyle = window.getComputedStyle(dialogContent);
       const padding = parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
@@ -145,7 +150,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       child.style.width = `${width}px`;
 
 
-      const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root')) as HTMLElement[];
+      const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root, q2-scroll')) as HTMLElement[];
       pxTargets.forEach(el => {
         el.style.height = `${height}px`;
         el.style.width = `${width}px`;
@@ -194,9 +199,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
       const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
 
-      // Debug
-      console.log("scrollbars?", { hasVerticalScrollbar, hasHorizontalScrollbar });
-
       // Collect resizable elements (textarea, DataGrid)
       const resizableElements = Array.from(
         dialog.querySelectorAll(
@@ -233,7 +235,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       // Growable leaf
       const minW = parseInt(element.dataset.minWidth || element.style.minWidth || "50");
       const minH = parseInt(element.dataset.minHeight || element.style.minHeight || "50");
-      console.log(element, minW, minH)
       return { minW, minH };
     }
 
@@ -306,7 +307,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
     const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
-    console.log(hasVerticalScrollbar, hasHorizontalScrollbar)
     const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text]") as unknown as HTMLCollectionOf<HTMLElement>)
 
     if (elements) {
