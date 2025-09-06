@@ -21,10 +21,14 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   dialogRef: React.RefObject<HTMLDivElement | null>;
   prevStateRef: { width: string, height: string, left: string, top: string } | null;
 
+  // add a snapshot ref to detect unchanged dialog-container
+  prevDialogSnapshotRef: { clientWidth: number; clientHeight: number; scrollWidth: number; scrollHeight: number; childCount: number } | null;
+
   constructor(props: DialogProps) {
     super(props);
     this.dialogRef = React.createRef<HTMLDivElement>();
     this.prevStateRef = null;
+    this.prevDialogSnapshotRef = null;
     this.state = {
       isMaximized: false
     };
@@ -34,7 +38,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     this.loadDialogState();
     const dialog = this.dialogRef.current;
     if (!dialog) return;
-
+    
     this.resizeObserver = new ResizeObserver(() => {
       this.resizeChildren();
     });
@@ -130,21 +134,21 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     const dialogContent = dialog.querySelector('.dialog-content') as HTMLElement;
 
     const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
+    console.log("----")
     childrenArray.forEach(child => {
       const computedStyle = window.getComputedStyle(dialogContent);
       const padding = parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
       const paddingHor = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
-      const height = dialog.clientHeight - dialogHeader.clientHeight - padding;
-      const width = dialog.clientWidth - dialogHeader.clientWidth - paddingHor;
+      const height = dialog.clientHeight - dialogHeader.clientHeight - padding - 5;
+      const width = dialog.clientWidth - paddingHor - 5;
       child.style.height = `${height}px`;
       child.style.width = `${width}px`;
 
-      // Propagate a usable height down to nested wrappers so deeply-nested grids receive a finite height.
-      // Set pixel height for DataGrid roots and set 100% + min-height:0 for common wrapper elements.
-      const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot')) as HTMLElement[];
+
+      const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root')) as HTMLElement[];
       pxTargets.forEach(el => {
-        el.style.height = `${height-5}px`;
-        el.style.width = `${width-5}px`;
+        el.style.height = `${height}px`;
+        el.style.width = `${width}px`;
         el.style.minHeight = '0';
         el.style.minWidth = '0';
         el.style.boxSizing = 'border-box';
@@ -276,11 +280,34 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   dialogHandleMouseUp = () => {
     const dialog = this.dialogRef.current;
     if (!dialog) return;
+
+    // Snapshot current dialog metrics
+    const snapshot = {
+      clientWidth: dialog.clientWidth,
+      clientHeight: dialog.clientHeight,
+      scrollWidth: dialog.scrollWidth,
+      scrollHeight: dialog.scrollHeight,
+      childCount: dialog.children.length
+    };
+
+    // Early exit if nothing changed since last run
+    const prev = this.prevDialogSnapshotRef;
+    if (prev &&
+      prev.clientWidth === snapshot.clientWidth &&
+      prev.clientHeight === snapshot.clientHeight &&
+      // prev.scrollWidth === snapshot.scrollWidth &&
+      // prev.scrollHeight === snapshot.scrollHeight &&
+      prev.childCount === snapshot.childCount) {
+      return;
+    }
+
+    // store snapshot for next invocation
+    this.prevDialogSnapshotRef = snapshot;
+
     const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
     const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
     console.log(hasVerticalScrollbar, hasHorizontalScrollbar)
     const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text]") as unknown as HTMLCollectionOf<HTMLElement>)
-    // const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text], [class^=DataGrid]") as unknown as HTMLCollectionOf<HTMLElement>)
 
     if (elements) {
       elements.forEach(element => {
@@ -309,6 +336,15 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         });
       }
     }
+
+    // update snapshot after possible size changes
+    this.prevDialogSnapshotRef = {
+      clientWidth: dialog.clientWidth,
+      clientHeight: dialog.clientHeight,
+      scrollWidth: dialog.scrollWidth,
+      scrollHeight: dialog.scrollHeight,
+      childCount: dialog.children.length
+    };
   };
 
   handleMaximize = (e: React.MouseEvent) => {
