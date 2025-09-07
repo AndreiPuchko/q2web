@@ -4,7 +4,6 @@ import Cookies from 'js-cookie';
 import Form from './Form';
 
 import { Q2Form } from "../q2_modules/Q2Form";
-import { GiConsoleController } from 'react-icons/gi';
 
 interface DialogProps {
   onClose: () => void;
@@ -150,7 +149,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       child.style.width = `${width}px`;
 
 
-      const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root, q2-scroll')) as HTMLElement[];
+      const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root, .q2-scroll')) as HTMLElement[];
       pxTargets.forEach(el => {
         el.style.height = `${height}px`;
         el.style.width = `${width}px`;

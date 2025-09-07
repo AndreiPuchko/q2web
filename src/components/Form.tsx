@@ -262,7 +262,10 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
 
             }
 
-            if (col.column === "/h" || col.column === "/v" || col.column === "/f" || col.column === "/t") {
+            if (col.column.startsWith("/h") ||
+                col.column.startsWith("/v") ||
+                col.column.startsWith("/f") ||
+                col.column.startsWith("/t")) {
                 const panel = {
                     label: col.label,
                     key: `${col.column}-${index}`, // Generate unique key
@@ -324,7 +327,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
         // If q2form contains tabular data, render DataGrid instead of the standard form
         if (q2form?.data && Array.isArray(q2form.data) && q2form.data.length > 0) {
             // ensure non-optional props for DataGrid
-            return <DataGrid q2form={q2form} onClose={onClose ?? (() => {})} isTopDialog={!!isTopDialog} />;
+            return <DataGrid q2form={q2form} onClose={onClose ?? (() => { })} isTopDialog={!!isTopDialog} />;
         }
 
         const { columns } = q2form;

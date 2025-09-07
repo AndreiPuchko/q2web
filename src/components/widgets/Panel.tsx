@@ -94,7 +94,10 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     render() {
         const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
-        let className = panel.column.column === "/h" ? "Panel flex-row" : "Panel flex-column";
+        let className = "Panel";
+        if (panel.column.column.includes("/h")) className += " flex-row";
+        if (panel.column.column.includes("/v")) className += " flex-column";
+        if (panel.column.column.includes("o")) className += " q2-scroll ";
         if (panel?.label !== "" && panel?.label !== undefined && !panel?.isTabWidget) {
             className += " group-box ";
         }
@@ -120,11 +123,16 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
                 // gap: "0.2em",
                 // padding: "0.5cap"
             };
-        } else if (panel.column.column === "/v" || panel.column.column === "/t") {
+        } else if (panel.column.column.includes("/v") || panel.column.column.includes("/t")) {
             style.flexDirection = 'column';
         } else {
             style.flexDirection = 'row';
         }
+
+        if (panel.column.column.includes("o")) {
+            style.overflow = "auto";
+        }
+
         style.alignItems = 'start';
         style.justifyContent = 'flex-start';
 
@@ -138,7 +146,6 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
             style.alignItems = 'end';
         }
 
-
         if ([7, 4, 1].includes(panel.column?.alignment)) {
             style.textAlign = 'left';
         }
@@ -148,7 +155,6 @@ class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
         else if ([9, 6, 3].includes(panel.column?.alignment)) {
             style.textAlign = 'right';
         }
-
 
         if (panel.column.label === "") {
             rootStyle.border = "none";
