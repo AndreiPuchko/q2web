@@ -707,3 +707,11 @@ export function get_report_json() {
 export function get_data_sets_json() {
   return JSON.parse(data_sets_json)
 }
+
+export function get_report_invoice_json() {
+  return JSON.parse(report_json0)
+}
+
+export function get_data_sets_invoice_json() {
+  return JSON.parse(data_sets_json0)
+}

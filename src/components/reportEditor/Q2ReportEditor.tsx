@@ -7,7 +7,6 @@ import "./Q2ReportEditor.css";
 import Q2Button from "../widgets/Button";
 import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 import uploadAndDownload from "./Q2ReportAPI"
-import Q2Panel from "../widgets/Panel";
 
 
 interface Q2ReportEditorProps {

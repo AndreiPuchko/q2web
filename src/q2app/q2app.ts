@@ -2,7 +2,7 @@ import { Q2Form } from "../q2_modules/Q2Form"
 import { fileMenu } from "./FileMenu"
 import { Q2ReportEditor } from "../components/reportEditor/Q2ReportEditor"
 // import { JsonEditor } from 'json-edit-react'
-import { get_report_json, get_data_sets_json } from "../components/reportEditor/test_report"
+import { get_report_json, get_data_sets_json, get_report_invoice_json, get_data_sets_invoice_json } from "../components/reportEditor/test_report"
 
 export const q2forms: Q2Form[] = [];
 
@@ -103,19 +103,37 @@ const messageBox2 = new Q2Form("Dev|2", "Message Box 2", "messagebox2", {
     hasOkButton: true
 });
 
-const reportEditor = new Q2Form("Dev|Report Editor", "Report Editor Dialog Demo", "redemo",
+const reportEditor = new Q2Form("Dev|Report Editor|Test", "Report Editor Dialog Demo", "redemo",
     {
         hasOkButton: true,
         menutoolbar: true
     });
 
-// reportEditor.add_control("/h")
-reportEditor.add_control("repo", "", { control: "widget", data: { widget: Q2ReportEditor, props: { q2report: get_report_json(), data_set: get_data_sets_json() } } })
-// reportEditor.add_control("/t", "Data")
-// const jsonData = get_data_sets_json();
-// reportEditor.add_control("data", "", { control: "widget", data: { widget: JsonEditor, props: { data: jsonData } } });
+
+
+reportEditor.add_control("repo", "", {
+    control: "widget", data: {
+        widget: Q2ReportEditor,
+        props: { q2report: get_report_json(), data_set: get_data_sets_json() }
+    }
+})
+
+
+
+const reportEditor2 = new Q2Form("Dev|Report Editor|Invoice", "Report Editor Dialog Demo", "redemo2",
+    {
+        hasOkButton: true,
+        menutoolbar: true
+    });
+reportEditor2.add_control("repo", "", {
+    control: "widget", data: {
+        widget: Q2ReportEditor,
+        props: { q2report: get_report_invoice_json(), data_set: get_data_sets_invoice_json() }
+    }
+})
 
 q2forms.push(reportEditor);
+q2forms.push(reportEditor2);
 q2forms.push(new Q2Form("Dev|-"));
 q2forms.push(messageBox1);
 q2forms.push(messageBox2);
