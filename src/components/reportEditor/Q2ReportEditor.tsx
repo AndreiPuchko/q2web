@@ -7,6 +7,7 @@ import "./Q2ReportEditor.css";
 import Q2Button from "../widgets/Button";
 import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 import uploadAndDownload from "./Q2ReportAPI"
+import Q2Panel from "../widgets/Panel";
 
 
 interface Q2ReportEditorProps {
@@ -974,6 +975,52 @@ class ReportView extends React.Component<any, {
         dataViewer.showDialog()
     }
 
+    openReport = () => {
+        // create invisible file input to pick a local JSON file
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json,application/json';
+        input.onchange = async (e: Event) => {
+            const target = e.target as HTMLInputElement | null;
+            const file = target?.files?.[0];
+            if (!file) return;
+            try {
+                const text = await file.text();
+                const content = JSON.parse(text);
+
+                // Prefer updating the parent editor instance stored in props.reportEditor
+                if (this.props.reportEditor) {
+                    try {
+                        // this.props.reportEditor.q2report.report = new Q2Report(content);
+                        this.props.reportEditor.q2report.report = content;
+                        // trigger parent re-render so content and style editors receive new q2report
+                        if (typeof this.props.reportEditor.setState === 'function') {
+                            this.props.reportEditor.setState({});
+                        }
+                        // also request report view to refresh
+                        if (typeof this.props.reportEditor.incrementVersion === 'function') {
+                            this.props.reportEditor.incrementVersion();
+                        }
+                    } catch (err) {
+                        console.error('Failed to set report on parent editor', err);
+                    }
+                } else {
+                    // fallback: try to replace props.q2report and refresh this view
+                    try {
+                        (this.props as any).q2report = new Q2Report(content);
+                        this.incrementVersion();
+                    } catch (err) {
+                        console.error('Failed to set report on view props', err);
+                    }
+                }
+            } catch (err: any) {
+                console.error(err);
+                alert('Failed to open report: ' + (err?.message || err));
+            }
+        };
+        input.click();
+    }
+
     runReport(fmt: string) {
         uploadAndDownload(this.props.q2report, this.props.reportEditor.data_set, fmt)
     }
@@ -1000,8 +1047,9 @@ class ReportView extends React.Component<any, {
                         <Q2Button {...{ column: new Q2Control("b1", "DOCX", { valid: () => this.runReport("docx") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "XLSX", { valid: () => this.runReport("xlsx") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "PDF", { disabled: true }) }} />
-                        <div style={{ width: "90px" }}></div>
+                        <div style={{ width: "10px" }}></div>
                         <Q2Button {...{ column: new Q2Control("b1", "View data", { valid: this.showDataSets }) }} />
+                        <Q2Button {...{ column: new Q2Control("b1", "Open report", { valid: this.openReport }) }} />
                     </div>
                 </div>
 
