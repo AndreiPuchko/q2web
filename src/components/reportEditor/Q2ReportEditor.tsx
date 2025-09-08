@@ -988,38 +988,91 @@ class ReportView extends React.Component<any, {
                 const text = await file.text();
                 const content = JSON.parse(text);
 
-                // Prefer updating the parent editor instance stored in props.reportEditor
+                // Save file name in ReportEditor
+                if (this.props.reportEditor) {
+                    this.props.reportEditor.fileName = file.name;
+                }
+
+                // Replace the report instance
                 if (this.props.reportEditor) {
                     try {
-                        // this.props.reportEditor.q2report.report = new Q2Report(content);
+                        // this.props.reportEditor.q2report = new Q2Report(content);
                         this.props.reportEditor.q2report.report = content;
-                        // trigger parent re-render so content and style editors receive new q2report
+
+                        // Trigger a re-render of the parent editor
                         if (typeof this.props.reportEditor.setState === 'function') {
-                            this.props.reportEditor.setState({});
-                        }
-                        // also request report view to refresh
-                        if (typeof this.props.reportEditor.incrementVersion === 'function') {
-                            this.props.reportEditor.incrementVersion();
+                            this.props.reportEditor.setState({}, () => {
+                                const rv = this.props.reportEditor.reportViewRef?.current;
+                                if (rv) {
+                                    // Clear selection and refresh layout
+                                    rv.clearSelection?.();
+                                    rv.incrementVersion?.();
+                                    rv.forceUpdate?.();
+                                }
+                            });
                         }
                     } catch (err) {
                         console.error('Failed to set report on parent editor', err);
+                        alert('Failed to set report: ' + (err instanceof Error ? err.message : String(err)));
                     }
                 } else {
-                    // fallback: try to replace props.q2report and refresh this view
+                    // Fallback: update local q2report and refresh this view
                     try {
                         (this.props as any).q2report = new Q2Report(content);
-                        this.incrementVersion();
+                        this.incrementVersion?.();
+                        this.forceUpdate?.();
                     } catch (err) {
                         console.error('Failed to set report on view props', err);
                     }
                 }
-            } catch (err: any) {
+            } catch (err) {
                 console.error(err);
-                alert('Failed to open report: ' + (err?.message || err));
+                alert('Failed to open report: ' + (err instanceof Error ? err.message : String(err)));
             }
         };
         input.click();
     }
+
+    saveReport = () => {
+        try {
+            const reportData = this.props.q2report.getReport();
+            const json = JSON.stringify(reportData, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+
+            // Use fileName from ReportEditor or default to "report.json"
+            const fileName = this.props.reportEditor?.fileName || 'report.json';
+
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        } catch (err) {
+            console.error('Failed to save report', err);
+            alert('Failed to save report: ' + (err instanceof Error ? err.message : String(err)));
+        }
+    }
+
+    openData = () => {
+        // create invisible file input to pick a local JSON file
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json,application/json';
+        input.onchange = async (e: Event) => {
+            const target = e.target as HTMLInputElement | null;
+            const file = target?.files?.[0];
+            if (!file) return;
+            try {
+                const text = await file.text();
+                const content = JSON.parse(text);
+                this.props.reportEditor.data_set = content;
+            } catch (err) {
+                console.error(err);
+                alert('Failed to open report: ' + (err instanceof Error ? err.message : String(err)));
+            }
+        };
+        input.click();
+    }    
 
     runReport(fmt: string) {
         uploadAndDownload(this.props.q2report, this.props.reportEditor.data_set, fmt)
@@ -1047,9 +1100,13 @@ class ReportView extends React.Component<any, {
                         <Q2Button {...{ column: new Q2Control("b1", "DOCX", { valid: () => this.runReport("docx") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "XLSX", { valid: () => this.runReport("xlsx") }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "PDF", { disabled: true }) }} />
-                        <div style={{ width: "10px" }}></div>
+                        <div style={{ width: "20px" }}></div>
                         <Q2Button {...{ column: new Q2Control("b1", "View data", { valid: this.showDataSets }) }} />
+                        <div style={{ width: "20px" }}></div>
+                        <Q2Button {...{ column: new Q2Control("b1", "Save report", { valid: this.saveReport }) }} />
                         <Q2Button {...{ column: new Q2Control("b1", "Open report", { valid: this.openReport }) }} />
+                        <div style={{ width: "20px" }}></div>
+                        <Q2Button {...{ column: new Q2Control("b1", "Open data", { valid: this.openData }) }} />
                     </div>
                 </div>
 
