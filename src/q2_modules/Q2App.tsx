@@ -97,7 +97,7 @@ export class Q2App extends Component<{}, { zIndexMap: { [key: string]: any }, di
       <>
         <MainMenu />
         <div className='WorkSpace'>
-          <Q2ReportEditor q2report={get_report_json()} data_set={get_data_sets_json()} />
+          {/* <Q2ReportEditor q2report={get_report_json()} data_set={get_data_sets_json()} /> */}
           {this.state.dialogs.map((dialog: any, index: any) => (
             <Dialog
               key={index}

@@ -6,9 +6,9 @@ import { get_report_json, get_data_sets_json, get_report_invoice_json, get_data_
 
 export const q2forms: Q2Form[] = [];
 
-const exampleForm = new Q2Form("Refs|LayoutForm", "Example Form", "layouts", {
+const exampleForm = new Q2Form("Forms|LayoutForm", "Example Form", "layouts", {
     description: "This is an example form created using Q2Form",
-    menutoolbar: true,
+    menutoolbar: false,
     icon: "form",
     width: 800,
     height: 600,
@@ -44,14 +44,14 @@ if (exampleForm.add_control("/v", "Vertical layout")) {
 
 exampleForm.hasCancelButton = true;
 
-const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", {
+const messageBox = new Q2Form("Forms|MessageBox", "Message Box 2", "messagebox", {
     columns: [
         { key: "0", column: "message", label: "Message", data: "Lorem ipsum", readonly: true, control: "text" },
         { key: "1", column: "description", label: "Description", data: "This is a Description...", readonly: true, control: "text" },
     ],
     data: [],
     description: "This is a data grid2",
-    menutoolbar: true,
+    menutoolbar: false,
     hasMaxButton: false,
     icon: "grid",
     width: 800,
@@ -63,10 +63,10 @@ const messageBox = new Q2Form("Refs|MessageBox", "Message Box 2", "messagebox", 
 
 q2forms.push(...fileMenu);
 q2forms.push(exampleForm);
-q2forms.push(new Q2Form("Refs|-"));
+q2forms.push(new Q2Form("Forms|-"));
 q2forms.push(messageBox);
 
-const messageBox1 = new Q2Form("Dev|Tab Bar", "Message Box 1", "messagebox1", { hasOkButton: true, menutoolbar: true });
+const messageBox1 = new Q2Form("Forms|Tab Bar", "Message Box 1", "messagebox1", { hasOkButton: true, menutoolbar: false });
 
 messageBox1.add_control("/t", "tab1")
 messageBox1.add_control("/h", "")
@@ -96,17 +96,19 @@ messageBox1.add_control("/f", "-")
 messageBox1.add_control("fi1", "F Input 1")
 messageBox1.add_control("fi12", "F Input 12")
 
-const messageBox2 = new Q2Form("Dev|2", "Message Box 2", "messagebox2", {
+const messageBox2 = new Q2Form("Forms|Message Box 2", "Message Box 2", "messagebox2", {
     columns: [
         { key: "0", column: "message", label: "Message2", data: "Lorem ipsum2", readonly: true, control: "text" },
     ],
     hasOkButton: true
 });
 
-const reportEditor = new Q2Form("Dev|Report Editor|Test", "Report Editor Dialog Demo", "redemo",
+const reportEditor = new Q2Form("Dev|Report Editor|Test", "Report Editor - Test", "redemo",
     {
         hasOkButton: true,
-        menutoolbar: true
+        menutoolbar: true,
+        width: "95%",
+        height: "95%",
     });
 
 
@@ -120,10 +122,12 @@ reportEditor.add_control("repo", "", {
 
 
 
-const reportEditor2 = new Q2Form("Dev|Report Editor|Invoice", "Report Editor Dialog Demo", "redemo2",
+const reportEditor2 = new Q2Form("Dev|Report Editor|Invoice", "Report Editor - Invioice", "autorun",
     {
         hasOkButton: true,
-        menutoolbar: true
+        menutoolbar: true,
+        width: "95%",
+        height: "95%",
     });
 reportEditor2.add_control("repo", "", {
     control: "widget", data: {
@@ -139,7 +143,7 @@ q2forms.push(messageBox1);
 q2forms.push(messageBox2);
 
 const data_set = get_data_sets_json()["cursor"];
-const dataGrid = new Q2Form("Grid|Open Grid (old)", "DataGrid", "", { menutoolbar: true, data: data_set })
+const dataGrid = new Q2Form("Grid|Open Grid (old)", "DataGrid", "", { menutoolbar: false, data: data_set })
 
 dataGrid.add_control("data1", "Text data")
 dataGrid.add_control("num1", "Num data")
@@ -149,7 +153,7 @@ dataGrid.add_control("tom", "Group data 2")
 q2forms.push(dataGrid);
 
 
-const dataGrid2 = new Q2Form("Grid|Open Grid (new)", "DataGrid2", "", { menutoolbar: true })
+const dataGrid2 = new Q2Form("Grid|Open Grid (new)", "DataGrid2", "", { menutoolbar: false })
 // dataGrid2.add_control("/v", "")
 // dataGrid2.add_control("txt", "", { control: "text", data: "12" })
 dataGrid2.add_control("datagrid", "", { control: "form", data: dataGrid })

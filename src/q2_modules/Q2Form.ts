@@ -103,8 +103,8 @@ export class Q2Form {
     subForm: boolean;
     title: string;
     icon: string;
-    width: number;
-    height: number;
+    width: number | string;
+    height: number | string;
     x: number;
     y: number;
     s: Record<string, any> = {};

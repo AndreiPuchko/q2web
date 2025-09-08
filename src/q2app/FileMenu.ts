@@ -2,7 +2,7 @@ import { Q2Form } from "../q2_modules/Q2Form"
 
 
 export const fileMenuSettings = new Q2Form("File|Settings", "Settings", "settings", {
-    menutoolbar: true,
+    menutoolbar: false,
     hasMaxButton: false,
     width: 800,
     height: 600,

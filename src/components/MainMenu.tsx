@@ -14,6 +14,7 @@ interface MainMenuState {
 
 export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
     menuRef: React.RefObject<HTMLDivElement | null>;
+    dialogShown: boolean;
 
     constructor(props: MainMenuProps) {
         super(props);
@@ -22,10 +23,18 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             activated: false,
         };
         this.menuRef = React.createRef<HTMLDivElement>();
+        this.dialogShown = false;
     }
 
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+        if (!this.dialogShown) {
+            this.dialogShown = true;
+            q2forms.forEach(el => {
+                if (el.key === "autorun") showDialog(el)
+            })
+            
+        }
     }
 
     componentWillUnmount() {
@@ -135,7 +144,6 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         const items = Object.entries(menuStructure)
             .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
-
         return (
             <nav className='MainMenuBar'>
                 <div className='menuItems' ref={this.menuRef}
