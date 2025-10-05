@@ -103,12 +103,12 @@ const messageBox2 = new Q2Form("Forms|Message Box 2", "Message Box 2", "messageb
     hasOkButton: true
 });
 
-const reportEditor = new Q2Form("Dev|Report Editor|Test", "Report Editor - Test", "redemo",
+const reportEditor = new Q2Form("Report Editor|Test", "Report Editor - Test", "redemo",
     {
         hasOkButton: true,
         menutoolbar: true,
-        width: "95%",
-        height: "95%",
+        width: "90%",
+        height: "90%",
     });
 
 
@@ -122,12 +122,12 @@ reportEditor.add_control("repo", "", {
 
 
 
-const reportEditor2 = new Q2Form("Dev|Report Editor|Invoice", "Report Editor - Invioice", "autorun",
+const reportEditor2 = new Q2Form("Report Editor|Invoice", "Report Editor - Invioice", "autorun",
     {
         hasOkButton: true,
         menutoolbar: true,
-        width: "95%",
-        height: "95%",
+        width: "90%",
+        height: "90%",
     });
 reportEditor2.add_control("repo", "", {
     control: "widget", data: {
@@ -138,7 +138,113 @@ reportEditor2.add_control("repo", "", {
 
 q2forms.push(reportEditor);
 q2forms.push(reportEditor2);
-q2forms.push(new Q2Form("Dev|-"));
+q2forms.push(new Q2Form("Report Editor|-"));
+q2forms.push(new Q2Form("Report Editor|Python code", "Python code", "usage",
+    {
+        columns: [
+            {
+                key: "0", column: "message", label: " ", data: `from q2report import Q2Report
+import json
+
+report = Q2Report()
+report.load(open(r"Test.json").read())
+report.run("result.docx", data=json.load(open(r"Test-data.json")))
+`, readonly: true, control: "text"
+            },
+        ],
+        hasOkButton: true
+    }
+));
+
+
+q2forms.push(new Q2Form("Report Editor|Runme.bat", "runme.bat", "runme",
+    {
+        columns: [
+            {
+                key: "0", column: "message", label: " ", data: `@echo off
+setlocal
+
+:: === Check Python ===
+where python >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo Python not found. Please install Python 3.8 or higher.
+    pause
+    exit /b 1
+)
+
+:: Check Python version
+for /f "tokens=2 delims= " %%v in ('python --version 2^>^&1') do set PY_VER=%%v
+for /f "tokens=1,2 delims=." %%a in ("%PY_VER%") do (
+    set MAJOR=%%a
+    set MINOR=%%b
+)
+
+if %MAJOR% lss 3 (
+    echo Python 3.8+ is required, found %PY_VER%
+    pause
+    exit /b 1
+)
+if %MAJOR%==3 if %MINOR% lss 8 (
+    echo Python 3.8+ is required, found %PY_VER%
+    pause
+    exit /b 1
+)
+
+:: === Check/Create venv ===
+if not exist .venv (
+    echo Creating virtual environment...
+    python -m venv .venv
+)
+
+:: Activate venv
+call .venv\Scripts\activate.bat
+
+:: === Check q2report ===
+pip show q2report >nul 2>&1
+if %ERRORLEVEL% neq 0 (
+    echo Installing q2report...
+    pip install q2report
+)
+
+:: === Handle 2 params (report + data file) ===
+if "%~1"=="" goto END
+if "%~2"=="" goto END
+
+if not exist "%~1" (
+    echo File "%~1" not found.
+    pause
+    exit /b 1
+)
+if not exist "%~2" (
+    echo File "%~2" not found.
+    pause
+    exit /b 1
+)
+
+
+:: === Write runme.py line by line ===
+> runme.py echo from q2report import Q2Report
+>> runme.py echo import json
+>> runme.py echo.
+>> runme.py echo report = Q2Report^()
+>> runme.py echo report.load(open(r"%~1").read())
+>> runme.py echo report.run("result.docx", data=json.load(open(r"%~2")))
+
+:: Run the script
+python runme.py
+
+:END
+echo Done.
+endlocal
+
+`, readonly: true, control: "text"
+            },
+        ],
+        hasOkButton: true
+    }
+));
+
+
 q2forms.push(messageBox1);
 q2forms.push(messageBox2);
 
