@@ -122,12 +122,10 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             dialog.style.width = normalizeSize(this.props.q2form.width, workspaceRect.width );
             dialog.style.height = normalizeSize(this.props.q2form.height, workspaceRect.height - 200);
 
-            dialog.style.left = `${(workspaceRect.width - dialog.offsetWidth) / 2}px`;
-            dialog.style.top = `${(workspaceRect.height - dialog.offsetHeight) / 2 + menuBarHeight}px`;
+            dialog.style.left = `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
+            dialog.style.top = `${(window.innerHeight - dialog.offsetHeight) / 2 + menuBarHeight}px`;
         }
     };
-
-
 
     onMoveMouseDown = (e: React.MouseEvent) => {
         if (!this.props.isTopDialog) return;
@@ -154,7 +152,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
     };
-
 
     resizeChildren = () => {
         const dialog = this.dialogRef.current;
@@ -192,7 +189,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             // });
         });
     };
-
 
     dialogHandleMouseUp1 = () => {
         const dialog = this.dialogRef.current;
@@ -249,7 +245,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         });
     };
 
-
     // Compute min-size recursively
     computeMinSize = (element: HTMLElement): { minW: number; minH: number } => {
         const isColumn = element.classList.contains("flex-column");
@@ -298,7 +293,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             minH: element.offsetHeight,
         };
     };
-
 
     dialogHandleMouseUp = () => {
         const dialog = this.dialogRef.current;
@@ -369,7 +363,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         };
     };
 
-
     handleMaximize = (e: React.MouseEvent) => {
         e.stopPropagation();
         const dialog = this.dialogRef.current;
@@ -412,7 +405,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         // this.dialogHandleMouseUp();
         this.resizeChildren()
     };
-
 
     render() {
         const { onClose, q2form, zIndex, isTopDialog, dialogIndex } = this.props;

@@ -146,9 +146,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
         return (
             <nav className='MainMenuBar'>
-                <div className='menuItems' ref={this.menuRef}
-                // onMouseLeave={this.hideDropdown}
-                >
+                <div className='menuItems' ref={this.menuRef} >
                     {items.map((item) => (
                         <div
                             className='dropdown'
