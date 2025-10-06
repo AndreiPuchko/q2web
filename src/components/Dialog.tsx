@@ -71,6 +71,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
+        this.normalizePosition()
+
         const dialogState = {
             width: dialog.style.width,
             height: dialog.style.height,
@@ -82,13 +84,29 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         Cookies.set(`dialogState_${title}`, JSON.stringify(dialogState));
     };
 
+    normalizePosition = () => {
+        const dialog = this.dialogRef.current;
+        if (!dialog) return;
+        let {left, top} = dialog.style;
+
+        const _left = parseFloat(left);
+        const _top = parseFloat(top);
+        const menuBarHeight = document.querySelector('.MainMenuBar')?.clientHeight || 0;
+        if (_left < 0) {
+            dialog.style.left =  "0px";
+        }
+        if (_top < menuBarHeight) {
+            dialog.style.top = `${menuBarHeight}px`;
+        }
+    }
+
     loadDialogState = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
         const title = this.props.q2form.title.replace(/\[.*?\]/g, '');
         const dialogState = Cookies.get(`dialogState_${title}`);
-        const menuBarHeight = document.querySelector('.MenuBar')?.clientHeight || 0;
+        const menuBarHeight = document.querySelector('.MainMenuBar')?.clientHeight || 0;
         const workspace = document.querySelector('.WorkSpace');
         const workspaceRect = workspace?.getBoundingClientRect();
 
@@ -108,7 +126,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                     }
                 }
             }
-            console.log(value)
             return String(value);
         };
 
@@ -117,14 +134,14 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             dialog.style.width = width;
             dialog.style.height = height;
             dialog.style.left = left;
-            dialog.style.top = `${parseFloat(top) + menuBarHeight}px`;
+            dialog.style.top = top;
         } else if (workspace && workspaceRect) {
-            dialog.style.width = normalizeSize(this.props.q2form.width, workspaceRect.width );
+            dialog.style.width = normalizeSize(this.props.q2form.width, workspaceRect.width);
             dialog.style.height = normalizeSize(this.props.q2form.height, workspaceRect.height - 200);
-
             dialog.style.left = `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
             dialog.style.top = `${(window.innerHeight - dialog.offsetHeight) / 2 + menuBarHeight}px`;
         }
+        this.normalizePosition();
     };
 
     onMoveMouseDown = (e: React.MouseEvent) => {
