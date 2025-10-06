@@ -43,11 +43,14 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
 
   componentDidMount() {
     this.applyTheme();
+    this.recalculateWorkspaceHeight();
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
+    window.addEventListener('resize', this.recalculateWorkspaceHeight);
   }
 
   componentWillUnmount() {
     window.removeEventListener('q2-theme-changed', this.handleThemeChanged);
+    window.removeEventListener('resize', this.recalculateWorkspaceHeight);
   }
 
   handleThemeChanged = () => {
@@ -59,6 +62,7 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
     if (prevState.theme !== this.state.theme) {
       this.applyTheme();
     }
+    this.recalculateWorkspaceHeight();
   }
 
   applyTheme = () => {
@@ -95,6 +99,17 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
         zIndexMap: newZIndexMap
       };
     });
+  };
+
+  recalculateWorkspaceHeight = () => {
+    return
+    // const mainMenuBar = document.querySelector('.MainMenuBar') as HTMLElement;
+    // const root = document.documentElement; // 
+    // if (mainMenuBar) {
+    //   const menuHeight = mainMenuBar.offsetHeight;
+    //   root.style.setProperty('--menu-height', `${menuHeight}px`);   
+    //   console.log(menuHeight, root.style.getPropertyValue('--menu-height'));
+    // }
   };
 
   render() {
