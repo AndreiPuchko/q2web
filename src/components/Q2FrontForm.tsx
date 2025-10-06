@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import './Form.css'; // Import the CSS file for styling
+import './Q2FrontForm.css'; // Import the CSS file for styling
 import DataGrid from './DataGrid';
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Color from './widgets/Color'; // Import the Line widget
@@ -13,13 +13,13 @@ import Q2Button from './widgets/Button';
 import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
 
-interface FormProps {
+interface Q2FrontFormProps {
     q2form: Q2Form;
     onClose?: () => void;
     isTopDialog?: boolean;
 }
 
-class Form extends Component<FormProps, { formData: { [key: string]: any }, panelChecks: { [key: string]: boolean } }> {
+export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key: string]: any }, panelChecks: { [key: string]: boolean } }> {
     w: { [key: string]: any } = {}; // Store references to the widgets
     s: { [key: string]: any } = {}; // widgets data
     c: { [key: string]: boolean } = {}; // widgets data
@@ -27,7 +27,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     prevFocus: string = "";
     formRef = React.createRef<HTMLDivElement>();
 
-    constructor(props: FormProps) {
+    constructor(props: Q2FrontFormProps) {
         super(props);
         this.state = {
             formData: {},
@@ -209,7 +209,7 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
                 return <Q2RadioButton {...commonProps} />;
             case "form":
                 column.data.subForm = true;
-                return <Form q2form={column.data} />
+                return <Q2FrontForm q2form={column.data} />
             case "widget":
                 {
                     if (typeof column.data === "object" && column.data?.widget) {
@@ -354,4 +354,4 @@ class Form extends Component<FormProps, { formData: { [key: string]: any }, pane
     }
 }
 
-export default Form;
+export default Q2FrontForm;

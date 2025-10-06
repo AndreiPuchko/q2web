@@ -1,14 +1,14 @@
-import Widget from './Widget';
+import Q2Widget from './Widget';
 import './Text.css';
-import { WidgetProps } from './Widget';
+import { Q2WidgetProps } from './Widget';
 
-interface Q2TextProps extends WidgetProps { }
+interface Q2TextProps extends Q2WidgetProps { }
 
 interface Q2TextState {
     value: string;
 }
 
-class Q2Text extends Widget<Q2TextProps, Q2TextState> {
+export class Q2Text extends Q2Widget<Q2TextProps, Q2TextState> {
     constructor(props: Q2TextProps) {
         super(props);
     }

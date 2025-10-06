@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Q2Form } from "../../q2_modules/Q2Form";
-import Form from '../Form';
+import Q2FrontForm from '../Q2FrontForm';
 // import { getPage, getColsSet, getWidth, getRowsSet, getHeight, getCell } from "./Q2Report";
 
 
@@ -151,7 +151,7 @@ class Q2ContentEditor extends Component<ContentProps> {
             return (
                 <>
                     <div className="q2-report-content-editor">
-                        {< Form q2form={editor} />}
+                        {< Q2FrontForm q2form={editor} />}
                     </div>
                 </>
             );

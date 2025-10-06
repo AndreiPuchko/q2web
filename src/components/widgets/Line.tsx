@@ -1,15 +1,15 @@
 import React from 'react';
-import Widget from './Widget';
-import { WidgetProps } from './Widget';
+import Q2Widget from './Widget';
+import { Q2WidgetProps } from './Widget';
 
 
-interface Q2LineProps extends WidgetProps { }
+interface Q2LineProps extends Q2WidgetProps { }
 
 interface Q2LineState {
     value: string;
 }
 
-class Q2Line extends Widget<Q2LineProps, Q2LineState> {
+export class Q2Line extends Q2Widget<Q2LineProps, Q2LineState> {
 
     inputRef = React.createRef<HTMLInputElement>();
 

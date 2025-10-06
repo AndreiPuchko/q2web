@@ -1,7 +1,7 @@
 import React from 'react';
 import './Dialog.css';
 import Cookies from 'js-cookie';
-import Form from './Form';
+import Q2FrontForm from './Q2FrontForm';
 
 import { Q2Form } from "../q2_modules/Q2Form";
 
@@ -442,7 +442,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                 </div>
 
                 <div className="dialog-content">
-                    <Form q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
+                    <Q2FrontForm q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
                 </div>
 
             </div>

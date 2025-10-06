@@ -1,15 +1,15 @@
 import React from 'react';
-import Widget from './Widget';
-import { WidgetProps } from './Widget';
+import Q2Widget from './Widget';
+import { Q2WidgetProps } from './Widget';
 import './CheckBox.css'; // Import CSS for styling
 
-interface Q2CheckBoxProps extends WidgetProps { }
+interface Q2CheckBoxProps extends Q2WidgetProps { }
 
 interface Q2CheckBoxState {
     value: boolean;
 }
 
-class Q2CheckBox extends Widget<Q2CheckBoxProps, Q2CheckBoxState> {
+export class Q2CheckBox extends Q2Widget<Q2CheckBoxProps, Q2CheckBoxState> {
     constructor(props: Q2CheckBoxProps) {
         super(props);
         this.state = {

@@ -1,10 +1,10 @@
-import Widget from './Widget';
-import { WidgetProps } from './Widget';
+import Q2Widget from './Widget';
+import { Q2WidgetProps } from './Widget';
 import './Button.css';
 
-interface Q2ButtonProps extends WidgetProps { }
+interface Q2ButtonProps extends Q2WidgetProps { }
 
-class Q2Button extends Widget<Q2ButtonProps> {
+export class Q2Button extends Q2Widget<Q2ButtonProps> {
     constructor(props: Q2ButtonProps) {
         super(props);
     }

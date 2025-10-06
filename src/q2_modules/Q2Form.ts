@@ -1,4 +1,4 @@
-import Form from '../components/Form';
+import Q2FrontForm from '../components/Q2FrontForm';
 import { showDialog, closeDialog } from './Q2DialogApi';
 
 
@@ -110,8 +110,8 @@ export class Q2Form {
     s: Record<string, any> = {};
     w: Record<string, any> = {};
     c: Record<string, any> = {};
-    hookInputChanged?: (form: Form) => void;
-    hookFocusChanged?: (form: Form) => void;
+    hookInputChanged?: (form: Q2FrontForm) => void;
+    hookFocusChanged?: (form: Q2FrontForm) => void;
     dialogIndex: number;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {

@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Q2Form, Q2Control } from "../../q2_modules/Q2Form";
-import Form from '../Form';
+import Q2FrontForm from '../Q2FrontForm';
 import "./Q2ReportEditor.css";
 
 interface StyleProps {
@@ -250,7 +250,7 @@ class Q2StyleEditor extends Component<StyleProps> {
         return styleProps;
     }
 
-    collectStyle(form: Form) {
+    collectStyle(form: Q2FrontForm) {
         // Collect style values from the current form (this.propsEditor.s)
         const style: any = {};
         const s = form?.s || {};
@@ -329,7 +329,7 @@ class Q2StyleEditor extends Component<StyleProps> {
         this.defineUi()
         // console.log("SE render")
         const { q2report, selection, reportEditor } = this.props;
-        this.propsEditor.hookInputChanged = (form: Form) => {
+        this.propsEditor.hookInputChanged = (form: Q2FrontForm) => {
             const style = this.collectStyle(form);
             if (q2report.setStyle(selection, style)) {
                 setTimeout(() => {
@@ -343,7 +343,7 @@ class Q2StyleEditor extends Component<StyleProps> {
                 <div
                     style={{ fontSize: "12px" }}
                 >
-                    <Form q2form={this.propsEditor} />
+                    <Q2FrontForm q2form={this.propsEditor} />
                 </div>
             </div>
         );

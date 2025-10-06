@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { Q2Control } from "../../q2_modules/Q2Form";
 
 
-export interface WidgetProps {
+export interface Q2WidgetProps {
     id?: string;
     column: Q2Control;
     form?: any;
@@ -13,7 +13,7 @@ export interface WidgetProps {
 // }
 
 
-class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
+export class Q2Widget<P extends Q2WidgetProps, S = {}> extends Component<P, S> {
     id: string;
 
     // loosen state typing so subclasses (with their own state types) remain compatible
@@ -92,4 +92,4 @@ class Widget<P extends WidgetProps, S = {}> extends Component<P, S> {
     }
 }
 
-export default Widget;
+export default Q2Widget;

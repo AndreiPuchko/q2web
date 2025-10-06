@@ -1,9 +1,9 @@
-import Widget from './Widget';
-import { WidgetProps } from './Widget';
+import Q2Widget from './Widget';
+import { Q2WidgetProps } from './Widget';
 
-interface Q2SpacerProps extends WidgetProps { }
+interface Q2SpacerProps extends Q2WidgetProps { }
 
-class Q2Spacer extends Widget<Q2SpacerProps> {
+export class Q2Spacer extends Q2Widget<Q2SpacerProps> {
     constructor(props: Q2SpacerProps) {
         super(props);
     }

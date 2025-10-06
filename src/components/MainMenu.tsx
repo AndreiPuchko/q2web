@@ -1,11 +1,12 @@
 import React from 'react';
 import './MainMenu.css';
 import { Q2Form } from "../q2_modules/Q2Form";
-import { q2forms } from '../q2app/q2app';
 import { showDialog } from '../q2_modules/Q2DialogApi';
 
 
-interface MainMenuProps { }
+interface MainMenuProps {
+    q2forms: Array<Q2Form>
+}
 
 interface MainMenuState {
     visibleDropdown: string | null;
@@ -30,10 +31,9 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         document.addEventListener('mousedown', this.handleClickOutside);
         if (!this.dialogShown) {
             this.dialogShown = true;
-            q2forms.forEach(el => {
+            this.props.q2forms.forEach(el => {
                 if (el.key === "autorun") showDialog(el)
             })
-            
         }
     }
 
@@ -90,7 +90,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 return (
                     <button key={item.key} onClick={(e) => {
                         e.stopPropagation();
-                        const form = q2forms.find(f => f.key === item.key);
+                        const form = this.props.q2forms.find(f => f.key === item.key);
                         if (form) showDialog(form);
                         this.hideDropdown();
                     }}>
@@ -111,7 +111,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
     };
 
     renderToolButtons = () => {
-        return q2forms.map((form) => {
+        return this.props.q2forms.map((form) => {
             const menutoolbar = form.menutoolbar;
             if (menutoolbar === 1 || menutoolbar === true) {
                 const pathParts = form.menubarpath.split('|');
@@ -139,7 +139,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
 
     render() {
         const { visibleDropdown, activated } = this.state;
-        const menuStructure = this.buildMenuStructure(q2forms);
+        const menuStructure = this.buildMenuStructure(this.props.q2forms);
 
         const items = Object.entries(menuStructure)
             .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))

@@ -1,7 +1,7 @@
 import React from 'react';
 import { HexColorPicker } from 'react-colorful';
-import Widget from './Widget';
-import { WidgetProps } from './Widget';
+import Q2Widget from './Widget';
+import { Q2WidgetProps } from './Widget';
 
 
 function isValidColor(color: string): boolean {
@@ -10,7 +10,7 @@ function isValidColor(color: string): boolean {
     return s.color !== '';
 }
 
-interface Q2ColorProps extends WidgetProps { }
+interface Q2ColorProps extends Q2WidgetProps { }
 
 interface Q2ColorState {
     value: string;
@@ -18,7 +18,7 @@ interface Q2ColorState {
 }
 
 
-class Q2Color extends Widget<Q2ColorProps, Q2ColorState> {
+export class Q2Color extends Q2Widget<Q2ColorProps, Q2ColorState> {
     pickerRef = React.createRef<HTMLDivElement>();
     constructor(props: Q2ColorProps) {
         super(props);

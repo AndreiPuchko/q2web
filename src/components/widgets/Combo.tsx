@@ -1,8 +1,8 @@
 import React from 'react';
-import Widget from './Widget';
-import { WidgetProps } from './Widget';
+import Q2Widget from './Widget';
+import { Q2WidgetProps } from './Widget';
 
-interface Q2ComboProps extends WidgetProps { }
+interface Q2ComboProps extends Q2WidgetProps { }
 
 interface Q2ComboState {
     value: string;
@@ -13,7 +13,7 @@ interface Q2ComboState {
     dropdownMaxHeight: number;
 }
 
-class Q2Combo extends Widget<Q2ComboProps, Q2ComboState> {
+export class Q2Combo extends Q2Widget<Q2ComboProps, Q2ComboState> {
     inputRef: React.RefObject<HTMLInputElement | null>;
     wrapperRef: React.RefObject<HTMLDivElement | null>;
     dropdownRef: React.RefObject<HTMLUListElement | null>;

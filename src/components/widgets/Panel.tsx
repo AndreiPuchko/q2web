@@ -11,7 +11,7 @@ interface Q2PanelProps {
     setState: any;
 }
 
-class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
+export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
     hasCheck: boolean;
     constructor(props: Q2PanelProps) {
         super(props);

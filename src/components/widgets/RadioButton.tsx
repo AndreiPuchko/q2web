@@ -1,16 +1,16 @@
 import React from 'react';
-import Widget from './Widget';
+import Q2Widget from './Widget';
 import './RadioButton.css'; // Import the CSS file
 
-import { WidgetProps } from './Widget';
+import { Q2WidgetProps } from './Widget';
 
-interface Q2RadioButtonProps extends WidgetProps { }
+interface Q2RadioButtonProps extends Q2WidgetProps { }
 
 interface Q2RadioButtonState {
     selectedValue: string;
 }
 
-class Q2RadioButton extends Widget<Q2RadioButtonProps, Q2RadioButtonState> {
+export class Q2RadioButton extends Q2Widget<Q2RadioButtonProps, Q2RadioButtonState> {
     prevValue: string;
     constructor(props: Q2RadioButtonProps) {
         super(props);
