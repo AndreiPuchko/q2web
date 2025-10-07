@@ -2,6 +2,8 @@ import React from 'react';
 import './MainMenu.css';
 import { Q2Form } from "../q2_modules/Q2Form";
 import { showDialog } from '../q2_modules/Q2DialogApi';
+// import {Q2Button} from "./widgets/Button"
+// import {Q2Control} from "../q2_modules/Q2Form"
 
 
 interface MainMenuProps {
@@ -141,6 +143,9 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         const { visibleDropdown, activated } = this.state;
         const menuStructure = this.buildMenuStructure(this.props.q2forms);
 
+        // const themaButtonText = document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
+
+
         const items = Object.entries(menuStructure)
             .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
@@ -176,6 +181,8 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                     {this.renderToolButtons()}
                 </div>
                 <div className='spacer9'></div>
+                {/* <Q2Button {...{ column: new Q2Control("b1", "Login", { valid: () => {} }) }}/>
+                <Q2Button {...{ column: new Q2Control("b1", themaButtonText, { valid: () => {} }) }}/> */}
                 <button className='newTabButton' onClick={this.openNewTab}><b>+</b></button>
             </nav>
         );

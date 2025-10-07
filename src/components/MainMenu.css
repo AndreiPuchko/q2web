@@ -135,7 +135,6 @@ hr {
 
 .newTabButton {
     background-color: var(--newtab-btn-bg);
-    font-size: 20px;
 }
 
 .newTabButton:hover {

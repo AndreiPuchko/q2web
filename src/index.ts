@@ -13,3 +13,5 @@ export {Q2Panel} from "./components/widgets/Panel"
 export {Q2RadioButton} from "./components/widgets/RadioButton"
 export {Q2Spacer} from "./components/widgets/Spacer"
 export {Q2Text} from "./components/widgets/Text"
+
+export {showDialog, closeDialog} from "./q2_modules/Q2DialogApi"
