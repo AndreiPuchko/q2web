@@ -147,8 +147,12 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
             close = this.props.q2form.hookSubmit(this);
         }
 
-        if (close && this.props.onClose) this.props.onClose();
+        if (close && this.props.onClose) this.close();
     };
+
+    close = () =>{
+        if (this.props.onClose) this.props.onClose()
+    }
 
     handleAction = (action: any) => {
         if (action.label === "Exit" && this.props.onClose) {
