@@ -62,6 +62,10 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key:
             focusFirstFocusableElement(this.formRef.current);
         }, 100);
         // console.log("DM", this.s);
+        if (typeof this.props.q2form?.hookShow === "function") {
+            this.props.q2form.hookShow(this);
+        }
+
     }
 
     // componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
