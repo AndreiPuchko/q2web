@@ -92,7 +92,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     normalizePosition = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
-        const { left, top, width, height } = dialog.style;
+        const { left, top} = dialog.style;
 
         const _left = parseFloat(left);
         const _top = parseFloat(top);
@@ -109,8 +109,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             dialog.style.justifyContent = "center";
             dialog.style.alignItems = "center";
         }
-        const workspace = document.querySelector('.WorkSpace');
-        const workspaceRect = workspace?.getBoundingClientRect();
+        // const workspace = document.querySelector('.WorkSpace');
+        // const workspaceRect = workspace?.getBoundingClientRect();
     }
 
     loadDialogState = () => {
@@ -123,24 +123,24 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const workspace = document.querySelector('.WorkSpace');
         const workspaceRect = workspace?.getBoundingClientRect();
 
-        const normalizeSize = (value: string | number, workspaceSize: number): string => {
-            if (typeof value === "number") {
-                return `${value}px`;
-            }
-            if (typeof value === "string") {
-                if (value.endsWith("px")) {
-                    return value;
-                }
-                if (value.endsWith("%") && workspaceSize) {
-                    const percent = parseFloat(value);
-                    if (!isNaN(percent)) {
-                        // your logic: 80% → workspace - 80% (so keep 20%)
-                        return `${(workspaceSize * percent) / 100}px`;
-                    }
-                }
-            }
-            return String(value);
-        };
+        // const normalizeSize = (value: string | number, workspaceSize: number): string => {
+        //     if (typeof value === "number") {
+        //         return `${value}px`;
+        //     }
+        //     if (typeof value === "string") {
+        //         if (value.endsWith("px")) {
+        //             return value;
+        //         }
+        //         if (value.endsWith("%") && workspaceSize) {
+        //             const percent = parseFloat(value);
+        //             if (!isNaN(percent)) {
+        //                 // your logic: 80% → workspace - 80% (so keep 20%)
+        //                 return `${(workspaceSize * percent) / 100}px`;
+        //             }
+        //         }
+        //     }
+        //     return String(value);
+        // };
 
         if (dialogState) {
             const { width, height, left, top } = JSON.parse(dialogState);

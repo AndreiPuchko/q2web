@@ -85,7 +85,7 @@ export class Q2RadioButton extends Q2Widget<Q2RadioButtonProps, Q2RadioButtonSta
         if (column.pic) {
             const options = column.pic.split(';');
             return (
-                <div className="Q2RadioButton" id={this.id}>
+                <div className={`Q2RadioButton ${column.class}`} id={this.id}>
                     <style>{column.style?.replace(/#/g, `#${this.id}`)}</style>
                     {options.map((opt: any, index: number) => {
                         const radio_id = `${this.id}-${index}`

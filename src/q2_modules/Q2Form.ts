@@ -108,8 +108,8 @@ export class Q2Form {
     icon: string;
     width: number | string;
     height: number | string;
-    resizeable: booleanl;
-    moveable: booleanl;
+    resizeable: boolean;
+    moveable: boolean;
     x: number;
     y: number;
     s: Record<string, any> = {};
@@ -118,6 +118,8 @@ export class Q2Form {
     hookInputChanged?: (form: Q2FrontForm) => void;
     hookFocusChanged?: (form: Q2FrontForm) => void;
     hookShow?: (form: Q2FrontForm) => void;
+    hookSubmit?: (form: Q2FrontForm) => boolean;
+    hookCancel?: (form: Q2FrontForm) => void;
     dialogIndex: number;
     frontForm: Q2FrontForm | undefined;
 

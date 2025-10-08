@@ -9,12 +9,10 @@ export class Q2Image extends Q2Widget<Q2ImageProps> {
 
     constructor(props: Q2ImageProps) {
         super(props);
-        console.log("co")
     }
 
     render() {
         const { column } = this.props;
-        console.log("==", column)
         return (
             <>
                 {column?.label}

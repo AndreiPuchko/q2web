@@ -3,12 +3,13 @@
   /* text-align: center; */
 }
 
-body, html { 
+body,
+html {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: var(--workspace-bg);  
+  background-color: var(--workspace-bg);
 }
 
 :root {
@@ -58,7 +59,8 @@ body, html {
   border-top: 2px solid var(--datagrid-border);
 }
 
-.DataGrid td, th {
+.DataGrid td,
+th {
   border: 1px solid var(--datagrid-border);
   padding: 1px;
   text-align: left;
@@ -70,4 +72,35 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+.Q2TabWidget {
+  padding: 0;
+  margin: 0;
+  gap: 2px;
+  border: none;
+  border-bottom: 1px solid;
+  display: flex;
+  background: transparent
+}
+
+.Q2TabWidget input {
+  display: none;
+}
+
+.Q2TabWidget label {
+  border: 1px solid gray;
+  background: var(--form-input-bg);
+  padding: 0 1cap;
+  border: none
+}
+
+.Q2TabWidget label:hover {
+  filter: brightness(90%);
+  cursor: pointer;
+}
+
+.Q2TabWidget input[type="radio"]:checked+label {
+  background-color: LightSkyBlue;
 }

@@ -20,19 +20,30 @@ interface Q2FrontFormProps {
     isTopDialog?: boolean;
 }
 
-export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key: string]: any }, panelChecks: { [key: string]: boolean } }> {
+interface Q2FrontFormState {
+    formData: { [key: string]: any };
+    panelChecks: { [key: string]: boolean };
+    okButtonText: string;
+    cancelButtonText: string;
+}
+
+export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     w: { [key: string]: any } = {}; // Store references to the widgets
     s: { [key: string]: any } = {}; // widgets data
     c: { [key: string]: boolean } = {}; // widgets data
     focus: string | undefined = "";
     prevFocus: string = "";
     formRef = React.createRef<HTMLDivElement>();
+    okButtonText: string = "Ok";
+    cancelButtonText: string = "Cancel";
 
     constructor(props: Q2FrontFormProps) {
         super(props);
         this.state = {
             formData: {},
             panelChecks: {}, // Track checkbox state for panels
+            okButtonText: "Ok",
+            cancelButtonText: "Cancel",
         };
         // Provide pointer to Form.s on Q2Form instance
         this.updateQ2FormLinks();
@@ -66,7 +77,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key:
         if (typeof this.props.q2form?.hookShow === "function") {
             this.props.q2form.hookShow(this);
         }
-
     }
 
     // componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
@@ -131,9 +141,13 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key:
     };
 
     handleSubmit = () => {
-        // e.preventDefault();
-        console.log("Form submitted:", this.state.formData);
-        if (this.props.onClose) this.props.onClose();
+        // console.log("Form submitted:", this.state.formData);
+        let close: boolean = true;
+        if (typeof this.props.q2form?.hookSubmit === "function") {
+            close = this.props.q2form.hookSubmit(this);
+        }
+
+        if (close && this.props.onClose) this.props.onClose();
     };
 
     handleAction = (action: any) => {
@@ -163,7 +177,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key:
     getWidgetCheck = (columnName: string) => {
         return this.w[columnName]?.props.column.checkChecked;
     };
-
 
     scanAndCopyValues = () => {
         Object.keys(this.w).forEach(key => {
@@ -331,6 +344,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key:
 
     render() {
         const { q2form, onClose, isTopDialog } = this.props;
+        const { okButtonText, cancelButtonText } = this.state;
         // If q2form contains tabular data, render DataGrid instead of the standard form
         if (q2form?.data && Array.isArray(q2form.data) && q2form.data.length > 0) {
             // ensure non-optional props for DataGrid
@@ -349,9 +363,21 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key:
 
                 {((hasOkButton || hasCancelButton) && !subForm) && (
                     <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        {/* {hasOkButton && <Q2Button label="OK" onClick={this.handleSubmit} />} */}
-                        {hasOkButton && <Q2Button  {...{ column: new Q2Control("ok", "Ok", { valid: this.handleSubmit }) }} />}
-                        {hasCancelButton && <Q2Button  {...{ column: new Q2Control("cancel", "Cancel", { valid: this.handleCancel }) }} />}
+                        {hasOkButton && <Q2Button  {...{
+                            column: new Q2Control(
+                                "ok",
+                                okButtonText,
+                                { valid: this.handleSubmit }
+                            )
+                        }}
+                        />}
+                        {hasCancelButton && <Q2Button  {...{
+                            column: new Q2Control(
+                                "cancel",
+                                cancelButtonText,
+                                { valid: this.handleCancel })
+                        }}
+                        />}
 
                     </div>
                 )}
