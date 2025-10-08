@@ -24,6 +24,7 @@ export class Q2Control {
     tag?: string;
     range?: string;
     style?: string;
+    class?: string;
 
     constructor(
         column: string,
@@ -48,6 +49,7 @@ export class Q2Control {
             tag?: string;
             range?: string;
             style?: string;
+            class?: string;
 
         } = {},
         key: string = "0"
@@ -73,6 +75,7 @@ export class Q2Control {
         this.tag = options.tag;
         this.range = options.range;
         this.style = options?.style || "";
+        this.class = options?.class || "";
 
         if (this.control === "check") {
             this.stretch = 0
@@ -105,6 +108,8 @@ export class Q2Form {
     icon: string;
     width: number | string;
     height: number | string;
+    resizeable: booleanl;
+    moveable: booleanl;
     x: number;
     y: number;
     s: Record<string, any> = {};
@@ -130,6 +135,8 @@ export class Q2Form {
         this.icon = "form";
         this.width = 800;
         this.height = 600;
+        this.resizeable = true;
+        this.moveable = true;
         this.x = 0;
         this.y = 0;
         this.dialogIndex = -1;

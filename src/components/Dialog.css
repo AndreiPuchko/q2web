@@ -18,7 +18,7 @@
   --dialog-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   --dialog-disabled-overlay: rgba(0, 0, 0, 0.07);
   --close-btn-hover: #e57373;
-  --title-color:rgb(255, 255, 255);
+  --title-color: rgb(255, 255, 255);
 }
 
 .theme-dark {
@@ -32,20 +32,19 @@
   --title-color: lightgray;
 }
 
-* {
-}
+* {}
 
 .dialog-container {
   border-radius: 0.5rem;
 
   position: absolute;
-  width: 300px;
-  height: 200px;
+  /* width: 300px;
+  height: 200px; */
   border: 1px solid var(--dialog-border);
   background-color: var(--dialog-bg);
   box-shadow: var(--dialog-shadow);
-  resize: both;
-  overflow: hidden; /* keep header fixed, move scrolling into .dialog-content */
+  /* resize: both; */
+  /* overflow: hidden; */
 }
 
 .dialog-container.maximized {
@@ -76,16 +75,18 @@
   padding: 0px 10px;
   background-color: var(--dialog-header-bg);
   color: var(--title-color);
-  cursor: move;
   height: 2em;
   user-select: none;
+  -webkit-user-select: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky; /* keep header visible when content scrolls */
+  position: sticky;
+  /* keep header visible when content scrolls */
   top: 0;
   z-index: 3;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06); /* subtle separation from content */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  /* subtle separation from content */
 }
 
 .dialog-header.disabled {
@@ -99,10 +100,11 @@
   /* make content area independently scrollable */
   /* overflow: auto;  */
   /* reserve space for sticky header (header height = 2em) */
-  max-height: calc(100% - 2em); 
+  max-height: calc(100% - 2em);
 }
 
-.max-button, .close-button {
+.max-button,
+.close-button {
   background: transparent;
   color: var(--title-color);
   border: none;
