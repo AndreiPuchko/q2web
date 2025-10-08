@@ -12,6 +12,7 @@ import Q2RadioButton from "./widgets/RadioButton";
 import Q2Button from './widgets/Button';
 import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
+import Q2Image from './widgets/Image';
 
 interface Q2FrontFormProps {
     q2form: Q2Form;
@@ -211,6 +212,8 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, { formData: { [key:
                 return <Q2CheckBox {...commonProps} />;
             case "radio":
                 return <Q2RadioButton {...commonProps} />;
+            case "image":
+                return <Q2Image {...commonProps} />;
             case "form":
                 column.data.subForm = true;
                 return <Q2FrontForm q2form={column.data} />
