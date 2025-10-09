@@ -392,7 +392,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                     position: "fixed"
                 }}>
                 <div
-                    className={`dialog-container ${q2form.class}
+                    className={`dialog-container Q2Dialog ${q2form.class}
                         ${isTopDialog ? '' : 'disabled'} ${isMaximized ? "maximized" : ""}
                         `}
                     ref={this.dialogRef}
@@ -400,7 +400,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                 >
                     <div className={`dialog-header ${isTopDialog ? '' : 'disabled'}`}
                         onMouseDown={this.onMoveMouseDown}>
-                        <b>{q2form["title"]}</b>
+                        <span className="dialog-title"><b>{q2form["title"]}</b></span>
                         <div>
                             {q2form.hasMaxButton && q2form.resizeable ? (
                                 <button className="max-button" onClick={this.handleMaximize}>
