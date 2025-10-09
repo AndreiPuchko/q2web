@@ -1,5 +1,5 @@
 import Q2FrontForm from '../components/Q2FrontForm';
-import { showDialog, closeDialog } from './Q2DialogApi';
+import { showDialog, closeDialog } from './Q2Api';
 
 
 export class Q2Control {

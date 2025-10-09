@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import MainMenu from '../components/MainMenu';
 import Dialog from '../components/Dialog';
+import Cookies from "js-cookie";
 import { Q2Form } from "../q2_modules/Q2Form";
 import './Q2App.css';
 
@@ -13,6 +14,7 @@ interface Q2AppState {
   zIndexMap: { [key: string]: any };
   dialogs: any[];
   theme: string | null;
+  isLoggedIn: boolean;
 }
 
 export class Q2App extends Component<Q2AppProps, Q2AppState> {
@@ -25,7 +27,8 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
     this.state = {
       dialogs: [],
       zIndexMap: {},
-      theme: this.detectTheme()
+      theme: this.detectTheme(),
+      isLoggedIn: false
     };
   }
 
@@ -72,6 +75,8 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
       prev => {
         const newTheme = prev.theme === 'light' ? 'dark' : 'light';
         localStorage.setItem('theme', newTheme);
+        Cookies.set("theme", newTheme, { expires: 365 * 10 });
+        document.documentElement.classList.toggle("dark", newTheme === "dark");
         return { theme: newTheme };
       }
     );
@@ -100,7 +105,7 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
   render() {
     return (
       <>
-        <MainMenu q2forms={this.props.q2forms} />
+        <MainMenu q2forms={this.props.q2forms} isLoggedIn={this.state.isLoggedIn} />
         <div className='WorkSpace'>
           {this.state.dialogs.map((dialog: any, index: any) => (
             <Dialog

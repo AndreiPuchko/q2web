@@ -22,7 +22,7 @@ hr {
 }
 
 .theme-light {
-    --menu-bg: #f5f5f5;
+    --menu-bg: #cfcfcf;
     --menu-border: #bbb;
     --menu-btn-bg: #f5f5f5;
     --menu-btn-color: #222;
@@ -43,7 +43,7 @@ hr {
 .theme-dark {
     --menu-bg: #333;
     --menu-border: #444;
-    --menu-btn-bg: #333;
+    --menu-btn-bg: #4b4b4b;
     --menu-btn-color: #fff;
     --menu-dropdown-bg: #222;
     --menu-dropdown-color: #fff;
@@ -53,7 +53,7 @@ hr {
     --menu-submenu-hover-bg: #444;
     --tool-btn-bg: rgb(88, 82, 78);
     --tool-btn-color: #fff;
-    --tool-btn-hover-bg: royalblue;
+    --tool-btn-hover-bg: rgb(65, 225, 129);
     --newtab-btn-bg: green;
     --newtab-btn-hover-bg: greenyellow;
     --newtab-btn-hover-color: black;
@@ -63,6 +63,7 @@ hr {
     width: 100%;
     padding: 0;
     background-color: var(--menu-bg);
+    color: var(--menu-btn-color);
     position: fixed;
     z-index: 1000;
     display: flex;
@@ -133,6 +134,19 @@ hr {
     display: flex;
 }
 
+.MainMenuIcon {
+    margin: auto 0.3em;
+    padding: 0.2em;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.MainMenuIcon:hover {
+    border: 1px solid black;
+    border-radius: 0.5em;
+    filter: brightness(90%);
+}
+
 .newTabButton {
     background-color: var(--newtab-btn-bg);
 }
@@ -140,6 +154,7 @@ hr {
 .newTabButton:hover {
     background-color: var(--newtab-btn-hover-bg);
     color: var(--newtab-btn-hover-color);
+    cursor: pointer;
 }
 
 .submenu {

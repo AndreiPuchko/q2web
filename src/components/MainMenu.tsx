@@ -1,13 +1,16 @@
 import React from 'react';
-import './MainMenu.css';
 import { Q2Form } from "../q2_modules/Q2Form";
-import { showDialog } from '../q2_modules/Q2DialogApi';
-// import {Q2Button} from "./widgets/Button"
-// import {Q2Control} from "../q2_modules/Q2Form"
+import { showDialog } from '../q2_modules/Q2Api';
+import { Q2Button } from "./widgets/Button"
+import { Q2Control } from "../q2_modules/Q2Form"
+import { GetQ2AppInstance } from "../q2_modules/Q2Api"
+import { House, ArrowBigLeft } from "lucide-react";
 
+import './MainMenu.css';
 
 interface MainMenuProps {
     q2forms: Array<Q2Form>
+    isLoggedIn: boolean;
 }
 
 interface MainMenuState {
@@ -41,6 +44,57 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
 
     componentWillUnmount() {
         document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+    login_logout = async () => {
+        if (this.props.isLoggedIn) {
+            await GetAppInstance()?.handleLogout();
+        }
+        else {
+            const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
+            AuthForm.hasOkButton = true;
+            AuthForm.hasCancelButton = true;
+            AuthForm.hasMaxButton = false;
+            AuthForm.resizeable = false;
+            AuthForm.moveable = false;
+            AuthForm.width = "65%";
+            AuthForm.height = "";
+
+            AuthForm.add_control("/t", "Login")
+            AuthForm.add_control("email", "Email")
+            AuthForm.add_control("password", "Password")
+
+            AuthForm.add_control("/t", "Register")
+            AuthForm.add_control("reg_name", "nickname")
+            AuthForm.add_control("reg_email", "Email")
+            AuthForm.add_control("reg_pass1", "Password")
+            AuthForm.add_control("reg_pass2", "Repeat password")
+            AuthForm.add_control("/")
+            AuthForm.add_control("/h")
+            AuthForm.add_control("remember", "Remember me", { control: "check", data: true })
+
+            AuthForm.hookInputChanged = (form) => {
+                if (form.w["tabWidget"].prevValue != form.s["tabWidget"]) {
+                    form.setState({ okButtonText: form.s["tabWidget"] });
+                }
+            }
+
+            AuthForm.hookSubmit = (form) => {
+                const { tabWidget, email, password, remember } = form.s;
+                if (tabWidget === "Login") {
+                    GetAppInstance()?.handleLogin(email, password, remember).then((close) => {
+                        if (close) form.close();
+                    });
+                } else {
+                    const { reg_name, reg_email, reg_pass1, reg_pass2 } = form.s;
+                    GetAppInstance()?.handleRegister(reg_name, reg_email, reg_pass1, reg_pass2, remember).then((close) => {
+                        if (close) form.close();
+                    });
+                }
+                return false; // Return a boolean synchronously
+            }
+            showDialog(AuthForm)
+        }
     }
 
     handleClickOutside = (event: MouseEvent) => {
@@ -142,15 +196,24 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
     render() {
         const { visibleDropdown, activated } = this.state;
         const menuStructure = this.buildMenuStructure(this.props.q2forms);
+        const {
+            // userName,
+            // guestName,
+            // guestLogo,
+            isLoggedIn,
+            // navigate,
+        } = this.props;
 
-        // const themaButtonText = document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
 
+        const themaButtonText = document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
 
         const items = Object.entries(menuStructure)
             .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
         return (
             <nav className='MainMenuBar'>
+                <House className={"MainMenuIcon "} />
+                <ArrowBigLeft className="MainMenuIcon " />
                 <div className='menuItems' ref={this.menuRef} >
                     {items.map((item) => (
                         <div
@@ -181,9 +244,25 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                     {this.renderToolButtons()}
                 </div>
                 <div className='spacer9'></div>
-                {/* <Q2Button {...{ column: new Q2Control("b1", "Login", { valid: () => {} }) }}/>
-                <Q2Button {...{ column: new Q2Control("b1", themaButtonText, { valid: () => {} }) }}/> */}
-                <button className='newTabButton' onClick={this.openNewTab}><b>+</b></button>
+                <Q2Button {...{
+                    column: new Q2Control(
+                        "login",
+                        !isLoggedIn ? "Login" : "Logout",
+                        {
+                            valid: this.login_logout,
+                            class: "login-button"
+                        })
+                }} />
+                <Q2Button {...{
+                    column: new Q2Control(
+                        "theme",
+                        themaButtonText,
+                        {
+                            valid: () => GetQ2AppInstance()?.toggleTheme(),
+                            class: "theme-button"
+                        })
+                }} />
+                {/* <button className='newTabButton' onClick={this.openNewTab}><b>+</b></button> */}
             </nav>
         );
     }

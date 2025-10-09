@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { MdOutlineExitToApp, MdOutlineCropPortrait, MdOutlineContentCopy, MdEdit, MdClose } from "react-icons/md";
 import { Q2Form, Q2Control } from "../q2_modules/Q2Form";
 import "./DataGrid.css"
-import { showDialog } from '../q2_modules/Q2DialogApi';
+import { showDialog } from '../q2_modules/Q2Api';
 
 
 const EDIT = "EDIT";
