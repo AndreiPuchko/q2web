@@ -34,17 +34,17 @@
 
 * {}
 
+
+.dialog-pre-container {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .dialog-container {
   border-radius: 0.5rem;
-
   position: absolute;
-  /* width: 300px;
-  height: 200px; */
   border: 1px solid var(--dialog-border);
   background-color: var(--dialog-bg);
   box-shadow: var(--dialog-shadow);
-  /* resize: both; */
-  /* overflow: hidden; */
 }
 
 .dialog-container.maximized {

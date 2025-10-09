@@ -41,7 +41,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         dialog.style.overflow = this.props.q2form.resizeable ? "hidden" : "none"
 
-        this.make_resize_move()
+        this.set_resize_move_icons()
 
         this.resizeObserver = new ResizeObserver(() => {
             this.resizeChildren();
@@ -59,7 +59,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         });
     }
 
-    make_resize_move = () => {
+    set_resize_move_icons = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
         const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
@@ -67,11 +67,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         dialog.style.resize = this.props.q2form.resizeable && !this.state.isMaximized ? "both" : "none"
     }
 
-    componentDidUpdate(
-        // prevProps: Readonly<DialogProps>,
-        // prevState: Readonly<DialogState>, snapshot?: any
-    ): void {
-        this.make_resize_move()
+    componentDidUpdate(): void {
+        this.set_resize_move_icons()
     }
 
     componentWillUnmount() {
@@ -88,7 +85,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
-        this.normalizePosition()
 
         const dialogState = {
             width: dialog.style.width,
@@ -96,6 +92,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             left: dialog.style.left,
             top: dialog.style.top,
         };
+        this.normalizePosition();
 
         const title = this.props.q2form.title.replace(/\[.*?\]/g, '');
         Cookies.set(`dialogState_${title}`, JSON.stringify(dialogState));
@@ -104,25 +101,27 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     normalizePosition = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
-        const { left, top } = dialog.style;
-
-        const _left = parseFloat(left);
-        const _top = parseFloat(top);
-        const menuBarHeight = document.querySelector('.MainMenuBar')?.clientHeight || 0;
+        const left = dialog.offsetLeft;
+        const top = dialog.offsetTop;
         if (this.props.q2form.moveable) {
-            if (_left < 0) {
+            if (left < 0) {
                 dialog.style.left = "0px";
             }
-            if (_top < menuBarHeight) {
-                dialog.style.top = `${menuBarHeight}px`;
+            if (top < 0) {
+                dialog.style.top = "0px";
             }
+            if (dialog.parentElement) {
+                const { offsetHeight, offsetWidth } = dialog.parentElement
+                const { offsetTop, offsetLeft } = dialog
+                if (offsetLeft + dialog.offsetWidth > offsetWidth) {
+                    dialog.style.width = `${offsetWidth - offsetLeft}px`;
+                }
+                if (offsetTop + dialog.offsetHeight > offsetHeight) {
+                    dialog.style.height = `${offsetHeight - offsetTop}px`;
+                }
+            }
+
         }
-        else {
-            dialog.style.justifyContent = "center";
-            dialog.style.alignItems = "center";
-        }
-        // const workspace = document.querySelector('.WorkSpace');
-        // const workspaceRect = workspace?.getBoundingClientRect();
     }
 
     loadDialogState = () => {
@@ -133,13 +132,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const dialogState = Cookies.get(`dialogState_${title}`);
         const menuBarHeight = document.querySelector('.MainMenuBar')?.clientHeight || 0;
         const workspace = document.querySelector('.WorkSpace');
-        // const pre_dialog_container = dialog.querySelector('.dialog-pre-container');
-
-        // console.log(dialog.parentElement);
 
         if (dialog.parentElement) {
             dialog.parentElement.style.inset = `${menuBarHeight}px 0 0`;
-            console.log(dialog.parentElement.style)
         }
         const workspaceRect = workspace?.getBoundingClientRect();
 
@@ -160,8 +155,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         } else if (workspace && workspaceRect) {
             dialog.style.width = String(this.props.q2form.width);
             dialog.style.height = String(this.props.q2form.height);
-            // dialog.style.width = normalizeSize(this.props.q2form.width, workspaceRect.width);
-            // dialog.style.height = normalizeSize(this.props.q2form.height, workspaceRect.height - 200);
             dialog.style.left = `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
             dialog.style.top = `${(window.innerHeight - dialog.offsetHeight) / 2 + menuBarHeight}px`;
         }
@@ -191,7 +184,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             document.removeEventListener('mouseup', onMouseUp);
             this.saveDialogState();
         };
-
         document.addEventListener('mousemove', onMouseMove);
         document.addEventListener('mouseup', onMouseUp);
     };
@@ -200,6 +192,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
         if (!this.props.q2form.resizeable) return;
+        this.normalizePosition();
 
         const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
         const dialogContent = dialog.querySelector('.dialog-content') as HTMLElement;
@@ -213,8 +206,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             const width = dialog.clientWidth - paddingHor - 5;
             child.style.height = `${height}px`;
             child.style.width = `${width}px`;
-
-
             const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root, .q2-scroll')) as HTMLElement[];
             pxTargets.forEach(el => {
                 el.style.height = `${height}px`;
@@ -223,14 +214,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                 el.style.minWidth = '0';
                 el.style.boxSizing = 'border-box';
             });
-
-            // const percentTargets = Array.from(child.querySelectorAll('.FormComponent, .Panel, .field-set-style, .form-group, .flex-column')) as HTMLElement[];
-            // percentTargets.forEach(el => {
-            //   // use 100% so these wrappers fill the pixel-sized ancestor
-            //   el.style.height = '100%';
-            //   el.style.minHeight = '0';
-            //   el.style.boxSizing = 'border-box';
-            // });
         });
     };
 
@@ -397,9 +380,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const { isMaximized } = this.state;
         q2form.dialogIndex = dialogIndex;
 
-        if (!q2form) {
-            return null;
-        }
+        if (!q2form) return null;
 
         return (
             <div className={"dialog-pre-container"}

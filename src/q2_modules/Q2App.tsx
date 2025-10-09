@@ -43,9 +43,9 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
 
   componentDidMount() {
     this.applyTheme();
-    this.recalculateWorkspaceHeight();
+    // this.recalculateWorkspaceHeight();
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
-    window.addEventListener('resize', this.recalculateWorkspaceHeight);
+    // window.addEventListener('resize', this.recalculateWorkspaceHeight);
   }
 
   componentWillUnmount() {
@@ -62,7 +62,7 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
     if (prevState.theme !== this.state.theme) {
       this.applyTheme();
     }
-    this.recalculateWorkspaceHeight();
+    // this.recalculateWorkspaceHeight();
   }
 
   applyTheme = () => {
