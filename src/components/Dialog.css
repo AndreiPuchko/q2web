@@ -49,6 +49,7 @@
 
 .dialog-container.maximized {
   resize: none;
+  inset: 0;
 }
 
 .dialog-container.disabled {

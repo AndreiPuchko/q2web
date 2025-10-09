@@ -122,6 +122,7 @@ export class Q2Form {
     hookCancel?: (form: Q2FrontForm) => void;
     dialogIndex: number;
     frontForm: Q2FrontForm | undefined;
+    class: string;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -145,6 +146,7 @@ export class Q2Form {
         this.y = 0;
         this.dialogIndex = -1;
         this.frontForm = undefined;
+        this.class = options.class || "";
         if (key === "") {
             this.key = this.get_random_key();
         }
