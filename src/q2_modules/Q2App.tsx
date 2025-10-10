@@ -47,6 +47,7 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
   componentDidMount() {
     this.applyTheme();
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
+    this.showHome();
   }
 
   componentWillUnmount() {
@@ -100,6 +101,25 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
         zIndexMap: newZIndexMap
       };
     });
+  };
+
+  closeAllDialogs = () => {
+    this.setState({ dialogs: [], zIndexMap: {} },
+      () => this.showHome());
+  };
+
+  closeTopDialog = () => {
+    if (this.state.dialogs.length > 0) {
+      this.closeDialog(this.state.dialogs.length - 1);
+    }
+  };
+
+  showHome = () => {
+    if (this.state.dialogs.length === 0) {
+      this.props.q2forms.forEach(el => {
+        if (el.key === "autorun") this.showDialog(el);
+      });
+    }
   };
 
   render() {

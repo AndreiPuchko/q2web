@@ -20,7 +20,6 @@ interface MainMenuState {
 
 export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
     menuRef: React.RefObject<HTMLDivElement | null>;
-    dialogShown: boolean;
 
     constructor(props: MainMenuProps) {
         super(props);
@@ -29,17 +28,10 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             activated: false,
         };
         this.menuRef = React.createRef<HTMLDivElement>();
-        this.dialogShown = false;
     }
 
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
-        if (!this.dialogShown) {
-            this.dialogShown = true;
-            this.props.q2forms.forEach(el => {
-                if (el.key === "autorun") showDialog(el)
-            })
-        }
     }
 
     componentWillUnmount() {
@@ -48,7 +40,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
 
     login_logout = async () => {
         if (this.props.isLoggedIn) {
-            await GetAppInstance()?.handleLogout();
+            await GetQ2AppInstance()?.handleLogout();
         }
         else {
             const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
@@ -82,12 +74,12 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             AuthForm.hookSubmit = (form) => {
                 const { tabWidget, email, password, remember } = form.s;
                 if (tabWidget === "Login") {
-                    GetAppInstance()?.handleLogin(email, password, remember).then((close) => {
+                    GetQ2AppInstance()?.handleLogin(email, password, remember).then((close) => {
                         if (close) form.close();
                     });
                 } else {
                     const { reg_name, reg_email, reg_pass1, reg_pass2 } = form.s;
-                    GetAppInstance()?.handleRegister(reg_name, reg_email, reg_pass1, reg_pass2, remember).then((close) => {
+                    GetQ2AppInstance()?.handleRegister(reg_name, reg_email, reg_pass1, reg_pass2, remember).then((close) => {
                         if (close) form.close();
                     });
                 }
@@ -212,8 +204,10 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
         return (
             <nav className='MainMenuBar'>
-                <House className={"MainMenuIcon "} />
-                <ArrowBigLeft className="MainMenuIcon " />
+                <House className={"MainMenuIcon "}
+                    onClick={() => GetQ2AppInstance()?.closeAllDialogs()} />
+                <ArrowBigLeft className="MainMenuIcon "
+                    onClick={() => GetQ2AppInstance()?.closeTopDialog()} />
                 <div className='menuItems' ref={this.menuRef} >
                     {items.map((item) => (
                         <div
