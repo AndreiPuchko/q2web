@@ -1,5 +1,7 @@
 import Q2App from './q2_modules/Q2App';
 import { Q2Form } from './q2_modules/Q2Form';
+import { apiRequest } from "./q2_modules/Q2Api"
+
 import './App.css';
 
 
