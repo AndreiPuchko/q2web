@@ -223,6 +223,8 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                 return <Q2Color {...commonProps} />
             case "combo":
                 return <Q2Combo {...commonProps} />
+            case "button":
+                return <Q2Button {...commonProps} />;
             case "spacer":
                 return <Q2Spacer {...commonProps} />;
             case "check":
