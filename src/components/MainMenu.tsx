@@ -38,57 +38,6 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         document.removeEventListener('mousedown', this.handleClickOutside);
     }
 
-    login_logout = async () => {
-        if (this.props.isLoggedIn) {
-            await GetQ2AppInstance()?.handleLogout();
-        }
-        else {
-            const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
-            AuthForm.hasOkButton = true;
-            AuthForm.hasCancelButton = true;
-            AuthForm.hasMaxButton = false;
-            AuthForm.resizeable = false;
-            AuthForm.moveable = false;
-            AuthForm.width = "65%";
-            AuthForm.height = "";
-
-            AuthForm.add_control("/t", "Login")
-            AuthForm.add_control("email", "Email")
-            AuthForm.add_control("password", "Password")
-
-            AuthForm.add_control("/t", "Register")
-            AuthForm.add_control("reg_name", "nickname")
-            AuthForm.add_control("reg_email", "Email")
-            AuthForm.add_control("reg_pass1", "Password")
-            AuthForm.add_control("reg_pass2", "Repeat password")
-            AuthForm.add_control("/")
-            AuthForm.add_control("/h")
-            AuthForm.add_control("remember", "Remember me", { control: "check", data: true })
-
-            AuthForm.hookInputChanged = (form) => {
-                if (form.w["tabWidget"].prevValue != form.s["tabWidget"]) {
-                    form.setState({ okButtonText: form.s["tabWidget"] });
-                }
-            }
-
-            AuthForm.hookSubmit = (form) => {
-                const { tabWidget, email, password, remember } = form.s;
-                if (tabWidget === "Login") {
-                    GetQ2AppInstance()?.handleLogin(email, password, remember).then((close) => {
-                        if (close) form.close();
-                    });
-                } else {
-                    const { reg_name, reg_email, reg_pass1, reg_pass2 } = form.s;
-                    GetQ2AppInstance()?.handleRegister(reg_name, reg_email, reg_pass1, reg_pass2, remember).then((close) => {
-                        if (close) form.close();
-                    });
-                }
-                return false; // Return a boolean synchronously
-            }
-            showDialog(AuthForm)
-        }
-    }
-
     handleClickOutside = (event: MouseEvent) => {
         if (this.menuRef.current && !this.menuRef.current.contains(event.target as Node)) {
             this.setState({ visibleDropdown: null, activated: false });

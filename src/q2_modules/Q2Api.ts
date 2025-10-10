@@ -13,3 +13,17 @@ export function GetQ2AppInstance() {
     const Q2AppInstance = Q2App.instance;
     return Q2AppInstance;
 }
+
+export async function apiRequest(path: string, options: RequestInit = {}) {
+    const res = await fetch(`${dkApiUrl}${path}`, {
+        ...options,
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {}),
+        },
+    });
+
+    if (!res.ok) throw new Error("Request failed");
+    return res.json();
+}

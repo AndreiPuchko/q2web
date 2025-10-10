@@ -83,6 +83,84 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
     );
   };
 
+  login_logout = async () => {
+    if (this.state.isLoggedIn) {
+      await this.handleLogout();
+    }
+    else {
+      const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
+      AuthForm.hasOkButton = true;
+      AuthForm.hasCancelButton = true;
+      AuthForm.hasMaxButton = false;
+      AuthForm.resizeable = false;
+      AuthForm.moveable = false;
+      AuthForm.width = "65%";
+      AuthForm.height = "";
+
+      AuthForm.add_control("/t", "Login")
+      AuthForm.add_control("email", "Email")
+      AuthForm.add_control("password", "Password")
+
+      AuthForm.add_control("/t", "Register")
+      AuthForm.add_control("reg_name", "nickname")
+      AuthForm.add_control("reg_email", "Email")
+      AuthForm.add_control("reg_pass1", "Password")
+      AuthForm.add_control("reg_pass2", "Repeat password")
+      AuthForm.add_control("/")
+      AuthForm.add_control("/h")
+      AuthForm.add_control("remember", "Remember me", { control: "check", data: true })
+
+      AuthForm.hookInputChanged = (form) => {
+        if (form.w["tabWidget"].prevValue != form.s["tabWidget"]) {
+          form.setState({ okButtonText: form.s["tabWidget"] });
+        }
+      }
+
+      AuthForm.hookSubmit = (form) => {
+        const { tabWidget, email, password, remember } = form.s;
+        if (tabWidget === "Login") {
+          this.handleLogin(email, password, remember).then((close) => {
+            if (close) form.close();
+          });
+        } else {
+          const { reg_name, reg_email, reg_pass1, reg_pass2 } = form.s;
+          this.handleRegister(reg_name, reg_email, reg_pass1, reg_pass2, remember).then((close) => {
+            if (close) form.close();
+          });
+        }
+        return false; // Return a boolean synchronously
+      }
+      this.showDialog(AuthForm)
+    }
+  }
+
+  handleLogin = async (email: string, password: string, remember: boolean): Promise<boolean> => {
+    try {
+      await apiRequest("/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password, remember }),
+      });
+      if (remember) {
+        localStorage.setItem("rememberedEmail", email);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+      const me = await apiRequest("/me");
+      this.setUser(me.user.name, me.user.uid);
+    } catch (err) {
+      console.log(err)
+      alert("Login failed");
+      return false
+    }
+    return true
+  };
+
+  handleLogout = async () => {
+    await apiRequest("/logout", { method: "POST" });
+    this.setState({ isLoggedIn: false }, () => this.showHome())
+  };
+
+
   showDialog = (q2form: Q2Form) => {
     const newDialogIndex = this.state.dialogs.length;
     this.setState((prevState) => ({
