@@ -96,6 +96,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 );
             }
 
+            
             return (
                 <div className='submenu' key={item.label}>
                     <button className='submenubtn'>{item.label}</button>
@@ -192,7 +193,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                         "login",
                         !isLoggedIn ? "Login" : "Logout",
                         {
-                            valid: this.login_logout,
+                            valid: GetQ2AppInstance()?.login_logout,
                             class: "login-button"
                         })
                 }} />

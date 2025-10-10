@@ -4,37 +4,47 @@ import Dialog from '../components/Dialog';
 import Cookies from "js-cookie";
 import { Q2Form } from "../q2_modules/Q2Form";
 import './Q2App.css';
+import { apiRequest } from "./Q2Api"
 
 
-interface Q2AppProps {
-  q2forms: Array<Q2Form>
+export interface Q2AppProps<T extends Q2Form = Q2Form> {
+  q2forms: Array<T>;
 }
 
-interface Q2AppState {
+export interface Q2AppState {
   zIndexMap: { [key: string]: any };
   dialogs: any[];
   theme: string | null;
-  isLoggedIn: boolean;
+  isLoggedIn: boolean; // No changes here, `isLoggedIn` is already in the state
+  userName: string;
+  userUid: number;
+  isGuestDialogOpen: boolean;
+  isLoginDialogOpen: boolean;
 }
 
-export class Q2App extends Component<Q2AppProps, Q2AppState> {
-  static instance: Q2App | null = null;
+export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q2AppState> {
+  static instance: Q2App<any> | null = null; // Use `any` to allow for generic compatibility
+  static apiUrl: string = "";
 
-  constructor(props: Q2AppProps) {
+  constructor(props: Q2AppProps<T>) {
     super(props);
-    Q2App.instance = this;
+    Q2App.instance = this; // No error now since `instance` is typed as `Q2App<any> | null`
 
     this.state = {
       dialogs: [],
       zIndexMap: {},
       theme: this.detectTheme(),
-      isLoggedIn: false
+      isLoggedIn: false,
+      userName: "",
+      userUid: 0,
+      isGuestDialogOpen: false,
+      isLoginDialogOpen: false,
     };
   }
 
   detectTheme = () => {
     // Try to get from localStorage first
-    return 'light';
+    // return 'light';
     const saved = localStorage.getItem('theme');
     if (saved === 'light' || saved === 'dark') return saved;
     // Otherwise, use system preference
@@ -86,8 +96,7 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
   login_logout = async () => {
     if (this.state.isLoggedIn) {
       await this.handleLogout();
-    }
-    else {
+    } else {
       const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
       AuthForm.hasOkButton = true;
       AuthForm.hasCancelButton = true;
@@ -97,30 +106,33 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
       AuthForm.width = "65%";
       AuthForm.height = "";
 
-      AuthForm.add_control("/t", "Login")
-      AuthForm.add_control("email", "Email")
-      AuthForm.add_control("password", "Password")
+      AuthForm.add_control("/t", "Login");
+      AuthForm.add_control("email", "Email");
+      AuthForm.add_control("password", "Password");
 
-      AuthForm.add_control("/t", "Register")
-      AuthForm.add_control("reg_name", "nickname")
-      AuthForm.add_control("reg_email", "Email")
-      AuthForm.add_control("reg_pass1", "Password")
-      AuthForm.add_control("reg_pass2", "Repeat password")
-      AuthForm.add_control("/")
-      AuthForm.add_control("/h")
-      AuthForm.add_control("remember", "Remember me", { control: "check", data: true })
+      AuthForm.add_control("/t", "Register");
+      AuthForm.add_control("reg_name", "nickname");
+      AuthForm.add_control("reg_email", "Email");
+      AuthForm.add_control("reg_pass1", "Password");
+      AuthForm.add_control("reg_pass2", "Repeat password");
+      AuthForm.add_control("/");
+      AuthForm.add_control("/h");
+      AuthForm.add_control("remember", "Remember me", { control: "check", data: true });
 
       AuthForm.hookInputChanged = (form) => {
         if (form.w["tabWidget"].prevValue != form.s["tabWidget"]) {
           form.setState({ okButtonText: form.s["tabWidget"] });
         }
-      }
+      };
 
       AuthForm.hookSubmit = (form) => {
         const { tabWidget, email, password, remember } = form.s;
         if (tabWidget === "Login") {
           this.handleLogin(email, password, remember).then((close) => {
             if (close) form.close();
+            else {
+              alert("Login failed")
+            }
           });
         } else {
           const { reg_name, reg_email, reg_pass1, reg_pass2 } = form.s;
@@ -129,10 +141,41 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
           });
         }
         return false; // Return a boolean synchronously
-      }
-      this.showDialog(AuthForm)
+      };
+      this.showDialog(AuthForm as T); // Explicitly assert the type of AuthForm to T
     }
   }
+
+  handleRegister = async (
+    name: string,
+    email: string,
+    password: string,
+    password2: string,
+    remember: boolean
+  ): Promise<boolean> => {
+    try {
+      const res = await apiRequest("/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password, password2, remember }),
+      });
+
+      remember ? localStorage.setItem("rememberedEmail", email) : localStorage.removeItem("rememberedEmail");
+
+      if ("error" in res) return false;
+
+      const me = await apiRequest("/me");
+      this.setUser(me.user.name, me.user.uid);
+
+      this.setState({ isLoggedIn: true, isLoginDialogOpen: false },
+        () => this.closeAllDialogs());
+
+      return true;
+    } catch (err) {
+      console.error(err);
+      alert("Register failed");
+      return false;
+    }
+  };
 
   handleLogin = async (email: string, password: string, remember: boolean): Promise<boolean> => {
     try {
@@ -149,7 +192,7 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
       this.setUser(me.user.name, me.user.uid);
     } catch (err) {
       console.log(err)
-      alert("Login failed");
+      // alert("Login failed");
       return false
     }
     return true
@@ -160,11 +203,32 @@ export class Q2App extends Component<Q2AppProps, Q2AppState> {
     this.setState({ isLoggedIn: false }, () => this.showHome())
   };
 
+  setUser = (userName: string, uid: number) => {
+    this.setState({ userName, userUid: uid, isLoggedIn: true, isLoginDialogOpen: false });
+    this.closeAllDialogs();
+  };
 
-  showDialog = (q2form: Q2Form) => {
+  showMsg = (msg: string): void => {
+    console.log(msg + "333");
+    const msgBox = new Q2Form("", "msgbox", "msgbox", {
+      hasMaxButton: false,
+      hasOkButton: true,
+      resizeable: false,
+    });
+
+    msgBox.add_control("/v");
+    msgBox.add_control("text", "", {
+      readonly: true,
+      data: msg,
+      control: "text"
+    });
+    this.showDialog(msgBox as T); // Explicitly assert the type of msgBox to T
+  }
+
+  showDialog = (q2form: T) => {
     const newDialogIndex = this.state.dialogs.length;
     this.setState((prevState) => ({
-      dialogs: [...prevState.dialogs, { key: q2form.key, q2form: q2form }],
+      dialogs: [...prevState.dialogs, { key: (q2form as any).key, q2form }],
       zIndexMap: { ...prevState.zIndexMap, [newDialogIndex]: newDialogIndex + 1 }
     }));
   };

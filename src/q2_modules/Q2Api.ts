@@ -3,6 +3,7 @@ import { Q2App } from './Q2App';
 
 export function showDialog(q2form: Q2Form) {
     Q2App.instance?.showDialog(q2form);
+
 }
 
 export function closeDialog(zIndex: number) {
@@ -15,7 +16,7 @@ export function GetQ2AppInstance() {
 }
 
 export async function apiRequest(path: string, options: RequestInit = {}) {
-    const res = await fetch(`${dkApiUrl}${path}`, {
+    const res = await fetch(`${Q2App.apiUrl}${path}`, {
         ...options,
         credentials: "include",
         headers: {
