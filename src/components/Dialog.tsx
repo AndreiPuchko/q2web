@@ -51,12 +51,14 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
 
         // ensure layout is settled: resize children and run mouse-up sizing logic
-        requestAnimationFrame(() => {
-            this.resizeChildren();
-            this.dialogHandleMouseUp();
-            // extra pass to catch deferred layout changes
-            requestAnimationFrame(() => this.dialogHandleMouseUp());
-        });
+        if (this.props.q2form.resizeable) {
+            requestAnimationFrame(() => {
+                this.resizeChildren();
+                this.dialogHandleMouseUp();
+                // extra pass to catch deferred layout changes
+                requestAnimationFrame(() => this.dialogHandleMouseUp());
+            });
+        }
     }
 
     set_resize_move_icons = () => {
@@ -191,7 +193,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     resizeChildren = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
-        // if (!this.props.q2form.resizeable) return;
+        if (!this.props.q2form.resizeable) return;
         this.normalizePosition();
 
         const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
@@ -267,6 +269,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     };
 
     dialogHandleMouseUp = () => {
+        if (!this.props.q2form.resizeable) return;
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
