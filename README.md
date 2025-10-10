@@ -61,7 +61,3 @@ function App() {
 
 export default App;
 ```
-
-## Documentation
-
-For detailed documentation and API references, please visit the [official documentation](#).
