@@ -131,7 +131,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
           this.handleLogin(email, password, remember).then((close) => {
             if (close) form.close();
             else {
-              alert("Login failed")
+              this.showMsg("Login failed");
             }
           });
         } else {
@@ -172,7 +172,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       return true;
     } catch (err) {
       console.error(err);
-      alert("Register failed");
+      this.showMsg("Register failed");
       return false;
     }
   };
