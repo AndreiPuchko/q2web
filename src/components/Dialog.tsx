@@ -191,7 +191,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     resizeChildren = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
-        if (!this.props.q2form.resizeable) return;
+        // if (!this.props.q2form.resizeable) return;
         this.normalizePosition();
 
         const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
