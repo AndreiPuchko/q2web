@@ -147,7 +147,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const { resizeable, moveable, width, height, left, top } = this.props.q2form;
         const saved = dialogState ? JSON.parse(dialogState) : {};
 
-        if (!saved.height) saved.height = "600px"
+        if (!saved.height) saved.height = "30%"
+        if (!saved.width) saved.width = "60%"
 
         const finalWidth = resizeable && saved.width ? saved.width : String(width);
         const finalHeight = resizeable && saved.height ? saved.height : String(height);
@@ -360,18 +361,10 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                 left: dialog.style.left,
                 top: dialog.style.top,
             };
-            const workspace = document.querySelector('.WorkSpace') as HTMLElement;
-            if (workspace) {
-                // Maximize within workspace
-                dialog.style.width = `auto`;
-                dialog.style.height = `auto`;
-                dialog.style.inset = "0px";
-            } else {
-                dialog.style.left = "0px";
-                dialog.style.top = "0px";
-                dialog.style.width = window.innerWidth + "px";
-                dialog.style.height = window.innerHeight + "px";
-            }
+            dialog.style.left = "0px";
+            dialog.style.top = "0px";
+            dialog.style.width = window.innerWidth + "px";
+            dialog.style.height = window.innerHeight + "px";
             this.resizeChildren()
             this.setState({ isMaximized: true }, this.dialogHandleMouseUp);
         } else {

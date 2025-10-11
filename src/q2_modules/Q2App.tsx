@@ -271,18 +271,16 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
     return (
       <>
         <MainMenu q2forms={this.props.q2forms} isLoggedIn={this.state.isLoggedIn} />
-        <div className='WorkSpace'>
-          {this.state.dialogs.map((dialog: any, index: any) => (
-            <Dialog
-              key={index}
-              onClose={() => this.closeDialog(index)}
-              q2form={dialog.q2form}
-              isTopDialog={index === this.state.dialogs.length - 1}
-              zIndex={this.state.zIndexMap[index] || 0}
-              dialogIndex={index}
-            />
-          ))}
-        </div>
+        {this.state.dialogs.map((dialog: any, index: any) => (
+          <Dialog
+            key={index}
+            onClose={() => this.closeDialog(index)}
+            q2form={dialog.q2form}
+            isTopDialog={index === this.state.dialogs.length - 1}
+            zIndex={this.state.zIndexMap[index] || 0}
+            dialogIndex={index}
+          />
+        ))}
       </>
     );
   }

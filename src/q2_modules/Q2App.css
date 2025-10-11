@@ -70,14 +70,6 @@ th {
   /* color: var(--datagrid-cell-color); */
 }
 
-.WorkSpace {
-  overflow: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
 .Q2TabWidget {
   padding: 0 0.3em 0 0;
   margin: 0;
