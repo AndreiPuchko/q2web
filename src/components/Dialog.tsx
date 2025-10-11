@@ -268,6 +268,14 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         };
     };
 
+    forceResize = () => {
+        const dialog = this.dialogRef.current;
+        if (!dialog) return;
+        dialog.style.width = `${dialog.clientWidth+1}px`;
+        this.dialogHandleMouseUp();
+        dialog.style.width = `${dialog.clientWidth-1}px`;
+    }
+
     dialogHandleMouseUp = () => {
         if (!this.props.q2form.resizeable) return;
         const dialog = this.dialogRef.current;
@@ -415,7 +423,11 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                     </div>
 
                     <div className="dialog-content">
-                        <Q2FrontForm q2form={q2form} onClose={onClose} isTopDialog={isTopDialog} />
+                        <Q2FrontForm
+                            q2form={q2form}
+                            onClose={onClose} 
+                            forceResize={this.forceResize}
+                            isTopDialog={isTopDialog} />
                     </div>
                 </div>
             </div>

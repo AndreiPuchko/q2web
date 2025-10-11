@@ -17,6 +17,7 @@ import Q2Image from './widgets/Image';
 interface Q2FrontFormProps {
     q2form: Q2Form;
     onClose?: () => void;
+    forceResize?: () => void;
     isTopDialog?: boolean;
 }
 
@@ -343,6 +344,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                 form={this}
                 onChange={this.handlePanelCheck(panel.key)}
                 formData={this.state.formData}
+                forceResize={this.props.forceResize}
                 setState={this.setState.bind(this)}
             />
         );

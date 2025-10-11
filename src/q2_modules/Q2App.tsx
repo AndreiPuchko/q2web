@@ -127,6 +127,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
 
       AuthForm.hookSubmit = (form) => {
         const { tabWidget, email, password, remember } = form.s;
+        console.log(AuthForm.s)
         if (tabWidget === "Login") {
           this.handleLogin(email, password, remember).then((close) => {
             if (close) form.close();

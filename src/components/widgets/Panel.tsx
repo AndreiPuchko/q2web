@@ -6,6 +6,7 @@ import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 interface Q2PanelProps {
     panel: any;
     onChange: (e: any) => void;
+    forceResize?: () => void;
     form: any;
     formData: any;
     setState: any;
@@ -171,6 +172,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
         const checkChecked = this.state.checkChecked;
 
         const tabs: any = [];
+        const forceResize = this.props.forceResize;
         if (panel?.isTabWidget) {
             panel.children.reduce((a: any, b: any) => {
                 a;
@@ -194,6 +196,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                     }
                 }
             })
+            if (forceResize) forceResize();
         }
         const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
             pic: panel.label,
