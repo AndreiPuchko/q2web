@@ -32,6 +32,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         this.state = {
             isMaximized: false
         };
+        this.props.q2form.check_frameless()
     }
 
     componentDidMount() {
@@ -64,8 +65,13 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     set_resize_move_icons = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
-        const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
-        dialogHeader.style.cursor = this.props.q2form.moveable && !this.state.isMaximized ? "move" : "auto";
+        if (!this.props.q2form.frameless) {
+            const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
+            dialogHeader.style.cursor = this.props.q2form.moveable && !this.state.isMaximized ? "move" : "auto";
+        }
+        else {
+            dialog.style.borderRadius = "unset";
+        }
         dialog.style.resize = this.props.q2form.resizeable && !this.state.isMaximized ? "both" : "none"
     }
 
@@ -131,34 +137,28 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         if (!dialog) return;
 
         const title = this.props.q2form.title.replace(/\[.*?\]/g, '');
-        const dialogState = Cookies.get(`dialogState_${title}`);
         const menuBarHeight = document.querySelector('.MainMenuBar')?.clientHeight || 0;
-        const workspace = document.querySelector('.WorkSpace');
 
         if (dialog.parentElement) {
             dialog.parentElement.style.inset = `${menuBarHeight}px 0 0`;
         }
-        const workspaceRect = workspace?.getBoundingClientRect();
+        const dialogState = Cookies.get(`dialogState_${title}`);
 
-        if (dialogState) {
-            const { width, height, left, top } = JSON.parse(dialogState);
-            if (this.props.q2form.resizeable) {
-                dialog.style.width = width;
-                dialog.style.height = height;
-            }
-            else {
-                dialog.style.width = String(this.props.q2form.width);
-                dialog.style.height = String(this.props.q2form.height);
-            }
-            if (this.props.q2form.moveable) {
-                dialog.style.left = left;
-                dialog.style.top = top;
-            }
-        } else if (workspace && workspaceRect) {
-            dialog.style.width = String(this.props.q2form.width);
-            dialog.style.height = String(this.props.q2form.height);
-            dialog.style.left = `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
-            dialog.style.top = `${(window.innerHeight - dialog.offsetHeight) / 2 + menuBarHeight}px`;
+        const { resizeable, moveable, width, height, left, top } = this.props.q2form;
+        const saved = dialogState ? JSON.parse(dialogState) : {};
+
+        const finalWidth = resizeable && saved.width ? saved.width : String(width);
+        const finalHeight = resizeable && saved.height ? saved.height : String(height);
+
+        dialog.style.width = finalWidth;
+        dialog.style.height = finalHeight;
+
+        if (moveable) {
+            dialog.style.left = saved.left || String(left);
+            dialog.style.top = saved.top || String(top);
+        } else {
+            dialog.style.left = left ? String(left) : `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
+            dialog.style.top = top != "" ? String(top) : `${(window.innerHeight - menuBarHeight - dialog.offsetHeight) / 2}px`;
         }
         this.normalizePosition();
     };
@@ -271,9 +271,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     forceResize = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
-        dialog.style.width = `${dialog.clientWidth+1}px`;
+        dialog.style.width = `${dialog.clientWidth + 1}px`;
         this.dialogHandleMouseUp();
-        dialog.style.width = `${dialog.clientWidth-1}px`;
+        dialog.style.width = `${dialog.clientWidth - 1}px`;
     }
 
     dialogHandleMouseUp = () => {
@@ -390,6 +390,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const { onClose, q2form, zIndex, isTopDialog, dialogIndex } = this.props;
         const { isMaximized } = this.state;
         q2form.dialogIndex = dialogIndex;
+        const frameless = q2form.frameless
 
         if (!q2form) return null;
 
@@ -403,29 +404,38 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                     position: "fixed"
                 }}>
                 <div
-                    className={`dialog-container Q2Dialog ${q2form.class}
+                    className={`dialog-container Q2Dialog ${q2form.class} ${frameless ? "frameless" : ""}
                         ${isTopDialog ? '' : 'disabled'} ${isMaximized ? "maximized" : ""}
                         `}
                     ref={this.dialogRef}
                     style={{ zIndex }}
                 >
-                    <div className={`dialog-header ${isTopDialog ? '' : 'disabled'}`}
-                        onMouseDown={this.onMoveMouseDown}>
-                        <span className="dialog-title"><b>{q2form["title"]}</b></span>
-                        <div>
-                            {q2form.hasMaxButton && q2form.resizeable ? (
-                                <button className="max-button" onClick={this.handleMaximize}>
-                                    {isMaximized ? "🗗" : "🗖"}
+
+                    {!frameless && (
+                        <div
+                            className={`dialog-header ${isTopDialog ? "" : "disabled"}`}
+                            onMouseDown={this.onMoveMouseDown}
+                        >
+                            <span className="dialog-title">
+                                <b>{q2form.title}</b>
+                            </span>
+                            <div>
+                                {q2form.hasMaxButton && q2form.resizeable && (
+                                    <button className="max-button" onClick={this.handleMaximize}>
+                                        {isMaximized ? "🗗" : "🗖"}
+                                    </button>
+                                )}
+                                <button className="close-button" onClick={onClose}>
+                                    &#10006;
                                 </button>
-                            ) : ""}
-                            <button className="close-button" onClick={onClose}>&#10006;</button>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div className="dialog-content">
                         <Q2FrontForm
                             q2form={q2form}
-                            onClose={onClose} 
+                            onClose={onClose}
                             forceResize={this.forceResize}
                             isTopDialog={isTopDialog} />
                     </div>

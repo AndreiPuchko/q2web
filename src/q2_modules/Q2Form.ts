@@ -1,5 +1,6 @@
 import Q2FrontForm from '../components/Q2FrontForm';
 import { showDialog, closeDialog } from './Q2Api';
+import { generateRandomKey } from "../q2_modules/Q2Api"
 
 
 export class Q2Control {
@@ -108,8 +109,11 @@ export class Q2Form {
     icon: string;
     width: number | string;
     height: number | string;
+    left: number | string;
+    top: number | string;
     resizeable: boolean;
     moveable: boolean;
+    frameless: boolean;
     x: number;
     y: number;
     s: Record<string, any> = {};
@@ -138,17 +142,20 @@ export class Q2Form {
         this.actions = [];
         this.title = title;
         this.icon = "form";
-        this.width = 800;
-        this.height = 600;
+        this.width = "";
+        this.height = "";
+        this.left = "";
+        this.top = "";
         this.resizeable = true;
         this.moveable = true;
+        this.frameless = false;
         this.x = 0;
         this.y = 0;
         this.dialogIndex = -1;
         this.frontForm = undefined;
         this.class = options.class || "";
         if (key === "") {
-            this.key = this.get_random_key();
+            this.key = generateRandomKey();
         }
         Object.assign(this, options);
         // Ensure all columns are Q2Control instances
@@ -166,12 +173,12 @@ export class Q2Form {
         }
     }
 
-    get_random_key() {
-        let uid = "";
-        for (var x = 0; x < 10; x++) {
-            uid = uid + String.fromCharCode(Math.floor(Math.random() * (90 - 65) + 65));
-        }
-        return uid
+    check_frameless() {
+        if (this.frameless && this.width === "") this.width = "100%"
+        if (this.frameless && this.height === "") this.height = "100%"
+        if (this.height === "") this.height = "auto"
+        if (this.width === "") this.width = "auto"
+        console.log(this.height)
     }
 
     add_control(column: string, label?: string, options: any = {}) {

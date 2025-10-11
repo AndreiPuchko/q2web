@@ -292,7 +292,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                 col.column.startsWith("/v") ||
                 col.column.startsWith("/f") ||
                 col.column.startsWith("/t")) {
-                const ukey = generateRandomKey();
                 const panel = {
                     label: col.label,
                     key: `${this.formKey}${col.column}-${index}`, // Generate unique key

@@ -102,9 +102,11 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       AuthForm.hasCancelButton = true;
       AuthForm.hasMaxButton = false;
       AuthForm.resizeable = false;
-      // AuthForm.moveable = false;
+      AuthForm.moveable = false;
       AuthForm.width = "65%";
-      AuthForm.height = "";
+      AuthForm.height = "auto";
+      AuthForm.top = "10%"
+      // AuthForm.frameless = true;
 
       AuthForm.add_control("/t", "Login");
       AuthForm.add_control("email", "Email");
