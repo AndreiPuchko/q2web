@@ -102,7 +102,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       AuthForm.hasCancelButton = true;
       AuthForm.hasMaxButton = false;
       AuthForm.resizeable = false;
-      AuthForm.moveable = false;
+      // AuthForm.moveable = false;
       AuthForm.width = "65%";
       AuthForm.height = "";
 
@@ -141,9 +141,9 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
             if (close) form.close();
           });
         }
-        return false; // Return a boolean synchronously
+        return false;
       };
-      this.showDialog(AuthForm as T); // Explicitly assert the type of AuthForm to T
+      this.showDialog(AuthForm as T);
     }
   }
 

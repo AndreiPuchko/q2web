@@ -1,6 +1,6 @@
 import React from 'react';
 import Q2Widget from './Widget';
-import './RadioButton.css'; // Import the CSS file
+
 
 import { Q2WidgetProps } from './Widget';
 
@@ -93,7 +93,7 @@ export class Q2RadioButton extends Q2Widget<Q2RadioButtonProps, Q2RadioButtonSta
                             <>
                                 <input
                                     type="radio"
-                                    name={column.column}
+                                    name={radio_id}
                                     id={radio_id}
                                     value={opt}
                                     checked={this.state.selectedValue === opt}
@@ -101,7 +101,7 @@ export class Q2RadioButton extends Q2Widget<Q2RadioButtonProps, Q2RadioButtonSta
                                     onBlur={this.focusOut}
                                     onFocus={this.focusIn}
                                 />
-                                <label key={index} htmlFor={radio_id}>
+                                <label key={index} htmlFor={radio_id} id={`label-${radio_id}`}>
                                     {opt}
                                 </label>
                             </>

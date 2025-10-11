@@ -2,6 +2,8 @@ import React, { Component, CSSProperties } from "react";
 import { focusFirstFocusableElement } from '../../utils/dom';
 import Q2RadioButton from "./RadioButton";
 import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
+import { generateRandomKey } from "../../q2_modules/Q2Api"
+
 
 interface Q2PanelProps {
     panel: any;
@@ -95,6 +97,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
     render() {
         const { panel, form, setState } = this.props;
         // Panel style logic (copied from Form.renderPanel)
+        panel.panelKey = generateRandomKey();
         let className = "Panel";
         if (panel.column.column.startsWith("/h")) className += " flex-row";
         if (panel.column.column.startsWith("/v") || panel.column.column.startsWith("/t")) className += " flex-column";
@@ -197,12 +200,14 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                 }
             })
             if (forceResize) forceResize();
+            return true
         }
         const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
             pic: panel.label,
             data: 1,
             valid: tabWidgetValid,
-            class: "Q2TabWidget "
+            class: "Q2TabWidget ",
+            key: generateRandomKey()
         })
 
         const tabWidgetControlProps = {
@@ -216,6 +221,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                 className={className}
                 style={rootStyle}
                 key={panel.column.key}
+                id={panel.panelKey}
                 ref={ref => { this.panelRef = ref; }}
             >
                 {panel.column.label && (

@@ -79,7 +79,7 @@ th {
 
 
 .Q2TabWidget {
-  padding: 0;
+  padding: 0 0.3em 0 0;
   margin: 0;
   gap: 2px;
   border: none;
@@ -95,7 +95,7 @@ th {
 .Q2TabWidget label {
   border: 1px solid gray;
   background: var(--form-input-bg);
-  padding: 0 1cap;
+  padding: 0.3em 0.7em;
   border: none
 }
 

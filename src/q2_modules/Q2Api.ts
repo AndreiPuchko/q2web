@@ -28,3 +28,6 @@ export async function apiRequest(path: string, options: RequestInit = {}) {
     if (!res.ok) throw new Error("Request failed");
     return res.json();
 }
+export function generateRandomKey() {
+    return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+}

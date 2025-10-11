@@ -13,9 +13,7 @@ import Q2Button from './widgets/Button';
 import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
 import Q2Image from './widgets/Image';
-
-const generateRandomKey = () =>
-    crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+import { generateRandomKey } from "../q2_modules/Q2Api"
 
 
 interface Q2FrontFormProps {
@@ -273,7 +271,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                         idx -= 1;
                     }
                     stack.pop();
-
                     tabs.label = tabs.label + `;${col.label}`;
                     tabs.isTabWidget = true;
                 }
@@ -285,21 +282,20 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                         children: [],
                         column: col,
                     };
-
                     stack[stack.length - 1].children.push(panel);
                     tabs = panel
                     stack.push(panel);
                 }
-
             }
 
             if (col.column.startsWith("/h") ||
                 col.column.startsWith("/v") ||
                 col.column.startsWith("/f") ||
                 col.column.startsWith("/t")) {
+                const ukey = generateRandomKey();
                 const panel = {
                     label: col.label,
-                    key: `${col.column}-${index}`, // Generate unique key
+                    key: `${this.formKey}${col.column}-${index}`, // Generate unique key
                     children: [],
                     isTabPage: col.column === "/t" ? true : false,
                     column: col,
@@ -370,7 +366,11 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         const structuredColumns = this.createFormTree(columns);
 
         return (
-            <div ref={this.formRef} className="FormComponent" >
+            <div ref={this.formRef} className="FormComponent"
+                key={this.formKey}
+            id={this.formKey}
+            >
+
                 {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel))}
 
                 {((hasOkButton || hasCancelButton) && !subForm) && (
