@@ -24,10 +24,10 @@ export class Q2Widget<P extends Q2WidgetProps, S = {}> extends Component<P, S> {
     constructor(props: P) {
         super(props);
         if (!props.id) {
-            this.id = `${props.column.column}-${props.column.key}`;
+            this.id = `${props.form?.formKey}-${props.column.column}-${props.column.key}`;
         }
         else {
-            this.id = props.id;
+            this.id = `${props.form?.key}-${props.id}`;
         }
     }
 

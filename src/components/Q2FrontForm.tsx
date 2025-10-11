@@ -14,6 +14,10 @@ import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
 import Q2Image from './widgets/Image';
 
+const generateRandomKey = () =>
+    crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+
+
 interface Q2FrontFormProps {
     q2form: Q2Form;
     onClose?: () => void;
@@ -37,6 +41,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     formRef = React.createRef<HTMLDivElement>();
     okButtonText: string = "Ok";
     cancelButtonText: string = "Cancel";
+    formKey: string = generateRandomKey();
 
     constructor(props: Q2FrontFormProps) {
         super(props);
@@ -48,7 +53,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         };
         // Provide pointer to Form.s on Q2Form instance
         this.updateQ2FormLinks();
-        // console.log("FC", this.s);
     }
 
     private updateQ2FormLinks() {
@@ -151,7 +155,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         if (close && this.props.onClose) this.close();
     };
 
-    close = () =>{
+    close = () => {
         if (this.props.onClose) this.props.onClose()
     }
 
