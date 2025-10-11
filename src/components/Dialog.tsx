@@ -147,6 +147,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const { resizeable, moveable, width, height, left, top } = this.props.q2form;
         const saved = dialogState ? JSON.parse(dialogState) : {};
 
+        if (!saved.height) saved.height = "600px"
+
         const finalWidth = resizeable && saved.width ? saved.width : String(width);
         const finalHeight = resizeable && saved.height ? saved.height : String(height);
 
