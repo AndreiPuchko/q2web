@@ -1,10 +1,11 @@
 .Q2Button {
-    padding: 0.5cap 0.5cap;
+    padding: 0.5em 0.5em;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
     border: 1px solid green;
-    border-radius: 3px;
+    border-radius: 0.5em;
     text-align: center;
     text-decoration: none;
-    margin: 2px 4px;
 }
 
 .Q2Button:hover:enabled {

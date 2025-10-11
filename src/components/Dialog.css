@@ -8,6 +8,7 @@
   --dialog-disabled-overlay: rgba(255, 255, 255, 0.3);
   --close-btn-hover: red;
   --title-color: rgb(88, 88, 88);
+  --dialog-radius: 0.5em;
 }
 
 .theme-light {
@@ -32,6 +33,8 @@
   --title-color: lightgray;
 }
 
+
+
 * {}
 
 
@@ -40,7 +43,7 @@
 }
 
 .dialog-container {
-  border-radius: 0.5rem;
+  border-radius: var(--dialog-radius);
   position: absolute;
   border: 1px solid var(--dialog-border);
   background-color: var(--dialog-bg);
@@ -75,6 +78,8 @@
 .dialog-header {
   padding: 0px 10px;
   background-color: var(--dialog-header-bg);
+  border-top-left-radius: var(--dialog-radius);
+  border-top-right-radius: var(--dialog-radius);
   color: var(--title-color);
   height: 2em;
   user-select: none;
@@ -94,15 +99,6 @@
   background-color: var(--dialog-header-disabled);
 }
 
-.dialog-content {
-  padding: 0 2px 0 2px;
-  position: relative;
-  z-index: 2;
-  /* make content area independently scrollable */
-  /* overflow: auto;  */
-  /* reserve space for sticky header (header height = 2em) */
-  max-height: calc(100% - 2em);
-}
 
 .max-button,
 .close-button {

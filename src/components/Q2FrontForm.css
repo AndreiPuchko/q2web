@@ -163,20 +163,6 @@ label {
   color: var(--form-label);
 }
 
-.FormComponent {
-  min-width: 30cap;
-  min-height: 3cap;
-  height: 100%;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  /* Ensure padding and border are included in the element's total width and height */
-  background: var(--form-bg);
-}
-
-.FormComponent {
-  border: 1px solid transparent;
-}
 
 .field-set-style {
   border: none;

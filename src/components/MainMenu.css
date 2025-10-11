@@ -80,7 +80,7 @@ hr {
     border: none;
     color: var(--menu-btn-color);
     cursor: pointer;
-    font-size: 14px;
+    font-size: 1em;
     background: var(--menu-btn-bg);
 }
 
@@ -93,7 +93,7 @@ hr {
     background-color: var(--menu-btn-bg);
     color: var(--menu-btn-color);
     padding: 10px 20px;
-    font-size: 14px;
+    font-size: 1em;
     border: none;
     cursor: pointer;
 }
