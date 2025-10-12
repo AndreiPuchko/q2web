@@ -9,8 +9,9 @@ import { House, ArrowBigLeft } from "lucide-react";
 import './MainMenu.css';
 
 interface MainMenuProps {
-    q2forms: Array<Q2Form>
+    q2forms: Array<Q2Form>;
     isLoggedIn: boolean;
+    isLoginDialogOpen:boolean;
 }
 
 interface MainMenuState {
@@ -143,6 +144,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             // guestName,
             // guestLogo,
             isLoggedIn,
+            isLoginDialogOpen,
             // navigate,
         } = this.props;
 
@@ -194,7 +196,8 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                         !isLoggedIn ? "Login" : "Logout",
                         {
                             valid: GetQ2AppInstance()?.login_logout,
-                            class: "login-button"
+                            class: "login-button",
+                            disabled: isLoginDialogOpen ? true : false,
                         })
                 }} />
                 <Q2Button {...{

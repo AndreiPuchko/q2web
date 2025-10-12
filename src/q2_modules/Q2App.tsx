@@ -57,7 +57,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
   componentDidMount() {
     this.applyTheme();
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
-    this.showHome();
+    this.setUser();
   }
 
   componentWillUnmount() {
@@ -129,7 +129,6 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
 
       AuthForm.hookSubmit = (form) => {
         const { tabWidget, email, password, remember } = form.s;
-        console.log(AuthForm.s)
         if (tabWidget === "Login") {
           this.handleLogin(email, password, remember).then((close) => {
             if (close) form.close();
@@ -145,7 +144,16 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
         }
         return false;
       };
-      this.showDialog(AuthForm as T);
+
+      AuthForm.hookClosed = () => {
+        this.setState({isLoginDialogOpen: false});
+        return true;
+      }
+
+      this.setState(
+        { isLoginDialogOpen: true },
+        () => this.showDialog(AuthForm as T)
+      );
     }
   }
 
@@ -165,13 +173,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       remember ? localStorage.setItem("rememberedEmail", email) : localStorage.removeItem("rememberedEmail");
 
       if ("error" in res) return false;
-
-      const me = await apiRequest("/me");
-      this.setUser(me.user.name, me.user.uid);
-
-      this.setState({ isLoggedIn: true, isLoginDialogOpen: false },
-        () => this.closeAllDialogs());
-
+      this.setUser();
       return true;
     } catch (err) {
       console.error(err);
@@ -191,8 +193,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       } else {
         localStorage.removeItem("rememberedEmail");
       }
-      const me = await apiRequest("/me");
-      this.setUser(me.user.name, me.user.uid);
+      this.setUser();
     } catch (err) {
       console.log(err)
       // alert("Login failed");
@@ -206,13 +207,24 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
     this.setState({ isLoggedIn: false }, () => this.showHome())
   };
 
-  setUser = (userName: string, uid: number) => {
-    this.setState({ userName, userUid: uid, isLoggedIn: true, isLoginDialogOpen: false });
-    this.closeAllDialogs();
+  setUser = async () => {
+    try {
+      const me = await apiRequest("/me");
+      this.setState({
+        userName: me.user.name,
+        userUid: me.user.uid,
+        isLoggedIn: true,
+        isLoginDialogOpen: false
+      });
+      this.closeAllDialogs();
+    }
+    catch {
+      console.log("Not logged in");
+
+    }
   };
 
   showMsg = (msg: string): void => {
-    console.log(msg + "333");
     const msgBox = new Q2Form("", "msgbox", "msgbox", {
       hasMaxButton: false,
       hasOkButton: true,
@@ -270,7 +282,10 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
   render() {
     return (
       <>
-        <MainMenu q2forms={this.props.q2forms} isLoggedIn={this.state.isLoggedIn} />
+        <MainMenu
+          q2forms={this.props.q2forms}
+          isLoggedIn={this.state.isLoggedIn}
+          isLoginDialogOpen={this.state.isLoginDialogOpen} />
         {this.state.dialogs.map((dialog: any, index: any) => (
           <Dialog
             key={index}
