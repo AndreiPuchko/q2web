@@ -61,15 +61,11 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     }
 
     componentDidMount() {
-
         const formData = this.props.q2form.columns.reduce((acc: any, column: any) => {
             acc[column.column] = column.data || "";
             return acc;
         }, {});
         this.setState({ formData });
-        // console.log(formData)
-        // console.log(this.state.formData)
-
         document.addEventListener("keydown", this.handleKeyDown);
 
         // Focus on the first focusable element after a short delay to ensure rendering is complete
@@ -103,6 +99,10 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     componentWillUnmount() {
         // this.resizeObserver.disconnect();
         document.removeEventListener("keydown", this.handleKeyDown);
+        setTimeout(() => {
+            if (typeof this.props.q2form?.hookClosed === "function")
+                this.props.q2form.hookClosed(this)
+        }, 100);
     }
 
     handleFocus = () => {
@@ -144,13 +144,19 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     };
 
     handleSubmit = () => {
-        // console.log("Form submitted:", this.state.formData);
         let close: boolean = true;
         if (typeof this.props.q2form?.hookSubmit === "function") {
             close = this.props.q2form.hookSubmit(this);
         }
+        if (close) this.close();
+    };
 
-        if (close && this.props.onClose) this.close();
+    handleCancel = () => {
+        let close: boolean = true;
+        if (typeof this.props.q2form?.hookCancel === "function") {
+            close = this.props.q2form.hookCancel(this);
+        }
+        if (close) this.close();
     };
 
     close = () => {
@@ -162,12 +168,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
             this.props.onClose();
         } else {
             // console.log(action.label);
-        }
-    };
-
-    handleCancel = () => {
-        if (this.props.onClose) {
-            this.props.onClose();
         }
     };
 
@@ -354,7 +354,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         const { okButtonText, cancelButtonText } = this.state;
         // If q2form contains tabular data, render DataGrid instead of the standard form
         if (q2form?.data && Array.isArray(q2form.data) && q2form.data.length > 0) {
-            // ensure non-optional props for DataGrid
             return <DataGrid q2form={q2form} onClose={onClose ?? (() => { })} isTopDialog={!!isTopDialog} />;
         }
 
@@ -367,13 +366,13 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         return (
             <div ref={this.formRef} className="FormComponent"
                 key={this.formKey}
-            id={this.formKey}
+                id={this.formKey}
             >
 
                 {structuredColumns.children && structuredColumns.children.map((panel) => this.renderPanel(panel))}
 
                 {((hasOkButton || hasCancelButton) && !subForm) && (
-                    <div className="FormBottomButtons" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <div className="form-bottom-panel" >
                         {hasOkButton && <Q2Button  {...{
                             column: new Q2Control(
                                 "ok",
@@ -389,10 +388,8 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                                 { valid: this.handleCancel })
                         }}
                         />}
-
                     </div>
                 )}
-
             </div>
         );
     }

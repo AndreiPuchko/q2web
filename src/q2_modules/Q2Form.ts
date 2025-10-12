@@ -123,7 +123,8 @@ export class Q2Form {
     hookFocusChanged?: (form: Q2FrontForm) => void;
     hookShow?: (form: Q2FrontForm) => void;
     hookSubmit?: (form: Q2FrontForm) => boolean;
-    hookCancel?: (form: Q2FrontForm) => void;
+    hookCancel?: (form: Q2FrontForm) => boolean;
+    hookClosed?: (form: Q2FrontForm) => void;
     dialogIndex: number;
     frontForm: Q2FrontForm | undefined;
     class: string;
@@ -178,7 +179,6 @@ export class Q2Form {
         if (this.frameless && this.height === "") this.height = "100%"
         if (this.height === "") this.height = "auto"
         if (this.width === "") this.width = "auto"
-        console.log(this.height)
     }
 
     add_control(column: string, label?: string, options: any = {}) {
