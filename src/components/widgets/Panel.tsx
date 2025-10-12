@@ -114,7 +114,8 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
         if (panel.isTabWidget) {
             className += " tab-widget ";
         }
-        let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
+        // let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
+        let style: CSSProperties = { display: "flex", flex: 1, padding: "0.1cap" };
         const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
         if (panel.column.column === "/f") {
