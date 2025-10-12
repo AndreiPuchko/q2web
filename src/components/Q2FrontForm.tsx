@@ -72,7 +72,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         setTimeout(() => {
             focusFirstFocusableElement(this.formRef.current);
         }, 100);
-        // console.log("DM", this.s);
         if (typeof this.props.q2form?.hookShow === "function") {
             this.props.q2form.hookShow(this);
         }
@@ -99,10 +98,8 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     componentWillUnmount() {
         // this.resizeObserver.disconnect();
         document.removeEventListener("keydown", this.handleKeyDown);
-        setTimeout(() => {
-            if (typeof this.props.q2form?.hookClosed === "function")
-                this.props.q2form.hookClosed(this)
-        }, 100);
+        if (typeof this.props.q2form?.hookClosed === "function")
+            this.props.q2form.hookClosed(this)
     }
 
     handleFocus = () => {

@@ -97,6 +97,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
     if (this.state.isLoggedIn) {
       await this.handleLogout();
     } else {
+      if (this.state.isLoginDialogOpen) return;
       const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
       AuthForm.hasOkButton = true;
       AuthForm.hasCancelButton = true;
