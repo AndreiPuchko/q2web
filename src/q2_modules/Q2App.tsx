@@ -57,7 +57,8 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
   componentDidMount() {
     this.applyTheme();
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
-    this.setUser();
+    this.setUser().then(() => this.showHome());
+
   }
 
   componentWillUnmount() {
@@ -147,7 +148,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       };
 
       AuthForm.hookClosed = () => {
-        this.setState({isLoginDialogOpen: false});
+        this.setState({ isLoginDialogOpen: false });
         return true;
       }
 
