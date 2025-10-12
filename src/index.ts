@@ -16,4 +16,9 @@ export { Q2Spacer } from "./components/widgets/Spacer"
 export { Q2Text } from "./components/widgets/Text"
 export { Q2Image } from "./components/widgets/Image"
 
-export { showDialog, closeDialog, GetQ2AppInstance } from "./q2_modules/Q2Api"
+export {
+    showDialog,
+    closeDialog,
+    GetQ2AppInstance,
+    apiRequest
+} from "./q2_modules/Q2Api"
