@@ -14,7 +14,7 @@
   --form-bg: #fff;
   --form-border: #b3b6f5;
   --form-label: #222;
-  --form-groupbox-bg: #f5f5f5;
+  --form-groupbox-bg: rgb(221, 244, 255);
   --form-input-bg: rgb(225, 242, 245);
   --form-input: black;
   --form-input-disabled: lightgray;
@@ -25,7 +25,7 @@
   --form-bg: #23272f;
   --form-border: rgb(179, 186, 245);
   --form-label: #e0e0e0;
-  --form-groupbox-bg: #23272f;
+  --form-groupbox-bg: #3e434e;
   --form-input-bg: gray;
   --form-input: white;
   --form-input-disabled: gray;
@@ -48,27 +48,23 @@ button:disabled {
 
 .Q2RadioButton,
 .Q2CheckBox-container,
-.Q2Combo:input,
+.Q2Combo input,
 .Q2Text,
 .Q2Line {
   background-color: var(--form-input-bg);
   color: var(--form-input);
-  border: 1px solid gray;
-  padding: 1px 2px;
+  border: 1px solid rgb(194, 192, 192);
+  border-radius: 5px;
+}
+
+.Q2Line {
+  padding: 0.3em;
 }
 
 .Q2RadioButton,
 .Q2CheckBox-container {
   display: inline-block;
-  padding: 0 0cap;
-}
-
-.Q2CheckBox-container {
-  /* padding: 0px; */
-  /* height: 1.8cap; */
-  /* display: flex; */
-  /* margin: 3px; */
-  /* padding-right: 0.5cap; */
+  /* padding: 0 0; */
 }
 
 .Q2RadioButton:focus-within,
@@ -80,19 +76,9 @@ button:disabled {
   background-color: var(--form-input-focus);
 }
 
-._Q2RadioButton.disabled,
-._Q2CheckBox-container.disabled,
-._Q2Text:disabled,
-._Q2Line:disabled {
-  background-color: var(--form-input-disabled);
-}
-
+.Q2RadioButton label,
 .Q2CheckBox-container label {
-  padding: 0 1cap;
-}
-
-.Q2RadioButton label {
-  padding: 0 1cap;
+  padding: 0 1cap 0 0;
 }
 
 .Panel {
@@ -100,10 +86,7 @@ button:disabled {
   color: var(--form-label);
   display: flex;
   position: relative;
-
-  /* Ensure minWidth is set to 0 to prevent overflow */
 }
-
 
 
 .flex-row {
@@ -117,7 +100,7 @@ button:disabled {
 .group-box {
   background: var(--form-groupbox-bg);
   margin: 0.3cap;
-  padding: 0px 0;
+  padding: 0 0;
   border: none;
 }
 
@@ -134,7 +117,6 @@ button:disabled {
   border-radius: 5px;
   padding: 0;
 }
-
 
 .tab-page {
   padding: 0;
@@ -163,11 +145,9 @@ label {
   color: var(--form-label);
 }
 
-
 .field-set-style {
   border: none;
   padding: 0;
-  width: 100%;
   display: flex;
 }
 
@@ -175,4 +155,10 @@ label {
   margin-right: 0.6em;
   margin-bottom: 0.1em;
   width: 100%
+}
+
+.form-bottom-panel {
+ display: flex; 
+ padding-top: 0.3em;
+ justify-content: flex-end;
 }
