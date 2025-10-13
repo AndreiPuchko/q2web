@@ -387,6 +387,7 @@ export class Q2Line extends Q2Widget<Q2LineProps, Q2LineState> {
                 this.handleSpin(-1);
             }
         };
+        Object.assign(style, column.style)
 
         return (
             <div style={{ display: "flex", alignItems: "center" }}>

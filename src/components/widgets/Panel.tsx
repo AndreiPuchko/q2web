@@ -156,6 +156,8 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
         }
         else if ([8, 5, 2].includes(panel.column?.alignment)) {
             style.textAlign = 'center';
+            if (panel.column.column.startsWith("/h"))
+                rootStyle.justifyContent = "center"
         }
         else if ([9, 6, 3].includes(panel.column?.alignment)) {
             style.textAlign = 'right';
@@ -253,7 +255,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                             )
                         ))}
                 {(panel?.isTabWidget) ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}
-                <fieldset className="field-set-style" disabled={this.hasCheck && !checkChecked}>
+                <fieldset className="field-set-style" disabled={this.hasCheck && !checkChecked} >
                     <div style={style}>
                         {panel.children && panel.children.map((child: any, index: number) => {
                             // Ensure child.id is always defined and unique
@@ -289,6 +291,14 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                                     }
                                     child.checkChecked = form.c[child.column];
                                 }
+                                const labelStyle = {};
+                                if (child.control != "label") {
+                                    labelStyle.justifySelf = "end";
+                                    labelStyle.justifySelf = "end";
+                                    labelStyle.marginRight = "0.5em";
+                                }
+                                Object.assign(labelStyle, child.style)
+                                console.log(child.style, "<<")
                                 return (
                                     <React.Fragment key={child.key + `-fragment-${index}`}>
                                         {child.check ?
@@ -328,7 +338,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                                                     htmlFor={id}
                                                     key={child.key + "-label"}
                                                     className="form-label"
-                                                    style={{ justifySelf: "end", marginRight: "0.5em" }}
+                                                    style={labelStyle}
                                                 >
                                                     {child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""}
                                                 </label> : <></>)
