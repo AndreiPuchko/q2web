@@ -291,7 +291,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                                     }
                                     child.checkChecked = form.c[child.column];
                                 }
-                                const labelStyle = {};
+                                const labelStyle: CSSProperties = {};
                                 if (child.control != "label") {
                                     labelStyle.justifySelf = "end";
                                     labelStyle.justifySelf = "end";

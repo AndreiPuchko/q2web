@@ -42,6 +42,7 @@ export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
     }
 
     async fetchData() {
+        if (!this.props.q2form.dataGridParams.loader) return;
         try {
             const data = await this.props.q2form.dataGridParams.loader();
             this.setState({ data, loading: false });
@@ -185,7 +186,7 @@ export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
 
         if (mode === EDIT || mode === COPY) {
             const { selectedRow } = this.state;
-            const rowData = this.props.q2form.data[selectedRow];
+            const rowData = this.state.data[selectedRow];
 
             q2formCopy.columns.map((column: Q2Control) => (
                 column.data = rowData[column.column] || column.data || ""
