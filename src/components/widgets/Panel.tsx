@@ -336,7 +336,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                                                 <label
                                                     htmlFor={id}
                                                     key={child.key + "-label"}
-                                                    className="form-label"
+                                                    className={`form-label ${child.class}`}
                                                     style={labelStyle}
                                                 >
                                                     {child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""}
