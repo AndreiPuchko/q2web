@@ -97,9 +97,6 @@ export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
 
     handleRowClick = (index: any) => {
         this.setState({ selectedRow: index }, this.scrollToRow);
-        if (typeof this.props.q2form?.hookDataGridRowClicked === "function") {
-            this.props.q2form.hookDataGridRowClicked(this);
-        }
         
     };
 
@@ -168,6 +165,9 @@ export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
                     this.tableBodyRef.current!.scrollTop = rowBottom - clientHeight;
                 }
             }
+        }
+        if (typeof this.props.q2form?.hookDataGridRowClicked === "function") {
+            this.props.q2form.hookDataGridRowClicked(this);
         }
     };
 
