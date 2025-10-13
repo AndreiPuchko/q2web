@@ -351,7 +351,9 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         const { okButtonText, cancelButtonText } = this.state;
         // If q2form contains tabular data, render DataGrid instead of the standard form
         if (q2form?.data && Array.isArray(q2form.data) && q2form.data.length > 0) {
-            return <DataGrid q2form={q2form} onClose={onClose ?? (() => { })} isTopDialog={!!isTopDialog} />;
+            return <DataGrid 
+            q2form={q2form} 
+            onClose={onClose ?? (() => { })} isTopDialog={!!isTopDialog} />;
         }
 
         const { columns } = q2form;
@@ -359,9 +361,8 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         const subForm = this.props.q2form?.subForm;
         const hasCancelButton = this.props.q2form.hasCancelButton;
         const structuredColumns = this.createFormTree(columns);
-
         return (
-            <div ref={this.formRef} className="FormComponent"
+            <div ref={this.formRef} className={`FormComponent ${q2form.class}`}
                 key={this.formKey}
                 id={this.formKey}
             >

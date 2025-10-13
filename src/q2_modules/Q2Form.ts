@@ -93,10 +93,19 @@ export class Q2Control {
     }
 }
 
+
+type DataGridParams = {
+    showCurrentRow: boolean,
+}
+
+const defaultDataGridParams = {
+    showCurrentRow: true
+}
+
 export class Q2Form {
     key: string;
     columns: any[];
-    data: any[];
+    data: any[] | (() => void);
     actions: any[];
     hasCancelButton: boolean;
     hasOkButton: boolean;
@@ -128,6 +137,7 @@ export class Q2Form {
     dialogIndex: number;
     frontForm: Q2FrontForm | undefined;
     class: string;
+    dataGridParams: DataGridParams;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -155,6 +165,7 @@ export class Q2Form {
         this.dialogIndex = -1;
         this.frontForm = undefined;
         this.class = options.class || "";
+        this.dataGridParams = {...defaultDataGridParams}
         if (key === "") {
             this.key = generateRandomKey();
         }

@@ -53,7 +53,7 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
             const rowHeight = rowElement.offsetHeight;
             const tableHeight = this.dataGridRef.current!.clientHeight;
             const element = this.dataGridRef.current!.querySelector('.DialogToolBar') as HTMLTableRowElement;
-            const toolbarHeight = element.offsetHeight;
+            const toolbarHeight = (element) ? element.offsetHeight : 0;
             const visibleRows = Math.floor((tableHeight - toolbarHeight) / rowHeight);
             if (visibleRows > this.state.visibleRows) {
                 this.setState({ visibleRows });
@@ -211,9 +211,9 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
         ];
         // Root contains toolbar and a DataGrid root; the actual scrollable area is .DataGridBody
         return (
-            <div ref={this.dataGridRef} className="DataGridRoot" style={{ height: '100%' }}>
-                <DialogToolBar actions={runtimeActions} onAction={this.handleAction} />
-                <div className="DataGrid">
+            <div ref={this.dataGridRef} className="DataGridRoot">
+                {actions.length > 0 && (<DialogToolBar actions={runtimeActions} onAction={this.handleAction} />)}
+                <div className={`DataGrid ${this.props.q2form.class}`}>
                     <div className="DataGridBody" ref={this.tableBodyRef} onScroll={this.handleScroll}>
                         <table>
                             <thead className="DataGrigHeader">
@@ -225,7 +225,9 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
                             </thead>
                             <tbody>
                                 {data.slice(0, visibleRows).map((row: any, index: number) => {
-                                    const isSelected = selectedRow === index;
+                                    const isSelected = selectedRow === index &&
+                                        this.props.q2form.dataGridParams.showCurrentRow;
+
                                     const backgroundColor = isSelected ? 'Highlight' : (index % 2 === 1 ? '#e7f7f7' : 'white');
                                     const color = isSelected ? '#FFAA99' : 'black';
                                     return (
