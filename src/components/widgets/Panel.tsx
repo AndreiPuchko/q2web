@@ -4,370 +4,374 @@ import Q2RadioButton from "./RadioButton";
 import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 import { generateRandomKey } from "../../q2_modules/Q2Api"
 
+function HtmlLabel({ html }) {
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+}
 
 interface Q2PanelProps {
-    panel: any;
-    onChange: (e: any) => void;
-    forceResize?: () => void;
-    form: any;
-    formData: any;
-    setState: any;
+  panel: any;
+  onChange: (e: any) => void;
+  forceResize?: () => void;
+  form: any;
+  formData: any;
+  setState: any;
 }
 
 export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> {
-    hasCheck: boolean;
-    constructor(props: Q2PanelProps) {
-        super(props);
-        const { panel } = this.props;
-        this.hasCheck = panel.column?.check;
-        // Use panel.column.checkChecked for initial state
-        this.state = {
-            checkChecked: panel.column.checkChecked
-        };
-    }
+  hasCheck: boolean;
+  constructor(props: Q2PanelProps) {
+    super(props);
+    const { panel } = this.props;
+    this.hasCheck = panel.column?.check;
+    // Use panel.column.checkChecked for initial state
+    this.state = {
+      checkChecked: panel.column.checkChecked
+    };
+  }
 
-    static getDerivedStateFromProps(nextProps: Q2PanelProps, prevState: { checkChecked: boolean }) {
-        // Sync state with panel.column.checkChecked if it changes from parent (e.g. on section switch)
-        if (nextProps.panel.column.checkChecked !== prevState.checkChecked) {
-            return { checkChecked: nextProps.panel.column.checkChecked };
+  static getDerivedStateFromProps(nextProps: Q2PanelProps, prevState: { checkChecked: boolean }) {
+    // Sync state with panel.column.checkChecked if it changes from parent (e.g. on section switch)
+    if (nextProps.panel.column.checkChecked !== prevState.checkChecked) {
+      return { checkChecked: nextProps.panel.column.checkChecked };
+    }
+    return null;
+  }
+
+  componentDidMount() {
+    // If panel has check, collect all input columns and set their check status in form.c
+    if (this.hasCheck && this.panelRef) {
+      // Find all input elements with a name attribute (assumed to be column name)
+      const inputs = this.panelRef.querySelectorAll('input[name]');
+      inputs.forEach((input: any) => {
+        if (input && input.name) {
+          this.props.form.c[input.name] = !!this.state.checkChecked;
         }
-        return null;
+      });
+      // console.log("DM", this.props.form)
+      // console.log("DM", this.props.form.c)
     }
+  }
 
-    componentDidMount() {
-        // If panel has check, collect all input columns and set their check status in form.c
-        if (this.hasCheck && this.panelRef) {
-            // Find all input elements with a name attribute (assumed to be column name)
-            const inputs = this.panelRef.querySelectorAll('input[name]');
-            inputs.forEach((input: any) => {
-                if (input && input.name) {
-                    this.props.form.c[input.name] = !!this.state.checkChecked;
-                }
-            });
-            // console.log("DM", this.props.form)
-            // console.log("DM", this.props.form.c)
+  componentDidUpdate(): void {
+    this.componentDidMount();
+  }
+
+
+  checkStatusChanged(checkStatus?: any) {
+    // If panel has check, update form.c for all children to match panel check status
+    // console.log(this.state.checkChecked);
+    if (this.hasCheck && this.panelRef) {
+      const inputs = this.panelRef.querySelectorAll('input[name]');
+      inputs.forEach((input: any) => {
+        if (input && input.name) {
+          this.props.form.c[input.name] = !!checkStatus;
+          // this.props.form.c[input.name] = !!this.state.checkChecked;
         }
+      });
     }
+    this.props.form.handleChange({
+      target: {
+        value: "",
+        name: ""
+      }
+    })
+  }
 
-    componentDidUpdate(): void {
-        this.componentDidMount();
-    }
-
-
-    checkStatusChanged(checkStatus?: any) {
-        // If panel has check, update form.c for all children to match panel check status
-        // console.log(this.state.checkChecked);
-        if (this.hasCheck && this.panelRef) {
-            const inputs = this.panelRef.querySelectorAll('input[name]');
-            inputs.forEach((input: any) => {
-                if (input && input.name) {
-                    this.props.form.c[input.name] = !!checkStatus;
-                    // this.props.form.c[input.name] = !!this.state.checkChecked;
-                }
-            });
+  handleCheckStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { panel } = this.props;
+    const checked = e.currentTarget.checked ? true : false;
+    this.checkStatusChanged(checked)
+    this.setState({ checkChecked: checked }, () => {
+      this.props.onChange(e);
+      panel.column.checkChecked = checked;
+      if (checked && this.panelRef) {
+        const fieldset = this.panelRef.querySelector('fieldset.field-set-style');
+        if (fieldset instanceof HTMLElement) {
+          setTimeout(() => {
+            focusFirstFocusableElement(fieldset);
+          }, 100);
         }
-        this.props.form.handleChange({
-            target: {
-                value: "",
-                name: ""
-            }
-        })
+      }
+    });
+  };
+
+  panelRef: HTMLDivElement | null = null;
+
+  render() {
+    const { panel, form, setState } = this.props;
+    // Panel style logic (copied from Form.renderPanel)
+    panel.panelKey = generateRandomKey();
+    let className = "Panel";
+    if (panel.column.column.startsWith("/h")) className += " flex-row";
+    if (panel.column.column.startsWith("/v") || panel.column.column.startsWith("/t")) className += " flex-column";
+    if (panel.column.column.includes("o")) className += " q2-scroll ";
+    if (panel?.label !== "" && panel?.label !== undefined && !panel?.isTabWidget) {
+      className += " group-box ";
+    }
+    if (panel?.label !== "-" && panel?.label !== "" && !panel?.isTabWidget && panel?.label !== undefined) {
+      className += " group-box-border ";
+    }
+    if (panel.isTabPage) {
+      className += " tab-page ";
+    }
+    if (panel.isTabWidget) {
+      className += " tab-widget ";
+    }
+    // let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
+    let style: CSSProperties = { display: "flex", flex: 1, padding: "0.1cap" };
+    const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
+
+    if (panel.column.column === "/f") {
+      className += " panel-formgrid";
+      style = {
+        display: "grid",
+        gridTemplateColumns: "max-content 1fr",
+        width: "100%",
+        paddingRight: "1cap",
+        // gap: "0.2em",
+        // padding: "0.5cap"
+      };
+    } else if (panel.column.column.startsWith("/v") || panel.column.column.startsWith("/t")) {
+      style.flexDirection = 'column';
+    } else {
+      style.flexDirection = 'row';
     }
 
-    handleCheckStatusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { panel } = this.props;
-        const checked = e.currentTarget.checked ? true : false;
-        this.checkStatusChanged(checked)
-        this.setState({ checkChecked: checked }, () => {
-            this.props.onChange(e);
-            panel.column.checkChecked = checked;
-            if (checked && this.panelRef) {
-                const fieldset = this.panelRef.querySelector('fieldset.field-set-style');
-                if (fieldset instanceof HTMLElement) {
-                    setTimeout(() => {
-                        focusFirstFocusableElement(fieldset);
-                    }, 100);
-                }
-            }
-        });
+    if (panel.column.column.includes("o")) {
+      style.overflow = "auto";
+    }
+
+    style.alignItems = 'start';
+    style.justifyContent = 'flex-start';
+
+    if ([7, 8, 9].includes(panel.column?.alignment)) {
+      style.alignItems = 'start';
+    }
+    else if ([4, 5, 6].includes(panel.column?.alignment)) {
+      style.alignItems = 'center';
+    }
+    else if ([1, 2, 3].includes(panel.column?.alignment)) {
+      style.alignItems = 'end';
+    }
+
+    if ([7, 4, 1].includes(panel.column?.alignment)) {
+      style.textAlign = 'left';
+    }
+    else if ([8, 5, 2].includes(panel.column?.alignment)) {
+      style.textAlign = 'center';
+      if (panel.column.column.startsWith("/h"))
+        rootStyle.justifyContent = "center"
+    }
+    else if ([9, 6, 3].includes(panel.column?.alignment)) {
+      style.textAlign = 'right';
+    }
+
+    if (panel.column.label === "") {
+      rootStyle.border = "none";
+      rootStyle.margin = "0px";
+      rootStyle.padding = "0px";
+    }
+
+    rootStyle.minWidth = "max-content";
+
+    const panel_id = `${panel.column.key}-${panel.column.tag}-panel-id`;
+
+    // Use state.checkChecked for rendering
+    // const checkChecked = this.hasCheck ? this.state.checkChecked : undefined;
+    const checkChecked = this.state.checkChecked;
+
+    const tabs: any = [];
+    const forceResize = this.props.forceResize;
+    if (panel?.isTabWidget) {
+      panel.children.reduce((a: any, b: any) => {
+        a;
+        tabs.push({ key: b.key, label: b.label, display: "" });
+      }, tabs)
+    }
+    function tabWidgetValid(form: Q2Form) {
+      let currentOption = form.s.tabWidget;
+      if (!currentOption) {
+        currentOption = tabs[0].label;
+      }
+      tabs.map((tab: any, idx: number) => {
+        const el = document.getElementById(tab.key)
+        if (el) {
+          if (tab.label === currentOption) {
+            el.style.display = "";
+          }
+          else {
+            tabs[idx].display = el.style.display;
+            el.style.display = "none";
+          }
+        }
+      })
+      if (forceResize) forceResize();
+      return true
+    }
+    const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
+      pic: panel.label,
+      data: 1,
+      valid: tabWidgetValid,
+      class: "Q2TabWidget ",
+      key: generateRandomKey()
+    })
+
+    const tabWidgetControlProps = {
+      column: tabWidgetControl,
+      form: this.props.form,
+      ref: (ref: any) => { this.props.form.w[tabWidgetControl.column] = ref; }
     };
 
-    panelRef: HTMLDivElement | null = null;
+    return (
+      <div
+        className={className}
+        style={rootStyle}
+        key={panel.column.key}
+        id={panel.panelKey}
+        ref={ref => { this.panelRef = ref; }}
+      >
+        {panel.column.label && (
+          panel?.isTabPage || panel?.isTabWidget ?
+            ""  // no group box header for tab pages
+            :
+            (this.hasCheck ? ( // Group Box with checkbox
+              <div className="group-box-title">
+                <input
+                  id={panel_id}
+                  key={panel_id}
+                  type="checkbox"
+                  checked={!!checkChecked}
+                  onChange={this.handleCheckStatusChange}
+                  disabled={!!panel.column.checkDisabled}
+                />
+                <label htmlFor={panel_id}>{panel.column.label}</label>
+              </div>
+            ) :
+              (  // Just Group Box Title
+                panel.label !== "-" ?
+                  <div className="group-box-title">{panel?.isTabs ?
+                    panel.label + "!" :
+                    (panel?.isTabPage ?
+                      "!" : (panel.label === "-" ? ""
+                        : panel.column.label))}</div>
+                  : <></>
+              )
+            ))}
+        {(panel?.isTabWidget) ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}
+        <fieldset className="field-set-style" disabled={this.hasCheck && !checkChecked} >
+          <div style={style}>
+            {panel.children && panel.children.map((child: any, index: number) => {
+              // Ensure child.id is always defined and unique
+              const childId = child.id || `${child.column}-${child.key || index}`;
+              const id = `${childId}-control-cb`;
+              if (child.children) {
+                // render nested panel
+                const nestedPanelStyle: any = {}
 
-    render() {
-        const { panel, form, setState } = this.props;
-        // Panel style logic (copied from Form.renderPanel)
-        panel.panelKey = generateRandomKey();
-        let className = "Panel";
-        if (panel.column.column.startsWith("/h")) className += " flex-row";
-        if (panel.column.column.startsWith("/v") || panel.column.column.startsWith("/t")) className += " flex-column";
-        if (panel.column.column.includes("o")) className += " q2-scroll ";
-        if (panel?.label !== "" && panel?.label !== undefined && !panel?.isTabWidget) {
-            className += " group-box ";
-        }
-        if (panel?.label !== "-" && panel?.label !== "" && !panel?.isTabWidget && panel?.label !== undefined) {
-            className += " group-box-border ";
-        }
-        if (panel.isTabPage) {
-            className += " tab-page ";
-        }
-        if (panel.isTabWidget) {
-            className += " tab-widget ";
-        }
-        // let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
-        let style: CSSProperties = { display: "flex", flex: 1, padding: "0.1cap" };
-        const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
+                if (child.children.some((item: any) => {
+                  return "children" in item || item?.datalen === undefined || item?.datalen === 0
+                }))
+                  nestedPanelStyle["width"] = "100%"
+                else
+                  nestedPanelStyle["display"] = "inline-block"
 
-        if (panel.column.column === "/f") {
-            className += " panel-formgrid";
-            style = {
-                display: "grid",
-                gridTemplateColumns: "max-content 1fr",
-                width: "100%",
-                paddingRight: "1cap",
-                // gap: "0.2em",
-                // padding: "0.5cap"
-            };
-        } else if (panel.column.column.startsWith("/v") || panel.column.column.startsWith("/t")) {
-            style.flexDirection = 'column';
-        } else {
-            style.flexDirection = 'row';
-        }
-
-        if (panel.column.column.includes("o")) {
-            style.overflow = "auto";
-        }
-
-        style.alignItems = 'start';
-        style.justifyContent = 'flex-start';
-
-        if ([7, 8, 9].includes(panel.column?.alignment)) {
-            style.alignItems = 'start';
-        }
-        else if ([4, 5, 6].includes(panel.column?.alignment)) {
-            style.alignItems = 'center';
-        }
-        else if ([1, 2, 3].includes(panel.column?.alignment)) {
-            style.alignItems = 'end';
-        }
-
-        if ([7, 4, 1].includes(panel.column?.alignment)) {
-            style.textAlign = 'left';
-        }
-        else if ([8, 5, 2].includes(panel.column?.alignment)) {
-            style.textAlign = 'center';
-            if (panel.column.column.startsWith("/h"))
-                rootStyle.justifyContent = "center"
-        }
-        else if ([9, 6, 3].includes(panel.column?.alignment)) {
-            style.textAlign = 'right';
-        }
-
-        if (panel.column.label === "") {
-            rootStyle.border = "none";
-            rootStyle.margin = "0px";
-            rootStyle.padding = "0px";
-        }
-
-        rootStyle.minWidth = "max-content";
-
-        const panel_id = `${panel.column.key}-${panel.column.tag}-panel-id`;
-
-        // Use state.checkChecked for rendering
-        // const checkChecked = this.hasCheck ? this.state.checkChecked : undefined;
-        const checkChecked = this.state.checkChecked;
-
-        const tabs: any = [];
-        const forceResize = this.props.forceResize;
-        if (panel?.isTabWidget) {
-            panel.children.reduce((a: any, b: any) => {
-                a;
-                tabs.push({ key: b.key, label: b.label, display: "" });
-            }, tabs)
-        }
-        function tabWidgetValid(form: Q2Form) {
-            let currentOption = form.s.tabWidget;
-            if (!currentOption) {
-                currentOption = tabs[0].label;
-            }
-            tabs.map((tab: any, idx: number) => {
-                const el = document.getElementById(tab.key)
-                if (el) {
-                    if (tab.label === currentOption) {
-                        el.style.display = "";
-                    }
-                    else {
-                        tabs[idx].display = el.style.display;
-                        el.style.display = "none";
-                    }
+                return (
+                  <div key={child.key + `-form-group1-${index}`}
+                    id={child.key}
+                    // style={{ gridColumn: "1 / span 2", width: "100%" }}>
+                    style={nestedPanelStyle}
+                  // style={{ display: "inline-block" }}
+                  >
+                    {form.renderPanel(child)}
+                  </div>
+                );
+              } else {
+                // render input
+                if (child.check) {
+                  // Ensure form.c[child.column] is initialized
+                  if (typeof form.c[child.column] === "undefined") {
+                    form.c[child.column] = typeof child.checkChecked !== "undefined" ? child.checkChecked : !!child.data;
+                  }
+                  child.checkChecked = form.c[child.column];
                 }
-            })
-            if (forceResize) forceResize();
-            return true
-        }
-        const tabWidgetControl: Q2Control = new Q2Control("tabWidget", "", {
-            pic: panel.label,
-            data: 1,
-            valid: tabWidgetValid,
-            class: "Q2TabWidget ",
-            key: generateRandomKey()
-        })
-
-        const tabWidgetControlProps = {
-            column: tabWidgetControl,
-            form: this.props.form,
-            ref: (ref: any) => { this.props.form.w[tabWidgetControl.column] = ref; }
-        };
-
-        return (
-            <div
-                className={className}
-                style={rootStyle}
-                key={panel.column.key}
-                id={panel.panelKey}
-                ref={ref => { this.panelRef = ref; }}
-            >
-                {panel.column.label && (
-                    panel?.isTabPage || panel?.isTabWidget ?
-                        ""  // no group box header for tab pages
-                        :
-                        (this.hasCheck ? ( // Group Box with checkbox
-                            <div className="group-box-title">
-                                <input
-                                    id={panel_id}
-                                    key={panel_id}
-                                    type="checkbox"
-                                    checked={!!checkChecked}
-                                    onChange={this.handleCheckStatusChange}
-                                    disabled={!!panel.column.checkDisabled}
-                                />
-                                <label htmlFor={panel_id}>{panel.column.label}</label>
-                            </div>
-                        ) :
-                            (  // Just Group Box Title
-                                panel.label !== "-" ?
-                                    <div className="group-box-title">{panel?.isTabs ?
-                                        panel.label + "!" :
-                                        (panel?.isTabPage ?
-                                            "!" : (panel.label === "-" ? ""
-                                                : panel.column.label))}</div>
-                                    : <></>
-                            )
-                        ))}
-                {(panel?.isTabWidget) ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}
-                <fieldset className="field-set-style" disabled={this.hasCheck && !checkChecked} >
-                    <div style={style}>
-                        {panel.children && panel.children.map((child: any, index: number) => {
-                            // Ensure child.id is always defined and unique
-                            const childId = child.id || `${child.column}-${child.key || index}`;
-                            const id = `${childId}-control-cb`;
-                            if (child.children) {
-                                // render nested panel
-                                const nestedPanelStyle: any = {}
-
-                                if (child.children.some((item: any) => {
-                                    return "children" in item || item?.datalen === undefined || item?.datalen === 0
-                                }))
-                                    nestedPanelStyle["width"] = "100%"
-                                else
-                                    nestedPanelStyle["display"] = "inline-block"
-
-                                return (
-                                    <div key={child.key + `-form-group1-${index}`}
-                                        id={child.key}
-                                        // style={{ gridColumn: "1 / span 2", width: "100%" }}>
-                                        style={nestedPanelStyle}
-                                    // style={{ display: "inline-block" }}
-                                    >
-                                        {form.renderPanel(child)}
-                                    </div>
-                                );
-                            } else {
-                                // render input
-                                if (child.check) {
-                                    // Ensure form.c[child.column] is initialized
-                                    if (typeof form.c[child.column] === "undefined") {
-                                        form.c[child.column] = typeof child.checkChecked !== "undefined" ? child.checkChecked : !!child.data;
-                                    }
-                                    child.checkChecked = form.c[child.column];
+                const labelStyle: CSSProperties = {};
+                if (child.control != "label") {
+                  labelStyle.justifySelf = "end";
+                  labelStyle.justifySelf = "end";
+                  labelStyle.marginRight = "0.5em";
+                }
+                Object.assign(labelStyle, child.style)
+                return (
+                  <React.Fragment key={child.key + `-fragment-${index}`}>
+                    {child.check ?
+                      <div key={child.key + `-checkdiv-${index}`} style={{ justifySelf: "end", marginRight: "0.5em" }}>
+                        <input
+                          id={id}
+                          key={id}
+                          type="checkbox"
+                          checked={typeof form.c[child.column] !== "undefined" ? form.c[child.column] : !!child.checkChecked}
+                          onChange={e => {
+                            const checked = e.target.checked;
+                            child.checkChecked = checked;
+                            form.c[child.column] = checked;
+                            setState(
+                              (prevState: any) => ({
+                                formData: {
+                                  ...prevState.formData,
+                                  [child.column]: checked
                                 }
-                                const labelStyle: CSSProperties = {};
-                                if (child.control != "label") {
-                                    labelStyle.justifySelf = "end";
-                                    labelStyle.justifySelf = "end";
-                                    labelStyle.marginRight = "0.5em";
+                              }),
+                              () => {
+                                if (checked && typeof form.w[child.column]?.focus === "function") {
+                                  form.w[child.column].focus();
                                 }
-                                Object.assign(labelStyle, child.style)
-                                return (
-                                    <React.Fragment key={child.key + `-fragment-${index}`}>
-                                        {child.check ?
-                                            <div key={child.key + `-checkdiv-${index}`} style={{ justifySelf: "end", marginRight: "0.5em" }}>
-                                                <input
-                                                    id={id}
-                                                    key={id}
-                                                    type="checkbox"
-                                                    checked={typeof form.c[child.column] !== "undefined" ? form.c[child.column] : !!child.checkChecked}
-                                                    onChange={e => {
-                                                        const checked = e.target.checked;
-                                                        child.checkChecked = checked;
-                                                        form.c[child.column] = checked;
-                                                        setState(
-                                                            (prevState: any) => ({
-                                                                formData: {
-                                                                    ...prevState.formData,
-                                                                    [child.column]: checked
-                                                                }
-                                                            }),
-                                                            () => {
-                                                                if (checked && typeof form.w[child.column]?.focus === "function") {
-                                                                    form.w[child.column].focus();
-                                                                }
-                                                                this.checkStatusChanged()
-                                                            }
-                                                        );
-                                                    }}
-                                                    disabled={!!child.checkDisabled}
-                                                />
-                                                <label htmlFor={id}>
-                                                    {child.control === "check" ? "Turn on" : child.label}
-                                                </label>
-                                            </div>
-                                            : (child.label !== "" ?
-                                                <label
-                                                    htmlFor={id}
-                                                    key={child.key + "-label"}
-                                                    className={`form-label ${child.class}`}
-                                                    style={labelStyle}
-                                                >
-                                                    {child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""}
-                                                </label> : <></>)
-                                        }
-                                        {child.control !== "label" &&
-                                            <div key={child.key + `-form-group-${index}`}
-                                                className="form-group"
-                                                style={child.getStyle()}
-                                            >
-                                                {child.check ? (
-                                                    <fieldset
-                                                        className="field-set-style"
-                                                        disabled={!form.c[child.column]}
-                                                    >
-                                                        {form.renderInput(child)}
-                                                    </fieldset>
-                                                ) : (
-                                                    form.renderInput(child)
-                                                )}
-                                            </div>
-                                        }
-                                    </React.Fragment>
-                                );
-                            }
-                        })}
-                    </div>
-                </fieldset >
-            </div >
-        );
-    }
+                                this.checkStatusChanged()
+                              }
+                            );
+                          }}
+                          disabled={!!child.checkDisabled}
+                        />
+                        <label htmlFor={id}>
+                          {child.control === "check" ? "Turn on" : child.label}
+                        </label>
+                      </div>
+                      : (child.label !== "" ?
+                        <label
+                          htmlFor={id}
+                          key={child.key + "-label"}
+                          className={`form-label ${child.class}`}
+                          style={labelStyle}
+                        >
+                          <HtmlLabel html={ child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""} />
+                          {/* { child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""} */}
+                        </label> : <></>)
+                    }
+                    {child.control !== "label" &&
+                      <div key={child.key + `-form-group-${index}`}
+                        className="form-group"
+                        style={child.getStyle()}
+                      >
+                        {child.check ? (
+                          <fieldset
+                            className="field-set-style"
+                            disabled={!form.c[child.column]}
+                          >
+                            {form.renderInput(child)}
+                          </fieldset>
+                        ) : (
+                          form.renderInput(child)
+                        )}
+                      </div>
+                    }
+                  </React.Fragment>
+                );
+              }
+            })}
+          </div>
+        </fieldset >
+      </div >
+    );
+  }
 }
 
 export default Q2Panel;
