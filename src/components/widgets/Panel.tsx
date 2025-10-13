@@ -298,7 +298,6 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                                     labelStyle.marginRight = "0.5em";
                                 }
                                 Object.assign(labelStyle, child.style)
-                                console.log(child.style, "<<")
                                 return (
                                     <React.Fragment key={child.key + `-fragment-${index}`}>
                                         {child.check ?

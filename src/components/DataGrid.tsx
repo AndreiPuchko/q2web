@@ -10,24 +10,47 @@ const NEW = "NEW";
 const COPY = "COPY";
 // const DELETE = "DELETE";
 
-interface DataGridProps {
+interface Q2DataGridProps {
     q2form: Q2Form;
     onClose: () => void;
     isTopDialog: boolean;
 }
 
-class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedRow: number }> {
+interface Q2DataGridState {
+    visibleRows: number,
+    selectedRow: number,
+    data: Array<any>,
+    loading: boolean;
+    error: string | null;
+}
+
+export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
     tableBodyRef = React.createRef<HTMLDivElement>();
     dataGridRef = React.createRef<HTMLDivElement>();
     resizeObserver!: ResizeObserver;
-    constructor(props: DataGridProps) {
+    constructor(props: Q2DataGridProps) {
         super(props);
         this.state = {
             visibleRows: 20, // Начальное количество отображаемых строк
             selectedRow: 0, // Initially row 0 is selected
+            data: typeof this.props.q2form.data === "object" ? this.props.q2form.data : [],
+            loading: false,
+            error: null
         };
         this.tableBodyRef = React.createRef();
         this.dataGridRef = React.createRef();
+    }
+
+    async fetchData() {
+        try {
+            const data = await this.props.q2form.dataGridParams.loader();
+            this.setState({ data, loading: false });
+            return data
+        }
+        catch (err: any) {
+            this.setState({ error: err.message, loading: false });
+            return err
+        }
     }
 
     componentDidMount() {
@@ -35,9 +58,11 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
         window.addEventListener("resize", this.checkTableHeight);
         document.addEventListener("keydown", this.handleKeyDown);
         this.checkTableHeight();
-
         this.resizeObserver = new ResizeObserver(this.checkTableHeight);
         this.resizeObserver.observe(this.dataGridRef.current!);
+        if (this.props.q2form.dataGridParams.loader) {
+            this.fetchData();
+        }
     }
 
     componentWillUnmount() {
@@ -71,6 +96,10 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
 
     handleRowClick = (index: any) => {
         this.setState({ selectedRow: index }, this.scrollToRow);
+        if (typeof this.props.q2form?.hookDataGridRowClicked === "function") {
+            this.props.q2form.hookDataGridRowClicked(this);
+        }
+        
     };
 
     handleKeyDown = (event: any) => {
@@ -196,9 +225,8 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
     };
 
     render() {
-        const { columns, data, actions } = this.props.q2form;
-        const { visibleRows, selectedRow } = this.state;
-
+        const { columns, actions } = this.props.q2form;
+        const { visibleRows, selectedRow, data, loading, error } = this.state;
         // Add separator and Exit action at runtime
         const runtimeActions = [
             { key: "new", label: "New", icon: <MdOutlineCropPortrait /> },
@@ -216,6 +244,8 @@ class DataGrid extends Component<DataGridProps, { visibleRows: number, selectedR
                 <div className={`DataGrid ${this.props.q2form.class}`}>
                     <div className="DataGridBody" ref={this.tableBodyRef} onScroll={this.handleScroll}>
                         <table>
+                            {loading && <div>Loading...</div>}
+                            {error && <div>{error}</div>}
                             <thead className="DataGrigHeader">
                                 <tr>
                                     {columns.map((col: any, colIndex: number) => (
@@ -289,4 +319,4 @@ const DialogToolBar: React.FC<DialogToolBarProps> = ({ actions, onAction }) => {
 //   CanGrowWidth: true,
 // };
 
-export default DataGrid;
+export default Q2DataGrid;

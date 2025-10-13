@@ -1,7 +1,9 @@
 export { Q2App } from "./q2_modules/Q2App";
 export type { Q2AppProps, Q2AppState } from "./q2_modules/Q2App";
 export { Q2Form, Q2Control } from "./q2_modules/Q2Form";
+
 export { Q2FrontForm } from "./components/Q2FrontForm";
+export { Q2DataGrid } from "./components/DataGrid";
 
 export { Q2Widget } from "./components/widgets/Widget"
 
