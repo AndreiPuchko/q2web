@@ -4,7 +4,7 @@ import Q2RadioButton from "./RadioButton";
 import { Q2Control, Q2Form } from "../../q2_modules/Q2Form"
 import { generateRandomKey } from "../../q2_modules/Q2Api"
 
-function HtmlLabel({ html }) {
+function HtmlLabel({ html }: { html: string }) {
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
@@ -342,7 +342,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                           className={`form-label ${child.class}`}
                           style={labelStyle}
                         >
-                          <HtmlLabel html={ child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""} />
+                          <HtmlLabel html={child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""} />
                           {/* { child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""} */}
                         </label> : <></>)
                     }
