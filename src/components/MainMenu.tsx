@@ -4,14 +4,13 @@ import { showDialog } from '../q2_modules/Q2Api';
 import { Q2Button } from "./widgets/Button"
 import { Q2Control } from "../q2_modules/Q2Form"
 import { GetQ2AppInstance } from "../q2_modules/Q2Api"
-import { House, ArrowBigLeft } from "lucide-react";
+import { House, ArrowBigLeft, Moon, Sun, LogIn, LogOut } from "lucide-react";
 
 import './MainMenu.css';
 
 interface MainMenuProps {
     q2forms: Array<Q2Form>;
     isLoggedIn: boolean;
-    isLoginDialogOpen:boolean;
 }
 
 interface MainMenuState {
@@ -97,7 +96,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 );
             }
 
-            
+
             return (
                 <div className='submenu' key={item.label}>
                     <button className='submenubtn'>{item.label}</button>
@@ -144,11 +143,10 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
             // guestName,
             // guestLogo,
             isLoggedIn,
-            isLoginDialogOpen,
             // navigate,
         } = this.props;
 
-
+        const isCurentDark = document.documentElement.classList.contains("dark");
         const themaButtonText = document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
 
         const items = Object.entries(menuStructure)
@@ -190,26 +188,24 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                     {this.renderToolButtons()}
                 </div>
                 <div className='spacer9'></div>
-                <Q2Button {...{
-                    column: new Q2Control(
-                        "login",
-                        !isLoggedIn ? "Login" : "Logout",
-                        {
-                            valid: GetQ2AppInstance()?.login_logout,
-                            class: "login-button",
-                            disabled: isLoginDialogOpen ? true : false,
-                        })
-                }} />
-                <Q2Button {...{
-                    column: new Q2Control(
-                        "theme",
-                        themaButtonText,
-                        {
-                            valid: () => GetQ2AppInstance()?.toggleTheme(),
-                            class: "theme-button"
-                        })
-                }} />
-                {/* <button className='newTabButton' onClick={this.openNewTab}><b>+</b></button> */}
+                <span title={isLoggedIn ? "Logout" : "Login"}>
+                    {isLoggedIn ?
+                        <LogOut className={"MainMenuIcon"}
+                            onClick={GetQ2AppInstance()?.login_logout} />
+                        :
+                        <LogIn className={"MainMenuIcon"}
+                            onClick={GetQ2AppInstance()?.login_logout} />
+                    }
+                </span>
+                <span title={isCurentDark ? "Light theme" : "Dark theme"}>
+                    {isCurentDark ?
+                        <Sun className={"MainMenuIcon"}
+                            onClick={GetQ2AppInstance()?.toggleTheme} />
+                        :
+                        <Moon className={"MainMenuIcon"}
+                            onClick={GetQ2AppInstance()?.toggleTheme} />
+                    }
+                </span>
             </nav>
         );
     }

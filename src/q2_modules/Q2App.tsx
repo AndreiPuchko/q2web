@@ -287,7 +287,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
         <MainMenu
           q2forms={this.props.q2forms}
           isLoggedIn={this.state.isLoggedIn}
-          isLoginDialogOpen={this.state.isLoginDialogOpen} />
+          />
         {this.state.dialogs.map((dialog: any, index: any) => (
           <Dialog
             key={index}
