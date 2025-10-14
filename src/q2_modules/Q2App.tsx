@@ -80,6 +80,8 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
     const root = document.documentElement;
     root.classList.remove('theme-dark', 'theme-light');
     root.classList.add(this.state.theme === 'light' ? 'theme-light' : 'theme-dark');
+    if (this.state.theme === 'dark')
+      root.classList.add('dark');
   };
 
   toggleTheme = () => {
@@ -287,7 +289,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
         <MainMenu
           q2forms={this.props.q2forms}
           isLoggedIn={this.state.isLoggedIn}
-          />
+        />
         {this.state.dialogs.map((dialog: any, index: any) => (
           <Dialog
             key={index}
