@@ -22,5 +22,6 @@ export {
     showDialog,
     closeDialog,
     GetQ2AppInstance,
-    apiRequest
+    apiRequest,
+    generateRandomKey
 } from "./q2_modules/Q2Api"
