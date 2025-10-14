@@ -22,20 +22,20 @@ export interface Q2AppState {
 }
 
 export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component<P, S> {
-  static instance: any | null = null;
+  static instance: Q2App<any, any> | null = null;
   static apiUrl: string = "";
   constructor(props: Q2AppProps) {
     super(props as P);
     Q2App.instance = this; // No error now since `instance` is typed as `Q2App<any> | null`
-      this.state  = {
-        zIndexMap: {},
-        dialogs: [],
-        theme: this.detectTheme(),
-        isLoggedIn: false,
-        userName: "",
-        userUid: 0,
-        isLoginDialogOpen: false,
-      }  as unknown as Readonly<S>;
+    this.state = {
+      zIndexMap: {},
+      dialogs: [],
+      theme: this.detectTheme(),
+      isLoggedIn: false,
+      userName: "",
+      userUid: 0,
+      isLoginDialogOpen: false,
+    } as unknown as Readonly<S>;
   }
 
   detectTheme = () => {
@@ -44,7 +44,6 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     const saved = localStorage.getItem('theme');
     if (saved === 'dark')
       document.documentElement.classList.add('dark');
-
     if (saved === 'light' || saved === 'dark') return saved;
     // Otherwise, use system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
@@ -99,6 +98,8 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     if (this.state.isLoggedIn) {
       await this.handleLogout();
     } else {
+      console.log(this.state, "---")
+
       if (this.state.isLoginDialogOpen) return;
       const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
       AuthForm.hasOkButton = true;
