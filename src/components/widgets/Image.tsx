@@ -13,10 +13,13 @@ export class Q2Image extends Q2Widget<Q2ImageProps> {
 
     render() {
         const { column } = this.props;
+        const style = {};
+        Object.assign(style, column.style)
         return (
             <>
                 {column?.label}
                 <img className={"Q2Image" + " " + column.class}
+                    style={style}
                     onClick={column.valid}
                     alt={column.label}
                     src={column.data}
