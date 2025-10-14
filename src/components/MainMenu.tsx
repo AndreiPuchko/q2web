@@ -1,8 +1,6 @@
 import React from 'react';
 import { Q2Form } from "../q2_modules/Q2Form";
 import { showDialog } from '../q2_modules/Q2Api';
-import { Q2Button } from "./widgets/Button"
-import { Q2Control } from "../q2_modules/Q2Form"
 import { GetQ2AppInstance } from "../q2_modules/Q2Api"
 import { House, ArrowBigLeft, Moon, Sun, LogIn, LogOut } from "lucide-react";
 
