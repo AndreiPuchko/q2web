@@ -143,12 +143,13 @@ hr {
     margin: auto 0.3em;
     padding: 0.2em;
     border: 1px solid transparent;
+    border-radius: 0.5em;
+    vertical-align: middle;
     cursor: pointer;
 }
 
 .MainMenuIcon:hover {
     border: 1px solid black;
-    border-radius: 0.5em;
     filter: brightness(90%);
 }
 
