@@ -57,11 +57,19 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
     this.setUser().then(() => this.showHome());
 
+    window.addEventListener("popstate", this.handleBackButton);
   }
+
+  handleBackButton = (event) => {
+    event.preventDefault();
+    this.closeTopDialog();
+  };
 
   componentWillUnmount() {
     window.removeEventListener('q2-theme-changed', this.handleThemeChanged);
+    window.removeEventListener("popstate", this.handleBackButton);
   }
+
 
   handleThemeChanged = () => {
     const theme = this.detectTheme();
@@ -246,6 +254,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
   showDialog = (q2form: Q2Form) => {
     const newDialogIndex = this.state.dialogs.length;
+    history.pushState({ key: Math.random() }, "", window.location.href);
     this.setState((prevState) => ({
       dialogs: [...prevState.dialogs, { key: (q2form as any).key, q2form }],
       zIndexMap: { ...prevState.zIndexMap, [newDialogIndex]: newDialogIndex + 1 }
