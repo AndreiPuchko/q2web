@@ -147,12 +147,13 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         } = this.props;
 
         const isCurentDark = document.documentElement.classList.contains("dark");
+        const customMainMenu = GetQ2AppInstance()?.hookMainMenuWidget();
 
         const items = Object.entries(menuStructure)
             .map(([key, value]: [string, any]) => ({ key, ...value.__meta__, children: value }))
             .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0));
-        
-            return (
+
+        return (
             <nav className='MainMenuBar'>
                 <House className={"MainMenuIcon "}
                     onClick={() => GetQ2AppInstance()?.closeAllDialogs()} />
@@ -188,6 +189,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                     {this.renderToolButtons()}
                 </div>
                 <div className='spacer9'></div>
+                {customMainMenu ? customMainMenu : null}
                 <span title={isLoggedIn ? "Logout" : "Login"}>
                     {isLoggedIn ?
                         <LogOut className={"MainMenuIcon"}

@@ -18,7 +18,6 @@ export interface Q2AppState {
   isLoggedIn: boolean; // No changes here, `isLoggedIn` is already in the state
   userName: string;
   userUid: number;
-  isGuestDialogOpen: boolean;
   isLoginDialogOpen: boolean;
 }
 
@@ -37,7 +36,6 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       isLoggedIn: false,
       userName: "",
       userUid: 0,
-      isGuestDialogOpen: false,
       isLoginDialogOpen: false,
     };
   }
@@ -261,6 +259,8 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
         dialogs: newDialogs,
         zIndexMap: newZIndexMap
       };
+    }, () => {
+      if (this.state.dialogs.length === 0) this.showHome()
     });
   };
 
@@ -282,6 +282,10 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       });
     }
   };
+
+  hookMainMenuWidget = (): any => {
+    return null
+  }
 
   render() {
     return (
