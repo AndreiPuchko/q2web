@@ -7,8 +7,8 @@ import './Q2App.css';
 import { apiRequest } from "./Q2Api"
 
 
-export interface Q2AppProps<T extends Q2Form = Q2Form> {
-  q2forms: Array<T>;
+export interface Q2AppProps {
+  q2forms: Array<Q2Form>;
 }
 
 export interface Q2AppState {
@@ -17,33 +17,34 @@ export interface Q2AppState {
   theme: string | null;
   isLoggedIn: boolean; // No changes here, `isLoggedIn` is already in the state
   userName: string;
-  userUid: number;
+  userUid: string;
   isLoginDialogOpen: boolean;
 }
 
-export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q2AppState> {
-  static instance: Q2App<any> | null = null; // Use `any` to allow for generic compatibility
+export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component<P, S> {
+  static instance: any | null = null;
   static apiUrl: string = "";
-
-  constructor(props: Q2AppProps<T>) {
-    super(props);
+  constructor(props: Q2AppProps) {
+    super(props as P);
     Q2App.instance = this; // No error now since `instance` is typed as `Q2App<any> | null`
-
-    this.state = {
-      dialogs: [],
-      zIndexMap: {},
-      theme: this.detectTheme(),
-      isLoggedIn: false,
-      userName: "",
-      userUid: 0,
-      isLoginDialogOpen: false,
-    };
+      this.state  = {
+        zIndexMap: {},
+        dialogs: [],
+        theme: this.detectTheme(),
+        isLoggedIn: false,
+        userName: "",
+        userUid: 0,
+        isLoginDialogOpen: false,
+      }  as unknown as Readonly<S>;
   }
 
   detectTheme = () => {
     // Try to get from localStorage first
     // return 'light';
     const saved = localStorage.getItem('theme');
+    if (saved === 'dark')
+      document.documentElement.classList.add('dark');
+
     if (saved === 'light' || saved === 'dark') return saved;
     // Otherwise, use system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
@@ -154,7 +155,7 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
 
       this.setState(
         { isLoginDialogOpen: true },
-        () => this.showDialog(AuthForm as T)
+        () => this.showDialog(AuthForm)
       );
     }
   }
@@ -239,10 +240,10 @@ export class Q2App<T extends Q2Form = Q2Form> extends Component<Q2AppProps<T>, Q
       data: msg,
       control: "text"
     });
-    this.showDialog(msgBox as T); // Explicitly assert the type of msgBox to T
+    this.showDialog(msgBox); // Explicitly assert the type of msgBox to T
   }
 
-  showDialog = (q2form: T) => {
+  showDialog = (q2form: Q2Form) => {
     const newDialogIndex = this.state.dialogs.length;
     this.setState((prevState) => ({
       dialogs: [...prevState.dialogs, { key: (q2form as any).key, q2form }],
