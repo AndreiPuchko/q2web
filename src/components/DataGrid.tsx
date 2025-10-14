@@ -227,7 +227,8 @@ export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
 
   render() {
     const { columns, actions } = this.props.q2form;
-    const { visibleRows, selectedRow, data, loading, error } = this.state;
+    // const { visibleRows, selectedRow, data, loading, error } = this.state;
+    const { visibleRows, data, loading, error } = this.state;
     // Add separator and Exit action at runtime
     const runtimeActions = [
       { key: "new", label: "New", icon: <MdOutlineCropPortrait /> },
@@ -256,8 +257,8 @@ export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
               </thead>
               <tbody>
                 {data.slice(0, visibleRows).map((row: any, index: number) => {
-                  const isSelected = selectedRow === index &&
-                    this.props.q2form.dataGridParams.showCurrentRow;
+                  // const isSelected = selectedRow === index &&
+                  //   this.props.q2form.dataGridParams.showCurrentRow;
 
                   // const backgroundColor = isSelected ? 'Highlight' : (index % 2 === 1 ? '#e7f7f7' : 'white');
                   // const color = isSelected ? '#FFAA99' : 'black';
