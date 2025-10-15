@@ -288,19 +288,27 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     reduceHeight = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
-        const panels = dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll")
-        panels.forEach(pan => {
-            pan.style.height = '50px'
-        });
+
+        const panels = dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll");
+        if (!panels.length) return;
+
+        panels.forEach(pan => (pan.style.height = "50px"));
 
         while (dialog.scrollHeight <= dialog.clientHeight) {
-            panels.forEach(pan => {
+            for (let i = 0; i < panels.length; i++) {
+                const pan = panels[i];
                 const current = parseFloat(getComputedStyle(pan).height);
-                pan.style.height = `${current + 1}px`
-                console.log("**", pan)
-            });
+                pan.style.height = `${current + 1}px`;
+
+                // проверка после каждого изменения
+                if (dialog.scrollHeight > dialog.clientHeight) {
+                    // перебор — вернуть обратно и выйти
+                    pan.style.height = `${current}px`;
+                    return;
+                }
+            }
         }
-    }
+    };
 
     dialogHandleMouseUp = () => {
         if (!this.props.q2form.resizeable) return;
@@ -316,9 +324,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             childCount: dialog.children.length
         };
 
-        // console.log("---", snapshot)
-        this.reduceHeight();
-        // return
 
         // Early exit if nothing changed since last run
         const prev = this.prevDialogSnapshotRef;
@@ -331,6 +336,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             return;
         }
 
+        this.reduceHeight();
         // store snapshot for next invocation
         this.prevDialogSnapshotRef = snapshot;
 
@@ -340,12 +346,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             dialog.querySelectorAll(".Q2Text, .Q2DataList-scrollarea") as
             // dialog.querySelectorAll("[class^=Q2Text]") as
             unknown as HTMLCollectionOf<HTMLElement>)
-
-        // if (elements) {
-        //     elements.forEach(element => {
-        //         element.style.height = "auto";
-        //     });
-        // }
 
         if (hasVerticalScrollbar) {
             dialog.style.height = `${dialog.scrollHeight + 3}px`;
