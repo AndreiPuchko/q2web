@@ -23,6 +23,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     resizeObserver: ResizeObserver | undefined;
     // add a snapshot ref to detect unchanged dialog-container
     prevDialogSnapshotRef: { clientWidth: number; clientHeight: number; scrollWidth: number; scrollHeight: number; childCount: number } | null;
+    _reduceRaf = null;
+    _reduceRunning = false;
 
     constructor(props: DialogProps) {
         super(props);
@@ -211,7 +213,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             const width = dialog.clientWidth - paddingHor - 5;
             child.style.height = `${height}px`;
             child.style.width = `${width}px`;
-            const pxTargets = Array.from(child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root, .q2-scroll')) as HTMLElement[];
+            const pxTargets = Array.from(
+                child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root, .q2-scroll')
+            ) as HTMLElement[];
             pxTargets.forEach(el => {
                 el.style.height = `${height}px`;
                 el.style.width = `${width}px`;
@@ -226,8 +230,10 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     computeMinSize = (element: HTMLElement): { minW: number; minH: number } => {
         const isColumn = element.classList.contains("flex-column");
 
-        if (element.classList.contains("Q2Text") ||
-            element.classList.contains("DataGrid")) {
+        if (element.classList.contains("Q2Text")
+            || element.classList.contains("DataGrid")
+            || element.classList.contains("Q2DataList-scrollarea")
+        ) {
             // Growable leaf
             const minW = parseInt(element.dataset.minWidth || element.style.minWidth || "50");
             const minH = parseInt(element.dataset.minHeight || element.style.minHeight || "50");
@@ -279,6 +285,23 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         dialog.style.width = `${dialog.clientWidth - 1}px`;
     }
 
+    reduceHeight = () => {
+        const dialog = this.dialogRef.current;
+        if (!dialog) return;
+        const panels = dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll")
+        panels.forEach(pan => {
+            pan.style.height = '50px'
+        });
+
+        while (dialog.scrollHeight <= dialog.clientHeight) {
+            panels.forEach(pan => {
+                const current = parseFloat(getComputedStyle(pan).height);
+                pan.style.height = `${current + 1}px`
+                console.log("**", pan)
+            });
+        }
+    }
+
     dialogHandleMouseUp = () => {
         if (!this.props.q2form.resizeable) return;
         const dialog = this.dialogRef.current;
@@ -292,6 +315,10 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             scrollHeight: dialog.scrollHeight,
             childCount: dialog.children.length
         };
+
+        // console.log("---", snapshot)
+        this.reduceHeight();
+        // return
 
         // Early exit if nothing changed since last run
         const prev = this.prevDialogSnapshotRef;
@@ -309,13 +336,16 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
         const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
-        const elements = Array.from(dialog.querySelectorAll("[class^=Q2Text]") as unknown as HTMLCollectionOf<HTMLElement>)
+        const elements = Array.from(
+            dialog.querySelectorAll(".Q2Text, .Q2DataList-scrollarea") as
+            // dialog.querySelectorAll("[class^=Q2Text]") as
+            unknown as HTMLCollectionOf<HTMLElement>)
 
-        if (elements) {
-            elements.forEach(element => {
-                element.style.height = "auto";
-            });
-        }
+        // if (elements) {
+        //     elements.forEach(element => {
+        //         element.style.height = "auto";
+        //     });
+        // }
 
         if (hasVerticalScrollbar) {
             dialog.style.height = `${dialog.scrollHeight + 3}px`;
@@ -347,6 +377,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             scrollHeight: dialog.scrollHeight,
             childCount: dialog.children.length
         };
+        // console.log(this.prevDialogSnapshotRef)
     };
 
     handleMaximize = (e: React.MouseEvent) => {
