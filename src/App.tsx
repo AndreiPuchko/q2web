@@ -28,12 +28,47 @@ function App() {
       menutoolbar: true,
       hasMaxButton: false,
       hasOkButton: true,
+      key: "autorun",
     });
+
+
   fileMenuDialog.add_control("/f");
   fileMenuDialog.add_control("text1", "Label 1",
-    { readonly: true, data: "text1", control: "text" });
+    { data: "text1", control: "line" });
   fileMenuDialog.add_control("text2", "Label 2",
-    { readonly: true, data: "text2", control: "text" });
+    { data: "text2", control: "text" });
+  fileMenuDialog.add_control("/")
+  fileMenuDialog.add_control("/v")
+
+
+  const datalistForm = new Q2Form("", "", "");
+  datalistForm.add_control("c1", "Header1");
+  datalistForm.add_control("c2", "Header2");
+  datalistForm.data = [
+    { c1: "12", c2: "34" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+    { c1: "56", c2: "78" },
+  ];
+
+
+  fileMenuDialog.add_control("list1", "List 1",
+    {
+      control: "list",
+      data: datalistForm,
+    });
+
 
   fileMenuDialog.add_control("/")
   fileMenuDialog.add_control("/h", "", { alignment: 5 })
