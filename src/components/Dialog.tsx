@@ -226,57 +226,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         });
     };
 
-    // Compute min-size recursively
-    computeMinSize = (element: HTMLElement): { minW: number; minH: number } => {
-        const isColumn = element.classList.contains("flex-column");
-
-        if (element.classList.contains("Q2Text")
-            || element.classList.contains("DataGrid")
-            || element.classList.contains("Q2DataList-scrollarea")
-        ) {
-            // Growable leaf
-            const minW = parseInt(element.dataset.minWidth || element.style.minWidth || "50");
-            const minH = parseInt(element.dataset.minHeight || element.style.minHeight || "50");
-            return { minW, minH };
-        }
-
-        if (element.classList.contains("ReportEditor")) {
-            // Fixed-size leaf
-            return {
-                minW: element.offsetWidth,
-                minH: element.offsetHeight,
-            };
-        }
-
-        if (element.children.length > 0) {
-            // Panel container
-            const children = Array.from(element.children) as HTMLElement[];
-            if (isColumn) {
-                let minW = 0, minH = 0;
-                children.forEach(child => {
-                    const { minW: cW, minH: cH } = this.computeMinSize(child);
-                    minW = Math.max(minW, cW);
-                    minH += cH;
-                });
-                return { minW, minH };
-            } else {
-                let minW = 0, minH = 0;
-                children.forEach(child => {
-                    const { minW: cW, minH: cH } = this.computeMinSize(child);
-                    minW += cW;
-                    minH = Math.max(minH, cH);
-                });
-                return { minW, minH };
-            }
-        }
-
-        // Default: fixed-size leaf
-        return {
-            minW: element.offsetWidth,
-            minH: element.offsetHeight,
-        };
-    };
-
     forceResize = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;

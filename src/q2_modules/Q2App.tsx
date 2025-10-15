@@ -60,7 +60,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     window.addEventListener("popstate", this.handleBackButton);
   }
 
-  handleBackButton = (event) => {
+  handleBackButton = (event: any) => {
     event.preventDefault();
     this.closeTopDialog();
   };
