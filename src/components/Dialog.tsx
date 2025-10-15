@@ -285,28 +285,49 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         dialog.style.width = `${dialog.clientWidth - 1}px`;
     }
 
-    reduceHeight = () => {
+    fitHeghts = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
         const panels = dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll");
         if (!panels.length) return;
 
+        // Сбрасываем панели
         panels.forEach(pan => (pan.style.height = "50px"));
 
+        // Быстрый старт с крупным шагом, потом уменьшаем
+        let step = 10;
+
+        // Пока содержимое помещается в диалог
         while (dialog.scrollHeight <= dialog.clientHeight) {
+            let reachedLimit = false;
+
             for (let i = 0; i < panels.length; i++) {
                 const pan = panels[i];
                 const current = parseFloat(getComputedStyle(pan).height);
-                pan.style.height = `${current + 1}px`;
+                pan.style.height = `${current + step}px`;
 
-                // проверка после каждого изменения
+                // Проверяем после каждой панели
                 if (dialog.scrollHeight > dialog.clientHeight) {
-                    // перебор — вернуть обратно и выйти
+                    // Перепрыгнули → шаг назад и уменьшаем step
                     pan.style.height = `${current}px`;
-                    return;
+
+                    // если шаг был больше 1 — уменьшаем его и продолжаем
+                    if (step > 1) {
+                        step = Math.max(1, Math.floor(step / 2)); // плавное уменьшение
+                    } else {
+                        reachedLimit = true;
+                    }
+                    break;
                 }
             }
+
+            // Если перепрыгнули даже с шагом 1px — выходим
+            if (reachedLimit) break;
+
+            // Если места остаётся мало — уменьшаем шаг
+            const free = dialog.clientHeight - dialog.scrollHeight;
+            if (free < 50 && step > 1) step = 1;
         }
     };
 
@@ -336,7 +357,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             return;
         }
 
-        this.reduceHeight();
+        this.fitHeghts();
         // store snapshot for next invocation
         this.prevDialogSnapshotRef = snapshot;
 
