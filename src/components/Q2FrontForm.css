@@ -163,3 +163,8 @@ label {
  padding-top: 0.3em;
  justify-content: flex-end;
 }
+
+.FormComponent {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import './Q2FrontForm.css'; // Import the CSS file for styling
 import Q2DataGrid from './DataGrid';
+import Q2DataList from './widgets/DataList';
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Color from './widgets/Color'; // Import the Line widget
 import Q2Combo from './widgets/Combo'; // Import the Line widget
@@ -233,6 +234,9 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                 return <Q2RadioButton {...commonProps} />;
             case "image":
                 return <Q2Image {...commonProps} />;
+            case "list":
+                column.data.subForm = true;
+                return <Q2DataList q2form={column.data} />
             case "form":
                 column.data.subForm = true;
                 return <Q2FrontForm q2form={column.data} />
@@ -338,6 +342,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
             <Q2Panel
                 panel={panel}
                 form={this}
+                key={panel.key}
                 onChange={this.handlePanelCheck(panel.key)}
                 formData={this.state.formData}
                 forceResize={this.props.forceResize}

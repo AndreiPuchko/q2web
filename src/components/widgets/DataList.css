@@ -1,0 +1,44 @@
+.Q2DataList {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-top: none;
+    border-right: none;
+}
+
+.Q2DataList-header {
+    display: flex;
+    flex-direction: row;
+    background: rgb(125, 148, 242);
+    color: aliceblue;
+    position: sticky;
+    top: 0;
+}
+
+.Q2DataList-header-cell {
+    display: flex;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    flex: 1 1;
+    padding: 0.1rem;
+    padding-left: 0.4rem;
+}
+
+.Q2DataList-scrollarea {
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+.Q2DataList-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.Q2DataList-cell {
+    display: flex;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
+    flex: 1 1;
+    padding: 0.1rem;
+    padding-left: 0.4rem;
+}
