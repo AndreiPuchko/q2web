@@ -16,15 +16,6 @@
     top: 0;
 }
 
-/* .Q2DataList-header-cell {
-    display: flex;
-    border-top: 1px solid black;
-    border-right: 1px solid black;
-    flex: 1 1;
-    padding: 0.1rem;
-    padding-left: 0.4rem;
-} */
-
 .Q2DataList-scrollarea {
     overflow: auto;
     box-sizing: border-box;
@@ -46,8 +37,6 @@
     box-sizing: border-box;
 }
 
-.Q2DataList-header-cell.drag-over {}
-
 .Q2DataList-header-cell {
     position: relative;
     /* 👈 This keeps resizer inside each header cell */
@@ -62,11 +51,9 @@
 .Q2DataList-resizer {
     position: absolute;
     top: 0;
-    right: 0;
-    width: 4px;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    background: #d013ff;
+    right: 0px;
+    /* width: 2px; */
+    background: black;
     height: 100%;
     /* 👈 Full height of the cell */
     cursor: col-resize;

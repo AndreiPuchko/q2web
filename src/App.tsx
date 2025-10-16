@@ -29,6 +29,13 @@ function App() {
       // hasMaxButton: false,
       hasOkButton: true,
       key: "autorun",
+      // frameless: true,
+      // resizeable: false,
+      // moveable: false,
+      // width: "100%",
+      // height: "100%",
+      // top: "0px",
+      // left: "0px",
     });
 
 
@@ -42,6 +49,11 @@ function App() {
 
 
   const datalistForm = new Q2Form("", "", "");
+  
+  datalistForm.dataGridParams.resizeColumns = false;
+  datalistForm.dataGridParams.reorderColumns = false;
+  datalistForm.dataGridParams.showHeaders = false;
+
   datalistForm.add_control("c1", "Header1");
   datalistForm.add_control("c2", "Header2");
   datalistForm.data = [

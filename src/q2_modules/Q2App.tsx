@@ -86,8 +86,9 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     const root = document.documentElement;
     root.classList.remove('theme-dark', 'theme-light');
     root.classList.add(this.state.theme === 'light' ? 'theme-light' : 'theme-dark');
-    if (this.state.theme === 'dark')
-      root.classList.add('dark');
+    document.documentElement.classList.toggle("dark", this.state.theme === "dark");
+    // if (this.state.theme === 'dark')
+    //   root.classList.add('dark');
   };
 
   toggleTheme = () => {

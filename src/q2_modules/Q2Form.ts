@@ -96,12 +96,18 @@ export class Q2Control {
 
 
 type DataGridParams = {
-    showCurrentRow: boolean,
+    showCurrentRow?: boolean,
+    showHeaders?: boolean,
+    resizeColumns?: boolean,
+    reorderColumns?: boolean,
     loader?: () => any,
 }
 
-const defaultDataGridParams = {
-    showCurrentRow: true
+const defaultDataGridParams: DataGridParams = {
+    showHeaders: true,
+    showCurrentRow: true,
+    resizeColumns: true,
+    reorderColumns: true,
 }
 
 export class Q2Form {
@@ -168,7 +174,7 @@ export class Q2Form {
         this.dialogIndex = -1;
         this.frontForm = undefined;
         this.class = options.class || "";
-        this.dataGridParams = { ...defaultDataGridParams }
+        this.dataGridParams = { ...options.dataGridParams,...defaultDataGridParams }
         if (key === "") {
             this.key = generateRandomKey();
         }

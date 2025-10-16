@@ -198,7 +198,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
-        const panels = dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll");
+        const panels = Array.from(dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll") as unknown as HTMLCollectionOf<HTMLElement>);
         if (!panels.length) return;
 
         // Сбрасываем панели
@@ -207,7 +207,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         // Быстрый старт с крупным шагом, потом уменьшаем
         let step = 10;
 
-        // Пока содержимое помещается в диалог
         while (dialog.scrollHeight <= dialog.clientHeight) {
             let reachedLimit = false;
 
@@ -216,14 +215,64 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                 const current = parseFloat(getComputedStyle(pan).height);
                 pan.style.height = `${current + step}px`;
 
-                // Проверяем после каждой панели
                 if (dialog.scrollHeight > dialog.clientHeight) {
-                    // Перепрыгнули → шаг назад и уменьшаем step
+                    // oversize - step back
                     pan.style.height = `${current}px`;
-
-                    // если шаг был больше 1 — уменьшаем его и продолжаем
                     if (step > 1) {
-                        step = Math.max(1, Math.floor(step / 2)); // плавное уменьшение
+                        step = Math.max(1, Math.floor(step / 2));
+                    } else {
+                        reachedLimit = true;
+                    }
+                    break;
+                }
+            }
+            if (reachedLimit) break;
+
+            const free = dialog.clientHeight - dialog.scrollHeight;
+            if (free < 50 && step > 1) step = 1;
+        }
+    };
+
+    fitWidths = () => {
+        const dialog = this.dialogRef.current;
+        if (!dialog) return;
+
+        const panels = Array.from(dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll") as unknown as HTMLCollectionOf<HTMLElement>);
+        if (!panels.length) return;
+
+        const states: Array<any> = [];
+
+        // 1️⃣ Сохраняем текущее состояние и подготавливаем панели
+        panels.forEach(pan => {
+            states.push({
+                pan,
+                overflowX: pan.style.overflowX,
+                height: pan.style.height,
+            });
+
+            const currentHeight = pan.offsetHeight;
+            pan.style.height = `${currentHeight}px`; // фиксируем высоту, чтобы не схлопнулась
+            pan.style.overflowX = "hidden"; // временно отключаем горизонтальный скролл
+            pan.style.width = pan.style.minWidth || "350px";
+        });
+
+        let step = 10;
+
+        // 2️⃣ Расширяем панели, пока не появится горизонтальный скролл
+        while (dialog.scrollWidth <= dialog.clientWidth) {
+            let reachedLimit = false;
+
+            for (let i = 0; i < panels.length; i++) {
+                const pan = panels[i];
+                const current = parseFloat(getComputedStyle(pan).width);
+                pan.style.width = `${current + step}px`;
+
+                if (dialog.scrollWidth > dialog.clientWidth) {
+                    // перебор — шаг назад
+                    pan.style.width = `${current}px`;
+
+                    if (step > 1) {
+                        step = Math.max(1, Math.floor(step / 2));
                     } else {
                         reachedLimit = true;
                     }
@@ -231,13 +280,17 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                 }
             }
 
-            // Если перепрыгнули даже с шагом 1px — выходим
             if (reachedLimit) break;
 
-            // Если места остаётся мало — уменьшаем шаг
-            const free = dialog.clientHeight - dialog.scrollHeight;
+            const free = dialog.clientWidth - dialog.scrollWidth;
             if (free < 50 && step > 1) step = 1;
         }
+
+        // 3️⃣ Восстанавливаем исходные overflow и высоты
+        states.forEach(({ pan, overflowX, height }) => {
+            pan.style.overflowX = overflowX || "";
+            pan.style.height = height || "";
+        });
     };
 
     dialogHandleMouseUp = () => {
@@ -266,6 +319,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             return;
         }
         this.fitHeghts();
+        // this.fitWidths();
+
         // store snapshot for next invocation
         this.prevDialogSnapshotRef = snapshot;
 
