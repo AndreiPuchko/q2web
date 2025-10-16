@@ -3,7 +3,7 @@
   --form-bg: #fff;
   --form-border: #b3b6f5;
   --form-label: #222;
-  --form-groupbox-bg: rgb(221, 244, 255);
+  --form-groupbox-bg: rgb(243, 251, 254);
   --form-input-bg: rgb(225, 242, 245);
   --form-input: black;
   --form-input-disabled: lightgray;
@@ -14,7 +14,7 @@
   --form-bg: #23272f;
   --form-border: rgb(179, 186, 245);
   --form-label: #e0e0e0;
-  --form-groupbox-bg: #3e434e;
+  --form-groupbox-bg: #17171f;
   --form-input-bg: gray;
   --form-input: white;
   --form-input-disabled: gray;
@@ -156,4 +156,5 @@ label {
 .FormComponent {
   display: flex;
   flex-direction: column;
+  background: var(--form-bg);
 }
