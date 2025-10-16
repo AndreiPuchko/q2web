@@ -19,7 +19,6 @@
   --workspace-bg: rgb(135, 141, 155);
 }
 
-
 body,
 html {
   width: 100%;
@@ -28,6 +27,7 @@ html {
   padding: 0;
   background-color: var(--workspace-bg);
 }
+
 
 
 .DataGrid {
