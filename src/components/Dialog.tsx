@@ -46,17 +46,11 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         this.set_resize_move_icons()
 
-        this.resizeObserver = new ResizeObserver(() => {
-            this.resizeChildren();
-        });
-        this.resizeObserver.observe(dialog);
-
         dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
 
         // ensure layout is settled: resize children and run mouse-up sizing logic
         if (this.props.q2form.resizeable) {
             requestAnimationFrame(() => {
-                this.resizeChildren();
                 this.dialogHandleMouseUp();
                 // extra pass to catch deferred layout changes
                 requestAnimationFrame(() => this.dialogHandleMouseUp());
@@ -83,9 +77,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     componentWillUnmount() {
         const dialog = this.dialogRef.current;
-        if (this.resizeObserver) {
-            this.resizeObserver.disconnect();
-        }
         if (dialog) {
             dialog.removeEventListener('mouseup', this.dialogHandleMouseUp);
         }
@@ -195,37 +186,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         document.addEventListener('mouseup', onMouseUp);
     };
 
-    resizeChildren = () => {
-        const dialog = this.dialogRef.current;
-        if (!dialog) return;
-        if (!this.props.q2form.resizeable) return;
-        this.normalizePosition();
-
-        const dialogHeader = dialog.querySelector('.dialog-header') as HTMLElement;
-        const dialogContent = dialog.querySelector('.dialog-content') as HTMLElement;
-
-        const childrenArray = Array.from(dialogContent.children) as HTMLElement[];
-        childrenArray.forEach(child => {
-            const computedStyle = window.getComputedStyle(dialogContent);
-            const padding = parseFloat(computedStyle.paddingTop) + parseFloat(computedStyle.paddingBottom);
-            const paddingHor = parseFloat(computedStyle.paddingLeft) + parseFloat(computedStyle.paddingRight);
-            const height = dialog.clientHeight - dialogHeader.clientHeight - padding - 5;
-            const width = dialog.clientWidth - paddingHor - 5;
-            child.style.height = `${height}px`;
-            child.style.width = `${width}px`;
-            const pxTargets = Array.from(
-                child.querySelectorAll('.DataGrid, .DataGridRoot, .q2-report-editor-root, .q2-scroll')
-            ) as HTMLElement[];
-            pxTargets.forEach(el => {
-                el.style.height = `${height}px`;
-                el.style.width = `${width}px`;
-                el.style.minHeight = '0';
-                el.style.minWidth = '0';
-                el.style.boxSizing = 'border-box';
-            });
-        });
-    };
-
     forceResize = () => {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
@@ -305,7 +265,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             prev.childCount === snapshot.childCount) {
             return;
         }
-
         this.fitHeghts();
         // store snapshot for next invocation
         this.prevDialogSnapshotRef = snapshot;
@@ -366,7 +325,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             dialog.style.top = "0px";
             dialog.style.width = window.innerWidth + "px";
             dialog.style.height = window.innerHeight + "px";
-            this.resizeChildren()
             this.setState({ isMaximized: true }, this.dialogHandleMouseUp);
         } else {
             if (this.prevStateRef) {
@@ -375,11 +333,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                 dialog.style.left = this.prevStateRef.left;
                 dialog.style.top = this.prevStateRef.top;
             }
-            this.resizeChildren()
             this.setState({ isMaximized: false }, this.dialogHandleMouseUp);
         }
-        // this.dialogHandleMouseUp();
-        this.resizeChildren()
     };
 
     render() {

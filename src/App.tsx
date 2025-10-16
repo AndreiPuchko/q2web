@@ -26,7 +26,7 @@ function App() {
   const fileMenuDialog = new Q2Form("File|Dialog", "Settings", "dialog",
     {
       menutoolbar: true,
-      hasMaxButton: false,
+      // hasMaxButton: false,
       hasOkButton: true,
       key: "autorun",
     });
