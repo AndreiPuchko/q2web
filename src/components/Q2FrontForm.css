@@ -139,6 +139,7 @@ label {
   padding: 0;
   display: flex;
   flex-grow: 1;
+  min-width: 0;
 }
 
 .form-group {
@@ -148,13 +149,15 @@ label {
 }
 
 .form-bottom-panel {
- display: flex; 
- padding-top: 0.3em;
- justify-content: flex-end;
+  display: flex;
+  padding-top: 0.3em;
+  justify-content: flex-end;
 }
 
 .FormComponent {
   display: flex;
+  position: relative;
   flex-direction: column;
+  min-width: 0;
   background: var(--form-bg);
 }

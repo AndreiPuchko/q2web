@@ -167,7 +167,7 @@ export class Q2DataGrid extends Component<Q2DataGridProps, Q2DataGridState> {
       }
     }
     if (typeof this.props.q2form?.hookDataGridRowClicked === "function") {
-      this.props.q2form.hookDataGridRowClicked(this);
+      // this.props.q2form.hookDataGridRowClicked(this);
     }
   };
 

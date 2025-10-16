@@ -1,8 +1,7 @@
 import Q2FrontForm from '../components/Q2FrontForm';
-import { Q2DataGrid } from '../components/DataGrid';
+import { Q2DataList } from '../components/widgets/DataList';
 import { showDialog, closeDialog } from './Q2Api';
 import { generateRandomKey } from "../q2_modules/Q2Api"
-
 
 export class Q2Control {
     column: string;
@@ -142,7 +141,7 @@ export class Q2Form {
     hookSubmit?: (form: Q2FrontForm) => boolean;
     hookCancel?: (form: Q2FrontForm) => boolean;
     hookClosed?: (form: Q2FrontForm) => void;
-    hookDataGridRowClicked?: (form: Q2DataGrid) => void;
+    hookDataGridRowClicked?: (form: Q2DataList) => void;
     dialogIndex: number;
     frontForm: Q2FrontForm | undefined;
     class: string;

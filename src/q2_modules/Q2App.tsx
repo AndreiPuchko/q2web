@@ -117,13 +117,13 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
       AuthForm.add_control("/t", "Login");
       AuthForm.add_control("email", "Email");
-      AuthForm.add_control("password", "Password");
+      AuthForm.add_control("password", "Password", { pic: "*" });
 
       AuthForm.add_control("/t", "Register");
       AuthForm.add_control("reg_name", "nickname");
       AuthForm.add_control("reg_email", "Email");
-      AuthForm.add_control("reg_pass1", "Password");
-      AuthForm.add_control("reg_pass2", "Repeat password");
+      AuthForm.add_control("reg_pass1", "Password", { pic: "*" });
+      AuthForm.add_control("reg_pass2", "Repeat password", { pic: "*" });
       AuthForm.add_control("/");
       AuthForm.add_control("/h");
       AuthForm.add_control("remember", "Remember me", { control: "check", data: true });

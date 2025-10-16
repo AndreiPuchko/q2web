@@ -102,6 +102,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
     // Panel style logic (copied from Form.renderPanel)
     panel.panelKey = generateRandomKey();
     let className = "Panel";
+    className += this.props.form.props.q2form.class;
     if (panel.column.column.startsWith("/h")) className += " flex-row";
     if (panel.column.column.startsWith("/v") || panel.column.column.startsWith("/t")) className += " flex-column";
     if (panel.column.column.includes("o")) className += " q2-scroll ";
@@ -172,7 +173,14 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
       rootStyle.padding = "0px";
     }
 
-    rootStyle.minWidth = "max-content";
+    
+    if (!this.props.form.props.q2form.resizeable) {
+      style.minWidth = "0";
+      rootStyle.minWidth = "0";
+    }
+    else {
+      rootStyle.minWidth = "max-content";
+    }
 
     const panel_id = `${panel.column.key}-${panel.column.tag}-panel-id`;
 
@@ -227,7 +235,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
         className={className}
         style={rootStyle}
         key={panel.column.key}
-        id={panel.panelKey}
+        id={"r__"+panel.panelKey}
         ref={ref => { this.panelRef = ref; }}
       >
         {panel.column.label && (

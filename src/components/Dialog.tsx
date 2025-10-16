@@ -23,7 +23,7 @@ const growableHeightClasses = `textarea,
                     .q2-report-editor-root`;
 
 const growableWidthClasses = `
-                    .Q2DataList-scrollarea, 
+                    .Q2DataList, 
                     .q2-scroll, 
                     .q2-report-editor-root`;
 
@@ -31,7 +31,6 @@ const growableWidthClasses = `
 class Dialog extends React.Component<DialogProps, DialogState> {
     dialogRef: React.RefObject<HTMLDivElement | null>;
     prevStateRef: { width: string, height: string, left: string, top: string } | null;
-    resizeObserver: ResizeObserver | undefined;
     // add a snapshot ref to detect unchanged dialog-container
     prevDialogSnapshotRef: { clientWidth: number; clientHeight: number; scrollWidth: number; scrollHeight: number; childCount: number } | null;
     _reduceRaf = null;
@@ -60,6 +59,10 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
 
         // ensure layout is settled: resize children and run mouse-up sizing logic
+        if (!this.props.q2form.resizeable) {
+            this.fitHeghts()
+            // this.fitWidths()
+        }
         if (this.props.q2form.resizeable) {
             requestAnimationFrame(() => {
                 this.dialogHandleMouseUp();
@@ -77,7 +80,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             dialogHeader.style.cursor = this.props.q2form.moveable && !this.state.isMaximized ? "move" : "auto";
         }
         else {
-            dialog.style.borderRadius = "unset";
+            // dialog.style.borderRadius = "unset";
         }
         dialog.style.resize = this.props.q2form.resizeable && !this.state.isMaximized ? "both" : "none"
     }
@@ -253,7 +256,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         const states: Array<any> = [];
 
-        // 1️⃣ Сохраняем текущее состояние и подготавливаем панели
+        // save height state
         panels.forEach(pan => {
             states.push({
                 pan,
@@ -264,12 +267,12 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             const currentHeight = pan.offsetHeight;
             pan.style.height = `${currentHeight}px`; // фиксируем высоту, чтобы не схлопнулась
             pan.style.overflowX = "hidden"; // временно отключаем горизонтальный скролл
-            pan.style.width = pan.style.minWidth || "350px";
+            pan.style.width = pan.style.minWidth || "50px";
         });
 
         let step = 10;
 
-        // 2️⃣ Расширяем панели, пока не появится горизонтальный скролл
+        // grow until scroll
         while (dialog.scrollWidth <= dialog.clientWidth) {
             let reachedLimit = false;
 
@@ -296,8 +299,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             const free = dialog.clientWidth - dialog.scrollWidth;
             if (free < 50 && step > 1) step = 1;
         }
-
-        // 3️⃣ Восстанавливаем исходные overflow и высоты
+        // restore height state
         states.forEach(({ pan, overflowX, height }) => {
             pan.style.overflowX = overflowX || "";
             pan.style.height = height || "";

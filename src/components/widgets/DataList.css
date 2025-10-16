@@ -25,17 +25,29 @@
     display: flex;
     flex-direction: row;
     align-items: stretch;
+    background: var(--datagrid-bg);
 }
+
+
 
 .Q2DataList-cell {
     display: flex;
-    border-top: 1px solid black;
+    border-bottom: 1px solid black;
     border-right: 1px solid black;
-    flex: 1 1;
     padding: 0.1rem;
     padding-left: 0.4rem;
     box-sizing: border-box;
 }
+
+
+.Q2DataList-cell.first-row {
+    border-top: 1px solid black;
+}
+
+.Q2DataList-row.odd{
+    background: var(--datagrid-bg-odd);
+}
+
 
 .Q2DataList-header-cell {
     position: relative;

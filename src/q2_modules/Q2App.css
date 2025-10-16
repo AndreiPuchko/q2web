@@ -5,6 +5,7 @@
 
 :root {
   --datagrid-bg: #fff;
+  --datagrid-bg-odd: #f7f7f7;
   --datagrid-header-bg: #e3e3e3;
   --datagrid-border: #bbb;
   --datagrid-cell-color: #222;
@@ -13,6 +14,7 @@
 
 .dark {
   --datagrid-bg: rgb(76, 82, 82);
+  --datagrid-bg-odd: rgb(87, 87, 96);
   --datagrid-header-bg: rgb(192, 196, 188);
   --datagrid-border: black;
   --datagrid-cell-color: #fff;
