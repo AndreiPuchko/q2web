@@ -17,6 +17,17 @@ interface DialogState {
     isMaximized: boolean;
 }
 
+const growableHeightClasses = `textarea, 
+                    .Q2DataList-scrollarea, 
+                    .q2-scroll, 
+                    .q2-report-editor-root`;
+
+const growableWidthClasses = `
+                    .Q2DataList-scrollarea, 
+                    .q2-scroll, 
+                    .q2-report-editor-root`;
+
+
 class Dialog extends React.Component<DialogProps, DialogState> {
     dialogRef: React.RefObject<HTMLDivElement | null>;
     prevStateRef: { width: string, height: string, left: string, top: string } | null;
@@ -198,7 +209,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
-        const panels = Array.from(dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll") as unknown as HTMLCollectionOf<HTMLElement>);
+        const panels = Array.from(dialog.querySelectorAll(growableHeightClasses) as unknown as HTMLCollectionOf<HTMLElement>);
         if (!panels.length) return;
 
         // Сбрасываем панели
@@ -237,7 +248,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const dialog = this.dialogRef.current;
         if (!dialog) return;
 
-        const panels = Array.from(dialog.querySelectorAll("textarea, .Q2DataList-scrollarea, .q2-scroll") as unknown as HTMLCollectionOf<HTMLElement>);
+        const panels = Array.from(dialog.querySelectorAll(growableWidthClasses) as unknown as HTMLCollectionOf<HTMLElement>);
         if (!panels.length) return;
 
         const states: Array<any> = [];
@@ -319,7 +330,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             return;
         }
         this.fitHeghts();
-        // this.fitWidths();
+        this.fitWidths();
 
         // store snapshot for next invocation
         this.prevDialogSnapshotRef = snapshot;
