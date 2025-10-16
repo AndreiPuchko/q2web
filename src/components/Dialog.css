@@ -1,17 +1,5 @@
 /* Theme variables */
 :root {
-  --dialog-bg: rgb(76, 82, 82);
-  --dialog-header-bg: rgb(4, 4, 5);
-  --dialog-header-disabled: lightgray;
-  --dialog-border: #ccc;
-  --dialog-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  --dialog-disabled-overlay: rgba(255, 255, 255, 0.3);
-  --dialog-radius: 5px;
-  --close-btn-hover: red;
-  --title-color: rgb(88, 88, 88);
-}
-
-.theme-light {
   --dialog-bg: #fff;
   --dialog-header-bg: #245c9c;
   --dialog-header-disabled: lightgray;
@@ -22,7 +10,7 @@
   --title-color: rgb(255, 255, 255);
 }
 
-.theme-dark {
+.dark {
   --dialog-bg: rgb(76, 82, 82);
   --dialog-header-bg: rgb(4, 4, 5);
   --dialog-header-disabled: gray;
@@ -32,11 +20,6 @@
   --close-btn-hover: red;
   --title-color: lightgray;
 }
-
-
-
-* {}
-
 
 .dialog-pre-container {
   background-color: rgba(255, 255, 255, 0.1);

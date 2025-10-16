@@ -1,18 +1,9 @@
 #root {
   margin: 0 auto;
-  /* text-align: center; */
   font-family: sans-serif;
 }
 
 :root {
-  --datagrid-bg: rgb(76, 82, 82);
-  --datagrid-header-bg: rgb(16, 128, 219);
-  --datagrid-border: black;
-  --datagrid-cell-color: #fff;
-  --workspace-bg: rgb(135, 141, 155);
-}
-
-.theme-light {
   --datagrid-bg: #fff;
   --datagrid-header-bg: #e3e3e3;
   --datagrid-border: #bbb;
@@ -20,7 +11,7 @@
   --workspace-bg: #e1e1e1;
 }
 
-.theme-dark {
+.dark {
   --datagrid-bg: rgb(76, 82, 82);
   --datagrid-header-bg: rgb(192, 196, 188);
   --datagrid-border: black;

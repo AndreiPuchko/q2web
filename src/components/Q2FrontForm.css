@@ -1,16 +1,5 @@
 /* Theme variables */
 :root {
-  --form-bg: #23272f;
-  --form-border: rgb(179, 186, 245);
-  --form-label: #e0e0e0;
-  --form-groupbox-bg: #23272f;
-  --form-input-bg: lightgray;
-  --form-input: black;
-  --form-input-disabled: lightgray;
-  --form-input-focus: black;
-}
-
-.theme-light {
   --form-bg: #fff;
   --form-border: #b3b6f5;
   --form-label: #222;
@@ -21,7 +10,7 @@
   --form-input-focus: rgb(186, 226, 240);
 }
 
-.theme-dark {
+.dark {
   --form-bg: #23272f;
   --form-border: rgb(179, 186, 245);
   --form-label: #e0e0e0;

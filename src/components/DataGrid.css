@@ -1,11 +1,4 @@
 :root {
-  --datagrid-bg: rgb(76, 82, 82);
-  --datagrid-header-bg: rgb(16, 128, 219);
-  --datagrid-border: black;
-  --datagrid-cell-color: #fff;
-}
-
-.theme-light {
   --datagrid-bg: #fff;
   --datagrid-header-bg: #e3e3e3;
   --datagrid-border: #bbb;
