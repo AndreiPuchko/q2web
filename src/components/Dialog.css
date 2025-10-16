@@ -31,6 +31,8 @@
   border: 1px solid var(--dialog-border);
   background-color: var(--dialog-bg);
   box-shadow: var(--dialog-shadow);
+  min-height: 100px;
+  min-width: 100px;
 }
 
 .dialog-container.maximized {
