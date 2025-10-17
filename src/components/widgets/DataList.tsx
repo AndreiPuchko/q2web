@@ -213,7 +213,9 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
         <div className={`Q2DataList ${this.props.q2form.class}`}>
           {q2form.dataGridParams.showHeaders && this.renderHeader()}
           <div className="Q2DataList-scrollarea">
-            {data.map((row, index) => this.renderRow(row, index))}
+            <div>
+              {data.map((row, index) => this.renderRow(row, index))}
+            </div>
           </div>
         </div>
       );
