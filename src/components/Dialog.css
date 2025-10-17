@@ -23,11 +23,12 @@
 
 .dialog-pre-container {
   /* background-color: rgba(255, 255, 255, 0.9); */
-  display: flex;
+  background: transparent;
+  /* display: flex;
   justify-content: center;
   align-items: "center";
   inset: 0;
-  position: "fixed";
+  position: "fixed"; */
   /* background-color: red; */
 }
 
