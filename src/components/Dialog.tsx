@@ -418,13 +418,14 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         return (
             <div className={"dialog-pre-container"}
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    inset: "0",
-                    position: "fixed"
-                }}>
+                // style={{
+                //     display: "flex",
+                //     justifyContent: "center",
+                //     alignItems: "center",
+                //     inset: "0",
+                //     position: "fixed"
+                // }}
+                >
                 <div
                     className={`dialog-container Q2Dialog ${q2form.class} ${frameless ? "frameless" : ""}
                         ${isTopDialog ? '' : 'disabled'} ${isMaximized ? "maximized" : ""}

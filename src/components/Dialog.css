@@ -22,7 +22,13 @@
 }
 
 .dialog-pre-container {
-  background-color: rgba(255, 255, 255, 0.1);
+  /* background-color: rgba(255, 255, 255, 0.9); */
+  display: flex;
+  justify-content: center;
+  align-items: "center";
+  inset: 0;
+  position: "fixed";
+  /* background-color: red; */
 }
 
 .dialog-container {
