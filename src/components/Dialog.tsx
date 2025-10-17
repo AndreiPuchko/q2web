@@ -168,7 +168,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             dialog.style.left = saved.left || String(left);
             dialog.style.top = saved.top || String(top);
         } else {
-            dialog.style.left = left ? String(left) : `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
+            // dialog.style.left = left ? String(left) : `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
             dialog.style.top = top != "" ? String(top) : `${(window.innerHeight - menuBarHeight - dialog.offsetHeight) / 2}px`;
         }
         this.normalizePosition();

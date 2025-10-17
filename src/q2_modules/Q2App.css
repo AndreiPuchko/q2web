@@ -4,6 +4,8 @@
 }
 
 :root {
+  --max-width: 1000px;
+
   --datagrid-bg: #fff;
   --datagrid-bg-odd: #f7f7f7;
   --datagrid-header-bg: #e3e3e3;
@@ -13,8 +15,8 @@
 }
 
 .dark {
-  --datagrid-bg: rgb(76, 82, 82);
-  --datagrid-bg-odd: rgb(87, 87, 96);
+  --datagrid-bg: rgb(93, 93, 103);
+  --datagrid-bg-odd: rgb(74, 74, 84);
   --datagrid-header-bg: rgb(192, 196, 188);
   --datagrid-border: black;
   --datagrid-cell-color: #fff;
@@ -31,6 +33,18 @@ html {
 }
 
 
+.dialog-pre-container,
+.MainMenuBar {
+  max-width: var(--max-width);
+  /* width: 100%; */
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+.MainMenuBar {
+  left: 50%;
+  transform: translateX(-50%);
+}
 
 .DataGrid {
   background-color: var(--datagrid-bg);

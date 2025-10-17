@@ -36,7 +36,6 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     };
     this.resizeColumns = this.props.q2form.dataGridParams.resizeColumns;
     this.reorderColumns = this.props.q2form.dataGridParams.reorderColumns;
-    console.log(typeof props.q2form.data)
   }
 
   componentDidMount() {
@@ -175,9 +174,12 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     const { columns } = this.props.q2form;
     const { colWidths, columnOrder } = this.state;
     let className = "Q2DataList-row";
-    className += rowIndex % 2 === 0 ? " even " : " odd ";
+    className += rowIndex % 2 === 0 ? " even" : " odd";
+    // const style = rowIndex % 2 === 0 ? { background: "" } : { background: "var(--datagrid-bg-odd)" }
+    const style = rowIndex % 2 === 0 ? { background: "var(--datagrid-bg, #777 )" } : { background: "var(--datagrid-bg-odd)" }
     return (
       <div key={rowIndex} className={className}
+        style={style}
         onClick={() => this.handleRowClick(rowIndex)}
       >
         {columnOrder.map((colIdx) => {
@@ -212,7 +214,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       return (
         <div className={`Q2DataList ${this.props.q2form.class}`}>
           {q2form.dataGridParams.showHeaders && this.renderHeader()}
-          <div className="Q2DataList-scrollarea">
+          <div className="Q2DataList-scrollarea" style={{ overflow: "auto" }}>
             <div>
               {data.map((row, index) => this.renderRow(row, index))}
             </div>

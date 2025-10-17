@@ -46,10 +46,9 @@
     border-top: 1px solid black;
 }
 
-.Q2DataList-row.odd{
+.Q2DataList-row.odd {
     background: var(--datagrid-bg-odd);
 }
-
 
 .Q2DataList-header-cell {
     position: relative;
