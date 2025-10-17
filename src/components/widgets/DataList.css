@@ -37,6 +37,8 @@
     padding: 0.1rem;
     padding-left: 0.4rem;
     box-sizing: border-box;
+    flex: 0 0 auto;
+    overflow: auto;
 }
 
 
@@ -55,7 +57,7 @@
     border-right: 1px solid #ccc;
     padding: 4px 8px;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: auto;
     background: #d0e0ff;
     color: black
 }
