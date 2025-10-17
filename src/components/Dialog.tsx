@@ -148,6 +148,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         if (dialog.parentElement) {
             dialog.parentElement.style.inset = `${menuBarHeight}px 0 0`;
+            dialog.parentElement.style.background = "var(--workspace-bg)";
         }
         const dialogState = Cookies.get(`dialogState_${title}`);
 
