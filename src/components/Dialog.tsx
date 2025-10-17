@@ -58,6 +58,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
         dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
 
+        window.addEventListener('resize', this.fitHeghts);
+
         // ensure layout is settled: resize children and run mouse-up sizing logic
         if (!this.props.q2form.resizeable) {
             this.fitHeghts()
