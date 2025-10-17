@@ -388,11 +388,12 @@ export class Q2Line extends Q2Widget<Q2LineProps, Q2LineState> {
             }
         };
         Object.assign(style, column.style)
+        const input_type = column.pic === "*" ? "password" : "text"
 
         return (
             <div style={{ display: "flex", alignItems: "center" }}>
                 <input
-                    type="text"
+                    type={input_type}
                     className="Q2Line"
                     style={style}
                     value={value}

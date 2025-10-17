@@ -175,8 +175,9 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     const { colWidths, columnOrder } = this.state;
     let className = "Q2DataList-row";
     className += rowIndex % 2 === 0 ? " even" : " odd";
-    // const style = rowIndex % 2 === 0 ? { background: "" } : { background: "var(--datagrid-bg-odd)" }
-    const style = rowIndex % 2 === 0 ? { background: "var(--datagrid-bg, #777 )" } : { background: "var(--datagrid-bg-odd)" }
+    const style = rowIndex % 2 === 0 ?
+      { background: "var(--datagrid-bg, #777 )" }
+      : { background: "var(--datagrid-bg-odd)" }
     return (
       <div key={rowIndex} className={className}
         style={style}
