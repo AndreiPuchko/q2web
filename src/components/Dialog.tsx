@@ -176,32 +176,53 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     this.normalizePosition();
   };
 
-  onMoveMouseDown = (e: React.MouseEvent) => {
-    if (!this.props.q2form.moveable) return
-    if (this.state.isMaximized) return
+  onMoveMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!this.props.q2form.moveable) return;
+    if (this.state.isMaximized) return;
     if (!this.props.isTopDialog) return;
 
     const dialog = this.dialogRef.current;
     if (!dialog) return;
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    // Determine initial positions
+    const isTouch = e.type.startsWith("touch");
+    const startX = isTouch ? (e as React.TouchEvent).touches[0].clientX : (e as React.MouseEvent).clientX;
+    const startY = isTouch ? (e as React.TouchEvent).touches[0].clientY : (e as React.MouseEvent).clientY;
     const startLeft = dialog.offsetLeft;
     const startTop = dialog.offsetTop;
 
-    const onMouseMove = (e: MouseEvent) => {
-      dialog.style.left = `${startLeft + e.clientX - startX}px`;
-      dialog.style.top = `${startTop + e.clientY - startY}px`;
+    // Move handler
+    const onMove = (event: MouseEvent | TouchEvent) => {
+      const clientX = (event instanceof TouchEvent)
+        ? event.touches[0].clientX
+        : event.clientX;
+      const clientY = (event instanceof TouchEvent)
+        ? event.touches[0].clientY
+        : event.clientY;
+
+      dialog.style.left = `${startLeft + clientX - startX}px`;
+      dialog.style.top = `${startTop + clientY - startY}px`;
     };
 
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+    // Stop handler
+    const onStop = () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onStop);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onStop);
       this.saveDialogState();
     };
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+
+    // Attach listeners
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onStop);
+    document.addEventListener('touchmove', onMove);
+    document.addEventListener('touchend', onStop);
+
+    // Prevent accidental text selection / scroll
+    if (isTouch) e.preventDefault();
   };
+
 
   forceResize = () => {
     const dialog = this.dialogRef.current;
@@ -438,6 +459,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             <div
               className={`dialog-header ${isTopDialog ? "" : "disabled"}`}
               onMouseDown={this.onMoveMouseDown}
+              onTouchStart={this.onMoveMouseDown}
             >
               <span className="dialog-title">
                 <b>{q2form.title}</b>
