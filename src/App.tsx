@@ -2,6 +2,7 @@ import Q2App from './q2_modules/Q2App';
 import { Q2Form } from './q2_modules/Q2Form';
 
 import './App.css';
+import { GetQ2AppInstance } from './q2_modules/Q2Api';
 
 
 
@@ -49,7 +50,7 @@ function App() {
 
 
   const datalistForm = new Q2Form("", "", "");
-  
+
   datalistForm.dataGridParams.resizeColumns = false;
   datalistForm.dataGridParams.reorderColumns = false;
   datalistForm.dataGridParams.showHeaders = false;
@@ -90,6 +91,11 @@ function App() {
 
   fileMenuDialog.add_control("test3", "test button3",
     { control: "button", valid: () => Q2App.instance?.showMsg("Message Box Example") });
+
+  fileMenuDialog.hookSubmit = () => {
+    GetQ2AppInstance()?.showMsg("333")
+    return false
+  }
 
 
   fileMenu.push(fileMenuAbout)

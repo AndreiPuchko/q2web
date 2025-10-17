@@ -135,22 +135,27 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       };
 
       AuthForm.hookSubmit = (form) => {
-        this.showMsg("Development in progress...");
-        return true;
         const { tabWidget, email, password, remember } = form.s;
+        this.showMsg("Under constraction");
+        return true
         if (tabWidget === "Login") {
           this.handleLogin(email, password, remember).then((close) => {
-            if (close) form.close();
+            if (close) {
+              form.close();
+            }
             else {
-              this.showMsg("Login failed");
+              console.log("Login failed");
+              // this.showMsg("Login failed");
             }
           });
         } else {
           const { reg_name, reg_email, reg_pass1, reg_pass2 } = form.s;
-          this.handleRegister(reg_name, reg_email, reg_pass1, reg_pass2, remember).then((close) => {
-            if (close) form.close();
-          });
+          this.handleRegister(reg_name, reg_email,
+            reg_pass1, reg_pass2, remember).then((close) => {
+              if (close) form.close();
+            });
         }
+        console.log("submit")
         return false;
       };
 
@@ -233,7 +238,8 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     }
   };
 
-  showMsg = (msg: string): void => {
+  showMsg = (msg: string, title?: string): void => {
+    if (title === undefined) title = "Message";
     const msgBox = new Q2Form("", "msgbox", "msgbox", {
       hasMaxButton: false,
       hasOkButton: true,
