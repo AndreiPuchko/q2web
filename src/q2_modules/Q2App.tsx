@@ -110,7 +110,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       AuthForm.hasMaxButton = false;
       AuthForm.resizeable = false;
       AuthForm.moveable = false;
-      AuthForm.width = "65%";
+      AuthForm.width = window.innerWidth < 600 ? "100%" : "65%";
       AuthForm.height = "auto";
       AuthForm.top = "10%"
       // AuthForm.frameless = true;
@@ -120,7 +120,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       AuthForm.add_control("password", "Password", { pic: "*" });
 
       AuthForm.add_control("/t", "Register");
-      AuthForm.add_control("reg_name", "nickname");
+      AuthForm.add_control("reg_name", "Nickname");
       AuthForm.add_control("reg_email", "Email");
       AuthForm.add_control("reg_pass1", "Password", { pic: "*" });
       AuthForm.add_control("reg_pass2", "Repeat password", { pic: "*" });
@@ -135,6 +135,8 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       };
 
       AuthForm.hookSubmit = (form) => {
+        this.showMsg("Development in progress...");
+        return true;
         const { tabWidget, email, password, remember } = form.s;
         if (tabWidget === "Login") {
           this.handleLogin(email, password, remember).then((close) => {
