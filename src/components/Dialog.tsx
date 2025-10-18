@@ -51,13 +51,13 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     this.loadDialogState();
     const dialog = this.dialogRef.current;
     if (!dialog) return;
-
+    
     dialog.style.overflow = this.props.q2form.resizeable ? "hidden" : "none"
-
+    
     this.set_resize_move_icons()
-
+    
     dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
-
+    
     window.addEventListener('resize', this.fitHeghts);
 
     // ensure layout is settled: resize children and run mouse-up sizing logic
@@ -251,7 +251,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     // Быстрый старт с крупным шагом, потом уменьшаем
     let step = 10;
     let safety = 0;
-    while (dialog.scrollHeight < dialog.clientHeight && safety++ < 1000) {
+    const safety_limit = window.innerHeight-dialog.clientTop;
+    while (dialog.scrollHeight <= dialog.clientHeight && safety++ < safety_limit) {
       let reachedLimit = false;
 
       for (let i = 0; i < panels.length; i++) {
@@ -275,7 +276,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       const free = dialog.clientHeight - dialog.scrollHeight;
       if (free < 50 && step > 1) step = 1;
     }
-    if (safety >= 1000) {
+    if (safety >= safety_limit) {
       console.warn("Dialog.fitHeights() stopped due to safety limit");
     }
   };
@@ -440,7 +441,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   render() {
-    console.log("Rendering Dialog:", this.props.q2form?.key);
     const { onClose, q2form, zIndex, isTopDialog, dialogIndex } = this.props;
     const { isMaximized } = this.state;
     q2form.dialogIndex = dialogIndex;
