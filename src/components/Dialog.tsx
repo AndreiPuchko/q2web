@@ -164,13 +164,11 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     const finalWidth = resizeable && saved.width ? saved.width : String(width);
     let finalHeight = resizeable && saved.height ? saved.height : String(height);
-    
-    if (!resizeable && finalHeight.includes("%")){
-      console.log(`calc(${finalHeight} - ${menuBarHeight/4}px)`)
-      // finalHeight = `calc(${finalHeight} - ${menuBarHeight/4}px)`
+
+    if (!resizeable && finalHeight.includes("%")) {
       finalHeight = `calc(${finalHeight} - 1px)`
     }
-    
+
     dialog.style.width = finalWidth;
     dialog.style.height = finalHeight;
 
@@ -252,8 +250,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     // Быстрый старт с крупным шагом, потом уменьшаем
     let step = 10;
-
-    while (dialog.scrollHeight <= dialog.clientHeight) {
+    let safety = 0;
+    while (dialog.scrollHeight < dialog.clientHeight && safety++ < 1000) {
       let reachedLimit = false;
 
       for (let i = 0; i < panels.length; i++) {
@@ -276,6 +274,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
       const free = dialog.clientHeight - dialog.scrollHeight;
       if (free < 50 && step > 1) step = 1;
+    }
+    if (safety >= 1000) {
+      console.warn("Dialog.fitHeights() stopped due to safety limit");
     }
   };
 
@@ -439,6 +440,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   render() {
+    console.log("Rendering Dialog:", this.props.q2form?.key);
     const { onClose, q2form, zIndex, isTopDialog, dialogIndex } = this.props;
     const { isMaximized } = this.state;
     q2form.dialogIndex = dialogIndex;
