@@ -1,6 +1,5 @@
 /* Theme variables */
 :root {
-  --form-bg: #fff;
   --form-border: #b3b6f5;
   --form-label: #222;
   --form-groupbox-bg: rgb(243, 251, 254);
@@ -11,7 +10,6 @@
 }
 
 .dark {
-  --form-bg: #23272f;
   --form-border: rgb(179, 186, 245);
   --form-label: #e0e0e0;
   --form-groupbox-bg: #17171f;
@@ -159,5 +157,5 @@ label {
   position: relative;
   flex-direction: column;
   min-width: 0;
-  background: var(--form-bg);
+  background: var(--dialog-bg);
 }
