@@ -7,10 +7,9 @@ import { Q2Form } from "../q2_modules/Q2Form";
 
 interface DialogProps {
   onClose: () => void;
-  zIndex: number;
   q2form: Q2Form;
   isTopDialog: boolean;
-  dialogIndex: number;
+  dialogIndex: string;
 }
 
 interface DialogState {
@@ -441,7 +440,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   render() {
-    const { onClose, q2form, zIndex, isTopDialog, dialogIndex } = this.props;
+    const { onClose, q2form, isTopDialog, dialogIndex } = this.props;
     const { isMaximized } = this.state;
     q2form.dialogIndex = dialogIndex;
     const frameless = q2form.frameless
@@ -463,7 +462,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                         ${isTopDialog ? '' : 'disabled'} ${isMaximized ? "maximized" : ""}
                         `}
           ref={this.dialogRef}
-          style={{ zIndex }}
           key={q2form.key}
         >
 

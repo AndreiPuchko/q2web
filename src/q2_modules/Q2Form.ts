@@ -142,7 +142,7 @@ export class Q2Form {
     hookCancel?: (form: Q2FrontForm) => boolean;
     hookClosed?: (form: Q2FrontForm) => void;
     hookDataGridRowClicked?: (form: Q2DataList) => void;
-    dialogIndex: number;
+    dialogIndex: string;
     frontForm: Q2FrontForm | undefined;
     class: string;
     dataGridParams: DataGridParams;
@@ -170,7 +170,7 @@ export class Q2Form {
         this.frameless = false;
         this.x = 0;
         this.y = 0;
-        this.dialogIndex = -1;
+        this.dialogIndex = "";
         this.frontForm = undefined;
         this.class = options.class || "";
         this.dataGridParams = { ...options.dataGridParams,...defaultDataGridParams }

@@ -8,6 +8,7 @@
   --dialog-disabled-overlay: rgba(0, 0, 0, 0.07);
   --close-btn-hover: #e57373;
   --title-color: rgb(255, 255, 255);
+  --dialog-radius: 0.3rem;
 }
 
 .dark {

@@ -6,7 +6,7 @@ export function showDialog(q2form: Q2Form) {
 
 }
 
-export function closeDialog(zIndex: number) {
+export function closeDialog(zIndex: string) {
     Q2App.instance?.closeDialog(zIndex);
 }
 

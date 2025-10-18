@@ -271,7 +271,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   showHome = () => {
     if (Object.keys(this.state.dialogs).length === 0) {
       this.props.q2forms.forEach(el => {
-        if (el.key === "autorun") this.showDialog(el);
+        if (el.key.startsWith("autorun_")) this.showDialog(el);
       });
     }
   };
@@ -289,8 +289,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
             onClose={() => this.closeDialog(key)}
             q2form={this.state.dialogs[key]}
             isTopDialog={index === dialogKeys.length - 1}
-            zIndex={1000 + index} // topmost dialog gets highest z-index
-            dialogIndex={index}
+            dialogIndex={key}
           />
         ))}
       </>
