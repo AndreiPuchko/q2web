@@ -257,6 +257,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
   showDialog = (q2form: Q2Form) => {
     const newDialogIndex = this.state.dialogs.length;
+    console.log((q2form as any).key);
     history.pushState({ key: Math.random() }, "", window.location.href);
     this.setState((prevState) => ({
       dialogs: [...prevState.dialogs, { key: (q2form as any).key, q2form }],

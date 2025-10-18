@@ -177,6 +177,9 @@ export class Q2Form {
         if (key === "") {
             this.key = generateRandomKey();
         }
+        else {
+            this.key = `${this.key}_${generateRandomKey()}`
+        }
         Object.assign(this, options);
         // Ensure all columns are Q2Control instances
         if (this.columns && Array.isArray(this.columns)) {

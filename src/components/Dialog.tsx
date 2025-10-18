@@ -450,6 +450,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     return (
       <div className={"dialog-pre-container"}
+        key={q2form.key}
         style={{
           display: "flex",
           justifyContent: "center",
@@ -463,6 +464,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
                         `}
           ref={this.dialogRef}
           style={{ zIndex }}
+          key={q2form.key}
         >
 
           {!frameless && (
