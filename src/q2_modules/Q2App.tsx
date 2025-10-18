@@ -6,16 +6,14 @@ import { Q2Form } from "../q2_modules/Q2Form";
 import './Q2App.css';
 import { apiRequest } from "./Q2Api"
 
-
 export interface Q2AppProps {
   q2forms: Array<Q2Form>;
 }
 
 export interface Q2AppState {
-  zIndexMap: { [key: string]: any };
-  dialogs: any[];
+  dialogs: { [key: string]: Q2Form };
   theme: string | null;
-  isLoggedIn: boolean; // No changes here, `isLoggedIn` is already in the state
+  isLoggedIn: boolean;
   userName: string;
   userUid: string;
   isLoginDialogOpen: boolean;
@@ -24,40 +22,37 @@ export interface Q2AppState {
 export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component<P, S> {
   static instance: Q2App<any, any> | null = null;
   static apiUrl: string = "";
+
   constructor(props: Q2AppProps) {
     super(props as P);
-    Q2App.instance = this; // No error now since `instance` is typed as `Q2App<any> | null`
+    Q2App.instance = this;
     this.state = {
-      zIndexMap: {},
-      dialogs: [],
+      dialogs: {},
       theme: this.detectTheme(),
       isLoggedIn: false,
       userName: "",
-      userUid: 0,
+      userUid: "",
       isLoginDialogOpen: false,
     } as unknown as Readonly<S>;
   }
 
   detectTheme = () => {
-    // Try to get from localStorage first
-    // return 'light';
     const saved = localStorage.getItem('theme');
-    if (saved === 'dark')
-      document.documentElement.classList.add('dark');
+    if (saved === 'dark') document.documentElement.classList.add('dark');
     if (saved === 'light' || saved === 'dark') return saved;
-    // Otherwise, use system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-      return 'light';
-    }
-    return 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   };
 
   componentDidMount() {
     this.applyTheme();
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
     this.setUser().then(() => this.showHome());
-
     window.addEventListener("popstate", this.handleBackButton);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('q2-theme-changed', this.handleThemeChanged);
+    window.removeEventListener("popstate", this.handleBackButton);
   }
 
   handleBackButton = (event: any) => {
@@ -65,20 +60,13 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     this.closeTopDialog();
   };
 
-  componentWillUnmount() {
-    window.removeEventListener('q2-theme-changed', this.handleThemeChanged);
-    window.removeEventListener("popstate", this.handleBackButton);
-  }
-
   handleThemeChanged = () => {
     const theme = this.detectTheme();
     this.setState({ theme });
   };
 
   componentDidUpdate(prevState: any) {
-    if (prevState.theme !== this.state.theme) {
-      this.applyTheme();
-    }
+    if (prevState.theme !== this.state.theme) this.applyTheme();
   }
 
   applyTheme = () => {
@@ -86,23 +74,20 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   };
 
   toggleTheme = () => {
-    this.setState(
-      prev => {
-        const newTheme = prev.theme === 'light' ? 'dark' : 'light';
-        localStorage.setItem('theme', newTheme);
-        Cookies.set("theme", newTheme, { expires: 365 * 10 });
-        document.documentElement.classList.toggle("dark", newTheme === "dark");
-        return { theme: newTheme };
-      }
-    );
+    this.setState(prev => {
+      const newTheme = prev.theme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme', newTheme);
+      Cookies.set("theme", newTheme, { expires: 365 * 10 });
+      document.documentElement.classList.toggle("dark", newTheme === "dark");
+      return { theme: newTheme };
+    });
   };
+
 
   login_logout = async () => {
     if (this.state.isLoggedIn) {
       await this.handleLogout();
     } else {
-      console.log(this.state, "---")
-
       if (this.state.isLoginDialogOpen) return;
       const AuthForm = new Q2Form("", "Auth Form", "authform", { class: "LP-AuthForm" });
       AuthForm.hasOkButton = true;
@@ -136,7 +121,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
       AuthForm.hookSubmit = (form) => {
         const { tabWidget, email, password, remember } = form.s;
-        this.showMsg("Under constraction");
+        this.showMsg("Under constraction", "Auth error");
         return true
         if (tabWidget === "Login") {
           this.handleLogin(email, password, remember).then((close) => {
@@ -231,19 +216,18 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
         isLoginDialogOpen: false
       });
       this.closeAllDialogs();
-    }
-    catch {
+    } catch {
       console.log("Not logged in");
-
     }
   };
 
   showMsg = (msg: string, title?: string): void => {
-    if (title === undefined) title = "Message";
-    const msgBox = new Q2Form("", "msgbox", "msgbox", {
+    if (!title) title = "Message";
+    const msgBox = new Q2Form("", title, "msgbox", {
       hasMaxButton: false,
       hasOkButton: true,
-      resizeable: false,
+      width: "65%",
+      top: "10%",
     });
 
     msgBox.add_control("/v");
@@ -252,70 +236,60 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       data: msg,
       control: "text"
     });
-    this.showDialog(msgBox); // Explicitly assert the type of msgBox to T
+    this.showDialog(msgBox);
   }
 
   showDialog = (q2form: Q2Form) => {
-    const newDialogIndex = this.state.dialogs.length;
-    console.log((q2form as any).key);
-    history.pushState({ key: Math.random() }, "", window.location.href);
-    this.setState((prevState) => ({
-      dialogs: [...prevState.dialogs, { key: (q2form as any).key, q2form }],
-      zIndexMap: { ...prevState.zIndexMap, [newDialogIndex]: newDialogIndex + 1 }
+    const key = `dlg_${Math.random().toString(36).substr(2, 9)}`;
+    history.pushState({ key }, "", window.location.href);
+    this.setState(prevState => ({
+      dialogs: { ...prevState.dialogs, [key]: q2form }
     }));
   };
 
-  closeDialog = (index: number) => {
-    this.setState((prevState) => {
-      const newDialogs = prevState.dialogs.filter((_: any, i: number) => i !== index);
-      const newZIndexMap = { ...prevState.zIndexMap };
-      delete newZIndexMap[index];
-      return {
-        dialogs: newDialogs,
-        zIndexMap: newZIndexMap
-      };
+  closeDialog = (key: string) => {
+    this.setState(prevState => {
+      const newDialogs = { ...prevState.dialogs };
+      delete newDialogs[key];
+      return { dialogs: newDialogs };
     }, () => {
-      if (this.state.dialogs.length === 0) this.showHome()
+      if (Object.keys(this.state.dialogs).length === 0) this.showHome();
     });
   };
 
+
   closeAllDialogs = () => {
-    this.setState({ dialogs: [], zIndexMap: {} },
-      () => this.showHome());
+    this.setState({ dialogs: {} }, () => this.showHome());
   };
 
+
   closeTopDialog = () => {
-    if (this.state.dialogs.length > 0) {
-      this.closeDialog(this.state.dialogs.length - 1);
-    }
+    const keys = Object.keys(this.state.dialogs);
+    if (keys.length > 0) this.closeDialog(keys[keys.length - 1]);
   };
 
   showHome = () => {
-    if (this.state.dialogs.length === 0) {
+    if (Object.keys(this.state.dialogs).length === 0) {
       this.props.q2forms.forEach(el => {
         if (el.key === "autorun") this.showDialog(el);
       });
     }
   };
 
-  hookMainMenuWidget = (): any => {
-    return null
-  }
+  hookMainMenuWidget = (): any => null;
 
   render() {
+    const dialogKeys = Object.keys(this.state.dialogs);
     return (
       <>
-        <MainMenu
-          q2forms={this.props.q2forms}
-          isLoggedIn={this.state.isLoggedIn}
-        />
-        {this.state.dialogs.map((dialog: any, index: any) => (
+        <MainMenu q2forms={this.props.q2forms} isLoggedIn={this.state.isLoggedIn} />
+        {dialogKeys.map((key, index) => (
           <Dialog
-            key={index}
-            onClose={() => this.closeDialog(index)}
-            q2form={dialog.q2form}
-            isTopDialog={index === this.state.dialogs.length - 1}
-            zIndex={this.state.zIndexMap[index] || 0}
+            key={key}
+            onClose={() => this.closeDialog(key)}
+            q2form={this.state.dialogs[key]}
+            isTopDialog={index === dialogKeys.length - 1}
+            zIndex={1000 + index} // topmost dialog gets highest z-index
             dialogIndex={index}
           />
         ))}
