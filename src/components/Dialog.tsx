@@ -26,6 +26,17 @@ const growableWidthClasses = `
                     .q2-scroll, 
                     .q2-report-editor-root`;
 
+type Point = { x: number; y: number };
+
+// Helper to get {x, y} from mouse or touch event
+const getPoint = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent): Point => {
+  if ('touches' in e && e.touches.length > 0) {
+    return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  } else {
+    const mouseEvent = e as MouseEvent;
+    return { x: mouseEvent.clientX, y: mouseEvent.clientY };
+  }
+};
 
 class Dialog extends React.Component<DialogProps, DialogState> {
   dialogRef: React.RefObject<HTMLDivElement | null>;
@@ -50,13 +61,13 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     this.loadDialogState();
     const dialog = this.dialogRef.current;
     if (!dialog) return;
-    
+
     dialog.style.overflow = this.props.q2form.resizeable ? "hidden" : "none"
-    
+
     this.set_resize_move_icons()
-    
+
     dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
-    
+
     window.addEventListener('resize', this.fitHeghts);
 
     // ensure layout is settled: resize children and run mouse-up sizing logic
@@ -182,34 +193,24 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   };
 
   onMoveMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!this.props.q2form.moveable) return;
-    if (this.state.isMaximized) return;
-    if (!this.props.isTopDialog) return;
+    const { q2form, isTopDialog } = this.props;
+    const { isMaximized } = this.state;
+
+    if (!q2form.moveable || isMaximized || !isTopDialog) return;
 
     const dialog = this.dialogRef.current;
     if (!dialog) return;
 
-    // Determine initial positions
-    const isTouch = e.type.startsWith("touch");
-    const startX = isTouch ? (e as React.TouchEvent).touches[0].clientX : (e as React.MouseEvent).clientX;
-    const startY = isTouch ? (e as React.TouchEvent).touches[0].clientY : (e as React.MouseEvent).clientY;
+    const start = getPoint(e);
     const startLeft = dialog.offsetLeft;
     const startTop = dialog.offsetTop;
 
-    // Move handler
     const onMove = (event: MouseEvent | TouchEvent) => {
-      const clientX = (event instanceof TouchEvent)
-        ? event.touches[0].clientX
-        : event.clientX;
-      const clientY = (event instanceof TouchEvent)
-        ? event.touches[0].clientY
-        : event.clientY;
-
-      dialog.style.left = `${startLeft + clientX - startX}px`;
-      dialog.style.top = `${startTop + clientY - startY}px`;
+      const current = getPoint(event);
+      dialog.style.left = `${startLeft + current.x - start.x}px`;
+      dialog.style.top = `${startTop + current.y - start.y}px`;
     };
 
-    // Stop handler
     const onStop = () => {
       document.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseup', onStop);
@@ -218,14 +219,13 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       this.saveDialogState();
     };
 
-    // Attach listeners
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onStop);
-    document.addEventListener('touchmove', onMove);
+    document.addEventListener('touchmove', onMove, { passive: false });
     document.addEventListener('touchend', onStop);
 
     // Prevent accidental text selection / scroll
-    if (isTouch) e.preventDefault();
+    if ('touches' in e) e.preventDefault();
   };
 
 
@@ -250,7 +250,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     // Быстрый старт с крупным шагом, потом уменьшаем
     let step = 10;
     let safety = 0;
-    const safety_limit = window.innerHeight-dialog.clientTop;
+    const safety_limit = window.innerHeight - dialog.clientTop;
     while (dialog.scrollHeight <= dialog.clientHeight && safety++ < safety_limit) {
       let reachedLimit = false;
 
@@ -469,7 +469,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
             <div
               className={`dialog-header ${isTopDialog ? "" : "disabled"}`}
               onMouseDown={this.onMoveMouseDown}
-              onTouchStart={this.onMoveMouseDown}
+              onPointerDown={this.onMoveMouseDown}
             >
               <span className="dialog-title">
                 <b>{q2form.title}</b>
