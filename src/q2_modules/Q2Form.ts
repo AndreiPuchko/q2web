@@ -199,6 +199,8 @@ export class Q2Form {
     check_frameless() {
         if (this.frameless && this.width === "") this.width = "100%"
         if (this.frameless && this.height === "") this.height = "100%"
+        if (this.frameless && this.top === "") this.top = "0"
+        if (this.frameless && this.left === "") this.left = "0"
         if (this.height === "") this.height = "auto"
         if (this.width === "") this.width = "auto"
     }
