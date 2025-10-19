@@ -83,6 +83,9 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     });
   };
 
+  editUserProfile =() => {
+    this.showMsg("Under construction...");
+  }
 
   login_logout = async () => {
     if (this.state.isLoggedIn) {
@@ -121,8 +124,6 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
       AuthForm.hookSubmit = (form) => {
         const { tabWidget, email, password, remember } = form.s;
-        this.showMsg("Under constraction", "Auth error");
-        return true
         if (tabWidget === "Login") {
           this.handleLogin(email, password, remember).then((close) => {
             if (close) {
@@ -203,7 +204,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
   handleLogout = async () => {
     await apiRequest("/logout", { method: "POST" });
-    this.setState({ isLoggedIn: false }, () => this.showHome())
+    this.setState({ isLoggedIn: false, userName: "", userUid: "" }, () => this.showHome())
   };
 
   setUser = async () => {

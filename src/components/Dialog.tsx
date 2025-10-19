@@ -54,7 +54,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     this.state = {
       isMaximized: false
     };
-    this.props.q2form.check_frameless()
+    this.props.q2form.check_frameless();
   }
 
   componentDidMount() {

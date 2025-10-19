@@ -188,6 +188,14 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 </div>
                 <div className='spacer9'></div>
                 {customMainMenu ? customMainMenu : null}
+                {GetQ2AppInstance()?.state.userName &&
+                    <span className="MainMenuIcon"
+                        title="Edit User Propfile"
+                        onClick={GetQ2AppInstance()?.editUserProfile}
+                    >
+
+                        {GetQ2AppInstance()?.state.userName}
+                    </span>}
                 <span title={isLoggedIn ? "Logout" : "Login"}>
                     {isLoggedIn ?
                         <LogOut className={"MainMenuIcon"}
