@@ -249,7 +249,6 @@ fitHeights = () => {
   if (!panels.length) return;
   
   // Reset panel heights
-  console.log("on resize")
   panels.forEach(pan => (pan.style.height = "50px"));
   
   // Wait one animation frame to ensure DOM updates & reflow are committed
@@ -259,15 +258,12 @@ fitHeights = () => {
 private fitHeightsContinue(dialog: HTMLElement, panels: HTMLElement[]) {
   // Force layout flush (safety)
   void dialog.offsetHeight;
-  console.log("on resize!!!", window.innerHeight)
-
   let step = 10;
   let safety = 0;
   const safetyLimit = window.innerHeight - dialog.clientTop;
 
   while (dialog.scrollHeight <= dialog.clientHeight && safety++ < safetyLimit) {
     let reachedLimit = false;
-    console.log("!!!")
     for (let i = 0; i < panels.length; i++) {
       const pan = panels[i];
       const current = parseFloat(getComputedStyle(pan).height);
