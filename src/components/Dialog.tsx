@@ -68,11 +68,11 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     dialog.addEventListener('mouseup', this.dialogHandleMouseUp);
 
-    window.addEventListener('resize', this.fitHeghts);
+    window.addEventListener('resize', this.fitHeights);
 
     // ensure layout is settled: resize children and run mouse-up sizing logic
     if (!this.props.q2form.resizeable) {
-      this.fitHeghts()
+      this.fitHeights()
       // this.fitWidths()
     }
     if (this.props.q2form.resizeable) {
@@ -99,6 +99,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
   componentDidUpdate(): void {
     this.set_resize_move_icons()
+    this.fitHeights();
   }
 
   componentWillUnmount() {
@@ -177,6 +178,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     if (!resizeable && finalHeight.includes("%")) {
       finalHeight = `calc(${finalHeight} - 1px)`
+      // finalHeight = `${window.innerHeight - menuBarHeight}px`
     }
 
     dialog.style.width = finalWidth;
@@ -237,48 +239,65 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     dialog.style.width = `${dialog.clientWidth - 1}px`;
   }
 
-  fitHeghts = () => {
-    const dialog = this.dialogRef.current;
-    if (!dialog) return;
+fitHeights = () => {
+  const dialog = this.dialogRef.current;
+  if (!dialog) return;
+  
+  const panels = Array.from(
+    dialog.querySelectorAll(growableHeightClasses) as unknown as HTMLCollectionOf<HTMLElement>
+  );
+  if (!panels.length) return;
+  
+  // Reset panel heights
+  console.log("on resize")
+  panels.forEach(pan => (pan.style.height = "50px"));
+  
+  // Wait one animation frame to ensure DOM updates & reflow are committed
+  requestAnimationFrame(() => this.fitHeightsContinue(dialog, panels));
+};
 
-    const panels = Array.from(dialog.querySelectorAll(growableHeightClasses) as unknown as HTMLCollectionOf<HTMLElement>);
-    if (!panels.length) return;
+private fitHeightsContinue(dialog: HTMLElement, panels: HTMLElement[]) {
+  // Force layout flush (safety)
+  void dialog.offsetHeight;
+  console.log("on resize!!!", window.innerHeight)
 
-    // Сбрасываем панели
-    panels.forEach(pan => (pan.style.height = "50px"));
+  let step = 10;
+  let safety = 0;
+  const safetyLimit = window.innerHeight - dialog.clientTop;
 
-    // Быстрый старт с крупным шагом, потом уменьшаем
-    let step = 10;
-    let safety = 0;
-    const safety_limit = window.innerHeight - dialog.clientTop;
-    while (dialog.scrollHeight <= dialog.clientHeight && safety++ < safety_limit) {
-      let reachedLimit = false;
+  while (dialog.scrollHeight <= dialog.clientHeight && safety++ < safetyLimit) {
+    let reachedLimit = false;
+    console.log("!!!")
+    for (let i = 0; i < panels.length; i++) {
+      const pan = panels[i];
+      const current = parseFloat(getComputedStyle(pan).height);
+      pan.style.height = `${current + step}px`;
 
-      for (let i = 0; i < panels.length; i++) {
-        const pan = panels[i];
-        const current = parseFloat(getComputedStyle(pan).height);
-        pan.style.height = `${current + step}px`;
-
-        if (dialog.scrollHeight > dialog.clientHeight) {
-          // oversize - step back
-          pan.style.height = `${current}px`;
-          if (step > 1) {
-            step = Math.max(1, Math.floor(step / 2));
-          } else {
-            reachedLimit = true;
-          }
-          break;
+      // Reading scrollHeight forces layout
+      if (dialog.scrollHeight > dialog.clientHeight) {
+        // Oversized — step back
+        pan.style.height = `${current}px`;
+        void dialog.offsetHeight;
+        if (step > 1) {
+          step = Math.max(1, Math.floor(step / 2));
+        } else {
+          reachedLimit = true;
         }
+        break;
       }
-      if (reachedLimit) break;
+    }
 
-      const free = dialog.clientHeight - dialog.scrollHeight;
-      if (free < 50 && step > 1) step = 1;
-    }
-    if (safety >= safety_limit) {
-      console.warn("Dialog.fitHeights() stopped due to safety limit");
-    }
-  };
+    if (reachedLimit) break;
+
+    const free = dialog.clientHeight - dialog.scrollHeight;
+    if (free < 50 && step > 1) step = 1;
+  }
+
+  if (safety >= safetyLimit) {
+    console.warn("Dialog.fitHeights() stopped due to safety limit");
+  }
+}
+
 
   fitWidths = () => {
     const dialog = this.dialogRef.current;
@@ -364,7 +383,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       prev.childCount === snapshot.childCount) {
       return;
     }
-    this.fitHeghts();
+    this.fitHeights();
     this.fitWidths();
 
     // store snapshot for next invocation

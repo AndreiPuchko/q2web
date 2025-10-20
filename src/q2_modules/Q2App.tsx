@@ -196,7 +196,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       this.setUser();
     } catch (err) {
       console.log(err)
-      // alert("Login failed");
+      this.showMsg("Login failed");
       return false
     }
     return true
@@ -272,7 +272,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   showHome = () => {
     if (Object.keys(this.state.dialogs).length === 0) {
       this.props.q2forms.forEach(el => {
-        if (el.key.startsWith("autorun_")) this.showDialog(el);
+        if (el.key.startsWith("autorun")) this.showDialog(el);
       });
     }
   };
