@@ -25,6 +25,7 @@
 
 button {
   background-color: var(--form-input-bg);
+  border: 1px solid var(--form-border);
   color: var(--form-input);
   cursor: pointer;
 }
