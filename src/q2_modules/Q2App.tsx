@@ -203,7 +203,12 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   };
 
   handleLogout = async () => {
+    try {
     await apiRequest("/logout", { method: "POST" });
+    }
+    catch {
+      
+    }
     this.setState({ isLoggedIn: false, userName: "", userUid: "" }, () => this.showHome())
   };
 
