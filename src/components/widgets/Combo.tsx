@@ -1,6 +1,8 @@
 import React from 'react';
 import Q2Widget from './Widget';
 import { Q2WidgetProps } from './Widget';
+// import { } from "./Combo.css"
+import "./Combo.css"
 
 interface Q2ComboProps extends Q2WidgetProps { }
 
@@ -180,30 +182,25 @@ export class Q2Combo extends Q2Widget<Q2ComboProps, Q2ComboState> {
 
     render() {
         const { value, showList, filtered, highlightedIndex } = this.state;
+        // let style = this.props.column.style ? this.props.column.style : {};
+        // console.log(style)
+        let style: React.CSSProperties = {};
+        style = { ...style, ...this.props.column?.style }
+        const className = this.props.column.class;
 
         return (
-            <div className="Q2Combo" ref={this.wrapperRef} style={{ display: "flex", alignItems: "center", position: 'relative' }}>
+            <div className={`Q2Combo ${className}`} ref={this.wrapperRef} style={style}>
                 <input
                     ref={this.inputRef}
                     value={value}
                     onChange={this.handleInputChange}
-                    // onFocus={this.handleFocus}
                     onBlur={this.handleBlur}
                     onKeyDown={this.handleKeyDown}
-                    style={{ flex: "1 auto", paddingRight: '3em', width: '100%' }}
+                    style={{ flex: "1 auto", width: '100%' }}
                 />
                 {value && (
-                    <button
+                    <button className='Clear'
                         onClick={this.handleClear}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            right: '1em',
-                            background: 'transparent',
-                            border: 'none',
-                            color: "red",
-                            fontSize: 'larger',
-                        }}
                         title="Clear"
                     >
                         ×
@@ -212,12 +209,6 @@ export class Q2Combo extends Q2Widget<Q2ComboProps, Q2ComboState> {
                 <button
                     onClick={this.toggleDropdown}
                     tabIndex={-1}
-                    style={{
-                        position: 'absolute',
-                        right: '0px',
-                        background: 'transparent',
-                        border: 'none',
-                    }}
                     title="Toggle dropdown"
                 >
                     ▼

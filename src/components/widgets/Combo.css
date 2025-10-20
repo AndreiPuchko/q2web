@@ -1,0 +1,17 @@
+.Q2Combo {
+    display: flex;
+    align-items: top;
+    position: relative;
+    border: 1px solid gray;
+    border-radius: .3rem;
+}
+
+.Q2Combo button {
+    font-size: larger;
+    border: none;
+    background: transparent;
+}
+
+.Q2Combo .Clear  {
+    color: red;
+}
