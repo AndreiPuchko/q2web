@@ -102,9 +102,9 @@
   background: transparent;
   color: var(--title-color);
   border: none;
-  font-size: 1.2em;
   cursor: pointer;
-  padding: 0px 1rem;
+  padding: 0px 0.3rem;
+  border-radius: 0.2rem;
 }
 
 .close-button:hover {

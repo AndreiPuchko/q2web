@@ -239,60 +239,60 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     dialog.style.width = `${dialog.clientWidth - 1}px`;
   }
 
-fitHeights = () => {
-  const dialog = this.dialogRef.current;
-  if (!dialog) return;
-  
-  const panels = Array.from(
-    dialog.querySelectorAll(growableHeightClasses) as unknown as HTMLCollectionOf<HTMLElement>
-  );
-  if (!panels.length) return;
-  
-  // Reset panel heights
-  panels.forEach(pan => (pan.style.height = "50px"));
-  
-  // Wait one animation frame to ensure DOM updates & reflow are committed
-  requestAnimationFrame(() => this.fitHeightsContinue(dialog, panels));
-};
+  fitHeights = () => {
+    const dialog = this.dialogRef.current;
+    if (!dialog) return;
 
-private fitHeightsContinue(dialog: HTMLElement, panels: HTMLElement[]) {
-  // Force layout flush (safety)
-  void dialog.offsetHeight;
-  let step = 10;
-  let safety = 0;
-  const safetyLimit = window.innerHeight - dialog.clientTop;
+    const panels = Array.from(
+      dialog.querySelectorAll(growableHeightClasses) as unknown as HTMLCollectionOf<HTMLElement>
+    );
+    if (!panels.length) return;
 
-  while (dialog.scrollHeight <= dialog.clientHeight && safety++ < safetyLimit) {
-    let reachedLimit = false;
-    for (let i = 0; i < panels.length; i++) {
-      const pan = panels[i];
-      const current = parseFloat(getComputedStyle(pan).height);
-      pan.style.height = `${current + step}px`;
+    // Reset panel heights
+    panels.forEach(pan => (pan.style.height = "50px"));
 
-      // Reading scrollHeight forces layout
-      if (dialog.scrollHeight > dialog.clientHeight) {
-        // Oversized — step back
-        pan.style.height = `${current}px`;
-        void dialog.offsetHeight;
-        if (step > 1) {
-          step = Math.max(1, Math.floor(step / 2));
-        } else {
-          reachedLimit = true;
+    // Wait one animation frame to ensure DOM updates & reflow are committed
+    requestAnimationFrame(() => this.fitHeightsContinue(dialog, panels));
+  };
+
+  private fitHeightsContinue(dialog: HTMLElement, panels: HTMLElement[]) {
+    // Force layout flush (safety)
+    void dialog.offsetHeight;
+    let step = 10;
+    let safety = 0;
+    const safetyLimit = window.innerHeight - dialog.clientTop;
+
+    while (dialog.scrollHeight <= dialog.clientHeight && safety++ < safetyLimit) {
+      let reachedLimit = false;
+      for (let i = 0; i < panels.length; i++) {
+        const pan = panels[i];
+        const current = parseFloat(getComputedStyle(pan).height);
+        pan.style.height = `${current + step}px`;
+
+        // Reading scrollHeight forces layout
+        if (dialog.scrollHeight > dialog.clientHeight) {
+          // Oversized — step back
+          pan.style.height = `${current}px`;
+          void dialog.offsetHeight;
+          if (step > 1) {
+            step = Math.max(1, Math.floor(step / 2));
+          } else {
+            reachedLimit = true;
+          }
+          break;
         }
-        break;
       }
+
+      if (reachedLimit) break;
+
+      const free = dialog.clientHeight - dialog.scrollHeight;
+      if (free < 50 && step > 1) step = 1;
     }
 
-    if (reachedLimit) break;
-
-    const free = dialog.clientHeight - dialog.scrollHeight;
-    if (free < 50 && step > 1) step = 1;
+    if (safety >= safetyLimit) {
+      console.warn("Dialog.fitHeights() stopped due to safety limit");
+    }
   }
-
-  if (safety >= safetyLimit) {
-    console.warn("Dialog.fitHeights() stopped due to safety limit");
-  }
-}
 
 
   fitWidths = () => {
@@ -492,11 +492,11 @@ private fitHeightsContinue(dialog: HTMLElement, panels: HTMLElement[]) {
               <div>
                 {q2form.hasMaxButton && q2form.resizeable && (
                   <button className="max-button" onClick={this.handleMaximize}>
-                    {isMaximized ? "🗗" : "🗖"}
+                    {isMaximized ? <RestoreIcon /> : <MaximizeIcon />}
                   </button>
                 )}
                 <button className="close-button" onClick={onClose}>
-                  &#10006;
+                  <CloseIcon />
                 </button>
               </div>
             </div>
@@ -515,5 +515,66 @@ private fitHeightsContinue(dialog: HTMLElement, panels: HTMLElement[]) {
   }
 }
 
+export function MaximizeIcon({ size = 24, color = "currentColor" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* outer square */}
+      <rect x="4" y="6" width="16" height="16" rx="2" ry="2" />
+    </svg>
+  );
+}
+
+export function RestoreIcon({ size = 24, color = "currentColor" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* front window, shifted */}
+      <rect x="4" y="11" width="11" height="11" rx="0" ry="0" />
+      {/* back window */}
+      <path
+        d="M8 10 V6 H20 V18 H16" rx="2" ry="2"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
+export function CloseIcon({ size = 24, color = "currentColor" }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={color}
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* front window, shifted */}
+      <path
+        d="M4 7 L20 22 M 4 22 L20 7" rx="2" ry="2"
+        fill="none"
+      />
+    </svg>
+  );
+}
 
 export default Dialog;
