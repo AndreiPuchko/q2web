@@ -187,10 +187,12 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     if (moveable) {
       if (saved.left) { dialog.style.left = saved.left; }
       else if (String(left)) { dialog.style.left = String(left) }
-      else { dialog.style.left = `${dialog.parentElement?.clientWidth / 2 - dialog.clientWidth / 2}px` }
+      else if (dialog.parentElement) { dialog.style.left = `${dialog.parentElement?.clientWidth / 2 - dialog.clientWidth / 2}px` }
+      else dialog.style.left = "0px"
       if (saved.top) { dialog.style.top = saved.top }
       else if (String(top)) { dialog.style.top = String(top); }
-      else { dialog.style.top = `${dialog.parentElement?.clientHeight / 2 - dialog.clientHeight / 2}px` }
+      else if ( dialog.parentElement) { dialog.style.top = `${dialog.parentElement?.clientHeight / 2 - dialog.clientHeight / 2}px` }
+      else dialog.style.top = "0px";
     } else {
       // dialog.style.left = left ? String(left) : `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
       dialog.style.top = top != "" ? String(top) : `${(window.innerHeight - menuBarHeight - dialog.offsetHeight) / 2}px`;
@@ -272,7 +274,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const pan = panels[i];
         const current = parseFloat(getComputedStyle(pan).height);
         pan.style.height = `${current + step}px`;
-
+        console.log(pan.style.height,dialog.scrollHeight , dialog.clientHeight, pan)
         // Reading scrollHeight forces layout
         if (dialog.scrollHeight > dialog.clientHeight) {
           // Oversized — step back
@@ -391,10 +393,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     const hasVerticalScrollbar = dialog.scrollHeight > dialog.clientHeight;
     const hasHorizontalScrollbar = dialog.scrollWidth > dialog.clientWidth;
-    const elements = Array.from(
-      dialog.querySelectorAll(".Q2Text, .Q2DataList-scrollarea") as
-      // dialog.querySelectorAll("[class^=Q2Text]") as
-      unknown as HTMLCollectionOf<HTMLElement>)
 
     if (hasVerticalScrollbar) {
       dialog.style.height = `${dialog.scrollHeight + 3}px`;
@@ -402,20 +400,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
     if (hasHorizontalScrollbar) {
       dialog.style.width = `${dialog.scrollWidth + 3}px`;
-    }
-
-    if (elements.length > 0) {
-      while (dialog.scrollHeight === dialog.clientHeight) {
-        elements.forEach(element => {
-          element.style.height = `${element.clientHeight + 1}px`;
-        });
-      }
-
-      if (dialog.scrollHeight > dialog.clientHeight) {
-        elements.forEach(element => {
-          element.style.height = `${element.clientHeight - 10}px`;
-        });
-      }
     }
 
     // update snapshot after possible size changes
