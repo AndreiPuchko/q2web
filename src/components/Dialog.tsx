@@ -185,8 +185,12 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     dialog.style.height = finalHeight;
 
     if (moveable) {
-      dialog.style.left = saved.left || String(left);
-      dialog.style.top = saved.top || String(top);
+      if (saved.left) { dialog.style.left = saved.left; }
+      else if (String(left)) { dialog.style.left = String(left) }
+      else { dialog.style.left = `${dialog.parentElement?.clientWidth / 2 - dialog.clientWidth / 2}px` }
+      if (saved.top) { dialog.style.top = saved.top }
+      else if (String(top)) { dialog.style.top = String(top); }
+      else { dialog.style.top = `${dialog.parentElement?.clientHeight / 2 - dialog.clientHeight / 2}px` }
     } else {
       // dialog.style.left = left ? String(left) : `${(window.innerWidth - dialog.offsetWidth) / 2}px`;
       dialog.style.top = top != "" ? String(top) : `${(window.innerHeight - menuBarHeight - dialog.offsetHeight) / 2}px`;
