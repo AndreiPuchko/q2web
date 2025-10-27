@@ -4,7 +4,7 @@ import Dialog from '../components/Dialog';
 import Cookies from "js-cookie";
 import { Q2Form } from "../q2_modules/Q2Form";
 import './Q2App.css';
-import { apiRequest } from "./Q2Api"
+import { apiRequest, cloneForm } from "./Q2Api"
 
 export interface Q2AppProps {
   q2forms: Array<Q2Form>;
@@ -246,10 +246,11 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   }
 
   showDialog = (q2form: Q2Form) => {
-    const key = `dlg_${Math.random().toString(36).substr(2, 9)}`;
+    const _form = cloneForm(q2form);
+    const key = `dlg_${Math.random().toString(36).substring(2, 9)}`;
     history.pushState({ key }, "", window.location.href);
     this.setState(prevState => ({
-      dialogs: { ...prevState.dialogs, [key]: q2form }
+      dialogs: { ...prevState.dialogs, [key]: _form }
     }));
   };
 

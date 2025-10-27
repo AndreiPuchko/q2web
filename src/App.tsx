@@ -51,28 +51,28 @@ function App() {
 
   const datalistForm = new Q2Form("", "", "");
 
-  datalistForm.dataGridParams.resizeColumns = false;
-  datalistForm.dataGridParams.reorderColumns = false;
-  datalistForm.dataGridParams.showHeaders = false;
+  // datalistForm.dataGridParams.resizeColumns = false;
+  // datalistForm.dataGridParams.reorderColumns = false;
+  // datalistForm.dataGridParams.showHeaders = false;
 
   datalistForm.add_control("c1", "Header1");
   datalistForm.add_control("c2", "Header2");
   datalistForm.data = [
-    { c1: "12", c2: "34" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
-    { c1: "56", c2: "78" },
+    { c1: "01 12", c2: "34" },
+    { c1: "02 56", c2: "78" },
+    { c1: "03 56", c2: "78" },
+    { c1: "04 56", c2: "78" },
+    { c1: "05 56", c2: "78" },
+    { c1: "06 56", c2: "78" },
+    { c1: "07 56", c2: "78" },
+    { c1: "08 56", c2: "78" },
+    { c1: "09 56", c2: "78" },
+    { c1: "10 56", c2: "78" },
+    { c1: "11 56", c2: "78" },
+    { c1: "12 56", c2: "78" },
+    { c1: "13 56", c2: "78" },
+    { c1: "14 56", c2: "78" },
+    { c1: "15 56", c2: "78" },
   ];
 
 

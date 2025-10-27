@@ -274,7 +274,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
         const pan = panels[i];
         const current = parseFloat(getComputedStyle(pan).height);
         pan.style.height = `${current + step}px`;
-        console.log(pan.style.height,dialog.scrollHeight , dialog.clientHeight, pan)
         // Reading scrollHeight forces layout
         if (dialog.scrollHeight > dialog.clientHeight) {
           // Oversized — step back
