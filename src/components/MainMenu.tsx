@@ -153,11 +153,11 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
 
         return (
             <nav className='MainMenuBar'>
-                <House className={"MainMenuIcon "}
+                <House className={"MainMenuIcon HomeButton"}
                     onClick={() => GetQ2AppInstance()?.closeAllDialogs()} />
-                <ArrowBigLeft className="MainMenuIcon "
+                <ArrowBigLeft className="MainMenuIcon StepBackButton"
                     onClick={() => GetQ2AppInstance()?.closeTopDialog()} />
-                <div className='menuItems' ref={this.menuRef} >
+                <div className='menuItems MainMenuItems' ref={this.menuRef} >
                     {items.map((item) => (
                         <div
                             className='dropdown'
@@ -189,7 +189,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 <div className='spacer9'></div>
                 {customMainMenu ? customMainMenu : null}
                 {GetQ2AppInstance()?.state.userName &&
-                    <span className="MainMenuIcon"
+                    <span className="MainMenuIcon MainMenuUserName"
                         title="Edit User Propfile"
                         onClick={GetQ2AppInstance()?.editUserProfile}
                     >
@@ -198,14 +198,14 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                     </span>}
                 <span title={isLoggedIn ? "Logout" : "Login"}>
                     {isLoggedIn ?
-                        <LogOut className={"MainMenuIcon"}
+                        <LogOut className={"MainMenuIcon MainMenuLogButton"}
                             onClick={GetQ2AppInstance()?.login_logout} />
                         :
                         <LogIn className={"MainMenuIcon"}
                             onClick={GetQ2AppInstance()?.login_logout} />
                     }
                 </span>
-                <span title={isCurentDark ? "Light theme" : "Dark theme"}>
+                <span title={isCurentDark ? "Light theme" : "Dark theme"} className='MainMenuThemeButton'>
                     {isCurentDark ?
                         <Sun className={"MainMenuIcon"}
                             onClick={GetQ2AppInstance()?.toggleTheme} />

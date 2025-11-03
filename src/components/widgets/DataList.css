@@ -65,7 +65,7 @@
     position: absolute;
     top: 0;
     right: 0px;
-    /* width: 2px; */
+    width: 2px;
     background: black;
     height: 100%;
     /* 👈 Full height of the cell */
