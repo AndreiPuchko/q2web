@@ -196,9 +196,9 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
 
                         {GetQ2AppInstance()?.state.userName}
                     </span>}
-                <span title={isLoggedIn ? "Logout" : "Login"}>
+                <span title={isLoggedIn ? "Logout" : "Login"} className='MainMenuLoginButton '>
                     {isLoggedIn ?
-                        <LogOut className={"MainMenuIcon MainMenuLogButton"}
+                        <LogOut className={"MainMenuIcon "}
                             onClick={GetQ2AppInstance()?.login_logout} />
                         :
                         <LogIn className={"MainMenuIcon"}
