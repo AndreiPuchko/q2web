@@ -93,7 +93,13 @@ function App() {
     { control: "button", valid: () => Q2App.instance?.showMsg("Message Box Example") });
 
   fileMenuDialog.hookSubmit = () => {
-    GetQ2AppInstance()?.showMsg("333")
+    const msgForm = GetQ2AppInstance()?.showMsg("333");
+    if (msgForm) {
+      setTimeout(() => {
+        msgForm.closeDialog()
+      }, 1000);
+    }
+
     return false
   }
 

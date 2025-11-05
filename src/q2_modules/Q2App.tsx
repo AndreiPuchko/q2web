@@ -252,6 +252,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     const _form = cloneForm(q2form);
     const key = `dlg_${Math.random().toString(36).substring(2, 9)}`;
     history.pushState({ key }, "", window.location.href);
+    _form.dialogIndex =  key;
     this.setState(prevState => ({
       dialogs: { ...prevState.dialogs, [key]: _form }
     }));
