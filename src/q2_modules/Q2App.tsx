@@ -17,6 +17,7 @@ export interface Q2AppState {
   userName: string;
   userUid: string;
   isLoginDialogOpen: boolean;
+  isMobile: boolean;
 }
 
 export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component<P, S> {
@@ -33,6 +34,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       userName: "",
       userUid: "",
       isLoginDialogOpen: false,
+      isMobile: /Mobi|Android/i.test(navigator.userAgent),
     } as unknown as Readonly<S>;
   }
 
@@ -83,7 +85,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     });
   };
 
-  editUserProfile =() => {
+  editUserProfile = () => {
     this.showMsg("Under construction...");
   }
 
@@ -204,10 +206,10 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
   handleLogout = async () => {
     try {
-    await apiRequest("/logout", { method: "POST" });
+      await apiRequest("/logout", { method: "POST" });
     }
     catch {
-      
+
     }
     this.setState({ isLoggedIn: false, userName: "", userUid: "" }, () => this.showHome())
   };
@@ -227,13 +229,13 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     }
   };
 
-  showMsg = (msg: string, title?: string): void => {
+  showMsg = (msg: string, title?: string): Q2Form => {
     if (!title) title = "Message";
     const msgBox = new Q2Form("", title, "msgbox", {
       hasMaxButton: false,
       hasOkButton: true,
-      width: "65%",
-      top: "10%",
+      width: this.state.isMobile ? "100%" : "65%",
+      top: this.state.isMobile ? "50%" : "10%",
     });
 
     msgBox.add_control("/v");
@@ -243,6 +245,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       control: "text"
     });
     this.showDialog(msgBox);
+    return msgBox
   }
 
   showDialog = (q2form: Q2Form) => {

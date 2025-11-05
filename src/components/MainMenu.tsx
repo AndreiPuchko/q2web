@@ -193,7 +193,6 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                         title="Edit User Propfile"
                         onClick={GetQ2AppInstance()?.editUserProfile}
                     >
-
                         {GetQ2AppInstance()?.state.userName}
                     </span>}
                 <span title={isLoggedIn ? "Logout" : "Login"} className='MainMenuLoginButton '>
