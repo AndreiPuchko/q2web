@@ -59,6 +59,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
 
   componentDidMount() {
     this.loadDialogState();
+
     const dialog = this.dialogRef.current;
     if (!dialog) return;
 
@@ -163,7 +164,9 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       dialog.parentElement.style.inset = `${menuBarHeight}px 0 0`;
       // dialog.parentElement.style.background = "var(--workspace-bg)";
     }
-    const dialogState = Cookies.get(`dialogState_${title}`);
+    const dialogState = this.props.q2form.restoreGeometry ? Cookies.get(`dialogState_${title}`) : "";
+      
+
 
     const { resizeable, moveable, width, height, left, top } = this.props.q2form;
     const saved = dialogState ? JSON.parse(dialogState) : {};
@@ -191,7 +194,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       else dialog.style.left = "0px"
       if (saved.top) { dialog.style.top = saved.top }
       else if (String(top)) { dialog.style.top = String(top); }
-      else if ( dialog.parentElement) { dialog.style.top = `${dialog.parentElement?.clientHeight / 2 - dialog.clientHeight / 2}px` }
+      else if (dialog.parentElement) { dialog.style.top = `${dialog.parentElement?.clientHeight / 2 - dialog.clientHeight / 2}px` }
       else dialog.style.top = "0px";
     } else {
       // dialog.style.left = left ? String(left) : `${(window.innerWidth - dialog.offsetWidth) / 2}px`;

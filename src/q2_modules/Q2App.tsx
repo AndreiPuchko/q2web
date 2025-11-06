@@ -236,6 +236,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       hasOkButton: true,
       width: this.state.isMobile ? "100%" : "65%",
       top: this.state.isMobile ? "50%" : "10%",
+      restoreGeometry: false,
     });
 
     msgBox.add_control("/v");

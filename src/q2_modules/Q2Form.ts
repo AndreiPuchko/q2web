@@ -147,6 +147,7 @@ export class Q2Form {
     class: string;
     dataGridParams: DataGridParams;
     cssText: string;
+    restoreGeometry: boolean;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -176,6 +177,7 @@ export class Q2Form {
         this.class = options.class || "";
         this.dataGridParams = { ...options.dataGridParams, ...defaultDataGridParams }
         this.cssText = options.cssText ? options.cssText : "";
+        this.restoreGeometry = options.restoreGeometry ? options.restoreGeometry : true;
         if (key === "") {
             this.key = generateRandomKey();
         }
