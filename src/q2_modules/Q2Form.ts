@@ -146,6 +146,7 @@ export class Q2Form {
     frontForm: Q2FrontForm | undefined;
     class: string;
     dataGridParams: DataGridParams;
+    cssText: string;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -173,7 +174,8 @@ export class Q2Form {
         this.dialogIndex = "";
         this.frontForm = undefined;
         this.class = options.class || "";
-        this.dataGridParams = { ...options.dataGridParams,...defaultDataGridParams }
+        this.dataGridParams = { ...options.dataGridParams, ...defaultDataGridParams }
+        this.cssText = options.cssText ? options.cssText : "";
         if (key === "") {
             this.key = generateRandomKey();
         }
@@ -224,5 +226,12 @@ export class Q2Form {
 
     closeDialog() {
         closeDialog(this.dialogIndex);
+    }
+
+    setCssText(cssText: string) {
+        this.cssText = cssText;
+        if (this.frontForm) {
+            this.frontForm.setCssText(cssText)
+        }
     }
 }

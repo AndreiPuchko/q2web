@@ -14,7 +14,7 @@ import Q2Button from './widgets/Button';
 import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
 import Q2Image from './widgets/Image';
-import { generateRandomKey } from "../q2_modules/Q2Api"
+import { generateRandomKey, injectCssText } from "../q2_modules/Q2Api"
 
 
 interface Q2FrontFormProps {
@@ -68,6 +68,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         }, {});
         this.setState({ formData });
         document.addEventListener("keydown", this.handleKeyDown);
+        this.props.q2form.frontForm = this;
 
         // Focus on the first focusable element after a short delay to ensure rendering is complete
         setTimeout(() => {
@@ -75,6 +76,9 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         }, 100);
         if (typeof this.props.q2form?.hookShow === "function") {
             this.props.q2form.hookShow(this);
+        }
+        if (this.props.q2form.cssText) {
+            this.setCssText(this.props.q2form.cssText);
         }
     }
 
@@ -351,10 +355,14 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         );
     };
 
+    setCssText = (cssText: string) => {
+        injectCssText(this.formKey, cssText)
+    }
+
     render() {
         const { q2form, onClose, isTopDialog } = this.props;
         const { okButtonText, cancelButtonText } = this.state;
-        
+
         // If q2form contains tabular data, render DataGrid instead of the standard form
         if (q2form?.data &&
             (
@@ -377,7 +385,8 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         const hasCancelButton = this.props.q2form.hasCancelButton;
         const structuredColumns = this.createFormTree(columns);
         return (
-            <div ref={this.formRef} className={`FormComponent ${q2form.class}`}
+            <div ref={this.formRef}
+                className={`FormComponent ${q2form.class}`}
                 key={this.formKey}
                 id={this.formKey}
             >

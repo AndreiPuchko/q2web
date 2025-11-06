@@ -101,10 +101,12 @@ function App() {
     }
 
     const msgForm2 = GetQ2AppInstance()?.showMsg("555555", "1");
+    msgForm2.setCssText(".Panel {background: red}")
     if (msgForm2) {
       setTimeout(() => {
         msgForm2.closeDialog()
-      }, 2000);
+        msgForm2.setCssText(".Panel {background: red}")
+      }, 5000);
     }
 
 

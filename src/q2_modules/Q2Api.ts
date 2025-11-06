@@ -30,7 +30,7 @@ export async function apiRequest(path: string, options: RequestInit = {}) {
     return res.json();
 }
 export function generateRandomKey() {
-    return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+    return "uid_" + (crypto.randomUUID ? crypto.randomUUID().replaceAll("-", "") : Math.random().toString(36).substring(2, 15).replaceAll("-", ""));
 }
 
 export function cloneForm<T extends Q2Form>(q2form: T): T {
@@ -56,4 +56,32 @@ export function cloneForm<T extends Q2Form>(q2form: T): T {
     }
 
     return cloned;
+}
+
+
+export function injectCssText(id, cssText) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // Try to find an existing style element for this id
+    let style = el.querySelector(':scope > style[data-scope]');
+    if (!style) {
+        style = document.createElement('style');
+        style.dataset.scope = id;
+        el.prepend(style); // put at top of the element
+    }
+
+    // Prefix all selectors with the element ID
+    const scopedCSS = cssText.replace(/(^|\}|;)\s*([^{]+)/g, (match, sep, selector) => {
+        // ignore @rules
+        if (selector.trim().startsWith("@")) return match;
+        const newSelector = selector
+            .split(",")
+            .map(s => `[id="${id}"] ${s.trim()}`) // safer for UUIDs
+            .join(", ");
+        return `${sep} ${newSelector}`;
+    });
+
+    // Replace content
+    style.textContent = scopedCSS;
 }
