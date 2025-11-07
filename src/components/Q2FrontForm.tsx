@@ -51,6 +51,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
             cancelButtonText: "Cancel",
         };
         // Provide pointer to Form.s on Q2Form instance
+        // console.log("con", props.q2form.cssText)
         this.updateQ2FormLinks();
     }
 
@@ -62,6 +63,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     }
 
     componentDidMount() {
+        // console.log("dm", this.props.q2form.cssText)
         const formData = this.props.q2form.columns.reduce((acc: any, column: any) => {
             acc[column.column] = column.data || "";
             return acc;
@@ -85,7 +87,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     // componentDidUpdate(prevProps: FormProps, prevState: { formData: { [key: string]: any } }) {
     componentDidUpdate(_: any, prevState: { formData: { [key: string]: any } }) {
         // Focus input when a check-linked input becomes checked
-        // console.log("DU", this.s)
         // this.scanAndCopyValues();
         this.updateQ2FormLinks();
         Object.keys(this.state.formData).forEach(column => {
@@ -98,6 +99,9 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                 this.w[column].focus();
             }
         });
+        if (this.props.q2form.cssText) {
+            this.setCssText(this.props.q2form.cssText);
+        }
     }
 
     componentWillUnmount() {
@@ -145,18 +149,18 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         // }
     };
 
-    handleSubmit = () => {
+    handleSubmit = async () => {
         let close: boolean = true;
         if (typeof this.props.q2form?.hookSubmit === "function") {
-            close = this.props.q2form.hookSubmit(this);
+            close = await this.props.q2form.hookSubmit(this);
         }
         if (close) this.close();
     };
 
-    handleCancel = () => {
+    handleCancel = async () => {
         let close: boolean = true;
         if (typeof this.props.q2form?.hookCancel === "function") {
-            close = this.props.q2form.hookCancel(this);
+            close = await this.props.q2form.hookCancel(this);
         }
         if (close) this.close();
     };

@@ -154,6 +154,7 @@ label {
 }
 
 .FormComponent {
+  padding: 0.3rem;
   display: flex;
   position: relative;
   flex-direction: column;

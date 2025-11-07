@@ -143,7 +143,6 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
               if (close) form.close();
             });
         }
-        console.log("submit")
         return false;
       };
 
@@ -229,8 +228,9 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     }
   };
 
-  showMsg = (msg: string, title?: string): Q2Form => {
+  showMsg = async (msg: string, title?: string): Promise<Q2Form> => {
     if (!title) title = "Message";
+
     const msgBox = new Q2Form("", title, "msgbox", {
       hasMaxButton: false,
       hasOkButton: true,
@@ -243,20 +243,30 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     msgBox.add_control("text", "", {
       readonly: true,
       data: msg,
-      control: "text"
+      control: "text",
     });
-    this.showDialog(msgBox);
-    return msgBox
-  }
+    await this.showDialog(msgBox);
+    return msgBox;
+  };
 
-  showDialog = (q2form: Q2Form) => {
+  showDialog = async (q2form: Q2Form) => {
     const key = `dlg_${Math.random().toString(36).substring(2, 9)}`;
     history.pushState({ key }, "", window.location.href);
-    q2form.dialogIndex =  key;
+    q2form.dialogIndex = key;
     const _form = cloneForm(q2form);
-    this.setState(prevState => ({
-      dialogs: { ...prevState.dialogs, [key]: _form }
-    }));
+
+    await new Promise((resolve) => {
+      this.setState(
+        prevState => ({
+          dialogs: { ...prevState.dialogs, [key]: _form }
+        }),
+        // callback after render is committed
+        () => {
+          // Delay a tick to ensure children (dialogs) are mounted
+          requestAnimationFrame(resolve);
+        }
+      );
+    });
   };
 
   closeDialog = (key: string) => {
@@ -268,6 +278,19 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       if (Object.keys(this.state.dialogs).length === 0) this.showHome();
     });
   };
+
+  updateForm = (q2form: Q2Form) => {
+    const dialogEntry = Object.entries(this.state.dialogs).find(([_, form]) => form.dialogIndex === q2form.dialogIndex);
+    if (dialogEntry) {
+      const [dialogKey] = dialogEntry;
+      this.setState(prevState => ({
+        dialogs: {
+          ...prevState.dialogs,
+          [dialogKey]: q2form
+        }
+      }));
+    }
+  }
 
 
   closeAllDialogs = () => {

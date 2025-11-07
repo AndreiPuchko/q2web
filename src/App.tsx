@@ -92,32 +92,21 @@ function App() {
   fileMenuDialog.add_control("test3", "test button3",
     { control: "button", valid: () => Q2App.instance?.showMsg("Message Box Example") });
 
-  fileMenuDialog.hookSubmit = () => {
-    const msgForm = GetQ2AppInstance()?.showMsg("333", "2");
+  fileMenuDialog.hookSubmit = async () => {
+    const msgForm = await GetQ2AppInstance()?.showMsg("333", "2");
     if (msgForm) {
       setTimeout(() => {
         msgForm.closeDialog()
       }, 3000);
     }
 
-    const msgForm2 = GetQ2AppInstance()?.showMsg("555555", "1");
-    msgForm2.setCssText(".Panel {background: red}")
-    if (msgForm2) {
-      setTimeout(() => {
-        msgForm2.closeDialog()
-        msgForm2.setCssText(".Panel {background: red}")
-      }, 5000);
-    }
-
-
+    const msgForm2 = await GetQ2AppInstance()?.showMsg("555555", "1")
+    msgForm2?.setCssText(".Panel {background: red;padding: 5px; border-radius:15px} .Q2Text {background:pink} .Q2Text::focus {background:pink}");
     return false
   }
-
-
-  fileMenu.push(fileMenuAbout)
+    fileMenu.push(fileMenuAbout)
   fileMenu.push(fileMenuDialog)
-  // fileMenu.push(msgBox)
-
+  
   return <Q2App q2forms={fileMenu} />;
 }
 

@@ -1,7 +1,7 @@
 import Q2FrontForm from '../components/Q2FrontForm';
 import { Q2DataList } from '../components/widgets/DataList';
 import { showDialog, closeDialog } from './Q2Api';
-import { generateRandomKey } from "../q2_modules/Q2Api"
+import { generateRandomKey, GetQ2AppInstance } from "../q2_modules/Q2Api"
 
 export class Q2Control {
     column: string;
@@ -138,8 +138,8 @@ export class Q2Form {
     hookInputChanged?: (form: Q2FrontForm) => void;
     hookFocusChanged?: (form: Q2FrontForm) => void;
     hookShow?: (form: Q2FrontForm) => void;
-    hookSubmit?: (form: Q2FrontForm) => boolean;
-    hookCancel?: (form: Q2FrontForm) => boolean;
+    hookSubmit?: (form: Q2FrontForm) => boolean | Promise<boolean>;
+    hookCancel?: (form: Q2FrontForm) => boolean | Promise<boolean>;
     hookClosed?: (form: Q2FrontForm) => void;
     hookDataGridRowClicked?: (form: Q2DataList) => void;
     dialogIndex: string;
@@ -235,5 +235,10 @@ export class Q2Form {
         if (this.frontForm) {
             this.frontForm.setCssText(cssText)
         }
+        this.updateForm();
+    }
+
+    updateForm() {
+        GetQ2AppInstance()?.updateForm(this)
     }
 }

@@ -1,7 +1,13 @@
 {
   "files": [],
   "compilerOptions": {
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "target": "es2021",
+    "moduleResolution": "node",
+    "lib": [
+      "es2021",
+      "dom"
+    ]
   },
   "references": [
     {

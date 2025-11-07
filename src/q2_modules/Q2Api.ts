@@ -30,7 +30,10 @@ export async function apiRequest(path: string, options: RequestInit = {}) {
     return res.json();
 }
 export function generateRandomKey() {
-    return "uid_" + (crypto.randomUUID ? crypto.randomUUID().replaceAll("-", "") : Math.random().toString(36).substring(2, 15).replaceAll("-", ""));
+    const id = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15))
+        .split("-")
+        .join("");
+    return "uid_" + id;
 }
 
 export function cloneForm<T extends Q2Form>(q2form: T): T {
@@ -59,29 +62,35 @@ export function cloneForm<T extends Q2Form>(q2form: T): T {
 }
 
 
-export function injectCssText(id, cssText) {
+export function injectCssText(id: string, cssText: string) {
     const el = document.getElementById(id);
     if (!el) return;
 
-    // Try to find an existing style element for this id
-    let style = el.querySelector(':scope > style[data-scope]');
-    if (!style) {
+    // find or create <style>
+    let style = el.firstElementChild;
+    if (!style || style.tagName.toLowerCase() !== 'style') {
         style = document.createElement('style');
-        style.dataset.scope = id;
-        el.prepend(style); // put at top of the element
+        el.prepend(style);
     }
 
-    // Prefix all selectors with the element ID
-    const scopedCSS = cssText.replace(/(^|\}|;)\s*([^{]+)/g, (match, sep, selector) => {
-        // ignore @rules
-        if (selector.trim().startsWith("@")) return match;
-        const newSelector = selector
-            .split(",")
-            .map(s => `[id="${id}"] ${s.trim()}`) // safer for UUIDs
-            .join(", ");
-        return `${sep} ${newSelector}`;
-    });
+    // Split CSS into rules safely (based on curly braces)
+    const scopedParts = [];
+    const ruleRegex = /([^{}]+)\{([^}]*)\}/g;
+    let match;
+    while ((match = ruleRegex.exec(cssText))) {
+        let [_, selector, body] = match;
+        selector = selector.trim();
+        if (selector.startsWith('@')) {
+            // keep @-rules untouched (or handle recursively if needed)
+            scopedParts.push(`${selector} {${body}}`);
+            continue;
+        }
+        const prefixedSelector = selector
+            .split(',')
+            .map(s => `[id="${id}"] ${s.trim()}`)
+            .join(', ');
+        scopedParts.push(`${prefixedSelector} {${body}}`);
+    }
 
-    // Replace content
-    style.textContent = scopedCSS;
+    style.textContent = scopedParts.join('\n');
 }

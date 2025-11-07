@@ -65,7 +65,7 @@
 }
 
 .dialog-content {
-  margin: 0.3em;
+  /* margin: 0.3em; */
 }
 
 .dialog-container.disabled .dialog-content {
