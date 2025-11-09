@@ -30,29 +30,7 @@ export class Q2Control {
     constructor(
         column: string,
         label?: string,
-        options: {
-            datalen?: number,
-            datadec?: number,
-            datatype?: string,
-            size?: string,
-            stretch?: number,
-            alignment?: number,
-            control?: string,
-            readonly?: boolean,
-            disabled?: boolean;
-            key?: string,
-            valid?: any,
-            data?: any,
-            pic?: string,
-            check?: boolean | string | number,
-            checkChecked?: boolean | string | number,
-            checkDisabled?: boolean | string | number,
-            tag?: string;
-            range?: string;
-            style?: {};
-            class?: string;
-
-        } = {},
+        options: Partial<Q2Control> = {},
         key: string = "0"
     ) {
         this.column = column;
@@ -143,11 +121,13 @@ export class Q2Form {
     hookClosed?: (form: Q2FrontForm) => void;
     hookDataGridRowClicked?: (form: Q2DataList) => void;
     dialogIndex: string;
+    formKey: string;
     frontForm: Q2FrontForm | undefined;
     class: string;
     dataGridParams: DataGridParams;
     cssText: string;
     restoreGeometry: boolean;
+    payload: object;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -173,11 +153,13 @@ export class Q2Form {
         this.x = 0;
         this.y = 0;
         this.dialogIndex = "";
+        this.formKey = "";
         this.frontForm = undefined;
         this.class = options.class || "";
         this.dataGridParams = { ...options.dataGridParams, ...defaultDataGridParams }
         this.cssText = options.cssText ? options.cssText : "";
         this.restoreGeometry = options.restoreGeometry ? options.restoreGeometry : true;
+        this.payload = {};
         if (key === "") {
             this.key = generateRandomKey();
         }
@@ -238,7 +220,29 @@ export class Q2Form {
         this.updateForm();
     }
 
-    updateForm() {
-        GetQ2AppInstance()?.updateForm(this)
+    async updateForm() {
+        await GetQ2AppInstance()?.updateForm(this)
+    }
+
+    async getFormInstance()  {
+        Object.keys(GetQ2AppInstance()?.state.dialogs).forEach(async (dialog) => {
+            if (this.key === GetQ2AppInstance()?.state.dialogs[dialog].key) {
+                return await GetQ2AppInstance()?.state.dialogs[dialog];
+            }
+        })
+        return null
+    }
+
+
+    async waitForClose() {
+        console.log("->", await this.getFormInstance())
+        Object.keys(GetQ2AppInstance()?.state.dialogs).forEach(async (dialog) => {
+            if (this.key === GetQ2AppInstance()?.state.dialogs[dialog].key) {
+                console.log("w f c2", dialog)
+                const frontForm = GetQ2AppInstance()?.state.dialogs[dialog].frontForm;
+                await frontForm.waitForClose();
+                console.log("waitForClose")
+            }
+        })
     }
 }

@@ -94,3 +94,23 @@ export function injectCssText(id: string, cssText: string) {
 
     style.textContent = scopedParts.join('\n');
 }
+
+export function waitForClose(elementId: string): Promise<void> {
+    return new Promise((resolve) => {
+        const el = document.getElementById(elementId);
+        if (!el) {
+            // Already removed
+            resolve();
+            return;
+        }
+
+        const observer = new MutationObserver(() => {
+            if (!document.getElementById(elementId)) {
+                observer.disconnect();
+                resolve();
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+}

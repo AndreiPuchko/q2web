@@ -14,7 +14,7 @@ import Q2Button from './widgets/Button';
 import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
 import Q2Image from './widgets/Image';
-import { generateRandomKey, injectCssText } from "../q2_modules/Q2Api"
+import { generateRandomKey, GetQ2AppInstance, injectCssText, waitForClose } from "../q2_modules/Q2Api"
 
 
 interface Q2FrontFormProps {
@@ -44,6 +44,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
 
     constructor(props: Q2FrontFormProps) {
         super(props);
+        this.props.q2form.formKey = this.formKey;
         this.state = {
             formData: {},
             panelChecks: {}, // Track checkbox state for panels
@@ -361,6 +362,11 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
 
     setCssText = (cssText: string) => {
         injectCssText(this.formKey, cssText)
+    }
+
+    waitForClose = async () => {
+        console.log(1)
+        return await waitForClose(this.formKey)
     }
 
     render() {

@@ -228,14 +228,27 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     }
   };
 
-  showMsg = async (msg: string, title?: string): Promise<Q2Form> => {
-    if (!title) title = "Message";
+  // Overloads
+  async showMsg(msg: string, buttons: Array<string>): Promise<Q2Form | null>;
+  async showMsg(msg: string, title: string, buttons: Array<string>): Promise<Q2Form | null>;
+  async showMsg(msg: string, titleOrButtons?: string | Array<string>, buttonsArg?: Array<string>): Promise<Q2Form | null> {
+    let title: string | undefined;
+    let buttons: Array<string> | undefined;
 
+    if (Array.isArray(titleOrButtons)) {
+      title = "Message";
+      buttons = titleOrButtons;
+    } else {
+      title = titleOrButtons || "Message";
+      buttons = buttonsArg;
+    }
+
+    if (!Q2App.instance) return null;
     const msgBox = new Q2Form("", title, "msgbox", {
       hasMaxButton: false,
-      hasOkButton: true,
-      width: this.state.isMobile ? "100%" : "65%",
-      top: this.state.isMobile ? "50%" : "10%",
+      hasOkButton: !buttons,
+      width: Q2App.instance.state.isMobile ? "100%" : "65%",
+      top: Q2App.instance.state.isMobile ? "50%" : "10%",
       restoreGeometry: false,
     });
 
@@ -245,7 +258,21 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       data: msg,
       control: "text",
     });
-    await this.showDialog(msgBox);
+
+    msgBox.payload["button"] = 0;
+    if (buttons) {
+      function button(button: number): void {
+        msgBox.payload["button"] = button;
+        msgBox.closeDialog();
+      }
+
+      msgBox.add_control("/h", "", { alignment: 9 })
+      buttons.forEach((btn, idx) => {
+        msgBox.add_control(`btn${idx}`, btn, { control: "button", valid: () => button(1) });
+      });
+    }
+
+    await Q2App.instance.showDialog(msgBox);
     return msgBox;
   };
 
@@ -279,7 +306,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     });
   };
 
-  updateForm = (q2form: Q2Form) => {
+  updateForm = async (q2form: Q2Form) => {
     const dialogEntry = Object.entries(this.state.dialogs).find(([_, form]) => form.dialogIndex === q2form.dialogIndex);
     if (dialogEntry) {
       const [dialogKey] = dialogEntry;

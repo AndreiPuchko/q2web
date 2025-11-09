@@ -90,23 +90,33 @@ function App() {
     { control: "button", valid: testButoonClick });
 
   fileMenuDialog.add_control("test3", "test button3",
-    { control: "button", valid: () => Q2App.instance?.showMsg("Message Box Example") });
+    {
+      control: "button",
+      valid: async () => {
+        const msg = await Q2App.instance?.showMsg("Message Box Example", ["Ok", "Cancel"]);
+        msg.waitForClose()
+        console.log(msg, "<<!")
+      }
+    });
 
   fileMenuDialog.hookSubmit = async () => {
-    const msgForm = await GetQ2AppInstance()?.showMsg("333", "2");
-    if (msgForm) {
-      setTimeout(() => {
-        msgForm.closeDialog()
-      }, 3000);
-    }
+    // const msgForm = await GetQ2AppInstance()?.showMsg("333", "2");
+    // if (msgForm) {
+    //   setTimeout(() => {
+    //     msgForm.closeDialog()
+    //   }, 3000);
+    // }
 
     const msgForm2 = await GetQ2AppInstance()?.showMsg("555555", "1")
-    msgForm2?.setCssText(".Panel {background: red;padding: 5px; border-radius:15px} .Q2Text {background:pink} .Q2Text::focus {background:pink}");
+    msgForm2?.setCssText(" {background: red;padding: 5px;} .Q2Text:focus, .Q2Text {background:pink}");
+    await msgForm2?.waitForClose()
+    console.log("<<")
+
     return false
   }
-    fileMenu.push(fileMenuAbout)
+  fileMenu.push(fileMenuAbout)
   fileMenu.push(fileMenuDialog)
-  
+
   return <Q2App q2forms={fileMenu} />;
 }
 
