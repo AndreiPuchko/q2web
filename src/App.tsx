@@ -94,25 +94,20 @@ function App() {
       control: "button",
       valid: async () => {
         const msg = await Q2App.instance?.showMsg("Message Box Example", ["Ok", "Cancel"]);
-        msg.waitForClose()
-        console.log(msg, "<<!")
+        if (msg) {
+          await msg.waitForClose()
+          console.log(msg.payload.button, "<<!")
+        }
       }
     });
 
   fileMenuDialog.hookSubmit = async () => {
-    // const msgForm = await GetQ2AppInstance()?.showMsg("333", "2");
-    // if (msgForm) {
-    //   setTimeout(() => {
-    //     msgForm.closeDialog()
-    //   }, 3000);
-    // }
-
-    const msgForm2 = await GetQ2AppInstance()?.showMsg("555555", "1")
+    const msgForm2 = await GetQ2AppInstance()?.showMsg("555555", "1");
     msgForm2?.setCssText(" {background: red;padding: 5px;} .Q2Text:focus, .Q2Text {background:pink}");
-    await msgForm2?.waitForClose()
-    console.log("<<")
-
-    return false
+    if (msgForm2) {
+      await msgForm2.waitForClose();
+    }
+    return false;
   }
   fileMenu.push(fileMenuAbout)
   fileMenu.push(fileMenuDialog)

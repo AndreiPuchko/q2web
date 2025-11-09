@@ -365,7 +365,6 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     }
 
     waitForClose = async () => {
-        console.log(1)
         return await waitForClose(this.formKey)
     }
 

@@ -224,25 +224,38 @@ export class Q2Form {
         await GetQ2AppInstance()?.updateForm(this)
     }
 
-    async getFormInstance()  {
-        Object.keys(GetQ2AppInstance()?.state.dialogs).forEach(async (dialog) => {
-            if (this.key === GetQ2AppInstance()?.state.dialogs[dialog].key) {
-                return await GetQ2AppInstance()?.state.dialogs[dialog];
-            }
-        })
-        return null
+    async getFormInstance(): Promise<Q2Form | null> {
+        const app = GetQ2AppInstance();
+        if (!app) return null;
+        // Find the dialog instance by dialogIndex
+        const dialogInstance = Object.values(app.state.dialogs).find(
+            (form: Q2Form) => form.dialogIndex === this.dialogIndex
+        );
+        return dialogInstance || null;
     }
 
-
-    async waitForClose() {
-        console.log("->", await this.getFormInstance())
-        Object.keys(GetQ2AppInstance()?.state.dialogs).forEach(async (dialog) => {
-            if (this.key === GetQ2AppInstance()?.state.dialogs[dialog].key) {
-                console.log("w f c2", dialog)
-                const frontForm = GetQ2AppInstance()?.state.dialogs[dialog].frontForm;
-                await frontForm.waitForClose();
-                console.log("waitForClose")
-            }
-        })
+    async waitForClose(): Promise<void> {
+        const dialogInstance = await this.getFormInstance();
+        if (dialogInstance && dialogInstance.frontForm && typeof dialogInstance.frontForm.waitForClose === "function") {
+            await dialogInstance.frontForm.waitForClose();
+        } 
+        // Fallback: observe DOM removal if frontForm is not available
+        else {
+            await new Promise<void>((resolve) => {
+                const id = this.dialogIndex;
+                const el = document.getElementById(id);
+                if (!el) {
+                    resolve();
+                    return;
+                }
+                const observer = new MutationObserver(() => {
+                    if (!document.getElementById(id)) {
+                        observer.disconnect();
+                        resolve();
+                    }
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
+        }
     }
 }

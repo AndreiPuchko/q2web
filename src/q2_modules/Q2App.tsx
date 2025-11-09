@@ -268,7 +268,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
 
       msgBox.add_control("/h", "", { alignment: 9 })
       buttons.forEach((btn, idx) => {
-        msgBox.add_control(`btn${idx}`, btn, { control: "button", valid: () => button(1) });
+        msgBox.add_control(`btn${idx}`, btn, { control: "button", valid: () => button(idx) });
       });
     }
 
