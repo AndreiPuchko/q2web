@@ -1,3 +1,4 @@
+import React from 'react';
 import Q2Widget from './Widget';
 import { Q2WidgetProps } from './Widget';
 import './Button.css';
@@ -12,10 +13,13 @@ export class Q2Button extends Q2Widget<Q2ButtonProps> {
     render() {
         const { column } = this.props;
         const disabled = column.disabled;
+        const style: React.CSSProperties = {};
+        Object.assign(style, column.style)
         return (
             <button className="Q2Button"
                 onClick={column.valid}
                 disabled={disabled}
+                style={style}
             >
                 {column?.label}
             </button>

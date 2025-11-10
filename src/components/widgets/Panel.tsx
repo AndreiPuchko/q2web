@@ -343,15 +343,14 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
                           {child.control === "check" ? "Turn on" : child.label}
                         </label>
                       </div>
-                      : (child.label !== "" ?
+                      : (child.label !== "" && !["check", "button"].includes(child.control) ?
                         <label
                           htmlFor={id}
                           key={child.key + "-label"}
                           className={`form-label ${child.class}`}
                           style={labelStyle}
                         >
-                          <HtmlLabel html={child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""} />
-                          {/* { child.label && !["check", "button"].includes(child.control) ? child.label + ":" : ""} */}
+                          <HtmlLabel html={child.label} />
                         </label> : <></>)
                     }
                     {child.control !== "label" &&

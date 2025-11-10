@@ -266,10 +266,12 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
         msgBox.closeDialog();
       }
 
-      msgBox.add_control("/h", "", { alignment: 9 })
+      msgBox.add_control("/h", "")
+      msgBox.add_control("/s", "", {stretch:99})
       buttons.forEach((btn, idx) => {
-        msgBox.add_control(`btn${idx}`, btn, { control: "button", valid: () => button(idx) });
+        msgBox.add_control(`btn${idx}`, btn, { control: "button", valid: () => button(idx), style: {minWidth: "6rem"} });
       });
+      msgBox.add_control("/")
     }
 
     await Q2App.instance.showDialog(msgBox);
