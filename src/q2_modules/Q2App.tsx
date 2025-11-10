@@ -229,8 +229,8 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   };
 
   // Overloads
-  async showMsg(msg: string, buttons: Array<string>): Promise<Q2Form | null>;
-  async showMsg(msg: string, title: string, buttons: Array<string>): Promise<Q2Form | null>;
+  async showMsg(msg: string, buttons?: Array<string>): Promise<Q2Form | null>;
+  async showMsg(msg: string, title: string, buttons?: Array<string>): Promise<Q2Form | null>;
   async showMsg(msg: string, titleOrButtons?: string | Array<string>, buttonsArg?: Array<string>): Promise<Q2Form | null> {
     let title: string | undefined;
     let buttons: Array<string> | undefined;

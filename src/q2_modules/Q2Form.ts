@@ -1,7 +1,7 @@
 import Q2FrontForm from '../components/Q2FrontForm';
 import { Q2DataList } from '../components/widgets/DataList';
 import { showDialog, closeDialog } from './Q2Api';
-import { generateRandomKey, GetQ2AppInstance } from "../q2_modules/Q2Api"
+import { generateRandomKey, GetQ2AppInstance } from "../q2_modules/Q2Api";
 
 export class Q2Control {
     column: string;
@@ -127,7 +127,7 @@ export class Q2Form {
     dataGridParams: DataGridParams;
     cssText: string;
     restoreGeometry: boolean;
-    payload: object;
+    payload: any;
 
     constructor(menubarpath: string = "", title: string = "", key: string = "", options: Partial<Q2Form> = {}) {
         this.key = key;
@@ -224,15 +224,15 @@ export class Q2Form {
         await GetQ2AppInstance()?.updateForm(this)
     }
 
-    async getFormInstance(): Promise<Q2Form | null> {
+    async getFormInstance(): Promise<Q2FrontForm | null> {
         const app = GetQ2AppInstance();
         if (!app) return null;
         // Find the dialog instance by dialogIndex
-        const dialogInstance = Object.values(app.state.dialogs).find(
+        const formInstance: Q2Form | undefined = Object.values(app.state.dialogs as Q2Form[]).find(
             (form: Q2Form) => form.dialogIndex === this.dialogIndex
         );
-        if (dialogInstance && dialogInstance.frontForm && typeof dialogInstance.frontForm.waitForClose === "function") {
-            return dialogInstance.frontForm
+        if (formInstance && formInstance.frontForm && typeof formInstance.frontForm.waitForClose === "function") {
+            return formInstance.frontForm
         }
         else {
             return null
@@ -240,10 +240,10 @@ export class Q2Form {
     }
 
     async waitForClose(): Promise<void> {
-        const dialogInstance = await this.getFormInstance();
+        const formInstance = await this.getFormInstance();
         // if (dialogInstance && dialogInstance.frontForm && typeof dialogInstance.frontForm.waitForClose === "function") {
-        if (dialogInstance) {
-            await dialogInstance.waitForClose();
+        if (formInstance) {
+            await formInstance.waitForClose();
         }
         // Fallback: observe DOM removal if frontForm is not available
         // else {

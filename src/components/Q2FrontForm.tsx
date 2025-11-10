@@ -14,7 +14,7 @@ import Q2Button from './widgets/Button';
 import { Q2Control, Q2Form } from "../q2_modules/Q2Form";
 import Q2Panel from './widgets/Panel';
 import Q2Image from './widgets/Image';
-import { generateRandomKey, GetQ2AppInstance, injectCssText, waitForClose } from "../q2_modules/Q2Api"
+import { generateRandomKey, injectCssText, waitForClose } from "../q2_modules/Q2Api"
 
 
 interface Q2FrontFormProps {
