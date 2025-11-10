@@ -172,8 +172,8 @@ class Dialog extends React.Component<DialogProps, DialogState> {
     const saved = dialogState ? JSON.parse(dialogState) : {};
 
     if (resizeable) {
-      if (!saved.height) saved.height = "30%"
-      if (!saved.width) saved.width = "60%"
+      if (!saved.height) saved.height = this.props.q2form.height? this.props.q2form.height : "30%"
+      if (!saved.width) saved.width = this.props.q2form.width ? this.props.q2form.width :  "60%"
     }
 
     const finalWidth = resizeable && saved.width ? saved.width : String(width);
@@ -183,6 +183,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       finalHeight = `calc(${finalHeight} - 1px)`
       // finalHeight = `${window.innerHeight - menuBarHeight}px`
     }
+    console.log("---", finalWidth)
 
     dialog.style.width = finalWidth;
     dialog.style.height = finalHeight;

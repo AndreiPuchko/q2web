@@ -34,7 +34,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       userName: "",
       userUid: "",
       isLoginDialogOpen: false,
-      isMobile: /Mobi|Android/i.test(navigator.userAgent),
+      isMobile: window.innerWidth < 600,
     } as unknown as Readonly<S>;
   }
 
@@ -242,13 +242,15 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       title = titleOrButtons || "Message";
       buttons = buttonsArg;
     }
-
+    
     if (!Q2App.instance) return null;
+    console.log(Q2App.instance.state.isMobile, "<<");
     const msgBox = new Q2Form("", title, "msgbox", {
       hasMaxButton: false,
       hasOkButton: !buttons,
       width: Q2App.instance.state.isMobile ? "100%" : "65%",
-      top: Q2App.instance.state.isMobile ? "50%" : "10%",
+      height: "45%",
+      top: Q2App.instance.state.isMobile ? "25%" : "10%",
       restoreGeometry: false,
     });
 
