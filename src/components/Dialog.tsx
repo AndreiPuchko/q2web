@@ -183,8 +183,6 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       finalHeight = `calc(${finalHeight} - 1px)`
       // finalHeight = `${window.innerHeight - menuBarHeight}px`
     }
-    console.log("---", finalWidth)
-
     dialog.style.width = finalWidth;
     dialog.style.height = finalHeight;
 
