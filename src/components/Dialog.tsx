@@ -250,6 +250,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
   fitHeights = () => {
     const dialog = this.dialogRef.current;
     if (!dialog) return;
+    if (dialog.style.height === "auto") return;
 
     const panels = Array.from(
       dialog.querySelectorAll(growableHeightClasses) as unknown as HTMLCollectionOf<HTMLElement>

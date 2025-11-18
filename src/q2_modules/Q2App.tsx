@@ -244,7 +244,6 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     }
     
     if (!Q2App.instance) return null;
-    console.log(Q2App.instance.state.isMobile, "<<");
     const msgBox = new Q2Form("", title, "msgbox", {
       hasMaxButton: false,
       hasOkButton: !buttons,
