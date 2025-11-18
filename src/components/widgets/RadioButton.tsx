@@ -89,7 +89,7 @@ export class Q2RadioButton extends Q2Widget<Q2RadioButtonProps, Q2RadioButtonSta
           {options.map((opt: any, index: number) => {
             const radio_id = `${this.id}-${index}`
             return (
-              <>
+              <span key={radio_id}>
                 <input
                   type="radio"
                   name={radio_id}
@@ -103,7 +103,7 @@ export class Q2RadioButton extends Q2Widget<Q2RadioButtonProps, Q2RadioButtonSta
                 <label key={index} htmlFor={radio_id} id={`label-${radio_id}`}>
                   {opt}
                 </label>
-              </>
+              </span>
             )
           })}
         </div>
