@@ -1,8 +1,149 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { HexColorPicker } from 'react-colorful';
+import { createPortal } from "react-dom";
 import Q2Widget from './Widget';
 import { Q2WidgetProps } from './Widget';
 
+
+
+interface ColorPickerDialogProps {
+    x: number;
+    y: number;
+    color: string;
+    onChange: (c: string) => void;
+    onClose: () => void;
+}
+
+interface ColorPickerDialogProps {
+    x: number;
+    y: number;
+    color: string;
+    onChange: (c: string) => void;
+    onClose: () => void;
+}
+
+export function ColorPickerDialog({
+    x,
+    y,
+    color,
+    onChange,
+    onClose
+}: ColorPickerDialogProps) {
+    const dialogRef = useRef<HTMLDivElement>(null);
+    const [pos, setPos] = useState({ x, y });
+
+    // Clamp position after element mounts (we need its size)
+    useEffect(() => {
+        const el = dialogRef.current;
+        if (!el) return;
+
+        const rect = el.getBoundingClientRect();
+
+        const padding = 8;
+
+        let newX = x;
+        let newY = y;
+
+        // Right edge
+        if (rect.right > window.innerWidth - padding) {
+            newX = window.innerWidth - rect.width - padding;
+        }
+
+        // Left edge
+        if (newX < padding) {
+            newX = padding;
+        }
+
+        // Bottom edge
+        if (rect.bottom > window.innerHeight - padding) {
+            newY = window.innerHeight - rect.height - padding;
+        }
+
+        // Top edge
+        if (newY < padding) {
+            newY = padding;
+        }
+
+        setPos({ x: newX, y: newY });
+    }, [x, y]);
+
+    // Close on click outside
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (
+                dialogRef.current &&
+                !dialogRef.current.contains(e.target as Node)
+            ) {
+                onClose();
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, [onClose]);
+
+    const handleEyedropper = async () => {
+        if ("EyeDropper" in window) {
+            try {
+                // @ts-ignore
+                const result = await new EyeDropper().open();
+                onChange(result.sRGBHex);
+            } catch (err) {
+                console.warn("Eyedropper canceled", err);
+            }
+        } else {
+            alert("Your browser does not support the EyeDropper API.");
+        }
+    };
+
+    return createPortal(
+        <div
+            ref={dialogRef}
+            style={{
+                position: "fixed",
+                zIndex: 999999,
+                left: pos.x,
+                top: pos.y,
+                padding: 10,
+                background: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: 4,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+            }}
+        >
+            <HexColorPicker color={color} onChange={onChange} />
+
+            <div style={{ marginTop: 6, textAlign: "right" }}>
+                <button
+                    onClick={handleEyedropper}
+                    style={{
+                        padding: "2px 6px",
+                        fontSize: 12,
+                        border: "1px solid #ccc",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                        marginRight: 6
+                    }}
+                >
+                    Pick from screen
+                </button>
+
+                <button
+                    onClick={onClose}
+                    style={{
+                        padding: "2px 6px",
+                        fontSize: 12,
+                        border: "1px solid #ccc",
+                        borderRadius: 4,
+                        cursor: "pointer"
+                    }}
+                >
+                    Close
+                </button>
+            </div>
+        </div>,
+        document.body
+    );
+}
 
 function isValidColor(color: string): boolean {
     const s = new Option().style;
@@ -15,6 +156,8 @@ interface Q2ColorProps extends Q2WidgetProps { }
 interface Q2ColorState {
     value: string;
     showPicker: boolean;
+    dialogX: number;
+    dialogY: number;
 }
 
 
@@ -30,13 +173,13 @@ export class Q2Color extends Q2Widget<Q2ColorProps, Q2ColorState> {
     }
 
 
-    componentDidMount() {
-        document.addEventListener('mousedown', this.handleClickOutside);
-    }
+    // componentDidMount() {
+    //     document.addEventListener('mousedown', this.handleClickOutside);
+    // }
 
-    componentWillUnmount() {
-        document.removeEventListener('mousedown', this.handleClickOutside);
-    }
+    // componentWillUnmount() {
+    //     document.removeEventListener('mousedown', this.handleClickOutside);
+    // }
 
     componentDidUpdate(prevProps: Q2ColorProps) {
         if (prevProps.column.data !== this.props.column.data && this.props.column.data !== this.state.value) {
@@ -44,11 +187,11 @@ export class Q2Color extends Q2Widget<Q2ColorProps, Q2ColorState> {
         }
     }
 
-    handleClickOutside = (event: MouseEvent) => {
-        if (this.pickerRef.current && !this.pickerRef.current.contains(event.target as Node)) {
-            this.setState({ showPicker: false });
-        }
-    };
+    // handleClickOutside = (event: MouseEvent) => {
+    //     if (this.pickerRef.current && !this.pickerRef.current.contains(event.target as Node)) {
+    //         this.setState({ showPicker: false });
+    //     }
+    // };
 
     handleColorChange = (newColor: string) => {
         this.setState({ value: newColor }, () => {
@@ -81,7 +224,24 @@ export class Q2Color extends Q2Widget<Q2ColorProps, Q2ColorState> {
     };
 
     togglePicker = () => {
-        this.setState((prev) => ({ showPicker: !prev.showPicker }));
+        this.setState(prev => {
+            if (!prev.showPicker) {
+                const rect = this.pickerRef.current?.getBoundingClientRect();
+                return {
+                    showPicker: true,
+                    dialogX: rect ? rect.left : 0,
+                    dialogY: rect ? rect.bottom + 6 : 0,
+                    value: prev.value // optional, keep current value
+                };
+            }
+            // When closing, keep dialogX/Y so TS is happy
+            return {
+                showPicker: false,
+                dialogX: prev.dialogX,
+                dialogY: prev.dialogY,
+                value: prev.value
+            };
+        });
     };
 
     calculatePickerPosition = () => {
@@ -131,7 +291,7 @@ export class Q2Color extends Q2Widget<Q2ColorProps, Q2ColorState> {
                     <div
                         style={{
                             position: 'absolute',
-                            zIndex: 999,
+                            zIndex: 999999,
                             ...pickerPosition,
                             padding: 10,
                             background: '#fff',
@@ -140,9 +300,12 @@ export class Q2Color extends Q2Widget<Q2ColorProps, Q2ColorState> {
                             boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
                         }}
                     >
-                        <HexColorPicker
-                            color={valid ? value : '#ffffff'}
+                        <ColorPickerDialog
+                            x={this.state.dialogX}
+                            y={this.state.dialogY}
+                            color={valid ? value : "#ffffff"}
                             onChange={this.handleColorChange}
+                            onClose={() => this.setState({ showPicker: false })}
                         />
                         <div style={{ marginTop: 6, textAlign: 'right' }}>
                             <button

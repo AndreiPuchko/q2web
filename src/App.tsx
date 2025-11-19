@@ -101,6 +101,8 @@ function App() {
       }
     });
 
+  fileMenuDialog.add_control("color", "Color", {control:"color"})
+
   fileMenuDialog.hookSubmit = async () => {
     const msgForm2 = await GetQ2AppInstance()?.showMsg("555555", "1");
     msgForm2?.setCssText(" {background: red;padding: 5px;} .Q2Text:focus, .Q2Text {background:pink}");
