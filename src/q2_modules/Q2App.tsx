@@ -50,6 +50,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     window.addEventListener('q2-theme-changed', this.handleThemeChanged);
     this.setUser().then(() => this.showHome());
     window.addEventListener("popstate", this.handleBackButton);
+    this.setPageIcon("");
   }
 
   componentWillUnmount() {
@@ -228,6 +229,51 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     }
   };
 
+  // Method to set the page icon dynamically
+  setPageIcon = (icon: string) => {
+    if (!icon) return;
+
+    let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
+
+    // Helper to convert raw SVG string to data URL
+    const svgToDataUrl = (svgContent: string) => {
+      const cleaned = svgContent.replace(/\n/g, "").replace(/>\s+</g, "><");
+      const encoded = encodeURIComponent(cleaned).replace(/'/g, "%27").replace(/"/g, "%22");
+      return `data:image/svg+xml,${encoded}`;
+    };
+
+    // Convert raw SVG string to data URL if needed
+    let iconUrl: string;
+    if (icon.trim().startsWith("<svg")) {
+      iconUrl = svgToDataUrl(icon);
+    } else {
+      iconUrl = icon;
+    }
+
+    // Skip if already set
+    if (link) {
+      if (link.href === new URL(iconUrl, window.location.href).href || link.href === iconUrl) return;
+    } else {
+      link = document.createElement("link");
+      link.rel = "icon";
+      document.head.appendChild(link);
+    }
+
+    // Set type automatically
+    if (iconUrl.startsWith("data:image/svg+xml") || iconUrl.endsWith(".svg")) {
+      link.type = "image/svg+xml";
+    } else if (iconUrl.endsWith(".png")) {
+      link.type = "image/png";
+    } else if (iconUrl.endsWith(".ico")) {
+      link.type = "image/x-icon";
+    } else {
+      link.type = "image/png";
+    }
+
+    link.href = iconUrl;
+  };
+
+
   // Overloads
   async showMsg(msg: string, buttons?: Array<string>): Promise<Q2Form | null>;
   async showMsg(msg: string, title: string, buttons?: Array<string>): Promise<Q2Form | null>;
@@ -242,7 +288,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       title = titleOrButtons || "Message";
       buttons = buttonsArg;
     }
-    
+
     if (!Q2App.instance) return null;
     const msgBox = new Q2Form("", title, "msgbox", {
       hasMaxButton: false,
@@ -268,9 +314,9 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
       }
 
       msgBox.add_control("/h", "")
-      msgBox.add_control("/s", "", {stretch:99})
+      msgBox.add_control("/s", "", { stretch: 99 })
       buttons.forEach((btn, idx) => {
-        msgBox.add_control(`btn${idx}`, btn, { control: "button", valid: () => button(idx), style: {minWidth: "6rem"} });
+        msgBox.add_control(`btn${idx}`, btn, { control: "button", valid: () => button(idx), style: { minWidth: "6rem" } });
       });
       msgBox.add_control("/")
     }
