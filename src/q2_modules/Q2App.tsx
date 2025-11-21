@@ -232,9 +232,9 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   // Method to set the page icon dynamically
   setPageIcon = (icon: string) => {
     let _icon = icon
-    let link = document.querySelector("link[rel*='icon']");
+    let link = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
     if (!link) {
-      link = document.createElement('link');
+      link = document.createElement('link') as HTMLLinkElement;
       link.rel = 'icon';
       document.head.appendChild(link);
       if (_icon === "") _icon = "/assets/q2icon.png"
@@ -242,6 +242,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     else if (_icon === "") return
     link.href = _icon;
   };
+
 
 
   // Overloads
