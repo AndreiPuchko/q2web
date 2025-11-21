@@ -91,6 +91,7 @@ export class Q2Form {
     key: string;
     columns: any[];
     data: any[] | (() => void);
+    loader: undefined |  (() => any);
     actions: any[];
     hasCancelButton: boolean;
     hasOkButton: boolean;
