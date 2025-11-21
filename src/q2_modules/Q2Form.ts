@@ -182,25 +182,6 @@ export class Q2Form {
         }
     }
 
-    check_frameless1() {
-        if (this.frameless) {
-            if (this.width === "") this.width = "100%"
-            if (this.height === "") this.height = "100%"
-            if (this.top === "") this.top = "0"
-            if (this.left === "") this.left = "0"
-        }
-        else {
-            if (typeof this.height === "number" && this.height !== 0) {
-                this.height = `${this.height}px`;
-            }
-            if (typeof this.width === "number" && this.width !== 0) {
-                this.width = `${this.width}px`;
-            }
-        }
-        // if (this.height === "") this.height = "auto"
-        // if (this.width === "") this.width = "auto"
-    }
-
     check_frameless() {
         if (this.frameless && this.width === "") this.width = "100%"
         if (this.frameless && this.height === "") this.height = "100%"
@@ -208,15 +189,13 @@ export class Q2Form {
         if (this.frameless && this.left === "") this.left = "0"
         if (this.height === "") this.height = "auto"
         if (this.width === "") this.width = "auto"
-        // if (typeof this.height === "number" && this.height !== 0) {
-        //     this.height = `${this.height}px`;
-        // }
-        // if (typeof this.width === "number" && this.width !== 0) {
-        //     this.width = `${this.width}px`;
-        // }
-
+        if (typeof this.height === "number" && this.height !== 0) {
+            this.height = `${this.height}px`;
+        }
+        if (typeof this.width === "number" && this.width !== 0) {
+            this.width = `${this.width}px`;
+        }
     }
-
 
     add_control(column: string, label?: string, options: any = {}) {
         // const key = this.columns.length > 0 ? this.columns.length.toString() : "0";
