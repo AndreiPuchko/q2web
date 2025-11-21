@@ -101,7 +101,7 @@ function App() {
       }
     });
 
-  fileMenuDialog.add_control("color", "Color", {control:"color"})
+  fileMenuDialog.add_control("color", "Color", { control: "color" })
 
   fileMenuDialog.hookSubmit = async () => {
     const msgForm2 = await GetQ2AppInstance()?.showMsg("555555", "1");
@@ -111,8 +111,27 @@ function App() {
     }
     return false;
   }
+
+  const messageBox = new Q2Form("Forms|MessageBox", "Message Box 2", "messagebox", {
+    columns: [
+      { key: "0", column: "message", label: "Message", data: "Lorem ipsum", readonly: true, control: "text" },
+      { key: "1", column: "description", label: "Description", data: "This is a Description...", readonly: true, control: "text" },
+    ],
+    data: [],
+    description: "This is a data grid2",
+    menutoolbar: true,
+    hasMaxButton: false,
+    icon: "grid",
+    width: 800,
+    height: 600,
+    x: 0,
+    y: 0,
+    hasOkButton: true
+  });
+
   fileMenu.push(fileMenuAbout)
   fileMenu.push(fileMenuDialog)
+  fileMenu.push(messageBox)
 
   return <Q2App q2forms={fileMenu} />;
 }
