@@ -267,6 +267,7 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     createFormTree = (columns: any) => {
         const stack: any[] = [];
         const root = { column: 'root', children: [{ key: 'root-0', column: undefined }] };
+        if (columns.length === 0) return root;
         stack.push(root);
         if (!columns[0].column.startsWith("/")) {
             columns.splice(0, 0, { column: "/f", key: 'root-1' });
