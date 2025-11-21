@@ -350,7 +350,7 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
     if (keys.length > 0) this.closeDialog(keys[keys.length - 1]);
   };
 
-  showHome = () => {
+  showHome() {
     if (Object.keys(this.state.dialogs).length === 0) {
       this.props.q2forms.forEach(el => {
         if (el.key.startsWith("autorun")) this.showDialog(el);
