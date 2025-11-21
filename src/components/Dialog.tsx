@@ -323,7 +323,7 @@ class Dialog extends React.Component<DialogProps, DialogState> {
       const currentHeight = pan.offsetHeight;
       pan.style.height = `${currentHeight}px`; // фиксируем высоту, чтобы не схлопнулась
       pan.style.overflowX = "hidden"; // временно отключаем горизонтальный скролл
-      // pan.style.width = pan.style.minWidth || "50px";
+      pan.style.width = pan.style.minWidth || "50px";
     });
 
     let step = 10;
