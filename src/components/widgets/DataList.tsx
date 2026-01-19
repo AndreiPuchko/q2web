@@ -38,9 +38,9 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     this.reorderColumns = this.props.q2form.dataGridParams.reorderColumns;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (this.props.q2form.dataGridParams.loader) {
-      this.fetchData();
+      await this.fetchData();
     }
   }
 
@@ -48,7 +48,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     if (!this.props.q2form.dataGridParams.loader) return;
     try {
       const data = await this.props.q2form.dataGridParams.loader();
-      this.setState({ data, loading: false });
+      this.setState({ data: [...data], loading: false });
       return data
     }
     catch (err: any) {

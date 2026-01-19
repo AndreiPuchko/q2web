@@ -373,6 +373,10 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         const { q2form, onClose, isTopDialog } = this.props;
         const { okButtonText, cancelButtonText } = this.state;
 
+        // if (q2form.dataGridParams.loader) {
+            // return <Q2DataList q2form={q2form} />
+        // }
+
         // If q2form contains tabular data, render DataGrid instead of the standard form
         if (q2form?.data &&
             (
@@ -383,10 +387,11 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                 (q2form.dataGridParams.loader)
             )
         ) {
-            return <Q2DataGrid
-                q2form={q2form}
-                onClose={onClose ?? (() => { })}
-                isTopDialog={!!isTopDialog} />;
+            // return <Q2DataList q2form={q2form} />
+            // return <Q2DataGrid
+            //     q2form={q2form}
+            //     onClose={onClose ?? (() => { })}
+            //     isTopDialog={!!isTopDialog} />;
         }
 
         const { columns } = q2form;

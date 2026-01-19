@@ -22,7 +22,7 @@ const growableHeightClasses = `textarea,
                     .q2-report-editor-root`;
 
 const growableWidthClasses = `
-                    .Q2DataList, 
+                    .Q2DataList-scrollarea
                     .q2-scroll, 
                     .q2-report-editor-root`;
 
