@@ -9,7 +9,9 @@ import { GetQ2AppInstance } from './q2_modules/Q2Api';
 function App() {
 
   async function testButoonClick() {
-    Q2App.instance?.showDialog(fileMenuAbout)
+    await fileMenuAbout.showDialog();
+    await fileMenuAbout.waitForClose();
+    console.log("============", fileMenuAbout)
   }
 
   const fileMenu: Q2Form[] = [];
@@ -22,7 +24,7 @@ function App() {
     });
   fileMenuAbout.add_control("/v");
   fileMenuAbout.add_control("text", "About",
-    { readonly: true, data: "q2-web (React)", control: "text" });
+    { readonly: false, data: "q2-web (React)", control: "text" });
 
   const fileMenuDialog = new Q2Form("File|Dialog", "Settings", "dialog",
     {
