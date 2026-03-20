@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import './Q2FrontForm.css'; // Import the CSS file for styling
-import Q2DataGrid from './DataGrid';
+// import Q2DataGrid from './DataGrid';
 import Q2DataList from './widgets/DataList';
 import Q2Line from './widgets/Line'; // Import the Line widget
 import Q2Color from './widgets/Color'; // Import the Line widget
@@ -370,7 +370,8 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
     }
 
     render() {
-        const { q2form, onClose, isTopDialog } = this.props;
+        // const { q2form, onClose, isTopDialog } = this.props;
+        const { q2form } = this.props;
         const { okButtonText, cancelButtonText } = this.state;
 
         // if (q2form.dataGridParams.loader) {
