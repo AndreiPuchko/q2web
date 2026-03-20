@@ -17,7 +17,7 @@
 .dark {
   --datagrid-bg: rgb(93, 93, 103);
   --datagrid-bg-odd: rgb(74, 74, 84);
-  --datagrid-header-bg: rgb(192, 196, 188);
+  --datagrid-header-bg: rgb(127, 131, 124);
   --datagrid-border: black;
   --datagrid-cell-color: #fff;
   --workspace-bg: rgb(135, 141, 155);
