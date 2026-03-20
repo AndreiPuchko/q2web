@@ -1,5 +1,5 @@
 import { } from "./DataList.css"
-import { Component } from "react";
+import { Component, createRef } from "react";
 import { Q2Form } from "../../q2_modules/Q2Form";
 
 interface Q2DataListState {
@@ -20,6 +20,10 @@ interface Q2DataListProps {
 export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   resizeColumns: boolean | undefined;
   reorderColumns: boolean | undefined;
+  private scrollbarSpacer = createRef<HTMLDivElement>();
+  private scrollArea = createRef<HTMLDivElement>();
+  private resizeObserver?: ResizeObserver;
+
   constructor(props: Q2DataListProps) {
     super(props);
     const { columns } = props.q2form;
@@ -42,7 +46,27 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     if (this.props.q2form.dataGridParams.loader) {
       await this.fetchData();
     }
+    this.updateScrollbarSpacer();
+
+    if (this.scrollArea.current) {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.updateScrollbarSpacer();
+      });
+
+      this.resizeObserver.observe(this.scrollArea.current);
+    }
   }
+
+  componentDidUpdate() {
+    this.updateScrollbarSpacer();
+  }
+
+  updateScrollbarSpacer = () => {
+    const spacer = this.scrollbarSpacer.current;
+    if (!spacer) return;
+
+    spacer.style.width = `${this.getScrollbarWidth()}px`;
+  };
 
   async fetchData() {
     if (!this.props.q2form.dataGridParams.loader) return;
@@ -55,6 +79,22 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       this.setState({ error: err.message, loading: false });
       return err
     }
+  }
+
+  getScrollbarWidth = (): number => {
+    const element = this.scrollArea.current;
+    if (!element) return 0;
+
+    const fullWidth = element.offsetWidth;
+    const contentWidth = element.clientWidth;
+
+    const style = window.getComputedStyle(element);
+    const borderLeft = parseFloat(style.borderLeftWidth) || 0;
+    const borderRight = parseFloat(style.borderRightWidth) || 0;
+
+    const scrollbarWidth = fullWidth - contentWidth - borderLeft - borderRight;
+
+    return scrollbarWidth > 0 ? scrollbarWidth : 0;
   }
 
   handleRowClick = (rowIndex: any) => {
@@ -166,6 +206,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
           );
         })
         }
+        <div ref={this.scrollbarSpacer}></div>
       </div >
     );
   }
@@ -215,7 +256,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       return (
         <div className={`Q2DataList ${this.props.q2form.class}`}>
           {q2form.dataGridParams.showHeaders && this.renderHeader()}
-          <div className="Q2DataList-scrollarea" style={{ overflow: "auto" }}>
+          <div ref={this.scrollArea} className="Q2DataList-scrollarea" >
             <div>
               {data.map((row, index) => this.renderRow(row, index))}
             </div>
