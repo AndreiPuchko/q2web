@@ -114,3 +114,9 @@ export function waitForClose(elementId: string): Promise<void> {
         observer.observe(document.body, { childList: true, subtree: true });
     });
 }
+
+export function resolveForm(input: any): Q2Form {
+    return typeof input === "function"
+        ? input()   // пробный инстанс
+        : input;
+};

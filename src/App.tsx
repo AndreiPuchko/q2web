@@ -26,6 +26,19 @@ function App() {
   fileMenuAbout.add_control("text", "About",
     { readonly: false, data: "q2-web (React)", control: "text" });
 
+
+  const fileMenuFabricFactory = (): Q2Form => {
+    const form = new Q2Form("File|Fabric", "F a b r i c", "fabric",
+      {
+        menutoolbar: true,
+        hasMaxButton: false,
+        hasOkButton: true,
+      });
+    form.add_control("/v");
+    form.add_control("text", "About",
+      { readonly: false, data: "q2-web (React)", control: "text" });
+    return form
+  }
   const fileMenuDialog = new Q2Form("File|Dialog", "Settings", "dialog",
     {
       menutoolbar: true,
@@ -134,6 +147,7 @@ function App() {
   });
 
   fileMenu.push(fileMenuAbout)
+  fileMenu.push(fileMenuFabricFactory)
   fileMenu.push(fileMenuDialog)
   fileMenu.push(messageBox)
   fileMenu.push(datalistForm)

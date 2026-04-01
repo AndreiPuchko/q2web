@@ -1,6 +1,6 @@
 import React from 'react';
 import { Q2Form } from "../q2_modules/Q2Form";
-import { showDialog } from '../q2_modules/Q2Api';
+import { showDialog, resolveForm } from '../q2_modules/Q2Api';
 import { GetQ2AppInstance } from "../q2_modules/Q2Api"
 import { House, ArrowBigLeft, Moon, Sun, LogIn, LogOut } from "lucide-react";
 
@@ -42,12 +42,14 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         }
     };
 
-    buildMenuStructure(forms: Q2Form[]): any {
+    buildMenuStructure(forms: FormInput[]): any {
         const structure: any = {};
         let uid = 0;
 
-        forms.forEach((form) => {
+        forms.forEach((input) => {
+            const form = resolveForm(input);
             if (!form.menubarpath) return;
+
             const path = form.menubarpath.split('|');
             let currentLevel = structure;
 
@@ -59,7 +61,8 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                             label: part,
                             seq: uid,
                             key: i === path.length - 1 ? form.key : null,
-                            menutoolbar: i === path.length - 1 ? form.menutoolbar : null
+                            menutoolbar: i === path.length - 1 ? form.menutoolbar : null,
+                            form: form
                         },
                     };
                 }
@@ -85,7 +88,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 return (
                     <button key={item.key} onClick={(e) => {
                         e.stopPropagation();
-                        const form = this.props.q2forms.find(f => f.key === item.key);
+                        const form = resolveForm(item.form);
                         if (form) showDialog(form);
                         this.hideDropdown();
                     }}>
