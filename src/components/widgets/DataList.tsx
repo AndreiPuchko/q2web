@@ -213,15 +213,15 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
 
   renderRow(row: any, rowIndex: number) {
     const { columns } = this.props.q2form;
-    const { colWidths, columnOrder } = this.state;
+    const { colWidths, columnOrder, selectedRow } = this.state;
+    const isSelected = selectedRow === rowIndex
     let className = "Q2DataList-row";
     className += rowIndex % 2 === 0 ? " even" : " odd";
-    const style = rowIndex % 2 === 0 ?
-      { background: "var(--datagrid-bg, #777 )" }
-      : { background: "var(--datagrid-bg-odd)" }
+    if (isSelected) {
+      className += " selected"
+    }
     return (
       <div key={rowIndex} className={className}
-        style={style}
         onClick={() => this.handleRowClick(rowIndex)}
       >
         {columnOrder.map((colIdx) => {

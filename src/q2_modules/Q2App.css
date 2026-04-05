@@ -8,6 +8,8 @@
 
   --datagrid-bg: #fff;
   --datagrid-bg-odd: #f7f7f7;
+  --datagrid-bg-selected: #5959dd;
+  --datagrid-selected: #FFF;
   --datagrid-header-bg: #e3e3e3;
   --datagrid-border: #bbb;
   --datagrid-cell-color: #222;
@@ -17,6 +19,8 @@
 .dark {
   --datagrid-bg: rgb(93, 93, 103);
   --datagrid-bg-odd: rgb(74, 74, 84);
+  --datagrid-selected: #000;
+  --datagrid-bg-selected: #d7d7f2;
   --datagrid-header-bg: rgb(127, 131, 124);
   --datagrid-border: black;
   --datagrid-cell-color: #fff;

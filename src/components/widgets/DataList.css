@@ -50,6 +50,11 @@
     background: var(--datagrid-bg-odd);
 }
 
+.Q2DataList-row.selected {
+    background: var(--datagrid-bg-selected);
+    color: var(--datagrid-selected);
+}
+
 .Q2DataList-header-cell {
     position: relative;
     /* 👈 This keeps resizer inside each header cell */
