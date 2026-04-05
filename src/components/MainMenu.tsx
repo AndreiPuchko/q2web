@@ -88,8 +88,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                 return (
                     <button key={item.key} onClick={(e) => {
                         e.stopPropagation();
-                        const form = resolveForm(item.form);
-                        if (form) showDialog(form);
+                        if (item.form) showDialog(item.form);
                         this.hideDropdown();
                     }}>
                         {item.label}
