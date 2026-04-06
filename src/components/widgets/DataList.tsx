@@ -11,6 +11,7 @@ interface Q2DataListState {
   dragIndex: number | null,
   loading: boolean;
   error: string | null;
+  contextMenu?: { x: number; y: number; }
 }
 
 interface Q2DataListProps {
@@ -36,6 +37,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       columnOrder: columns.map((_, i) => i),
       dragIndex: null,
       data: Array.isArray(props.q2form.data) ? props.q2form.data : [],
+      contextMenu: undefined,
     };
     this.resizeColumns = this.props.q2form.dataGridParams.resizeColumns;
     this.reorderColumns = this.props.q2form.dataGridParams.reorderColumns;
@@ -84,6 +86,15 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       return err
     }
   }
+
+  handleContextMenu = (e: React.MouseEvent, rowIndex) => {
+    e.preventDefault();
+    console.log(9999, rowIndex)
+    this.setState({
+      contextMenu: { x: e.clientX, y: e.clientY }, selectedRow: rowIndex
+    });
+  };
+
 
   getScrollbarWidth = (): number => {
     const element = this.scrollArea.current;
@@ -261,7 +272,6 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     });
   };
 
-
   scrollPage = (align: "up" | "down") => {
     const { selectedRow } = this.state;
     const container = this.scrollArea?.current;
@@ -340,6 +350,29 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   // ==========================
   // RENDER
   // ==========================
+  renderContextMenu() {
+    const { contextMenu } = this.state;
+    if (!contextMenu) return null;
+    return (
+      <div
+        className="q2-context-menu"
+        style={{
+          top: contextMenu.y,
+          left: contextMenu.x,
+        }}
+        onClick={() => this.setState({ contextMenu: undefined })}
+        onContextMenu={e => e.preventDefault()}
+      >
+        <div>
+          <div className="q2-context-menu-item">1</div>
+          <div className="q2-context-menu-item">2</div>
+          <div className="q2-context-menu-item">3</div>
+        </div>
+      </div>
+    );
+  }
+
+
   renderHeader() {
     const { columns } = this.props.q2form;
     const { colWidths, columnOrder } = this.state;
@@ -396,6 +429,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     return (
       <div key={rowIndex} className={className}
         onClick={() => this.handleRowClick(rowIndex)}
+        onContextMenu={e => this.handleContextMenu(e, rowIndex)}
       >
         {columnOrder.map((colIdx) => {
           const column = columns[colIdx];
@@ -433,6 +467,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
               {data.map((row, index) => this.renderRow(row, index))}
             </div>
           </div>
+          {this.renderContextMenu()}
         </div>
       );
     }

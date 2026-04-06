@@ -299,7 +299,6 @@ export class Q2App<P extends Q2AppProps, S extends Q2AppState> extends Component
   showDialog = async (q2form: Q2Form | (() => Q2Form)) => {
     const key = `dlg_${Math.random().toString(36).substring(2, 9)}`;
     q2form = resolveForm(q2form);
-    console.log(q2form);
     history.pushState({ key }, "", window.location.href);
     q2form.dialogIndex = key;
     const _form = cloneForm(q2form);
