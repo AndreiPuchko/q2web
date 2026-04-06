@@ -245,7 +245,13 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
                 return <Q2Image {...commonProps} />;
             case "list":
                 column.data.subForm = true;
-                return <Q2DataList q2form={column.data} />
+                if (typeof column.data === "function") {
+                    return <Q2DataList q2form={column.data()} />
+                }
+                else {
+                    return <Q2DataList q2form={column.data} />
+                }
+
             case "form":
                 column.data.subForm = true;
                 return <Q2FrontForm q2form={column.data} />
@@ -375,24 +381,28 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
         const { okButtonText, cancelButtonText } = this.state;
 
         // if (q2form.dataGridParams.loader) {
-            // return <Q2DataList q2form={q2form} />
+        // return <Q2DataList q2form={q2form} />
         // }
 
         // If q2form contains tabular data, render DataGrid instead of the standard form
-        if (q2form?.data &&
-            (
-                (Array.isArray(q2form.data) && q2form.data.length > 0)
-                ||
-                (typeof q2form.data === "function")
-                ||
-                (q2form.dataGridParams.loader)
-            )
+        // console.log()
+        if ( q2form.dataGridParams?.loader
+            // q2form?.data &&
+            // (
+            //     (Array.isArray(q2form.data) && q2form.data.length > 0)
+            //     ||
+            //     (typeof q2form.data === "function")
+            //     ||
+            //     (q2form.dataGridParams.loader)
+            // )
         ) {
             // return <Q2DataList q2form={q2form} />
             // return <Q2DataGrid
             //     q2form={q2form}
             //     onClose={onClose ?? (() => { })}
             //     isTopDialog={!!isTopDialog} />;
+            
+            return (<Q2DataList q2form={q2form} />)
         }
 
         const { columns } = q2form;
