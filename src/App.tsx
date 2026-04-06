@@ -44,7 +44,7 @@ function App() {
       menutoolbar: true,
       // hasMaxButton: false,
       hasOkButton: true,
-      key: "autorun",
+      key: "auto run",
       // frameless: true,
       // resizeable: false,
       // moveable: false,
@@ -64,41 +64,42 @@ function App() {
   fileMenuDialog.add_control("/v")
 
 
-  const datalistForm = new Q2Form("Data|List", "123", "auto run");
-
-  // datalistForm.dataGridParams.resizeColumns = false;
-  // datalistForm.dataGridParams.reorderColumns = false;
-  // datalistForm.dataGridParams.showHeaders = false;
-
-  datalistForm.add_control("c1", "Header1");
-  datalistForm.add_control("c2", "Header2");
-  datalistForm.dataGridParams.loader = async () => {
-    return [
-      { c1: "01 12", c2: "34" },
-      { c1: "02 56", c2: "78" },
-      { c1: "03 56", c2: "78" },
-      { c1: "04 56", c2: "78" },
-      { c1: "05 56", c2: "78" },
-      { c1: "06 56", c2: "78" },
-      { c1: "07 56", c2: "78" },
-      { c1: "08 56", c2: "78" },
-      { c1: "09 56", c2: "78" },
-      { c1: "10 56", c2: "78" },
-      { c1: "11 56", c2: "78" },
-      { c1: "12 56", c2: "78" },
-      { c1: "13 56", c2: "78" },
-      { c1: "14 56", c2: "78" },
-      { c1: "15 56", c2: "78" },
-    ]
-  };
-
+  const factoryDataList = (): Q2Form => {
+    const datalistForm = new Q2Form("Data|List", "DataList", "autorun");
+    datalistForm.add_control("c1", "Header1");
+    datalistForm.add_control("c2", "Header2");
+    datalistForm.dataGridParams.loader = async () => {
+      return [
+        { c1: "01 12", c2: "34" },
+        { c1: "02 56", c2: "78" },
+        { c1: "03 56", c2: "78" },
+        { c1: "04 56", c2: "78" },
+        { c1: "05 56", c2: "78" },
+        { c1: "06 56", c2: "78" },
+        { c1: "07 56", c2: "78" },
+        { c1: "08 56", c2: "78" },
+        { c1: "09 56", c2: "78" },
+        { c1: "10 56", c2: "78" },
+        { c1: "11 56", c2: "78" },
+        { c1: "12 56", c2: "78" },
+        { c1: "13 56", c2: "78" },
+        { c1: "14 56", c2: "78" },
+        { c1: "15 56", c2: "78" },
+        { c1: "16 56", c2: "78" },
+        { c1: "17 56", c2: "78" },
+        { c1: "18 56", c2: "78" },
+        { c1: "19 56", c2: "78" },
+        { c1: "20 56", c2: "78" },
+      ]
+    };
+    return datalistForm
+  }
 
   fileMenuDialog.add_control("list1", "List 1",
     {
       control: "list",
-      data: datalistForm,
+      data: factoryDataList,
     });
-
 
   fileMenuDialog.add_control("/")
   fileMenuDialog.add_control("/h", "", { alignment: 5 })
@@ -150,7 +151,7 @@ function App() {
   fileMenu.push(fileMenuFabricFactory)
   fileMenu.push(fileMenuDialog)
   fileMenu.push(messageBox)
-  fileMenu.push(datalistForm)
+  fileMenu.push(factoryDataList)
 
   return <Q2App q2forms={fileMenu} />;
 }
