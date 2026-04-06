@@ -35,7 +35,6 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       colWidths: columns.map(() => 150),
       columnOrder: columns.map((_, i) => i),
       dragIndex: null,
-      // data: props.q2form.data,
       data: Array.isArray(props.q2form.data) ? props.q2form.data : [],
     };
     this.resizeColumns = this.props.q2form.dataGridParams.resizeColumns;
@@ -52,13 +51,18 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       this.resizeObserver = new ResizeObserver(() => {
         this.updateScrollbarSpacer();
       });
-
       this.resizeObserver.observe(this.scrollArea.current);
     }
+    document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentDidUpdate() {
     this.updateScrollbarSpacer();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+    // this.resizeObserver.disconnect();
   }
 
   updateScrollbarSpacer = () => {
@@ -103,10 +107,178 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
         this.props.q2form.hookDataGridRowClicked(this);
       }
     })
-
-
   }
 
+  handleKeyDown = (event: any) => {
+    const { selectedRow, data } = this.state;
+    const dataLength = data.length;
+
+    if (event.key === "PageDown") {
+      // if (last >= dataLength - 1) return;
+      const { last } = this.getVisibleRange();
+
+      let newRow = Math.min(last + 1, dataLength - 1);
+      if (last === dataLength) {
+        newRow = dataLength - 1
+      }
+
+      this.setState({ selectedRow: newRow }, () => {
+        this.scrollToRow();
+        this.scrollPage("down");
+      });
+
+    } else if (event.key === "PageUp") {
+      // if (first <= 0) return;
+
+      const newRow = this.getPageUp();
+
+      this.setState({ selectedRow: newRow }, () => {
+        this.scrollToRow();
+      });
+
+    } else if (event.key === "ArrowUp" && selectedRow > 0) {
+      this.setState({ selectedRow: selectedRow - 1 }, this.scrollToRow);
+
+    } else if (event.key === "ArrowDown" && selectedRow < dataLength - 1) {
+      this.setState({ selectedRow: selectedRow + 1 }, this.scrollToRow);
+
+    } else if (event.key === "Home") {
+      this.setState({ selectedRow: 0 }, () => {
+        this.scrollToRow();
+      });
+
+    } else if (event.key === "End") {
+      this.setState({ selectedRow: dataLength - 1 }, () => {
+        this.scrollToRow();
+      });
+    }
+
+    event.preventDefault();
+  };
+
+  getPageUp = (): number => {
+    const container = this.scrollArea?.current;
+    if (!container) return 0;
+
+    const rowsWrapper = container.firstElementChild;
+    if (!rowsWrapper) return 0;
+
+    const rows = rowsWrapper.children;
+
+    const { first } = this.getVisibleRange();
+
+    if (first <= 0) return 0;
+
+    let totalHeight = 0;
+    let targetIndex = first;
+
+    for (let i = first - 1; i >= 0; i--) {
+      const row = rows[i] as HTMLElement;
+      const height = row.getBoundingClientRect().height;
+
+      if (totalHeight + height > container.clientHeight) {
+        break;
+      }
+
+      totalHeight += height;
+      targetIndex = i;
+    }
+
+    return targetIndex;
+  };
+
+  getVisibleRange = () => {
+    const container = this.scrollArea?.current;
+    if (!container) return { first: 0, last: 0 };
+
+    const rowsWrapper = container.firstElementChild;
+    if (!rowsWrapper) return { first: 0, last: 0 };
+
+    const rows = rowsWrapper.children;
+
+    const viewTop = container.scrollTop;
+    const viewBottom = viewTop + container.clientHeight;
+
+    let firstFullyVisible = -1;
+    let lastFullyVisible = -1;
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i] as HTMLElement;
+
+      const containerRect = container.getBoundingClientRect();
+      const rowRect = row.getBoundingClientRect();
+
+      const top = rowRect.top - containerRect.top + container.scrollTop;
+      const bottom = top + rowRect.height;
+
+      const fullyVisible = top >= viewTop && bottom <= viewBottom;
+
+      if (fullyVisible) {
+        if (firstFullyVisible === -1) {
+          firstFullyVisible = i;
+        }
+        lastFullyVisible = i;
+      }
+    }
+
+    // fallback если нет полностью видимых строк (редкий кейс)
+    if (firstFullyVisible === -1) {
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i] as HTMLElement;
+        const top = row.offsetTop;
+        const bottom = top + row.offsetHeight;
+
+        if (bottom > viewTop) {
+          firstFullyVisible = i;
+          break;
+        }
+      }
+
+      lastFullyVisible = firstFullyVisible;
+    }
+
+    return {
+      first: firstFullyVisible,
+      last: lastFullyVisible,
+    };
+  };
+
+  scrollToRow = () => {
+    const { selectedRow } = this.state;
+
+    if (!this.scrollArea?.current) return;
+
+    const container = this.scrollArea.current;
+    const rowsWrapper = container.firstElementChild;
+    if (!rowsWrapper) return;
+
+    const rowElement = rowsWrapper.children[selectedRow] as HTMLElement;
+    if (!rowElement) return;
+
+    rowElement.scrollIntoView({
+      behavior: "smooth",   // можно "auto" если не нужна анимация
+      block: "nearest",     // не прыгает резко
+    });
+  };
+
+
+  scrollPage = (align: "up" | "down") => {
+    const { selectedRow } = this.state;
+    const container = this.scrollArea?.current;
+    if (!container) return;
+
+    const rowsWrapper = container.firstElementChild;
+    if (!rowsWrapper) return;
+
+    const row = rowsWrapper.children[selectedRow] as HTMLElement;
+    if (!row) return;
+
+    if (align === "up") {
+      container.scrollTop = row.offsetTop;
+    } else {
+      container.scrollTop = row.offsetTop + row.offsetHeight - container.clientHeight;
+    }
+  };
   // ==========================
   // COLUMN RESIZING
   // ==========================
@@ -177,14 +349,12 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
           const column = columns[colIdx];
           const width = this.resizeColumns ? `${colWidths[colIdx]}px` : "auto";
           return (
-
             <div
               key={colIdx}
               className="Q2DataList-header-cell"
               style={{
                 flex: `1 1 ${width}`,
                 width: `${width}`,
-                boxSizing: "border-box",
               }}
               {...(this.reorderColumns && {
                 draggable: true,
@@ -220,6 +390,9 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     if (isSelected) {
       className += " selected"
     }
+    if (rowIndex === 0) {
+      className += " first-row"
+    }
     return (
       <div key={rowIndex} className={className}
         onClick={() => this.handleRowClick(rowIndex)}
@@ -230,11 +403,10 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
           return (
             <div
               key={column.column}
-              className={`Q2DataList-cell ${rowIndex === 0 ? "first-row" : ""}`}
+              className="Q2DataList-cell"
               style={{
                 flex: `1 1 ${width}`,
                 width: `${width}px`,
-                boxSizing: "border-box",
               }}
             >
               {`${row[column.column]}`}
