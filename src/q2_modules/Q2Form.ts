@@ -251,14 +251,29 @@ export class Q2Form {
         return ctrl;
     }
 
-    add_action(text: string, options: any = {}) {
-        const act = new Q2Action(text, options);
-        // Sync all option keys to the control instance
-        for (const key in options) {
-            if (options.hasOwnProperty(key)) {
-                (act as any)[key] = options[key];
-            }
-        }
+    add_action(text: string,
+        worker?: any,
+        icon?: string,
+        mess?: string,
+        hotkey?: string,
+        tag?: string,
+        eof_disabled?: boolean,
+        child_form?: any,
+        child_where?: string,
+        child_copy_mode?: boolean,
+        child_noshow?: boolean
+    ) {
+        const act = new Q2Action(text,
+            worker,
+            icon,
+            mess,
+            hotkey,
+            tag,
+            eof_disabled,
+            child_form,
+            child_where,
+            child_copy_mode,
+            child_noshow);
         this.actions.push(act);
         return act;
     }

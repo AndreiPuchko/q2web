@@ -89,7 +89,6 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
 
   handleContextMenu = (e: React.MouseEvent, rowIndex) => {
     e.preventDefault();
-    console.log(9999, rowIndex)
     this.setState({
       contextMenu: { x: e.clientX, y: e.clientY }, selectedRow: rowIndex
     });
@@ -361,12 +360,17 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
           top: contextMenu.y,
           left: contextMenu.x,
         }}
-        onClick={() => this.setState({ contextMenu: undefined })}
+        onClick={() => {
+          this.setState({ contextMenu: undefined }
+          )
+        }}
         onContextMenu={e => e.preventDefault()}
       >
         <div>
           {actions.map((el, index) => {
-            return <div className="q2-context-menu-item"> {el.text}
+            return <div className="q2-context-menu-item"
+              onClick={el.worker}
+            > {el.text}
             </div>
           })}
         </div>
@@ -378,7 +382,9 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     const actions = this.props.q2form.actions;
     return <div className="q2-toolbar">
       {actions.map((el, index) => {
-        return <button className="q2-context-toolbar-item"> {el.text}
+        return <button className="q2-context-toolbar-item"
+          onClick={el.worker}
+        > {el.text}
         </button>
       })}
     </div>
@@ -474,7 +480,9 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
         <div className={`Q2DataList ${this.props.q2form.class}`}>
           {this.renderActions()}
           {q2form.dataGridParams.showHeaders && this.renderHeader()}
-          <div ref={this.scrollArea} className="Q2DataList-scrollarea" >
+          <div ref={this.scrollArea} className="Q2DataList-scrollarea"
+            onClick={() => this.setState({ contextMenu: undefined })}
+          >
             <div>
               {data.map((row, index) => this.renderRow(row, index))}
             </div>
