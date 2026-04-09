@@ -71,6 +71,45 @@ export class Q2Control {
     }
 }
 
+export class Q2Action {
+    text: string;
+    worker?: any;
+    icon?: string;
+    mess?: string;
+    hotkey?: string;
+    tag?: string;
+    eof_disabled?: boolean;
+    child_form?: any;
+    child_where?: string;
+    child_copy_mode?: boolean;
+    child_noshow?: boolean;
+    constructor(
+        text: string,
+        worker?: any,
+        icon?: string,
+        mess?: string,
+        hotkey?: string,
+        tag?: string,
+        eof_disabled?: boolean,
+        child_form?: any,
+        child_where?: string,
+        child_copy_mode?: boolean,
+        child_noshow?: boolean
+    ) {
+        this.text = text
+        this.worker = worker
+        this.icon = icon
+        this.mess = mess
+        this.hotkey = hotkey
+        this.tag = tag
+        this.eof_disabled = eof_disabled
+        this.child_form = child_form
+        this.child_where = child_where
+        this.child_copy_mode = child_copy_mode
+        this.child_noshow = child_noshow
+    }
+}
+
 
 type DataGridParams = {
     showCurrentRow?: boolean,
@@ -90,8 +129,9 @@ const defaultDataGridParams: DataGridParams = {
 export class Q2Form {
     key: string;
     columns: any[];
+    actions: any[];
     data: any[] | (() => void);
-    loader: undefined |  (() => any);
+    loader: undefined | (() => any);
     actions: any[];
     hasCancelButton: boolean;
     hasOkButton: boolean;
@@ -209,6 +249,18 @@ export class Q2Form {
         }
         this.columns.push(ctrl);
         return ctrl;
+    }
+
+    add_action(text: string, options: any = {}) {
+        const act = new Q2Action(text, options);
+        // Sync all option keys to the control instance
+        for (const key in options) {
+            if (options.hasOwnProperty(key)) {
+                (act as any)[key] = options[key];
+            }
+        }
+        this.actions.push(act);
+        return act;
     }
 
     showDialog() {

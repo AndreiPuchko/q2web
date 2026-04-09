@@ -92,6 +92,10 @@ function App() {
         { c1: "20 56", c2: "78" },
       ]
     };
+    datalistForm.add_action("New")
+    datalistForm.add_action("Copy")
+    datalistForm.add_action("Edit")
+    datalistForm.add_action("Delete")
     return datalistForm
   }
 

@@ -113,8 +113,6 @@
     user-select: none;
 }
 
-
-
 .q2-context-menu-item:hover {
     background: #93affc;
 }
@@ -122,4 +120,15 @@
 .q2-context-menu-separator {
     border-top: 1px solid #ccc;
     margin: 6px 0;
+}
+
+.q2-toolbar {
+    display: flex;
+}
+
+.q2-context-toolbar-item {
+    border: 1px solid gray;
+    margin: 0 0.2em;;
+    border-radius: 0.2em;
+    padding: 0.2em;
 }

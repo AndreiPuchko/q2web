@@ -353,6 +353,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   renderContextMenu() {
     const { contextMenu } = this.state;
     if (!contextMenu) return null;
+    const actions = this.props.q2form.actions;
     return (
       <div
         className="q2-context-menu"
@@ -364,14 +365,24 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
         onContextMenu={e => e.preventDefault()}
       >
         <div>
-          <div className="q2-context-menu-item">1</div>
-          <div className="q2-context-menu-item">2</div>
-          <div className="q2-context-menu-item">3</div>
+          {actions.map((el, index) => {
+            return <div className="q2-context-menu-item"> {el.text}
+            </div>
+          })}
         </div>
       </div>
     );
   }
 
+  renderActions() {
+    const actions = this.props.q2form.actions;
+    return <div className="q2-toolbar">
+      {actions.map((el, index) => {
+        return <button className="q2-context-toolbar-item"> {el.text}
+        </button>
+      })}
+    </div>
+  }
 
   renderHeader() {
     const { columns } = this.props.q2form;
@@ -461,6 +472,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     else {
       return (
         <div className={`Q2DataList ${this.props.q2form.class}`}>
+          {this.renderActions()}
           {q2form.dataGridParams.showHeaders && this.renderHeader()}
           <div ref={this.scrollArea} className="Q2DataList-scrollarea" >
             <div>
