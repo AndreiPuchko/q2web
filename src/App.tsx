@@ -92,10 +92,10 @@ function App() {
         { c1: "20 56", c2: "78" },
       ]
     };
-    datalistForm.add_action("New", () => { console.log("new!") })
-    datalistForm.add_action("Copy", () => { console.log("copy!") })
-    datalistForm.add_action("Edit", () => { console.log("edit!") })
-    datalistForm.add_action("Delete", () => { console.log("delete!") })
+    datalistForm.add_action("New", () => { console.log("new!") }, "new")
+    datalistForm.add_action("Copy", () => { console.log("copy!") }, "copy")
+    datalistForm.add_action("Edit", () => { console.log("edit!") }, "edit")
+    datalistForm.add_action("Delete", () => { console.log("delete!") }, "remove")
     return datalistForm
   }
 
