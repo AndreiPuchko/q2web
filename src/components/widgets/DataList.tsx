@@ -1,7 +1,7 @@
 import { } from "./DataList.css"
 import { Component, createRef } from "react";
 import { Q2Form } from "../../q2_modules/Q2Form";
-import { resolveIcon } from "../../q2_modules/Q2Icons"
+import { Q2Icon } from "../../q2_modules/Q2Icons"
 
 interface Q2DataListState {
   visibleRows: number,
@@ -368,13 +368,12 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
         onContextMenu={e => e.preventDefault()}
       >
         <div>
-          {actions.map((el, index) => {
-            const Icon = resolveIcon(el.icon);
+          {actions.map((el) => {
             return <div className="q2-context-menu-item"
               onClick={el.worker}
-            > 
-            <Icon size={20} />
-            {el.text}
+            >
+              <Q2Icon name={el.icon} size={20} />
+              <span> {el.text}</span>
             </div>
           })}
         </div>
@@ -385,12 +384,11 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   renderActions() {
     const actions = this.props.q2form.actions;
     return <div className="q2-toolbar">
-      {actions.map((el, index) => {
-        const Icon = resolveIcon(el.icon);
+      {actions.map((el) => {
         return <button className="q2-context-toolbar-item"
           onClick={el.worker}
         >
-          <Icon size={20} />
+          <Q2Icon name={el.icon} size={20} />
           {el.icon ? "" : el.text}
         </button>
       })}
