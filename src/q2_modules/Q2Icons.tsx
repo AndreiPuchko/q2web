@@ -1,6 +1,8 @@
 import React from "react";
-import * as LucideIcons from "lucide-react";
+import { File, Files, FileX, FilePen, Save, Circle } from "lucide-react";
 import { createLucideIcon, IconNode } from "lucide-react";
+
+const LucideIcons = { File: File, Files: Files, FileX: FileX, FilePen: FilePen, Save: Save, Circle: Circle };
 
 type LucideIconType = React.ComponentType<any>;
 

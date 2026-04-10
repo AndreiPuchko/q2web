@@ -42,7 +42,7 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
         }
     };
 
-    buildMenuStructure(forms: FormInput[]): any {
+    buildMenuStructure(forms: any[]): any {
         const structure: any = {};
         let uid = 0;
 

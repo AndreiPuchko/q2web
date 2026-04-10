@@ -89,7 +89,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     }
   }
 
-  handleContextMenu = (e: React.MouseEvent, rowIndex) => {
+  handleContextMenu = (e: React.MouseEvent, rowIndex: number) => {
     e.preventDefault();
     this.setState({
       contextMenu: { x: e.clientX, y: e.clientY }, selectedRow: rowIndex
@@ -394,10 +394,13 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       <button className="q2-context-toolbar-item"
         ref={this.menuBtnRef}
         onClick={() => {
-          const rect = this.menuBtnRef.current.getBoundingClientRect();
-          this.setState({
-            contextMenu: { x: rect.left, y: rect.bottom + 4 }
-          });
+          const menuBtn = this.menuBtnRef.current;
+          if (menuBtn) {
+            const rect = menuBtn.getBoundingClientRect();
+            this.setState({
+              contextMenu: { x: rect.left, y: rect.bottom + 4 }
+            });
+          }
         }}
       >
         <Q2Icon name="Menu" size={20}> </Q2Icon>

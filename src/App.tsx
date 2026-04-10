@@ -14,7 +14,7 @@ function App() {
     console.log("============", fileMenuAbout)
   }
 
-  const fileMenu: Q2Form[] = [];
+  const fileMenu: any[] = [];
 
   const fileMenuAbout = new Q2Form("File|About", "About", "about",
     {
@@ -96,7 +96,7 @@ function App() {
     datalistForm.add_action("Copy", () => { console.log("copy!") }, "copy")
     datalistForm.add_action("Edit", () => { console.log("edit!") }, "edit")
     datalistForm.add_action("Delete", () => { console.log("delete!") }, "remove")
-    datalistForm.add_action("/")
+    datalistForm.add_action("/", () => { console.log("close!") }, "exit")
     datalistForm.add_action("Close", () => { console.log("close!") }, "exit")
     return datalistForm
   }

@@ -132,7 +132,6 @@ export class Q2Form {
     actions: any[];
     data: any[] | (() => void);
     loader: undefined | (() => any);
-    actions: any[];
     hasCancelButton: boolean;
     hasOkButton: boolean;
     hasMaxButton: boolean;
