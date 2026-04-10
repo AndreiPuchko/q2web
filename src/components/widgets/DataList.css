@@ -124,7 +124,15 @@
 }
 
 .q2-context-toolbar-item {
-    margin: 0.1em 0.1em;;
+    margin: 0.1em 0.1em;
     border-radius: 0.2em;
     padding: 0.1em 0.1em 0em 0.1em;
+}
+
+.q2-toolbar-separator {
+    width: 1px;
+    margin: 1px 6px;
+    padding: 3px 0;
+    background-color: grey;
+    opacity: 0.2;
 }

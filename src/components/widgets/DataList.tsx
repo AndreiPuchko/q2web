@@ -25,6 +25,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   private scrollbarSpacer = createRef<HTMLDivElement>();
   private scrollArea = createRef<HTMLDivElement>();
   private resizeObserver?: ResizeObserver;
+  private menuBtnRef = createRef<HTMLButtonElement>();
 
   constructor(props: Q2DataListProps) {
     super(props);
@@ -354,6 +355,9 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     const { contextMenu } = this.state;
     if (!contextMenu) return null;
     const actions = this.props.q2form.actions;
+
+    console.log(actions)
+
     return (
       <div
         className="q2-context-menu"
@@ -369,12 +373,15 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       >
         <div>
           {actions.map((el) => {
-            return <div className="q2-context-menu-item"
-              onClick={el.worker}
-            >
-              <Q2Icon name={el.icon} size={20} />
-              <span> {el.text}</span>
-            </div>
+            if (el.text.startsWith("/")) { return <hr></hr> }
+            else {
+              return <div className="q2-context-menu-item"
+                onClick={el.worker}
+              >
+                <Q2Icon name={el.icon} size={20} />
+                <span> {el.text}</span>
+              </div>
+            }
           })}
         </div>
       </div>
@@ -384,13 +391,28 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   renderActions() {
     const actions = this.props.q2form.actions;
     return <div className="q2-toolbar">
+      <button className="q2-context-toolbar-item"
+        ref={this.menuBtnRef}
+        onClick={() => {
+          const rect = this.menuBtnRef.current.getBoundingClientRect();
+          this.setState({
+            contextMenu: { x: rect.left, y: rect.bottom + 4 }
+          });
+        }}
+      >
+        <Q2Icon name="Menu" size={20}> </Q2Icon>
+      </button>
+
       {actions.map((el) => {
-        return <button className="q2-context-toolbar-item"
-          onClick={el.worker}
-        >
-          <Q2Icon name={el.icon} size={20} />
-          {el.icon ? "" : el.text}
-        </button>
+        if (el.text.startsWith("/")) { return <div className="q2-toolbar-separator" /> }
+        else {
+          return <button className="q2-context-toolbar-item"
+            onClick={el.worker}
+          >
+            <Q2Icon name={el.icon} size={20} />
+            {el.icon ? "" : el.text}
+          </button>
+        }
       })}
     </div>
   }
