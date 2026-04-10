@@ -1,8 +1,16 @@
 import React from "react";
-import { File, Files, FileX, FilePen, Save, Circle } from "lucide-react";
+import { Menu, File, Files, FileX, FilePen, Save, Circle } from "lucide-react";
 import { createLucideIcon, IconNode } from "lucide-react";
 
-const LucideIcons = { File: File, Files: Files, FileX: FileX, FilePen: FilePen, Save: Save, Circle: Circle };
+const LucideIcons = {
+    Menu: Menu,
+    File: File,
+    Files: Files,
+    FileX: FileX,
+    FilePen: FilePen,
+    Save: Save,
+    Circle: Circle
+};
 
 type LucideIconType = React.ComponentType<any>;
 
@@ -19,6 +27,7 @@ const iconNameMap: Record<string, string> = {
     remove: "FileX",
     edit: "FilePen",
     save: "Save",
+    menu: "Menu",
 };
 
 // 🎯 fallback
