@@ -118,8 +118,8 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
     if (panel.isTabWidget) {
       className += " tab-widget ";
     }
-    // let style: CSSProperties = { display: "flex", flex: 1, padding: "0.5cap" };
-    let style: CSSProperties = { display: "flex", flex: 1, padding: "0.1cap" };
+    // let style: CSSProperties = { display: "flex", flex: 1, padding: "0.1cap" };
+    let style: CSSProperties = { display: "flex", flex: 1 };
     const rootStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-center', width: 'auto' };
 
     if (panel.column.column === "/f") {
@@ -267,7 +267,7 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
             ))}
         {(panel?.isTabWidget) ? (<Q2RadioButton {...tabWidgetControlProps} />) : ""}
         <fieldset className="field-set-style" disabled={this.hasCheck && !checkChecked} >
-          <div style={style}>
+          <div style={style}  className="field-container">
             {panel.children && panel.children.map((child: any, index: number) => {
               // Ensure child.id is always defined and unique
               const childId = child.id || `${child.column}-${child.key || index}`;
