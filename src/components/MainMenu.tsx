@@ -155,10 +155,14 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
 
         return (
             <nav className='MainMenuBar'>
-                <House className={"MainMenuIcon HomeButton"}
-                    onClick={() => GetQ2AppInstance()?.closeAllDialogs()} />
-                <ArrowBigLeft className="MainMenuIcon StepBackButton"
-                    onClick={() => GetQ2AppInstance()?.closeTopDialog()} />
+                <span title="Home" className='MainMenuHomeButton '>
+                    <House className={"MainMenuIcon HomeButton"}
+                        onClick={() => GetQ2AppInstance()?.closeAllDialogs()} />
+                </span>
+                <span title="Back" className='MainMenuBackButton '>
+                    <ArrowBigLeft className="MainMenuIcon StepBackButton"
+                        onClick={() => GetQ2AppInstance()?.closeTopDialog()} />
+                </span>
                 <div className='menuItems MainMenuItems' ref={this.menuRef} >
                     {items.map((item) => (
                         <div
