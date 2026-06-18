@@ -467,7 +467,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     const isSelected = selectedRow === rowIndex
     let className = "Q2DataList-row";
     className += rowIndex % 2 === 0 ? " even" : " odd";
-    if (isSelected) {
+    if (isSelected && this.props.q2form.dataGridParams.showCurrentRow) {
       className += " selected"
     }
     if (rowIndex === 0) {
