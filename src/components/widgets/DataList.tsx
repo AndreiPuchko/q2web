@@ -2,6 +2,7 @@ import { } from "./DataList.css"
 import { Component, createRef } from "react";
 import { Q2Form } from "../../q2_modules/Q2Form";
 import { Q2Icon } from "../../q2_modules/Q2Icons"
+import { Q2WidgetProps } from './Widget';
 
 interface Q2DataListState {
   visibleRows: number,
@@ -15,7 +16,7 @@ interface Q2DataListState {
   contextMenu?: { x: number; y: number; }
 }
 
-interface Q2DataListProps {
+interface Q2DataListProps extends Q2WidgetProps {
   q2form: Q2Form;
 }
 
@@ -58,6 +59,15 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       this.resizeObserver.observe(this.scrollArea.current);
     }
   }
+
+  getData() {
+    return this.state.data
+  }
+
+  setData(data: any) {
+    this.setState({data})
+  }
+
 
   componentDidUpdate() {
     this.updateScrollbarSpacer();

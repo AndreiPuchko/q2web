@@ -246,10 +246,10 @@ export class Q2FrontForm extends Component<Q2FrontFormProps, Q2FrontFormState> {
             case "list":
                 column.data.subForm = true;
                 if (typeof column.data === "function") {
-                    return <Q2DataList q2form={column.data()} />
+                    return <Q2DataList {...commonProps} q2form={column.data()} />
                 }
                 else {
-                    return <Q2DataList q2form={column.data} />
+                    return <Q2DataList {...commonProps} q2form={column.data} />
                 }
 
             case "form":
