@@ -100,6 +100,13 @@ button:disabled {
   border-radius: 5px;
 }
 
+.box-border {
+  margin: 0.2cap;
+  padding: 1cap;
+  border: 1px solid var(--form-border);
+  border-radius: 5px;
+}
+
 .tab-widget {
   border: 1px solid var(--form-border);
   border-radius: 5px;

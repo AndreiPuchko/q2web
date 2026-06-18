@@ -112,6 +112,9 @@ export class Q2Panel extends Component<Q2PanelProps, { checkChecked: boolean }> 
     if (panel?.label !== "-" && panel?.label !== "" && !panel?.isTabWidget && panel?.label !== undefined) {
       className += " group-box-border ";
     }
+    if (panel?.label === "-"){
+      className += " box-border ";
+    }
     if (panel.isTabPage) {
       className += " tab-page ";
     }
