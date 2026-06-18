@@ -164,29 +164,37 @@ export class MainMenu extends React.Component<MainMenuProps, MainMenuState> {
                         onClick={() => GetQ2AppInstance()?.closeTopDialog()} />
                 </span>
                 <div className='menuItems MainMenuItems' ref={this.menuRef} >
-                    {items.map((item) => (
-                        <div
-                            className='dropdown'
-                            key={item.seq}
-                            onMouseEnter={() => {
-                                if (activated) this.setState({ visibleDropdown: item.label });
-                            }}
-                            onClick={() => {
-                                if (!activated) {
-                                    this.setState({ activated: true });
-                                }
-                                this.setState({ visibleDropdown: item.label });
-                            }}
-                        >
-                            <button className='dropbtn'>{item.label}</button>
+                    {items.map((item) => {
+                        const hasChildren = Object.keys(item.children || {}).some(key => key !== '__meta__');
+                        return (
                             <div
-                                className='dropdown-content'
-                                style={{ display: visibleDropdown === item.label ? 'block' : 'none' }}
+                                className='dropdown'
+                                key={item.seq}
+                                onMouseEnter={() => {
+                                    if (activated) this.setState({ visibleDropdown: item.label });
+                                }}
+                                onClick={() => {
+                                    if (!activated) {
+                                        this.setState({ activated: true });
+                                    }
+                                    if (!hasChildren && item.form) {
+                                        showDialog(item.form);
+                                        this.hideDropdown();
+                                        return;
+                                    }
+                                    this.setState({ visibleDropdown: item.label });
+                                }}
                             >
-                                {this.renderMenu(item.children)}
+                                <button className='dropbtn'>{item.label}</button>
+                                <div
+                                    className='dropdown-content'
+                                    style={{ display: visibleDropdown === item.label ? 'block' : 'none' }}
+                                >
+                                    {this.renderMenu(item.children)}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
                 <div className='spacer1'></div>
                 <div className='toolButtons'>
