@@ -57,7 +57,6 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
       });
       this.resizeObserver.observe(this.scrollArea.current);
     }
-    document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentDidUpdate() {
@@ -65,7 +64,6 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
     // this.resizeObserver.disconnect();
   }
 
@@ -510,8 +508,15 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
         <div className={`Q2DataList ${this.props.q2form.class}`}>
           {this.renderActions()}
           {q2form.dataGridParams.showHeaders && this.renderHeader()}
-          <div ref={this.scrollArea} className="Q2DataList-scrollarea"
-            onClick={() => this.setState({ contextMenu: undefined })}
+          <div
+            ref={this.scrollArea}
+            className="Q2DataList-scrollarea"
+            tabIndex={0}
+            onKeyDown={this.handleKeyDown}
+            onClick={() => {
+              this.setState({ contextMenu: undefined });
+              this.scrollArea.current?.focus();
+            }}
           >
             <div>
               {data.map((row, index) => this.renderRow(row, index))}
