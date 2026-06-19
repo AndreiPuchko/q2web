@@ -16,7 +16,7 @@ export class Q2Button extends Q2Widget<Q2ButtonProps> {
         const style: React.CSSProperties = {};
         Object.assign(style, column.style)
         return (
-            <button className="Q2Button"
+            <button className={`Q2Button ${column.class}`}
                 onClick={column.valid}
                 disabled={disabled}
                 style={style}
