@@ -350,6 +350,10 @@ export class Q2Line extends Q2Widget<Q2LineProps, Q2LineState> {
         }, 0);
     }
 
+    focus(){
+        this.inputRef.current.focus()
+    }
+
     getData() {
         return this.state.value;
     }
