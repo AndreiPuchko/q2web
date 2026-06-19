@@ -65,7 +65,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
   }
 
   setData(data: any) {
-    this.setState({data})
+    this.setState({ data })
   }
 
 
@@ -473,6 +473,7 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
     const { columns } = this.props.q2form;
     const { colWidths, columnOrder, selectedRow } = this.state;
     const isSelected = selectedRow === rowIndex
+    const { row_renderer } = this.props.q2form.dataGridParams || {};
     let className = "Q2DataList-row";
     className += rowIndex % 2 === 0 ? " even" : " odd";
     if (isSelected && this.props.q2form.dataGridParams.showCurrentRow) {
@@ -486,22 +487,27 @@ export class Q2DataList extends Component<Q2DataListProps, Q2DataListState> {
         onClick={() => this.handleRowClick(rowIndex)}
         onContextMenu={e => this.handleContextMenu(e, rowIndex)}
       >
-        {columnOrder.map((colIdx) => {
-          const column = columns[colIdx];
-          const width = this.resizeColumns ? `${colWidths[colIdx]}px` : "auto";
-          return (
-            <div
-              key={column.column}
-              className="Q2DataList-cell"
-              style={{
-                flex: `1 1 ${width}`,
-                width: `${width}px`,
-              }}
-            >
-              {`${row[column.column]}`}
-            </div>
-          );
-        })
+        {
+          row_renderer ? (
+            // Кастомный рендеринг - передаем всю строку
+            row_renderer(row, rowIndex)
+          ) :
+            columnOrder.map((colIdx) => {
+              const column = columns[colIdx];
+              const width = this.resizeColumns ? `${colWidths[colIdx]}px` : "auto";
+              return (
+                <div
+                  key={column.column}
+                  className="Q2DataList-cell"
+                  style={{
+                    flex: `1 1 ${width}`,
+                    width: `${width}px`,
+                  }}
+                >
+                  {`${row[column.column]}`}
+                </div>
+              );
+            })
         }
       </div >
     );

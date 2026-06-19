@@ -2,6 +2,7 @@ import Q2FrontForm from '../components/Q2FrontForm';
 import { Q2DataList } from '../components/widgets/DataList';
 import { showDialog, closeDialog } from './Q2Api';
 import { generateRandomKey, GetQ2AppInstance } from "../q2_modules/Q2Api";
+import React from "react";
 
 export class Q2Control {
     column: string;
@@ -117,6 +118,7 @@ type DataGridParams = {
     resizeColumns?: boolean,
     reorderColumns?: boolean,
     loader?: () => any,
+    row_renderer?: (row: any, rowIndex: number) => React.ReactNode,
 }
 
 const defaultDataGridParams: DataGridParams = {
